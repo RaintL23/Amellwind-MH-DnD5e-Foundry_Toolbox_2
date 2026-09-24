@@ -4,11 +4,11 @@ import type { Spell } from "@/shared/types";
 import type { BuilderSpellSelection } from "@/shared/types";
 import { cn } from "@/shared/utils/cn";
 import { SpellExpandedDetails } from "@/features/dnd/spells/components/SpellExpandedDetails";
+import { LibraryInfoButton } from "@/features/raintdm/builder/components/shared/LibraryInfoButton";
 import { SpellMetaBadges } from "../SpellMetaBadges";
 import {
   SpellDamageResult,
   SpellDamageToggleButton,
-  SpellInfoToggleButton,
   SpellLibrarySourceBadge,
 } from "./SpellLibraryShared";
 
@@ -48,9 +48,10 @@ export function SelectedSpellRow({
         {fullSpell && <SpellMetaBadges spell={fullSpell} />}
         {spell.source && <SpellLibrarySourceBadge source={spell.source} />}
         {fullSpell && (
-          <SpellInfoToggleButton
+          <LibraryInfoButton
+            label={spell.name}
             expanded={showDetails}
-            onToggle={() => setShowDetails((p) => !p)}
+            onClick={() => setShowDetails((p) => !p)}
           />
         )}
         {hasDamage && (
@@ -64,6 +65,7 @@ export function SelectedSpellRow({
             type="button"
             onClick={onRemove}
             title="Remove spell"
+            aria-label={`Remove ${spell.name}`}
             className="flex h-5 w-5 items-center justify-center rounded bg-destructive/20 text-destructive-foreground transition-colors hover:bg-destructive/40"
           >
             <X className="h-2.5 w-2.5" strokeWidth={3} />

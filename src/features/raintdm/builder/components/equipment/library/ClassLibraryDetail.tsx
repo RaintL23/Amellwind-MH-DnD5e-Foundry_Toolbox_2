@@ -39,6 +39,8 @@ interface ClassLibraryDetailProps {
   varyingFields?: ClassVariantField[];
   bookNames?: BookSourceNameMap;
   onSourceSelect?: (id: string) => void;
+  /** Rendered inside a library row: omit the icon + name heading. */
+  inline?: boolean;
 }
 
 function groupFeaturesByLevel(
@@ -65,6 +67,7 @@ export function ClassLibraryDetail({
   varyingFields = [],
   bookNames = {},
   onSourceSelect,
+  inline = false,
 }: ClassLibraryDetailProps) {
   const features = getFeaturesUpToLevel(classData, subclass, level);
   const byLevel = groupFeaturesByLevel(features);
@@ -84,8 +87,14 @@ export function ClassLibraryDetail({
   return (
     <div className="space-y-3">
       <div className="flex flex-wrap items-center gap-2">
-        <GraduationCap className="h-4 w-4 text-amber-400" />
-        <h3 className="text-sm font-semibold text-foreground">{classData.name}</h3>
+        {!inline && (
+          <>
+            <GraduationCap className="h-4 w-4 text-amber-400" />
+            <h3 className="text-sm font-semibold text-foreground">
+              {classData.name}
+            </h3>
+          </>
+        )}
         <Badge variant="secondary" className="text-[10px]">
           {classData.source}
         </Badge>

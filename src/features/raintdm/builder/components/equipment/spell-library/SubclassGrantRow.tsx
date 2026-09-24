@@ -5,10 +5,10 @@ import { SpellExpandedDetails } from "@/features/dnd/spells/components/SpellExpa
 import { SpellMetaBadges } from "../SpellMetaBadges";
 import { parseSpellDamageRoll } from "@/features/raintdm/builder/utils/spell-selection.utils";
 import type { SubclassSpellGrant } from "@/features/raintdm/builder/utils/subclass-spells.utils";
+import { LibraryInfoButton } from "@/features/raintdm/builder/components/shared/LibraryInfoButton";
 import {
   SpellDamageResult,
   SpellDamageToggleButton,
-  SpellInfoToggleButton,
   SpellLibrarySourceBadge,
 } from "./SpellLibraryShared";
 
@@ -38,9 +38,10 @@ export function SubclassGrantRow({
         {spell && <SpellMetaBadges spell={spell} />}
         {spell && <SpellLibrarySourceBadge source={spell.source} />}
         {spell && (
-          <SpellInfoToggleButton
+          <LibraryInfoButton
+            label={grant.name}
             expanded={showDetails}
-            onToggle={() => setShowDetails((p) => !p)}
+            onClick={() => setShowDetails((p) => !p)}
           />
         )}
         {damageRoll && (

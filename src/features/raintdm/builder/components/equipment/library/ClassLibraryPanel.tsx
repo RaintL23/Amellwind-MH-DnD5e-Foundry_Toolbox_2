@@ -60,7 +60,7 @@ export function ClassLibraryPanel({
   const [classOptions, setClassOptions] = useState<LibraryListOption[]>([]);
   const [classCatalog, setClassCatalog] = useState<Class[]>([]);
   const [classLoading, setClassLoading] = useState(false);
-  const [infoPreviewId, setInfoPreviewId] = useState<string | null>(null);
+  const [browsing, setBrowsing] = useState(false);
 
   const {
     character,
@@ -133,10 +133,6 @@ export function ClassLibraryPanel({
     setClassCatalog([]);
     refreshClassCatalog();
   }, [needsClassCatalog, selectedSlot, refreshClassCatalog]);
-
-  useEffect(() => {
-    setInfoPreviewId(null);
-  }, [selectedSlot]);
 
   // Partnered / UA brew (e.g. Grim Hollow) loads on demand when Sources change —
   // same path as /classes — then refresh class + subclass lists.
@@ -357,28 +353,19 @@ export function ClassLibraryPanel({
   }, [classData, subclass?.name]);
 
   const showClassDetail =
-    isClassSlot && !!classSelection && !!classData && !infoPreviewId;
+    isClassSlot && !!classSelection && !!classData && !browsing;
   const showSubclassDetail =
-    isSubclassSlot && !!subclass && !!activeSubclass && !infoPreviewId;
+    isSubclassSlot && !!subclass && !!activeSubclass && !browsing;
 
-  const isPreviewingInfo = !!infoPreviewId;
-  const previewClass =
-    isPreviewingInfo && (isClassSlot || isMulticlassClassPicker)
-      ? (classById.get(infoPreviewId) ?? null)
-      : null;
-  const previewSubclass =
-    isPreviewingInfo && (isSubclassSlot || isMulticlassSubclassPicker)
-      ? (subclassEntities.find((sc) => sc.id === infoPreviewId) ?? null)
-      : null;
+  useEffect(() => {
+    setBrowsing(false);
+  }, [selectedSlot, classSelection?.id, subclass?.id]);
 
   useEffect(() => {
     if (!needsClassCatalog) return;
-    onSearchHiddenChange?.(
-      isPreviewingInfo || showClassDetail || showSubclassDetail,
-    );
+    onSearchHiddenChange?.(showClassDetail || showSubclassDetail);
   }, [
     needsClassCatalog,
-    isPreviewingInfo,
     showClassDetail,
     showSubclassDetail,
     onSearchHiddenChange,
@@ -406,50 +393,30 @@ export function ClassLibraryPanel({
     setSubclass({ id: variant.id, name: subclass.name });
   }
 
-  function handleInfoPreview(option: LibraryListOption) {
-    setInfoPreviewId(option.id);
-  }
-
-  if (isPreviewingInfo && (isClassSlot || isMulticlassClassPicker)) {
-    if (!previewClass) {
-      return (
-        <div>
-          <LibraryBackToListButton onClick={() => setInfoPreviewId(null)} />
-          <EmptyState text="Information not found." />
-        </div>
-      );
-    }
+  function renderClassPreview(option: LibraryListOption) {
+    const previewClass = classById.get(option.id);
+    if (!previewClass) return <EmptyState text="Information not found." />;
     return (
-      <div>
-        <LibraryBackToListButton onClick={() => setInfoPreviewId(null)} />
-        <ClassLibraryDetail
-          classData={previewClass}
-          subclass={null}
-          level={character.level}
-          bookNames={bookNames}
-        />
-      </div>
+      <ClassLibraryDetail
+        classData={previewClass}
+        subclass={null}
+        level={character.level}
+        bookNames={bookNames}
+        inline
+      />
     );
   }
 
-  if (isPreviewingInfo && (isSubclassSlot || isMulticlassSubclassPicker)) {
-    if (!previewSubclass) {
-      return (
-        <div>
-          <LibraryBackToListButton onClick={() => setInfoPreviewId(null)} />
-          <EmptyState text="Information not found." />
-        </div>
-      );
-    }
+  function renderSubclassPreview(option: LibraryListOption) {
+    const previewSubclass = subclassEntities.find((sc) => sc.id === option.id);
+    if (!previewSubclass) return <EmptyState text="Information not found." />;
     return (
-      <div>
-        <LibraryBackToListButton onClick={() => setInfoPreviewId(null)} />
-        <SubclassLibraryDetail
-          subclass={previewSubclass}
-          level={character.level}
-          bookNames={identityBookNames}
-        />
-      </div>
+      <SubclassLibraryDetail
+        subclass={previewSubclass}
+        level={character.level}
+        bookNames={identityBookNames}
+        inline
+      />
     );
   }
 
@@ -460,15 +427,21 @@ export function ClassLibraryPanel({
       }
       if (classData) {
         return (
-          <ClassLibraryDetail
-            classData={classData}
-            subclass={activeSubclass}
-            level={character.level}
-            variants={classVariants}
-            varyingFields={varyingFields}
-            bookNames={bookNames}
-            onSourceSelect={handleClassSourceSelect}
-          />
+          <div>
+            <LibraryBackToListButton
+              label="Change selection"
+              onClick={() => setBrowsing(true)}
+            />
+            <ClassLibraryDetail
+              classData={classData}
+              subclass={activeSubclass}
+              level={character.level}
+              variants={classVariants}
+              varyingFields={varyingFields}
+              bookNames={bookNames}
+              onSourceSelect={handleClassSourceSelect}
+            />
+          </div>
         );
       }
       return <EmptyState text="Information not found." />;
@@ -483,7 +456,7 @@ export function ClassLibraryPanel({
         icon={<GraduationCap className="h-3.5 w-3.5 text-amber-400" />}
         getDisabledReason={getClassDisabledReason}
         onSelect={handleSelectClass}
-        onInfo={handleInfoPreview}
+        renderDetails={renderClassPreview}
       />
     );
   }
@@ -494,14 +467,20 @@ export function ClassLibraryPanel({
     }
     if (showSubclassDetail && activeSubclass) {
       return (
-        <SubclassLibraryDetail
-          subclass={activeSubclass}
-          level={character.level}
-          sourceVariants={subclassSourceVariants}
-          activeSourceId={subclass?.id}
-          onSourceSelect={handleSubclassSourceSelect}
-          bookNames={identityBookNames}
-        />
+        <div>
+          <LibraryBackToListButton
+            label="Change selection"
+            onClick={() => setBrowsing(true)}
+          />
+          <SubclassLibraryDetail
+            subclass={activeSubclass}
+            level={character.level}
+            sourceVariants={subclassSourceVariants}
+            activeSourceId={subclass?.id}
+            onSourceSelect={handleSubclassSourceSelect}
+            bookNames={identityBookNames}
+          />
+        </div>
       );
     }
 
@@ -513,7 +492,7 @@ export function ClassLibraryPanel({
         selectedName={subclass?.name ?? null}
         icon={<Sparkles className="h-3.5 w-3.5 text-emerald-400" />}
         onSelect={handleSelectSubclass}
-        onInfo={handleInfoPreview}
+        renderDetails={renderSubclassPreview}
       />
     );
   }
@@ -540,7 +519,7 @@ export function ClassLibraryPanel({
         icon={<GraduationCap className="h-3.5 w-3.5 text-orange-400" />}
         getDisabledReason={getClassDisabledReason}
         onSelect={handleSelectMulticlassClass}
-        onInfo={handleInfoPreview}
+        renderDetails={renderClassPreview}
       />
     );
   }
@@ -567,7 +546,7 @@ export function ClassLibraryPanel({
         selectedName={entrySubclass?.name ?? null}
         icon={<Sparkles className="h-3.5 w-3.5 text-teal-400" />}
         onSelect={handleSelectMulticlassSubclass}
-        onInfo={handleInfoPreview}
+        renderDetails={renderSubclassPreview}
       />
     );
   }

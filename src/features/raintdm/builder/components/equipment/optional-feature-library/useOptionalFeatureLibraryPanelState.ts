@@ -92,8 +92,6 @@ export function useOptionalFeatureLibraryPanelState({
   const [loading, setLoading] = useState(true);
   const [search, setSearch] = useState("");
   const [filterValues, setFilterValues] = useState<ListFilterValues>({});
-  const [detailItem, setDetailItem] =
-    useState<OptionalFeatureCatalogItem | null>(null);
 
   const activeProgression = useMemo(() => {
     if (!parsed) return null;
@@ -115,7 +113,6 @@ export function useOptionalFeatureLibraryPanelState({
   useEffect(() => {
     setSearch("");
     setFilterValues({});
-    setDetailItem(null);
   }, [selectedSlot]);
 
   useEffect(() => {
@@ -457,8 +454,6 @@ export function useOptionalFeatureLibraryPanelState({
     filterValues,
     setFilterValues,
     filterSections,
-    detailItem,
-    setDetailItem,
     loading,
     picked,
     slotCount,

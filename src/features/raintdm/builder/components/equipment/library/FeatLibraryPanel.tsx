@@ -60,6 +60,7 @@ import {
 import { isGeneralFeatSlotCategory } from "@/features/raintdm/builder/utils/feat-prerequisites.utils";
 import { AsiLibraryPanel } from "../AsiLibraryPanel";
 import { FeatLibraryDetail } from "./FeatLibraryDetail";
+import { FeatLibraryPreview } from "./FeatLibraryPreview";
 import { FeatList } from "./shared/LibraryLists";
 import { EmptyState, LibraryBackToListButton } from "./shared/LibraryUi";
 
@@ -83,11 +84,6 @@ export function FeatLibraryPanel({
   const [featDetail, setFeatDetail] = useState<Feat | DndFeat | null>(null);
   const [featDetailLoading, setFeatDetailLoading] = useState(false);
   const [showFeatList, setShowFeatList] = useState(true);
-  const [infoPreview, setInfoPreview] = useState<{
-    id: string;
-    name: string;
-    source: BuilderFeatSelection["source"];
-  } | null>(null);
   const [amellwindFeats, setAmellwindFeats] = useState<Feat[]>([]);
   const [dndFeats, setDndFeats] = useState<DndFeat[]>([]);
   const [featsLoading, setFeatsLoading] = useState(false);
@@ -199,7 +195,6 @@ export function FeatLibraryPanel({
 
   useEffect(() => {
     setShowFeatList(true);
-    setInfoPreview(null);
   }, [selectedSlot]);
 
   const selectedFeat =
@@ -235,7 +230,8 @@ export function FeatLibraryPanel({
     }
     const feat =
       featSlotIndex !== null ? (featSelections[featSlotIndex] ?? null) : null;
-    setShowFeatList(!feat || !isAsiFeatSelection(feat));
+    // Non-ASI feats: open detail after pick; ASI opens the ASI panel via !showFeatList.
+    setShowFeatList(!feat);
   }, [
     isFeatPickerSlot,
     isOriginFeatSlotSelected,
@@ -255,15 +251,13 @@ export function FeatLibraryPanel({
     !!selectedFeat &&
     !showAsiPanel &&
     !isAsiFeatSelection(selectedFeat) &&
-    !infoPreview &&
     (isOriginFeatSlotSelected
       ? originFeatLocked || !showFeatList
       : isInvocationOriginFeatSlotSelected
         ? !showFeatList
-        : true);
+        : !showFeatList);
 
-  const detailSelection = infoPreview ?? (showFeatDetail ? selectedFeat : null);
-  const isPreviewingInfo = !!infoPreview;
+  const detailSelection = showFeatDetail ? selectedFeat : null;
 
   useEffect(() => {
     onShowAsiPanelChange?.(showAsiPanel);
@@ -271,12 +265,11 @@ export function FeatLibraryPanel({
 
   useEffect(() => {
     if (!isFeatPickerSlot) return;
-    onSearchHiddenChange?.(showAsiPanel || showFeatDetail || isPreviewingInfo);
+    onSearchHiddenChange?.(showAsiPanel || showFeatDetail);
   }, [
     isFeatPickerSlot,
     showAsiPanel,
     showFeatDetail,
-    isPreviewingInfo,
     onSearchHiddenChange,
   ]);
 
@@ -435,7 +428,6 @@ export function FeatLibraryPanel({
 
   // Ensure ability-increase picks exist once the full feat is resolved.
   useEffect(() => {
-    if (isPreviewingInfo) return;
     if (!featDetail || !selectedFeat || isAsiFeatSelection(selectedFeat)) return;
     if (featDetail.abilityIncreases.length === 0) return;
 
@@ -484,7 +476,6 @@ export function FeatLibraryPanel({
   }, [
     featDetail,
     selectedFeat,
-    isPreviewingInfo,
     isInvocationOriginFeatSlotSelected,
     invocationOriginFeatIndex,
     isOriginFeatSlotSelected,
@@ -716,106 +707,67 @@ export function FeatLibraryPanel({
     return "dnd2014";
   }
 
-  function handleInfoPreview(option: LibraryListOption) {
-    setInfoPreview({
-      id: option.id,
-      name: option.name,
-      source: resolveOptionFeatSource(option),
-    });
+  function renderFeatPreview(option: LibraryListOption) {
+    const source = resolveOptionFeatSource(option);
+    if (source === "asi" || option.id === ABILITY_SCORE_IMPROVEMENT.id) {
+      return (
+        <p className="text-[11px] text-muted-foreground">
+          Improve 2 ability points or choose a feat.
+        </p>
+      );
+    }
+    return (
+      <FeatLibraryPreview
+        id={option.id}
+        source={source}
+        bookNames={identityBookNames}
+      />
+    );
   }
 
   function renderFeatDetail(allowSourceSelect: boolean) {
     if (featDetailLoading) {
       return <EmptyState text="Loading..." />;
     }
-    if (
-      infoPreview &&
-      (infoPreview.source === "asi" ||
-        infoPreview.id === ABILITY_SCORE_IMPROVEMENT.id)
-    ) {
-      return (
-        <div className="space-y-2">
-          <LibraryBackToListButton onClick={() => setInfoPreview(null)} />
-          <p className="text-xs font-medium text-foreground">
-            {ABILITY_SCORE_IMPROVEMENT.name}
-          </p>
-          <p className="text-[11px] text-muted-foreground">
-            Improve 2 ability points or choose a feat.
-          </p>
-        </div>
-      );
+    if (!featDetail) {
+      return <EmptyState text="Information not found." />;
     }
-    if (featDetail) {
-      const spellListClassOptions =
-        "additionalSpells" in featDetail
-          ? getFeatSpellListOptions(featDetail as DndFeat)
-          : [];
-      const allowEdits = allowSourceSelect && !isPreviewingInfo;
-      return (
-        <div>
-          {isPreviewingInfo && (
-            <LibraryBackToListButton onClick={() => setInfoPreview(null)} />
-          )}
-          <FeatLibraryDetail
-            feat={featDetail}
-            sourceVariants={
-              isDndFeatSelection && !isPreviewingInfo
-                ? dndFeatSourceVariants
-                : undefined
-            }
-            activeSourceId={
-              isPreviewingInfo ? infoPreview?.id : selectedFeat?.id
-            }
-            onSourceSelect={
-              isDndFeatSelection && allowEdits
-                ? handleDndFeatSourceSelect
-                : undefined
-            }
-            bookNames={identityBookNames}
-            abilityIncreaseChoices={
-              isPreviewingInfo
-                ? undefined
-                : selectedFeat?.abilityIncreaseChoices
-            }
-            onAbilityIncreaseChoiceChange={
-              !isPreviewingInfo &&
-              selectedFeat &&
-              !isAsiFeatSelection(selectedFeat)
-                ? handleAbilityIncreaseChoiceChange
-                : undefined
-            }
-            spellListClassOptions={spellListClassOptions}
-            spellListClassChoice={
-              isPreviewingInfo
-                ? undefined
-                : selectedFeat?.spellListClassChoice
-            }
-            onSpellListClassChoiceChange={
-              !isPreviewingInfo &&
-              selectedFeat &&
-              !isAsiFeatSelection(selectedFeat)
-                ? handleSpellListClassChoiceChange
-                : undefined
-            }
-          />
-        </div>
-      );
-    }
+    const spellListClassOptions =
+      "additionalSpells" in featDetail
+        ? getFeatSpellListOptions(featDetail as DndFeat)
+        : [];
+    const canEditChoices = !!selectedFeat && !isAsiFeatSelection(selectedFeat);
     return (
       <div>
-        {isPreviewingInfo && (
-          <LibraryBackToListButton onClick={() => setInfoPreview(null)} />
-        )}
-        <EmptyState text="Information not found." />
+        <LibraryBackToListButton
+          label="Change selection"
+          onClick={() => setShowFeatList(true)}
+        />
+        <FeatLibraryDetail
+          feat={featDetail}
+          sourceVariants={isDndFeatSelection ? dndFeatSourceVariants : undefined}
+          activeSourceId={selectedFeat?.id}
+          onSourceSelect={
+            isDndFeatSelection && allowSourceSelect
+              ? handleDndFeatSourceSelect
+              : undefined
+          }
+          bookNames={identityBookNames}
+          abilityIncreaseChoices={selectedFeat?.abilityIncreaseChoices}
+          onAbilityIncreaseChoiceChange={
+            canEditChoices ? handleAbilityIncreaseChoiceChange : undefined
+          }
+          spellListClassOptions={spellListClassOptions}
+          spellListClassChoice={selectedFeat?.spellListClassChoice}
+          onSpellListClassChoiceChange={
+            canEditChoices ? handleSpellListClassChoiceChange : undefined
+          }
+        />
       </div>
     );
   }
 
   if (!isFeatPickerSlot) return null;
-
-  if (isPreviewingInfo) {
-    return renderFeatDetail(false);
-  }
 
   if (isInvocationOriginFeatSlotSelected) {
     if (showFeatDetail) {
@@ -830,7 +782,7 @@ export function FeatLibraryPanel({
         selectedId={selectedFeat?.id ?? null}
         selectedName={selectedFeat?.name ?? null}
         onSelect={handleSelectOriginFeatOption}
-        onInfo={handleInfoPreview}
+        renderDetails={renderFeatPreview}
       />
     );
   }
@@ -856,7 +808,7 @@ export function FeatLibraryPanel({
         selectedId={selectedFeat?.id ?? null}
         selectedName={selectedFeat?.name ?? null}
         onSelect={handleSelectOriginFeatOption}
-        onInfo={handleInfoPreview}
+        renderDetails={renderFeatPreview}
       />
     );
   }
@@ -886,7 +838,7 @@ export function FeatLibraryPanel({
         selectedId={selectedFeat?.id ?? null}
         selectedName={isDndFeatSelection ? (selectedFeat?.name ?? null) : null}
         onSelect={handleSelectFeatOption}
-        onInfo={handleInfoPreview}
+        renderDetails={renderFeatPreview}
       />
     );
   }

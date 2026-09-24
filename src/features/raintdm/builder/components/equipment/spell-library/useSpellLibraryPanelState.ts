@@ -503,7 +503,7 @@ export function useSpellLibraryPanelState({
                 : "pact spells known"
             } · ${spellcastingInfo.pactSlotCount} slot${
               spellcastingInfo.pactSlotCount !== 1 ? "s" : ""
-            } (niv. ${pactMaxLevel})`
+            } (lvl ${pactMaxLevel})`
           : null
         : spellcastingInfo.maxPreparedOrKnown > 0
           ? `${spellcastingInfo.selectedSpellCount}/${spellcastingInfo.maxPreparedOrKnown} ${spellcastingInfo.isPreparedCaster ? "prepared" : "known"}`

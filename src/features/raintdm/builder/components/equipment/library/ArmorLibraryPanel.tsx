@@ -26,7 +26,7 @@ import type { ListFilterValues } from "@/shared/components/list-filters";
 import type { ArmorItem, EquippedArmor } from "@/shared/types";
 import { ArmorLibraryDetail } from "./ArmorLibraryDetail";
 import { ArmorList, TrinketList } from "./shared/LibraryLists";
-import { EmptyState, LibraryBackToListButton } from "./shared/LibraryUi";
+import { EmptyState } from "./shared/LibraryUi";
 
 interface ArmorLibraryPanelProps {
   selectedSlot: BuilderSlotSelection;
@@ -53,6 +53,7 @@ export function ArmorLibraryPanel({
     equipArmor,
     equipShield,
     equipTrinket,
+    setArmorRarity,
     resolvedArmorItems,
     useAmellwindHomebrew,
   } = useCharacterBuilder();
@@ -60,7 +61,6 @@ export function ArmorLibraryPanel({
   const { classData } = useSelectedClass();
   const [dndArmors, setDndArmors] = useState<ArmorItem[]>([]);
   const [armorsLoading, setArmorsLoading] = useState(false);
-  const [previewArmor, setPreviewArmor] = useState<ArmorItem | null>(null);
 
   const {
     armors: inventoryArmors,
@@ -95,10 +95,6 @@ export function ArmorLibraryPanel({
       .then(setDndArmors)
       .finally(() => setArmorsLoading(false));
   }, [isArmorSlot, useAmellwindHomebrew, prefer2024]);
-
-  useEffect(() => {
-    setPreviewArmor(null);
-  }, [selectedSlot]);
 
   const catalogArmors = useMemo(() => {
     if (useAmellwindHomebrew) {
@@ -167,12 +163,12 @@ export function ArmorLibraryPanel({
         ? trinket2
         : null;
 
-  const showArmorDetail = isArmorSlot && !!armor && !previewArmor;
+  const showArmorDetail = isArmorSlot && !!armor;
 
   useEffect(() => {
     if (!isArmorSlot) return;
-    onSearchHiddenChange?.(!!previewArmor);
-  }, [isArmorSlot, previewArmor, onSearchHiddenChange]);
+    onSearchHiddenChange?.(false);
+  }, [isArmorSlot, onSearchHiddenChange]);
 
   const getArmorDisabledReason = useCallback(
     (armorItem: ArmorItem): string | null => {
@@ -222,8 +218,14 @@ export function ArmorLibraryPanel({
     addEquipmentBundle(buildTrinketInventoryBundle(name));
   }
 
-  function handleInfoPreview(item: ArmorItem) {
-    setPreviewArmor(item);
+  function renderArmorPreview(item: ArmorItem) {
+    const previewEquipped: EquippedArmor = {
+      armor: item,
+      rarity: item.itemRarityLabel ?? item.rarity ?? "Common",
+      runeSlots: 0,
+      runes: [],
+    };
+    return <ArmorLibraryDetail equipped={previewEquipped} inline />;
   }
 
   if (isArmorSlot) {
@@ -231,25 +233,17 @@ export function ArmorLibraryPanel({
       return <EmptyState text="Loading armors..." />;
     }
 
-    if (previewArmor) {
-      const previewEquipped: EquippedArmor = {
-        armor: previewArmor,
-        rarity:
-          previewArmor.itemRarityLabel ?? previewArmor.rarity ?? "Common",
-        runeSlots: 0,
-        runes: [],
-      };
-      return (
-        <div>
-          <LibraryBackToListButton onClick={() => setPreviewArmor(null)} />
-          <ArmorLibraryDetail equipped={previewEquipped} />
-        </div>
-      );
-    }
-
     return (
       <>
-        {showArmorDetail && <ArmorLibraryDetail equipped={armor} />}
+        {showArmorDetail && (
+          <ArmorLibraryDetail
+            equipped={armor}
+            showHomebrewDetails={useAmellwindHomebrew}
+            onRarityChange={
+              useAmellwindHomebrew ? setArmorRarity : undefined
+            }
+          />
+        )}
         <ArmorList
           showCloth={showClothOption}
           inventory={inventoryArmorsFiltered}
@@ -257,7 +251,7 @@ export function ArmorLibraryPanel({
           equippedName={armor?.armor.name ?? null}
           equippedShieldName={equippedShield?.name ?? null}
           onSelect={handleSelectArmor}
-          onInfo={handleInfoPreview}
+          renderDetails={renderArmorPreview}
           getDisabledReason={getArmorDisabledReason}
           rpgbotLookup={rpgbotArmorReady ? rpgbotArmorLookup : null}
         />

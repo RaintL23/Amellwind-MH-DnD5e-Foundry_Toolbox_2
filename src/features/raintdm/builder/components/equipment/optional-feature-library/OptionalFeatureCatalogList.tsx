@@ -1,4 +1,5 @@
-import { Check, Info, Swords } from "lucide-react";
+import { useState } from "react";
+import { Check, Swords } from "lucide-react";
 import type { BookSourceNameMap } from "@/shared/services/source-catalog.service";
 import type { RpgbotLookupFn } from "@/features/raintdm/builder/data/rpgbot-ratings.utils";
 import { RpgbotRatingBadge } from "@/features/raintdm/builder/components/shared/RpgbotRatingBadge";
@@ -11,9 +12,12 @@ import { RPGBOT_ROW_ACCENT } from "@/features/raintdm/builder/utils/library-vari
 import type { BuilderOptionalFeatureSelection } from "@/shared/types";
 import { cn } from "@/shared/utils/cn";
 import {
+  LibraryInfoButton,
   LibraryItemBadge,
   LibraryItemBadgeRow,
+  LibraryRowDetails,
 } from "../library/shared/LibraryUi";
+import { OptionalFeatureLibraryDetail } from "../library/OptionalFeatureLibraryDetail";
 import { normalizeName } from "./optional-feature-library.utils";
 
 interface OptionalFeatureCatalogListProps {
@@ -27,7 +31,6 @@ interface OptionalFeatureCatalogListProps {
   isPicked: (item: OptionalFeatureCatalogItem) => boolean;
   canAdd: (item: OptionalFeatureCatalogItem) => boolean;
   onToggle: (item: OptionalFeatureCatalogItem) => void;
-  onViewDetail: (item: OptionalFeatureCatalogItem) => void;
 }
 
 export function OptionalFeatureCatalogList({
@@ -41,8 +44,20 @@ export function OptionalFeatureCatalogList({
   isPicked,
   canAdd,
   onToggle,
-  onViewDetail,
 }: OptionalFeatureCatalogListProps) {
+  const [expandedIds, setExpandedIds] = useState<ReadonlySet<string>>(
+    () => new Set(),
+  );
+
+  function toggleExpanded(id: string) {
+    setExpandedIds((prev) => {
+      const next = new Set(prev);
+      if (next.has(id)) next.delete(id);
+      else next.add(id);
+      return next;
+    });
+  }
+
   if (items.length === 0) {
     return (
       <p className="py-4 text-center text-xs italic text-muted-foreground">
@@ -74,6 +89,7 @@ export function OptionalFeatureCatalogList({
         const rpgbotRating = rpgbotOptionalReady
           ? (rpgbotOptionalLookup?.(item.name, item.source) ?? null)
           : null;
+        const expanded = expandedIds.has(item.id);
 
         return (
           <li key={item.id}>
@@ -86,7 +102,7 @@ export function OptionalFeatureCatalogList({
                 selected
                   ? "border-violet-400/40 bg-violet-400/5"
                   : "border-border/60",
-                !disabled && "hover:bg-muted/40",
+                !disabled && !expanded && "hover:bg-muted/40",
               )}
             >
               <div className="flex items-stretch gap-1">
@@ -145,32 +161,34 @@ export function OptionalFeatureCatalogList({
                   </LibraryItemBadgeRow>
                 </button>
 
-                <div className="flex shrink-0 flex-col items-end justify-center gap-1 py-1.5 pr-1.5">
-                  <div className="flex items-center gap-1.5">
-                    {selected && (
-                      <span className="text-[10px] text-muted-foreground">
-                        Selected
-                      </span>
-                    )}
-                    <span
-                      className="rounded border border-border/50 bg-muted/40 px-1.5 py-0.5 text-[10px] font-medium text-muted-foreground"
-                      title={sourceTitle}
-                    >
-                      {item.source}
+                <div className="flex shrink-0 items-center gap-1.5 py-1.5 pr-2">
+                  {selected && (
+                    <span className="text-[10px] text-muted-foreground">
+                      Selected
                     </span>
-                  </div>
-                  <button
-                    type="button"
-                    onClick={() => onViewDetail(item)}
-                    title={`View details for ${item.name}`}
-                    aria-label={`View details for ${item.name}`}
-                    className="inline-flex items-center gap-1 rounded-md border border-border/60 bg-muted/50 px-1.5 py-0.5 text-[10px] font-medium text-foreground/80 transition-colors hover:border-border hover:bg-muted hover:text-foreground"
+                  )}
+                  <span
+                    className="rounded border border-border/50 bg-muted/40 px-1.5 py-0.5 text-[10px] font-medium text-muted-foreground"
+                    title={sourceTitle}
                   >
-                    <Info className="h-3 w-3 shrink-0 text-sky-400" />
-                    Details
-                  </button>
+                    {item.source}
+                  </span>
+                  <LibraryInfoButton
+                    label={item.name}
+                    expanded={expanded}
+                    onClick={() => toggleExpanded(item.id)}
+                  />
                 </div>
               </div>
+              {expanded && (
+                <LibraryRowDetails className="mt-0 pb-2 pl-7 pr-2">
+                  <OptionalFeatureLibraryDetail
+                    item={item}
+                    bookNames={bookNames}
+                    inline
+                  />
+                </LibraryRowDetails>
+              )}
             </div>
           </li>
         );

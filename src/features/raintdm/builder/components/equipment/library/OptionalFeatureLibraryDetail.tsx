@@ -16,6 +16,8 @@ interface OptionalFeatureLibraryDetailProps {
   activeSourceId?: string;
   onSourceSelect?: (id: string) => void;
   bookNames?: BookSourceNameMap;
+  /** Rendered inside a library row: omit the icon + name heading. */
+  inline?: boolean;
 }
 
 export function OptionalFeatureLibraryDetail({
@@ -24,6 +26,7 @@ export function OptionalFeatureLibraryDetail({
   activeSourceId,
   onSourceSelect,
   bookNames = {},
+  inline = false,
 }: OptionalFeatureLibraryDetailProps) {
   const categoryLabel =
     item.catalog === "feat"
@@ -33,8 +36,14 @@ export function OptionalFeatureLibraryDetail({
   return (
     <div className="space-y-3">
       <div className="flex flex-wrap items-center gap-2">
-        <Swords className="h-4 w-4 text-amber-400" />
-        <h3 className="text-sm font-semibold text-foreground">{item.name}</h3>
+        {!inline && (
+          <>
+            <Swords className="h-4 w-4 text-amber-400" />
+            <h3 className="text-sm font-semibold text-foreground">
+              {item.name}
+            </h3>
+          </>
+        )}
         {categoryLabel && (
           <Badge variant="secondary" className="text-[10px]">
             {categoryLabel}

@@ -20,6 +20,7 @@ export function SubclassLibraryDetail({
   activeSourceId,
   onSourceSelect,
   bookNames = {},
+  inline = false,
 }: {
   subclass: Subclass;
   level: number;
@@ -27,6 +28,8 @@ export function SubclassLibraryDetail({
   activeSourceId?: string;
   onSourceSelect?: (id: string) => void;
   bookNames?: BookSourceNameMap;
+  /** Rendered inside a library row: omit the icon + name heading. */
+  inline?: boolean;
 }) {
   const rowsWithFeatures = subclass.progression.filter(
     (row) => row.level <= level && row.features.length > 0,
@@ -37,10 +40,14 @@ export function SubclassLibraryDetail({
   return (
     <div className="space-y-3">
       <div className="flex flex-wrap items-center gap-2">
-        <Sparkles className="h-4 w-4 text-emerald-400" />
-        <h3 className="text-sm font-semibold text-foreground">
-          {subclass.name}
-        </h3>
+        {!inline && (
+          <>
+            <Sparkles className="h-4 w-4 text-emerald-400" />
+            <h3 className="text-sm font-semibold text-foreground">
+              {subclass.name}
+            </h3>
+          </>
+        )}
         <span className="text-[10px] text-muted-foreground">
           {subclass.source}
         </span>

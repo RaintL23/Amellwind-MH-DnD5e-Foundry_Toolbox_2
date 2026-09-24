@@ -1,4 +1,4 @@
-import { ChevronUp, Info, Zap } from "lucide-react";
+import { ChevronUp, Zap } from "lucide-react";
 import { cn } from "@/shared/utils/cn";
 import { averageRoll, parseDice } from "@/features/raintdm/builder/utils/spell-selection.utils";
 
@@ -33,39 +33,9 @@ export function SpellDamageResult({ damageRoll }: { damageRoll: string }) {
       <Zap className="h-3.5 w-3.5 shrink-0 text-amber-400" />
       <span className="font-medium text-amber-200">{damageRoll}</span>
       {avg !== null && (
-        <span className="text-amber-300/70">(~{avg} prom.)</span>
+        <span className="text-amber-300/70">(~{avg} avg.)</span>
       )}
     </div>
-  );
-}
-
-export function SpellInfoToggleButton({
-  expanded,
-  onToggle,
-}: {
-  expanded: boolean;
-  onToggle: () => void;
-}) {
-  return (
-    <button
-      type="button"
-      onClick={(e) => {
-        e.stopPropagation();
-        onToggle();
-      }}
-      title={expanded ? "Hide details" : "Show spell details"}
-      aria-expanded={expanded}
-      aria-label={
-        expanded ? "Hide spell details" : "Show spell details"
-      }
-      className="flex h-5 w-5 shrink-0 items-center justify-center rounded bg-muted/60 text-muted-foreground transition-colors hover:bg-muted hover:text-foreground"
-    >
-      {expanded ? (
-        <ChevronUp className="h-3 w-3" />
-      ) : (
-        <Info className="h-3 w-3" />
-      )}
-    </button>
   );
 }
 
@@ -81,6 +51,8 @@ export function SpellDamageToggleButton({
       type="button"
       onClick={onToggle}
       title="Calculate damage"
+      aria-label="Toggle damage calculation"
+      aria-pressed={showDamage}
       className="flex h-5 w-5 items-center justify-center rounded bg-amber-950/50 text-amber-400 transition-colors hover:bg-amber-950/80"
     >
       {showDamage ? (

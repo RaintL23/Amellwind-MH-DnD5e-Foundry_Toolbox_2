@@ -37,7 +37,6 @@ import type { WeaponLibraryCatalog } from "@/features/raintdm/builder/utils/buil
 import { WeaponLibraryDetail } from "./WeaponLibraryDetail";
 
 import { WeaponList } from "./shared/LibraryLists";
-import { LibraryBackToListButton } from "./shared/LibraryUi";
 
 function weaponMatchesLibraryCatalog(
   weapon: Weapon,
@@ -75,8 +74,6 @@ export function WeaponLibraryPanel({
 
   const [weaponsLoading, setWeaponsLoading] = useState(false);
 
-  const [previewWeapon, setPreviewWeapon] = useState<Weapon | null>(null);
-
   const {
     mainHand,
 
@@ -93,6 +90,7 @@ export function WeaponLibraryPanel({
     equipWeapon,
 
     setWeaponMode,
+    setWeaponRarity,
 
     resolvedWeaponItems,
 
@@ -155,10 +153,6 @@ export function WeaponLibraryPanel({
     prefer2024,
     weaponCatalog,
   ]);
-
-  useEffect(() => {
-    setPreviewWeapon(null);
-  }, [selectedSlot]);
 
   const effectiveListFilters = useMemo(
     () => (useAmellwindHomebrew ? { ...listFilters, rarity: "" } : listFilters),
@@ -228,16 +222,15 @@ export function WeaponLibraryPanel({
   const showWeaponDetail =
     isWeaponSlot &&
     !!equippedWeapon &&
-    !previewWeapon &&
     !(selectedSlot === "offHand" && showOffHandWeaponPicker);
 
   useEffect(() => {
     if (!isWeaponSlot) return;
-    onSearchHiddenChange?.(!!previewWeapon || showWeaponDetail);
-  }, [isWeaponSlot, previewWeapon, showWeaponDetail, onSearchHiddenChange]);
+    onSearchHiddenChange?.(showWeaponDetail);
+  }, [isWeaponSlot, showWeaponDetail, onSearchHiddenChange]);
 
   const dndWeaponVariants = useDndWeaponVariants(
-    !useAmellwindHomebrew && !!equippedWeapon && !previewWeapon,
+    !useAmellwindHomebrew && !!equippedWeapon,
     equippedWeapon?.weapon.name,
   );
 
@@ -342,78 +335,78 @@ export function WeaponLibraryPanel({
     addEquipmentBundle(buildWeaponInventoryBundle(weapon));
   }
 
-  function handleInfoPreview(weapon: Weapon) {
-    setPreviewWeapon(weapon);
-  }
-
-  if (!isWeaponSlot) return null;
-
-  if (previewWeapon) {
+  function renderWeaponPreview(weapon: Weapon) {
     const previewEquipped: EquippedWeapon = {
-      weapon: previewWeapon,
+      weapon,
       rarity: useAmellwindHomebrew
         ? "Common"
-        : (previewWeapon.itemRarityLabel ?? "Standard"),
+        : (weapon.itemRarityLabel ?? "Standard"),
       runeSlots: 0,
       runes: [],
       activeModeIndex: 0,
     };
 
     return (
-      <div>
-        <LibraryBackToListButton onClick={() => setPreviewWeapon(null)} />
-        <WeaponLibraryDetail
-          equipped={previewEquipped}
-          weaponProficiencies={resolvedWeaponItems}
-          showHomebrewDetails={useAmellwindHomebrew}
-        />
-      </div>
-    );
-  }
-
-  if (showWeaponDetail) {
-    const gripContext =
-      selectedSlot === "mainHand" || selectedSlot === "offHand"
-        ? {
-            weaponSlot: selectedSlot,
-            offHandOccupied: isOffHandSlotOccupied(
-              offHand,
-              equippedShield,
-              hasIntegratedShield,
-            ),
-            mainHandOccupied: !!mainHand,
-          }
-        : undefined;
-
-    return (
       <WeaponLibraryDetail
-        equipped={equippedWeapon}
-        gripContext={gripContext}
+        equipped={previewEquipped}
         weaponProficiencies={resolvedWeaponItems}
         showHomebrewDetails={useAmellwindHomebrew}
-        sourceVariants={!useAmellwindHomebrew ? dndSourceVariants : undefined}
-        activeSourceId={equippedWeapon.weapon.id}
-        onSourceChange={!useAmellwindHomebrew ? handleSourceChange : undefined}
-        onModeChange={(modeIndex) => {
-          if (selectedSlot === "mainHand" || selectedSlot === "offHand") {
-            setWeaponMode(selectedSlot, modeIndex);
-          }
-        }}
+        inline
       />
     );
   }
 
+  if (!isWeaponSlot) return null;
+
+  const gripContext =
+    showWeaponDetail &&
+    (selectedSlot === "mainHand" || selectedSlot === "offHand")
+      ? {
+          weaponSlot: selectedSlot,
+          offHandOccupied: isOffHandSlotOccupied(
+            offHand,
+            equippedShield,
+            hasIntegratedShield,
+          ),
+          mainHandOccupied: !!mainHand,
+        }
+      : undefined;
+
   return (
-    <WeaponList
-      inventory={inventoryWeaponsFiltered}
-      catalog={catalogWeaponsFiltered}
-      loading={weaponsLoading}
-      equipped={equippedWeapon?.weapon.name ?? null}
-      weaponProficiencies={resolvedWeaponItems}
-      onSelect={handleSelectWeapon}
-      onInfo={handleInfoPreview}
-      getDisabledReason={getWeaponDisabledReason}
-      rpgbotLookup={rpgbotWeaponReady ? rpgbotWeaponLookup : null}
-    />
+    <>
+      {showWeaponDetail && equippedWeapon && (
+        <WeaponLibraryDetail
+          equipped={equippedWeapon}
+          gripContext={gripContext}
+          weaponProficiencies={resolvedWeaponItems}
+          showHomebrewDetails={useAmellwindHomebrew}
+          sourceVariants={!useAmellwindHomebrew ? dndSourceVariants : undefined}
+          activeSourceId={equippedWeapon.weapon.id}
+          onSourceChange={!useAmellwindHomebrew ? handleSourceChange : undefined}
+          onModeChange={(modeIndex) => {
+            if (selectedSlot === "mainHand" || selectedSlot === "offHand") {
+              setWeaponMode(selectedSlot, modeIndex);
+            }
+          }}
+          onRarityChange={
+            useAmellwindHomebrew &&
+            (selectedSlot === "mainHand" || selectedSlot === "offHand")
+              ? (rarity) => setWeaponRarity(selectedSlot, rarity)
+              : undefined
+          }
+        />
+      )}
+      <WeaponList
+        inventory={inventoryWeaponsFiltered}
+        catalog={catalogWeaponsFiltered}
+        loading={weaponsLoading}
+        equipped={equippedWeapon?.weapon.name ?? null}
+        weaponProficiencies={resolvedWeaponItems}
+        onSelect={handleSelectWeapon}
+        renderDetails={renderWeaponPreview}
+        getDisabledReason={getWeaponDisabledReason}
+        rpgbotLookup={rpgbotWeaponReady ? rpgbotWeaponLookup : null}
+      />
+    </>
   );
 }

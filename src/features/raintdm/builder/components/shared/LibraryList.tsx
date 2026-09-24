@@ -1,7 +1,7 @@
 import { resolveBookSourceName } from "@/features/dnd/spells/services/book-source.service";
 import { useBookSourceNames } from "@/shared/hooks/useBookSourceNames";
 import { Check } from "lucide-react";
-import { useMemo } from "react";
+import { useMemo, useState } from "react";
 import { cn } from "@/shared/utils/cn";
 import {
   formatVariantSourcesLabel,
@@ -11,11 +11,104 @@ import {
   type LibraryListOption,
 } from "../../utils/library-variant.utils";
 import { RpgbotRatingBadge } from "./RpgbotRatingBadge";
-import { LibraryInfoButton } from "./LibraryInfoButton";
+import { LibraryInfoButton, LibraryRowDetails } from "./LibraryInfoButton";
 
 function EmptyState({ text }: { text: string }) {
   return (
     <p className="py-6 text-center text-xs text-muted-foreground">{text}</p>
+  );
+}
+
+function LibraryListRow({
+  option,
+  icon,
+  isSelected,
+  rowStats,
+  disabledReason,
+  trailingLabel,
+  trailingTitle,
+  onSelect,
+  renderDetails,
+}: {
+  option: LibraryListOption;
+  icon: React.ReactNode;
+  isSelected: boolean;
+  rowStats: string;
+  disabledReason: string | null;
+  trailingLabel?: string;
+  trailingTitle?: string;
+  onSelect: (id: string, name: string) => void;
+  renderDetails?: (option: LibraryListOption) => React.ReactNode;
+}) {
+  const [expanded, setExpanded] = useState(false);
+
+  return (
+    <div
+      className={cn(
+        "mb-1 w-full rounded-md border border-l-2 px-2 py-1.5 text-xs transition-colors",
+        option.rpgbot
+          ? RPGBOT_ROW_ACCENT[option.rpgbot.rating]
+          : "border-l-transparent",
+        isSelected
+          ? "border-violet-400/40 bg-violet-400/5"
+          : "border-border/60",
+        disabledReason && !expanded && "opacity-40",
+        !disabledReason && !expanded && "hover:bg-muted/50",
+      )}
+    >
+      <div className="flex items-center justify-between">
+        <button
+          type="button"
+          disabled={!!disabledReason}
+          title={disabledReason ?? undefined}
+          onClick={() => onSelect(option.id, option.name)}
+          className={cn(
+            "min-w-0 flex-1 text-left",
+            disabledReason ? "cursor-not-allowed" : "cursor-pointer",
+            disabledReason && expanded && "opacity-40",
+          )}
+        >
+          <div className="flex items-center gap-1 font-medium text-foreground">
+            {icon}
+            <span className="truncate">{option.name}</span>
+            {option.rpgbot && <RpgbotRatingBadge rating={option.rpgbot} />}
+            {isSelected && (
+              <Check className="h-3 w-3 shrink-0 text-emerald-400" />
+            )}
+          </div>
+          {rowStats && (
+            <div className="truncate pl-5 text-[11px] text-muted-foreground">
+              {rowStats}
+            </div>
+          )}
+          {disabledReason && (
+            <div className="pl-5 text-[10px] leading-snug text-amber-500">
+              {disabledReason}
+            </div>
+          )}
+        </button>
+        <div className="ml-2 flex shrink-0 items-center gap-1.5">
+          {trailingLabel && (
+            <span
+              className="max-w-[16rem] shrink-0 text-[10px] text-muted-foreground"
+              title={trailingTitle}
+            >
+              {trailingLabel}
+            </span>
+          )}
+          {renderDetails && (
+            <LibraryInfoButton
+              label={option.name}
+              expanded={expanded}
+              onClick={() => setExpanded((prev) => !prev)}
+            />
+          )}
+        </div>
+      </div>
+      {expanded && renderDetails && (
+        <LibraryRowDetails>{renderDetails(option)}</LibraryRowDetails>
+      )}
+    </div>
   );
 }
 
@@ -28,7 +121,7 @@ export function LibraryList({
   stats,
   getDisabledReason,
   onSelect,
-  onInfo,
+  renderDetails,
 }: {
   loading: boolean;
   options: LibraryListOption[];
@@ -38,8 +131,8 @@ export function LibraryList({
   stats?: (option: LibraryListOption) => string;
   getDisabledReason?: (option: LibraryListOption) => string | null;
   onSelect: (id: string, name: string) => void;
-  /** Opens details without selecting / equipping the option. */
-  onInfo?: (option: LibraryListOption) => void;
+  /** Details shown inline (accordion) under the row, without selecting it. */
+  renderDetails?: (option: LibraryListOption) => React.ReactNode;
 }) {
   const bookNames = useBookSourceNames();
   const sortedOptions = useMemo(
@@ -60,7 +153,6 @@ export function LibraryList({
           !variantTrailing && option.source
             ? resolveBookSourceName(bookNames, option.source)
             : undefined;
-        const rowStats = stats?.(option) ?? "";
         const isSelected = isLibraryOptionSelected(
           option,
           selectedId,
@@ -72,72 +164,23 @@ export function LibraryList({
             : null;
 
         return (
-          <div
+          <LibraryListRow
             key={option.id}
-            className={cn(
-              "mb-1 flex w-full items-center justify-between rounded-md border border-l-2 px-2 py-1.5 text-xs transition-colors",
-              option.rpgbot
-                ? RPGBOT_ROW_ACCENT[option.rpgbot.rating]
-                : "border-l-transparent",
-              isSelected
-                ? "border-violet-400/40 bg-violet-400/5"
-                : "border-border/60",
-              disabledReason ? "opacity-40" : "hover:bg-muted/50",
-            )}
-          >
-            <button
-              type="button"
-              disabled={!!disabledReason}
-              title={disabledReason ?? undefined}
-              onClick={() => onSelect(option.id, option.name)}
-              className={cn(
-                "min-w-0 flex-1 text-left",
-                disabledReason ? "cursor-not-allowed" : "cursor-pointer",
-              )}
-            >
-              <div className="flex items-center gap-1 font-medium text-foreground">
-                {icon}
-                <span className="truncate">{option.name}</span>
-                {option.rpgbot && <RpgbotRatingBadge rating={option.rpgbot} />}
-                {isSelected && (
-                  <Check className="h-3 w-3 shrink-0 text-emerald-400" />
-                )}
-              </div>
-              {rowStats && (
-                <div className="truncate pl-5 text-[11px] text-muted-foreground">
-                  {rowStats}
-                </div>
-              )}
-              {disabledReason && (
-                <div className="pl-5 text-[10px] leading-snug text-amber-500">
-                  {disabledReason}
-                </div>
-              )}
-            </button>
-            <div className="ml-2 flex shrink-0 items-center gap-1.5">
-              {(variantTrailing?.label ?? sourceLabel) && (
-                <span
-                  className="max-w-[16rem] shrink-0 text-[10px] text-muted-foreground"
-                  title={
-                    variantTrailing?.title ??
-                    (sourceLabel &&
-                    option.source &&
-                    sourceLabel !== option.source
-                      ? option.source
-                      : undefined)
-                  }
-                >
-                  {variantTrailing?.label ?? sourceLabel}
-                </span>
-              )}
-              {onInfo && (
-                <LibraryInfoButton
-                  label={option.name}
-                  onClick={() => onInfo(option)}
-                />
-              )}
-            </div>
-          </div>
+            option={option}
+            icon={icon}
+            isSelected={isSelected}
+            rowStats={stats?.(option) ?? ""}
+            disabledReason={disabledReason}
+            trailingLabel={variantTrailing?.label ?? sourceLabel}
+            trailingTitle={
+              variantTrailing?.title ??
+              (sourceLabel && option.source && sourceLabel !== option.source
+                ? option.source
+                : undefined)
+            }
+            onSelect={onSelect}
+            renderDetails={renderDetails}
+          />
         );
       })}
     </>

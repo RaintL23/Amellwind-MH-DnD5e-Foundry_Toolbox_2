@@ -6,7 +6,8 @@ import { SpellExpandedDetails } from "@/features/dnd/spells/components/SpellExpa
 import { RpgbotRatingBadge } from "@/features/raintdm/builder/components/shared/RpgbotRatingBadge";
 import { cn } from "@/shared/utils/cn";
 import { SpellMetaBadges } from "../SpellMetaBadges";
-import { SpellInfoToggleButton, SpellLibrarySourceBadge } from "./SpellLibraryShared";
+import { LibraryInfoButton } from "@/features/raintdm/builder/components/shared/LibraryInfoButton";
+import { SpellLibrarySourceBadge } from "./SpellLibraryShared";
 
 export function AvailableSpellRow({
   spell,
@@ -54,9 +55,10 @@ export function AvailableSpellRow({
             {spell.schoolName}
           </span>
         </button>
-        <SpellInfoToggleButton
+        <LibraryInfoButton
+          label={spell.name}
           expanded={showDetails}
-          onToggle={() => setShowDetails((p) => !p)}
+          onClick={() => setShowDetails((p) => !p)}
         />
       </div>
       {showDetails && <SpellExpandedDetails spell={spell} className="pl-5" />}

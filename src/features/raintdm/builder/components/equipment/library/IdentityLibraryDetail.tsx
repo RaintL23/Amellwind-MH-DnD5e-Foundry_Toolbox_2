@@ -1,10 +1,4 @@
 import { ScrollText, Sparkles, Users } from "lucide-react";
-import {
-  Accordion,
-  AccordionContent,
-  AccordionItem,
-  AccordionTrigger,
-} from "@/components/ui/accordion";
 import { Badge } from "@/components/ui/badge";
 import { Separator } from "@/components/ui/separator";
 import type { BookSourceNameMap } from "@/features/dnd/spells/services/book-source.service";
@@ -37,6 +31,7 @@ import {
   ProficiencyGrantBadge,
   ProficiencyHighlightFrame,
 } from "./shared/LibraryProficiencyHighlight";
+import { LibraryDetailAccordion } from "./shared/LibraryDetailAccordion";
 import {
   buildNamedGrantSummaryRows,
   buildSkillGrantSummaryRows,
@@ -74,6 +69,8 @@ interface IdentityLibraryDetailProps {
   onLegacySelect?: (name: string | null) => void;
   /** Cantrips always granted regardless of group choice. */
   universalCantrips?: string[];
+  /** Rendered inside a library row: omit the titled accordion shell. */
+  inline?: boolean;
 }
 
 function DetailTable({ caption, colLabels, rows }: SpeciesTable) {
@@ -662,6 +659,7 @@ export function IdentityLibraryDetail({
   activeLegacyId = null,
   onLegacySelect,
   universalCantrips,
+  inline = false,
 }: IdentityLibraryDetailProps) {
   const isSpecies = !!species;
   const name = species?.name ?? background?.name ?? "";
@@ -671,115 +669,108 @@ export function IdentityLibraryDetail({
     isSpecies && subspeciesLabel ? `${name} (${subspeciesLabel})` : name;
 
   return (
-    <Accordion type="single" collapsible defaultValue="identity-details">
-      <AccordionItem value="identity-details" className="border-0">
-        <AccordionTrigger className="gap-1.5 py-2 text-xs font-medium hover:no-underline">
-          <span className={`flex min-w-0 items-center gap-1.5 ${accentClass}`}>
-            <Icon className="h-3.5 w-3.5 shrink-0" aria-hidden />
-            <span className="truncate">{displayName}</span>
-          </span>
-        </AccordionTrigger>
-        <AccordionContent className="pb-1 pt-0">
-          {sourceVariants && onSourceSelect && (
-            <SourceVariantSwitcher
-              variants={sourceVariants}
-              activeId={activeSourceId}
-              onSelect={onSourceSelect}
-              bookNames={bookNames}
-              accent="emerald"
-              className="mb-2"
-            />
-          )}
-          {subspeciesOptions && onSubspeciesSelect && (
-            <NamedVariantSwitcher
-              options={subspeciesOptions}
-              activeId={activeSubspeciesId}
-              onSelect={onSubspeciesSelect}
-              accent="sky"
-              className="mb-2"
-            />
-          )}
-          {namedSpellGroups &&
-            namedSpellGroups.length > 0 &&
-            onLegacySelect && (
-              <NamedVariantSwitcher
-                label={namedSpellGroupsLabel ?? "Lineage"}
-                options={namedSpellGroups.map((g) => ({
-                  id: g.name,
-                  name: g.name,
-                }))}
-                activeId={activeLegacyId}
-                onSelect={onLegacySelect}
-                accent="violet"
-                includeBaseOption={false}
-                className="mb-2"
-              />
-            )}
-          <div className="mb-2 flex flex-wrap items-center gap-1.5">
-            {species && (
-              <>
-                {species.category &&
-                  SPECIES_CATEGORY_LABELS[species.category] && (
-                    <Badge variant="secondary" className="text-[10px]">
-                      {SPECIES_CATEGORY_LABELS[species.category]}
-                    </Badge>
-                  )}
-                {subspeciesLabel && (
-                  <Badge
-                    variant="outline"
-                    className="border-sky-500/40 text-[10px] text-sky-300"
-                  >
-                    {subspeciesLabel}
-                  </Badge>
-                )}
-                {species.sizes?.length ? (
-                  <Badge variant="outline" className="text-[10px]">
-                    {species.sizes.join(", ")}
-                  </Badge>
-                ) : null}
-                {species.speed ? (
-                  <Badge variant="outline" className="text-[10px]">
-                    {species.speed}
-                  </Badge>
-                ) : null}
-              </>
-            )}
-            {background && (
+    <LibraryDetailAccordion
+      value="identity-details"
+      icon={Icon}
+      title={displayName}
+      accentClass={accentClass}
+      inline={inline}
+    >
+      {sourceVariants && onSourceSelect && (
+        <SourceVariantSwitcher
+          variants={sourceVariants}
+          activeId={activeSourceId}
+          onSelect={onSourceSelect}
+          bookNames={bookNames}
+          accent="emerald"
+          className="mb-2"
+        />
+      )}
+      {subspeciesOptions && onSubspeciesSelect && (
+        <NamedVariantSwitcher
+          options={subspeciesOptions}
+          activeId={activeSubspeciesId}
+          onSelect={onSubspeciesSelect}
+          accent="sky"
+          className="mb-2"
+        />
+      )}
+      {namedSpellGroups && namedSpellGroups.length > 0 && onLegacySelect && (
+        <NamedVariantSwitcher
+          label={namedSpellGroupsLabel ?? "Lineage"}
+          options={namedSpellGroups.map((g) => ({
+            id: g.name,
+            name: g.name,
+          }))}
+          activeId={activeLegacyId}
+          onSelect={onLegacySelect}
+          accent="violet"
+          includeBaseOption={false}
+          className="mb-2"
+        />
+      )}
+      <div className="mb-2 flex flex-wrap items-center gap-1.5">
+        {species && (
+          <>
+            {species.category && SPECIES_CATEGORY_LABELS[species.category] && (
               <Badge variant="secondary" className="text-[10px]">
-                {BACKGROUND_FACTION_LABELS[background.faction]}
+                {SPECIES_CATEGORY_LABELS[species.category]}
               </Badge>
             )}
-            <span className="text-[10px] text-muted-foreground">
-              {species?.source ?? background?.source}
-              {(species?.page ?? background?.page) !== undefined
-                ? ` p.${species?.page ?? background?.page}`
-                : ""}
-            </span>
-          </div>
+            {subspeciesLabel && (
+              <Badge
+                variant="outline"
+                className="border-sky-500/40 text-[10px] text-sky-300"
+              >
+                {subspeciesLabel}
+              </Badge>
+            )}
+            {species.sizes?.length ? (
+              <Badge variant="outline" className="text-[10px]">
+                {species.sizes.join(", ")}
+              </Badge>
+            ) : null}
+            {species.speed ? (
+              <Badge variant="outline" className="text-[10px]">
+                {species.speed}
+              </Badge>
+            ) : null}
+          </>
+        )}
+        {background && (
+          <Badge variant="secondary" className="text-[10px]">
+            {BACKGROUND_FACTION_LABELS[background.faction]}
+          </Badge>
+        )}
+        <span className="text-[10px] text-muted-foreground">
+          {species?.source ?? background?.source}
+          {(species?.page ?? background?.page) !== undefined
+            ? ` p.${species?.page ?? background?.page}`
+            : ""}
+        </span>
+      </div>
 
-          {species && (
-            <SpeciesDetailBody
-              species={species}
-              subspeciesTraits={subspeciesTraits}
-              subspeciesLabel={subspeciesLabel}
-              subspeciesAbilitySummary={subspeciesAbilitySummary}
-              subspeciesFluff={subspeciesFluff}
-              namedSpellGroups={namedSpellGroups}
-              universalCantrips={universalCantrips}
-              activeLegacyId={activeLegacyId}
-            />
-          )}
-          {background && (
-            <BackgroundDetailBody
-              background={background}
-              abilitySummary={backgroundAbilitySummary}
-              featSummary={backgroundFeatSummary}
-              startingEquipmentOffers={startingEquipmentOffers}
-              startingEquipmentSource={startingEquipmentSource}
-            />
-          )}
-        </AccordionContent>
-      </AccordionItem>
-    </Accordion>
+      {species && (
+        <SpeciesDetailBody
+          species={species}
+          subspeciesTraits={subspeciesTraits}
+          subspeciesLabel={subspeciesLabel}
+          subspeciesAbilitySummary={subspeciesAbilitySummary}
+          subspeciesFluff={subspeciesFluff}
+          namedSpellGroups={namedSpellGroups}
+          universalCantrips={universalCantrips}
+          activeLegacyId={activeLegacyId}
+        />
+      )}
+      {background && (
+        <BackgroundDetailBody
+          background={background}
+          abilitySummary={backgroundAbilitySummary}
+          featSummary={backgroundFeatSummary}
+          startingEquipmentOffers={startingEquipmentOffers}
+          startingEquipmentSource={startingEquipmentSource}
+        />
+      )}
+    </LibraryDetailAccordion>
   );
 }

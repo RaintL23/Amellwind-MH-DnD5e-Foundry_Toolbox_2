@@ -48,6 +48,10 @@ import {
   libraryOptionMatchesSourceFilter,
 } from "@/features/raintdm/builder/utils/builder-library-filters";
 import { IdentityLibraryDetail } from "./IdentityLibraryDetail";
+import {
+  getBackgroundDetailExtras,
+  IdentityLibraryPreview,
+} from "./IdentityLibraryPreview";
 import { EmptyState, LibraryBackToListButton } from "./shared/LibraryUi";
 
 interface IdentityLibraryPanelProps {
@@ -95,14 +99,7 @@ export function IdentityLibraryPanel({
   const [mhSubraceOptions, setMhSubraceOptions] = useState<NamedVariant[]>([]);
   const [mhSubraceDetail, setMhSubraceDetail] = useState<Species | null>(null);
   const [identityDetailLoading, setIdentityDetailLoading] = useState(false);
-  const [infoPreview, setInfoPreview] = useState<{
-    id: string;
-    name: string;
-  } | null>(null);
-  const [previewDetail, setPreviewDetail] = useState<
-    Species | Background | null
-  >(null);
-  const [previewDetailLoading, setPreviewDetailLoading] = useState(false);
+  const [browsing, setBrowsing] = useState(false);
 
   const {
     species,
@@ -145,57 +142,6 @@ export function IdentityLibraryPanel({
 
     load.then(setIdentityOptions).finally(() => setIdentityLoading(false));
   }, [isSpeciesSlot, isBackgroundSlot, selectedSlot, identitySource]);
-
-  useEffect(() => {
-    setInfoPreview(null);
-  }, [selectedSlot]);
-
-  useEffect(() => {
-    if (!infoPreview || (!isSpeciesSlot && !isBackgroundSlot)) {
-      setPreviewDetail(null);
-      setPreviewDetailLoading(false);
-      return;
-    }
-
-    let cancelled = false;
-    setPreviewDetailLoading(true);
-    setPreviewDetail(null);
-
-    async function loadPreviewDetail() {
-      if (isSpeciesSlot) {
-        const { mhSpecies, dndRace } = await resolveSpeciesParts({
-          id: infoPreview!.id,
-          subraceId: null,
-        });
-        if (cancelled) return;
-        if (mhSpecies) {
-          setPreviewDetail(mhSpecies);
-          return;
-        }
-        if (dndRace) {
-          setPreviewDetail(dndRace as unknown as Species);
-          return;
-        }
-        setPreviewDetail(null);
-        return;
-      }
-
-      const data =
-        identitySource === "dnd"
-          ? await getDndBackgroundById(infoPreview!.id)
-          : await getBackgroundById(infoPreview!.id);
-      if (cancelled) return;
-      setPreviewDetail((data as Species | Background | null) ?? null);
-    }
-
-    void loadPreviewDetail().finally(() => {
-      if (!cancelled) setPreviewDetailLoading(false);
-    });
-
-    return () => {
-      cancelled = true;
-    };
-  }, [infoPreview, isSpeciesSlot, isBackgroundSlot, identitySource]);
 
   const rpgbotContext = useMemo(() => {
     if (identitySource !== "dnd") return null;
@@ -247,30 +193,30 @@ export function IdentityLibraryPanel({
         : null;
 
   const showIdentityDetail =
-    (isSpeciesSlot || isBackgroundSlot) && !!selectedIdentity && !infoPreview;
+    (isSpeciesSlot || isBackgroundSlot) && !!selectedIdentity && !browsing;
+
+  useEffect(() => {
+    setBrowsing(false);
+  }, [selectedSlot, selectedIdentity?.id]);
 
   useEffect(() => {
     if (!isSpeciesSlot && !isBackgroundSlot) return;
-    onSearchHiddenChange?.(!!infoPreview || showIdentityDetail);
+    onSearchHiddenChange?.(showIdentityDetail);
   }, [
     isSpeciesSlot,
     isBackgroundSlot,
-    infoPreview,
     showIdentityDetail,
     onSearchHiddenChange,
   ]);
 
   const dndRaceSourceVariants = useLibraryVariants<DndRace>(
-    identitySource === "dnd" && isSpeciesSlot && !!selectedIdentity?.name && !infoPreview,
+    identitySource === "dnd" && isSpeciesSlot && !!selectedIdentity?.name,
     selectedIdentity?.name,
     identitySource === "dnd" && isSpeciesSlot ? getDndRacesByName : null,
   );
 
   const dndBackgroundSourceVariants = useLibraryVariants<DndBackground>(
-    identitySource === "dnd" &&
-      isBackgroundSlot &&
-      !!selectedIdentity?.name &&
-      !infoPreview,
+    identitySource === "dnd" && isBackgroundSlot && !!selectedIdentity?.name,
     selectedIdentity?.name,
     identitySource === "dnd" && isBackgroundSlot
       ? getDndBackgroundsByName
@@ -461,82 +407,18 @@ export function IdentityLibraryPanel({
     });
   }
 
-  function handleInfoPreview(option: LibraryListOption) {
-    setInfoPreview({ id: option.id, name: option.name });
+  function renderIdentityPreview(option: LibraryListOption) {
+    return (
+      <IdentityLibraryPreview
+        id={option.id}
+        kind={isSpeciesSlot ? "species" : "background"}
+        identitySource={identitySource}
+        bookNames={identityBookNames}
+      />
+    );
   }
 
   if (!isSpeciesSlot && !isBackgroundSlot) return null;
-
-  if (infoPreview) {
-    if (previewDetailLoading) {
-      return (
-        <div>
-          <LibraryBackToListButton onClick={() => setInfoPreview(null)} />
-          <EmptyState text="Loading..." />
-        </div>
-      );
-    }
-
-    if (isSpeciesSlot && isLoadedSpecies(previewDetail)) {
-      return (
-        <div>
-          <LibraryBackToListButton onClick={() => setInfoPreview(null)} />
-          <IdentityLibraryDetail
-            species={previewDetail}
-            bookNames={identityBookNames}
-          />
-        </div>
-      );
-    }
-
-    if (isBackgroundSlot && isLoadedBackground(previewDetail)) {
-      return (
-        <div>
-          <LibraryBackToListButton onClick={() => setInfoPreview(null)} />
-          <IdentityLibraryDetail
-            background={previewDetail}
-            startingEquipmentOffers={
-              identitySource === "dnd" &&
-              previewDetail &&
-              "startingEquipmentOffers" in previewDetail
-                ? (previewDetail as unknown as DndBackground)
-                    .startingEquipmentOffers
-                : undefined
-            }
-            backgroundAbilitySummary={
-              identitySource === "dnd" &&
-              previewDetail &&
-              "abilitySummary" in previewDetail &&
-              typeof previewDetail.abilitySummary === "string"
-                ? previewDetail.abilitySummary
-                : null
-            }
-            backgroundFeatSummary={
-              identitySource === "dnd" &&
-              previewDetail &&
-              "featSummary" in previewDetail &&
-              typeof previewDetail.featSummary === "string"
-                ? previewDetail.featSummary
-                : identitySource === "amellwind" &&
-                    previewDetail &&
-                    "originFeatGrant" in previewDetail &&
-                    previewDetail.originFeatGrant?.summary
-                  ? previewDetail.originFeatGrant.summary
-                  : null
-            }
-            bookNames={identityBookNames}
-          />
-        </div>
-      );
-    }
-
-    return (
-      <div>
-        <LibraryBackToListButton onClick={() => setInfoPreview(null)} />
-        <EmptyState text="Information not found." />
-      </div>
-    );
-  }
 
   if (showIdentityDetail) {
     if (identityDetailLoading) {
@@ -573,7 +455,12 @@ export function IdentityLibraryPanel({
         : (mhSubraceDetail?.fluff ?? null);
 
       return (
-        <IdentityLibraryDetail
+        <div>
+          <LibraryBackToListButton
+            label="Change selection"
+            onClick={() => setBrowsing(true)}
+          />
+          <IdentityLibraryDetail
           species={identityDetail}
           sourceVariants={
             identitySource === "dnd" ? dndIdentitySourceVariants : undefined
@@ -600,21 +487,20 @@ export function IdentityLibraryPanel({
           activeLegacyId={speciesSpellGroupChoice}
           onLegacySelect={legacyOptions ? handleLegacySelect : undefined}
         />
+        </div>
       );
     }
 
     if (isBackgroundSlot && isLoadedBackground(identityDetail)) {
       return (
-        <IdentityLibraryDetail
+        <div>
+          <LibraryBackToListButton
+            label="Change selection"
+            onClick={() => setBrowsing(true)}
+          />
+          <IdentityLibraryDetail
           background={identityDetail}
-          startingEquipmentOffers={
-            identitySource === "dnd" &&
-            identityDetail &&
-            "startingEquipmentOffers" in identityDetail
-              ? (identityDetail as unknown as DndBackground)
-                  .startingEquipmentOffers
-              : undefined
-          }
+          {...getBackgroundDetailExtras(identityDetail, identitySource)}
           startingEquipmentSource={
             identitySource === "dnd" && selectedIdentity
               ? {
@@ -623,27 +509,6 @@ export function IdentityLibraryPanel({
                   name: selectedIdentity.name,
                 }
               : undefined
-          }
-          backgroundAbilitySummary={
-            identitySource === "dnd" &&
-            identityDetail &&
-            "abilitySummary" in identityDetail &&
-            typeof identityDetail.abilitySummary === "string"
-              ? identityDetail.abilitySummary
-              : null
-          }
-          backgroundFeatSummary={
-            identitySource === "dnd" &&
-            identityDetail &&
-            "featSummary" in identityDetail &&
-            typeof identityDetail.featSummary === "string"
-              ? identityDetail.featSummary
-              : identitySource === "amellwind" &&
-                  identityDetail &&
-                  "originFeatGrant" in identityDetail &&
-                  identityDetail.originFeatGrant?.summary
-                ? identityDetail.originFeatGrant.summary
-                : null
           }
           sourceVariants={
             identitySource === "dnd" ? dndIdentitySourceVariants : undefined
@@ -654,6 +519,7 @@ export function IdentityLibraryPanel({
           }
           bookNames={identityBookNames}
         />
+        </div>
       );
     }
 
@@ -678,7 +544,7 @@ export function IdentityLibraryPanel({
           )
         }
         onSelect={handleSelectIdentity}
-        onInfo={handleInfoPreview}
+        renderDetails={renderIdentityPreview}
       />
     </>
   );

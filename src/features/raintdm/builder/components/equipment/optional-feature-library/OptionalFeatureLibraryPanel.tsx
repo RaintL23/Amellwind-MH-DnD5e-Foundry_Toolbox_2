@@ -13,7 +13,6 @@ import { BuilderPanel } from "../../shared/BuilderPanel";
 import { ScrollableWhenNeeded } from "../../shared/ScrollableWhenNeeded";
 import { ListSearchWithFilters } from "@/shared/components/list-filters";
 import { cn } from "@/shared/utils/cn";
-import { OptionalFeatureLibraryDetail } from "../library/OptionalFeatureLibraryDetail";
 import { OptionalFeatureCatalogList } from "./OptionalFeatureCatalogList";
 import { OptionalFeatureWeaponMasteryList } from "./OptionalFeatureWeaponMasteryList";
 import { useOptionalFeatureLibraryPanelState } from "./useOptionalFeatureLibraryPanelState";
@@ -51,8 +50,6 @@ export function OptionalFeatureLibraryPanel({
     filterValues,
     setFilterValues,
     filterSections,
-    detailItem,
-    setDetailItem,
     loading,
     picked,
     slotCount,
@@ -90,30 +87,6 @@ export function OptionalFeatureLibraryPanel({
         <p className="text-xs italic text-muted-foreground">
           Select an optional feature slot.
         </p>
-      </BuilderPanel>
-    );
-  }
-
-  if (detailItem) {
-    return (
-      <BuilderPanel
-        title={
-          <>
-            <Swords className="h-3.5 w-3.5" aria-hidden />
-            {progressionLabel}
-          </>
-        }
-        action={
-          <button
-            type="button"
-            onClick={() => setDetailItem(null)}
-            className="text-[11px] text-muted-foreground hover:text-foreground"
-          >
-            Back to list
-          </button>
-        }
-      >
-        <OptionalFeatureLibraryDetail item={detailItem} bookNames={bookNames} />
       </BuilderPanel>
     );
   }
@@ -235,7 +208,6 @@ export function OptionalFeatureLibraryPanel({
             isPicked={isPicked}
             canAdd={canAdd}
             onToggle={handleToggle}
-            onViewDetail={setDetailItem}
           />
         )}
       </ScrollableWhenNeeded>

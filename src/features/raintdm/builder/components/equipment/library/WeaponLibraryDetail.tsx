@@ -1,11 +1,5 @@
 import { useMemo, useState } from "react";
 import { Shield, Sword } from "lucide-react";
-import {
-  Accordion,
-  AccordionContent,
-  AccordionItem,
-  AccordionTrigger,
-} from "@/components/ui/accordion";
 import { Badge } from "@/components/ui/badge";
 import { Separator } from "@/components/ui/separator";
 import {
@@ -42,9 +36,11 @@ import {
 import { getWeaponEffectiveTierLabel } from "../../../utils/equipment-proficiency.utils";
 import { useBookSourceNames } from "@/shared/hooks/useBookSourceNames";
 import { SourceVariantSwitcher } from "@/features/raintdm/builder/components/shared/SourceVariantSwitcher";
+import { RarityButtonGroup } from "@/features/raintdm/builder/components/shared/RarityButtonGroup";
 import type { SourceVariant } from "@/features/raintdm/builder/utils/library-variant.utils";
 import { customFeaturesToOptionalMap } from "@/features/raintdm/weapon-forge/mappers/weapon-forge.mapper";
 import { isWeaponForgeWeapon } from "@/features/raintdm/weapon-forge/utils/is-forge-weapon";
+import { LibraryDetailAccordion } from "./shared/LibraryDetailAccordion";
 
 interface WeaponLibraryDetailProps {
   equipped: EquippedWeapon;
@@ -55,6 +51,9 @@ interface WeaponLibraryDetailProps {
   activeSourceId?: string;
   onSourceChange?: (id: string) => void;
   onModeChange?: (modeIndex: number) => void;
+  onRarityChange?: (rarity: string) => void;
+  /** Rendered inside a library row: omit the titled accordion shell. */
+  inline?: boolean;
 }
 
 function getRarityIndex(equipped: EquippedWeapon): number {
@@ -226,6 +225,8 @@ export function WeaponLibraryDetail({
   activeSourceId,
   onSourceChange,
   onModeChange,
+  onRarityChange,
+  inline = false,
 }: WeaponLibraryDetailProps) {
   const bookNames = useBookSourceNames();
   const { weapon, activeModeIndex } = equipped;
@@ -247,82 +248,75 @@ export function WeaponLibraryDetail({
 
   if (isDndWeapon) {
     return (
-      <Accordion type="single" collapsible defaultValue="weapon-details">
-        <AccordionItem value="weapon-details" className="border-0">
-          <AccordionTrigger className="gap-1.5 py-2 text-xs font-medium hover:no-underline">
-            <span className="flex min-w-0 items-center gap-1.5 text-violet-400">
-              <Sword className="h-3.5 w-3.5 shrink-0" aria-hidden />
-              <span className="truncate">{weapon.name}</span>
+      <LibraryDetailAccordion
+        value="weapon-details"
+        icon={Sword}
+        title={weapon.name}
+        accentClass="text-violet-400"
+        inline={inline}
+      >
+        {sourceVariants && onSourceChange && (
+          <div className="mb-3">
+            <SourceVariantSwitcher
+              variants={sourceVariants}
+              activeId={activeSourceId ?? weapon.id}
+              onSelect={onSourceChange}
+              bookNames={bookNames}
+              accent="sky"
+            />
+          </div>
+        )}
+
+        <div className="mb-2 flex flex-wrap items-center gap-1.5">
+          {weapon.weaponCategory && (
+            <Badge variant="secondary" className="text-[10px] capitalize">
+              {weapon.weaponCategory}
+            </Badge>
+          )}
+          {weapon.properties.map((prop) => (
+            <Badge key={prop} variant="outline" className="text-[10px]">
+              {PROPERTY_LABELS[prop] ?? prop}
+            </Badge>
+          ))}
+          {!(sourceVariants && onSourceChange) && (
+            <span className="text-[10px] text-muted-foreground">
+              {weapon.source}
+              {weapon.page !== undefined ? ` p.${weapon.page}` : ""}
             </span>
-          </AccordionTrigger>
-          <AccordionContent className="pb-1 pt-0">
-            {sourceVariants && onSourceChange && (
-              <div className="mb-3">
-                <SourceVariantSwitcher
-                  variants={sourceVariants}
-                  activeId={activeSourceId ?? weapon.id}
-                  onSelect={onSourceChange}
-                  bookNames={bookNames}
-                  accent="sky"
-                />
-              </div>
-            )}
+          )}
+        </div>
 
-            <div className="mb-2 flex flex-wrap items-center gap-1.5">
-              {weapon.weaponCategory && (
-                <Badge variant="secondary" className="text-[10px] capitalize">
-                  {weapon.weaponCategory}
-                </Badge>
-              )}
-              {weapon.properties.map((prop) => (
-                <Badge key={prop} variant="outline" className="text-[10px]">
-                  {PROPERTY_LABELS[prop] ?? prop}
-                </Badge>
-              ))}
-              {!(sourceVariants && onSourceChange) && (
-                <span className="text-[10px] text-muted-foreground">
-                  {weapon.source}
-                  {weapon.page !== undefined ? ` p.${weapon.page}` : ""}
-                </span>
-              )}
-            </div>
+        {showModeToggle && (
+          <WeaponModeToggle
+            weapon={weapon}
+            activeModeIndex={activeModeIndex}
+            onChange={onModeChange}
+            className="mb-3"
+            isModeDisabled={gripModeDisabled}
+            getModeDisabledHint={gripModeDisabledHint}
+          />
+        )}
 
-            {showModeToggle && (
-              <WeaponModeToggle
-                weapon={weapon}
-                activeModeIndex={activeModeIndex}
-                onChange={onModeChange}
-                className="mb-3"
-                isModeDisabled={gripModeDisabled}
-                getModeDisabledHint={gripModeDisabledHint}
-              />
-            )}
+        <div className="mb-3 grid grid-cols-2 gap-2 text-xs">
+          <StatBox
+            label={
+              damageModeLabel === "Damage"
+                ? "Damage"
+                : `Damage (${damageModeLabel})`
+            }
+            value={`${activeDamage} ${damageTypeLabel}`}
+          />
+          <StatBox label="Weight" value={`${weapon.weight} lb`} />
+          <StatBox label="Value" value={formatWeaponValue(weapon.valueCp)} />
+          {weapon.range && <StatBox label="Range" value={weapon.range} />}
+        </div>
 
-            <div className="mb-3 grid grid-cols-2 gap-2 text-xs">
-              <StatBox
-                label={
-                  damageModeLabel === "Damage"
-                    ? "Damage"
-                    : `Damage (${damageModeLabel})`
-                }
-                value={`${activeDamage} ${damageTypeLabel}`}
-              />
-              <StatBox label="Weight" value={`${weapon.weight} lb`} />
-              <StatBox
-                label="Value"
-                value={formatWeaponValue(weapon.valueCp)}
-              />
-              {weapon.range && <StatBox label="Range" value={weapon.range} />}
-            </div>
-
-            {weapon.description && (
-              <div className="text-xs text-muted-foreground">
-                <DndRichText text={weapon.description} />
-              </div>
-            )}
-          </AccordionContent>
-        </AccordionItem>
-      </Accordion>
+        {weapon.description && (
+          <div className="text-xs text-muted-foreground">
+            <DndRichText text={weapon.description} />
+          </div>
+        )}
+      </LibraryDetailAccordion>
     );
   }
 
@@ -349,139 +343,131 @@ export function WeaponLibraryDetail({
     : null;
 
   return (
-    <Accordion type="single" collapsible defaultValue="weapon-details">
-      <AccordionItem value="weapon-details" className="border-0">
-        <AccordionTrigger className="gap-1.5 py-2 text-xs font-medium hover:no-underline">
-          <span className="flex min-w-0 items-center gap-1.5 text-violet-400">
-            <Sword className="h-3.5 w-3.5 shrink-0" aria-hidden />
-            <span className="truncate">{weapon.name}</span>
-          </span>
-        </AccordionTrigger>
-        <AccordionContent className="pb-1 pt-0">
-          <div className="mb-2 flex flex-wrap items-center gap-1.5">
-            <Badge variant="secondary" className="text-[10px]">
-              {rarity}
-            </Badge>
-            {weapon.properties.map((prop) => (
-              <Badge key={prop} variant="outline" className="text-[10px]">
-                {PROPERTY_LABELS[prop] ?? prop}
-              </Badge>
-            ))}
-            {weapon.isFocus && (
-              <Badge
-                variant="outline"
-                className="text-[10px] text-violet-300 border-violet-700/50"
-              >
-                Focus
-              </Badge>
-            )}
-            <span className="text-[10px] text-muted-foreground">
-              {weapon.source}
-              {weapon.page !== undefined ? ` p.${weapon.page}` : ""}
-            </span>
-          </div>
+    <LibraryDetailAccordion
+      value="weapon-details"
+      icon={Sword}
+      title={weapon.name}
+      accentClass="text-violet-400"
+      inline={inline}
+    >
+      {onRarityChange && (
+        <div className="mb-3">
+          <RarityButtonGroup value={rarity} onChange={onRarityChange} />
+        </div>
+      )}
+      <div className="mb-2 flex flex-wrap items-center gap-1.5">
+        <Badge variant="secondary" className="text-[10px]">
+          {rarity}
+        </Badge>
+        {weapon.properties.map((prop) => (
+          <Badge key={prop} variant="outline" className="text-[10px]">
+            {PROPERTY_LABELS[prop] ?? prop}
+          </Badge>
+        ))}
+        {weapon.isFocus && (
+          <Badge
+            variant="outline"
+            className="text-[10px] text-violet-300 border-violet-700/50"
+          >
+            Focus
+          </Badge>
+        )}
+        <span className="text-[10px] text-muted-foreground">
+          {weapon.source}
+          {weapon.page !== undefined ? ` p.${weapon.page}` : ""}
+        </span>
+      </div>
 
-          {weapon.description && (
-            <p className="mb-3 border-l-2 border-violet-800/40 pl-2 text-xs italic leading-relaxed text-muted-foreground">
-              <DndRichText text={weapon.description} />
+      {weapon.description && (
+        <p className="mb-3 border-l-2 border-violet-800/40 pl-2 text-xs italic leading-relaxed text-muted-foreground">
+          <DndRichText text={weapon.description} />
+        </p>
+      )}
+
+      <WeaponProficiencyInfo weapon={weapon} compact className="mb-3" />
+      {simpleModeLabel && (
+        <p className="mb-3 rounded-md border border-amber-700/40 bg-amber-950/20 px-2.5 py-2 text-[11px] leading-relaxed text-amber-100/90">
+          This weapon is treated as a <strong>Simple</strong> weapon for your
+          class because you only have Simple weapon proficiency.
+        </p>
+      )}
+
+      {showModeToggle && (
+        <WeaponModeToggle
+          weapon={weapon}
+          activeModeIndex={activeModeIndex}
+          onChange={onModeChange}
+          className="mb-3"
+          isModeDisabled={gripModeDisabled}
+          getModeDisabledHint={gripModeDisabledHint}
+        />
+      )}
+
+      <div className="mb-3 grid grid-cols-2 gap-2 text-xs">
+        <StatBox
+          label={
+            damageModeLabel === "Damage"
+              ? "Damage"
+              : `Damage (${damageModeLabel})`
+          }
+          value={`${activeDamage} ${damageTypeLabel}`}
+        />
+        {bonusLine && <StatBox label="Bonuses" value={bonusLine} />}
+        <StatBox
+          label="Rune Slots"
+          value={`${row.slots} slot${row.slots !== 1 ? "s" : ""}`}
+        />
+        <StatBox label="Weight" value={`${weapon.weight} lb`} />
+        <StatBox label="Value" value={formatWeaponValue(weapon.valueCp)} />
+        {weapon.range && <StatBox label="Range" value={weapon.range} />}
+        {otherStats.map(([label, value]) => (
+          <StatBox key={label} label={label} value={value} />
+        ))}
+        {shieldAc !== null && (
+          <StatBox label="Integrated Shield" value={`+${shieldAc} CA`} />
+        )}
+      </div>
+
+      {activeGripMode && (
+        <div className="mb-3 rounded-md border border-border/60 bg-muted/10 px-2 py-2">
+          <p className="text-[10px] uppercase tracking-wider text-muted-foreground">
+            Active grip
+          </p>
+          <p className="mt-0.5 text-[11px] font-medium text-foreground">
+            {activeGripMode.label} · {activeDamage} {damageTypeLabel}
+          </p>
+          <p className="mt-0.5 text-[10px] leading-relaxed text-muted-foreground">
+            {getWeaponGripModeHint(activeGripMode)}
+          </p>
+        </div>
+      )}
+
+      {showIntegratedShield && (
+        <div className="mb-3 flex items-start gap-2 rounded-md border border-teal-800/40 bg-teal-950/20 px-2 py-2">
+          <Shield className="h-3.5 w-3.5 shrink-0 text-teal-400 mt-0.5" />
+          <p className="text-[11px] leading-relaxed text-teal-100/90">
+            {activeGripMode
+              ? `In ${activeGripMode.label} mode, the integrated shield occupies the off-hand.`
+              : "Includes an integrated shield that occupies the off-hand."}
+          </p>
+        </div>
+      )}
+
+      {weapon.supplementaryNotes.length > 0 && (
+        <div className="mb-3 space-y-1">
+          {weapon.supplementaryNotes.map((note, i) => (
+            <p key={i} className="text-xs leading-relaxed text-muted-foreground">
+              {note}
             </p>
-          )}
+          ))}
+        </div>
+      )}
 
-          <WeaponProficiencyInfo
-            weapon={weapon}
-            compact
-            className="mb-3"
-          />
-          {simpleModeLabel && (
-            <p className="mb-3 rounded-md border border-amber-700/40 bg-amber-950/20 px-2.5 py-2 text-[11px] leading-relaxed text-amber-100/90">
-              This weapon is treated as a <strong>Simple</strong> weapon for
-              your class because you only have Simple weapon proficiency.
-            </p>
-          )}
-
-          {showModeToggle && (
-            <WeaponModeToggle
-              weapon={weapon}
-              activeModeIndex={activeModeIndex}
-              onChange={onModeChange}
-              className="mb-3"
-              isModeDisabled={gripModeDisabled}
-              getModeDisabledHint={gripModeDisabledHint}
-            />
-          )}
-
-          <div className="mb-3 grid grid-cols-2 gap-2 text-xs">
-            <StatBox
-              label={
-                damageModeLabel === "Damage"
-                  ? "Damage"
-                  : `Damage (${damageModeLabel})`
-              }
-              value={`${activeDamage} ${damageTypeLabel}`}
-            />
-            {bonusLine && (
-              <StatBox label="Bonuses" value={bonusLine} />
-            )}
-            <StatBox
-              label="Rune Slots"
-              value={`${row.slots} slot${row.slots !== 1 ? "s" : ""}`}
-            />
-            <StatBox label="Weight" value={`${weapon.weight} lb`} />
-            <StatBox label="Value" value={formatWeaponValue(weapon.valueCp)} />
-            {weapon.range && <StatBox label="Range" value={weapon.range} />}
-            {otherStats.map(([label, value]) => (
-              <StatBox key={label} label={label} value={value} />
-            ))}
-            {shieldAc !== null && (
-              <StatBox label="Integrated Shield" value={`+${shieldAc} CA`} />
-            )}
-          </div>
-
-          {activeGripMode && (
-            <div className="mb-3 rounded-md border border-border/60 bg-muted/10 px-2 py-2">
-              <p className="text-[10px] uppercase tracking-wider text-muted-foreground">
-                Active grip
-              </p>
-              <p className="mt-0.5 text-[11px] font-medium text-foreground">
-                {activeGripMode.label} · {activeDamage} {damageTypeLabel}
-              </p>
-              <p className="mt-0.5 text-[10px] leading-relaxed text-muted-foreground">
-                {getWeaponGripModeHint(activeGripMode)}
-              </p>
-            </div>
-          )}
-
-          {showIntegratedShield && (
-            <div className="mb-3 flex items-start gap-2 rounded-md border border-teal-800/40 bg-teal-950/20 px-2 py-2">
-              <Shield className="h-3.5 w-3.5 shrink-0 text-teal-400 mt-0.5" />
-              <p className="text-[11px] leading-relaxed text-teal-100/90">
-                {activeGripMode
-                  ? `In ${activeGripMode.label} mode, the integrated shield occupies the off-hand.`
-                  : "Includes an integrated shield that occupies the off-hand."}
-              </p>
-            </div>
-          )}
-
-          {weapon.supplementaryNotes.length > 0 && (
-            <div className="mb-3 space-y-1">
-              {weapon.supplementaryNotes.map((note, i) => (
-                <p
-                  key={i}
-                  className="text-xs leading-relaxed text-muted-foreground"
-                >
-                  {note}
-                </p>
-              ))}
-            </div>
-          )}
-
-          <WeaponFeatureSection
-            weapon={weapon}
-            rarityIndex={rarityIndex}
-            runes={equipped.runes}
-          />
-        </AccordionContent>
-      </AccordionItem>
-    </Accordion>
+      <WeaponFeatureSection
+        weapon={weapon}
+        rarityIndex={rarityIndex}
+        runes={equipped.runes}
+      />
+    </LibraryDetailAccordion>
   );
 }

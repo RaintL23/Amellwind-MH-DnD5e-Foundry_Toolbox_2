@@ -90,7 +90,7 @@ export function WeaponList({
   equipped,
   weaponProficiencies,
   onSelect,
-  onInfo,
+  renderDetails,
   getDisabledReason,
   rpgbotLookup = null,
 }: {
@@ -100,7 +100,7 @@ export function WeaponList({
   equipped: string | null;
   weaponProficiencies: string[];
   onSelect: (w: Weapon) => void;
-  onInfo?: (w: Weapon) => void;
+  renderDetails?: (w: Weapon) => React.ReactNode;
   getDisabledReason?: (weapon: Weapon) => string | null;
   rpgbotLookup?: RpgbotLookupFn | null;
 }) {
@@ -192,7 +192,7 @@ export function WeaponList({
         disabled={!!disabledReason}
         disabledHint={disabledReason ?? undefined}
         onClick={() => onSelect(w)}
-        onInfo={onInfo ? () => onInfo(w) : undefined}
+        renderDetails={renderDetails ? () => renderDetails(w) : undefined}
       />
     );
   }
@@ -213,7 +213,7 @@ export function ArmorList({
   equippedName,
   equippedShieldName = null,
   onSelect,
-  onInfo,
+  renderDetails,
   getDisabledReason,
   rpgbotLookup = null,
 }: {
@@ -223,7 +223,7 @@ export function ArmorList({
   equippedName: string | null;
   equippedShieldName?: string | null;
   onSelect: (a: ArmorItem) => void;
-  onInfo?: (a: ArmorItem) => void;
+  renderDetails?: (a: ArmorItem) => React.ReactNode;
   getDisabledReason?: (armor: ArmorItem) => string | null;
   rpgbotLookup?: RpgbotLookupFn | null;
 }) {
@@ -317,7 +317,9 @@ export function ArmorList({
         disabled={!!disabledReason}
         disabledHint={disabledReason ?? undefined}
         onClick={() => onSelect(armorItem)}
-        onInfo={onInfo ? () => onInfo(armorItem) : undefined}
+        renderDetails={
+          renderDetails ? () => renderDetails(armorItem) : undefined
+        }
       />
     );
   }
@@ -338,7 +340,9 @@ export function ArmorList({
             }
             equipped={equippedName === CLOTHING_ARMOR.name}
             onClick={() => onSelect(CLOTHING_ARMOR)}
-            onInfo={onInfo ? () => onInfo(CLOTHING_ARMOR) : undefined}
+            renderDetails={
+              renderDetails ? () => renderDetails(CLOTHING_ARMOR) : undefined
+            }
           />
         </>
       )}
@@ -402,13 +406,13 @@ export function FeatList({
   selectedId,
   selectedName = null,
   onSelect,
-  onInfo,
+  renderDetails,
 }: {
   options: LibraryListOption[];
   selectedId: string | null;
   selectedName?: string | null;
   onSelect: (id: string, name: string) => void;
-  onInfo?: (option: LibraryListOption) => void;
+  renderDetails?: (option: LibraryListOption) => React.ReactNode;
 }) {
   if (options.length === 0) {
     return <EmptyState text="No feats available." />;
@@ -427,7 +431,7 @@ export function FeatList({
           : ""
       }
       onSelect={onSelect}
-      onInfo={onInfo}
+      renderDetails={renderDetails}
     />
   );
 }

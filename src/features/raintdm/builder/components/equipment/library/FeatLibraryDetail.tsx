@@ -42,6 +42,8 @@ interface FeatLibraryDetailProps {
   spellListClassOptions?: string[];
   spellListClassChoice?: string | null;
   onSpellListClassChoiceChange?: (className: string) => void;
+  /** Rendered inside a library row: omit the icon + name heading. */
+  inline?: boolean;
 }
 
 export function FeatLibraryDetail({
@@ -55,6 +57,7 @@ export function FeatLibraryDetail({
   spellListClassOptions,
   spellListClassChoice,
   onSpellListClassChoiceChange,
+  inline = false,
 }: FeatLibraryDetailProps) {
   const categoryLabel =
     "category" in feat && feat.category
@@ -98,8 +101,14 @@ export function FeatLibraryDetail({
   return (
     <div className="space-y-3">
       <div className="flex flex-wrap items-center gap-2">
-        <Award className="h-4 w-4 text-rose-400" />
-        <h3 className="text-sm font-semibold text-foreground">{feat.name}</h3>
+        {!inline && (
+          <>
+            <Award className="h-4 w-4 text-rose-400" />
+            <h3 className="text-sm font-semibold text-foreground">
+              {feat.name}
+            </h3>
+          </>
+        )}
         {categoryLabel && (
           <Badge variant="secondary" className="text-[10px]">
             {categoryLabel}

@@ -1,10 +1,4 @@
 import { Shield, Shirt } from "lucide-react";
-import {
-  Accordion,
-  AccordionContent,
-  AccordionItem,
-  AccordionTrigger,
-} from "@/components/ui/accordion";
 import { Badge } from "@/components/ui/badge";
 import { EquippedArmor } from "@/shared/types";
 import {
@@ -12,9 +6,15 @@ import {
   isClothingArmor,
 } from "../../../data/armor.data";
 import { RuneFeaturesSection } from "../RuneFeaturesSection";
+import { RarityButtonGroup } from "@/features/raintdm/builder/components/shared/RarityButtonGroup";
+import { LibraryDetailAccordion } from "./shared/LibraryDetailAccordion";
 
 interface ArmorLibraryDetailProps {
   equipped: EquippedArmor;
+  showHomebrewDetails?: boolean;
+  onRarityChange?: (rarity: string) => void;
+  /** Rendered inside a library row: omit the titled accordion shell. */
+  inline?: boolean;
 }
 
 function StatBox({ label, value }: { label: string; value: string }) {
@@ -36,7 +36,12 @@ const CATEGORY_LABELS: Record<string, string> = {
   shield: "Shield",
 };
 
-export function ArmorLibraryDetail({ equipped }: ArmorLibraryDetailProps) {
+export function ArmorLibraryDetail({
+  equipped,
+  showHomebrewDetails = true,
+  onRarityChange,
+  inline = false,
+}: ArmorLibraryDetailProps) {
   const { armor, rarity, runes } = equipped;
   const isCloth = isClothingArmor(armor);
   const Icon = isCloth ? Shirt : Shield;
@@ -50,42 +55,43 @@ export function ArmorLibraryDetail({ equipped }: ArmorLibraryDetailProps) {
         : `Max +${armor.maxDexBonus} DEX`;
 
   return (
-    <Accordion type="single" collapsible defaultValue="armor-details">
-      <AccordionItem value="armor-details" className="border-0">
-        <AccordionTrigger className="gap-1.5 py-2 text-xs font-medium hover:no-underline">
-          <span className={`flex min-w-0 items-center gap-1.5 ${accentClass}`}>
-            <Icon className="h-3.5 w-3.5 shrink-0" aria-hidden />
-            <span className="truncate">{armor.name}</span>
-          </span>
-        </AccordionTrigger>
-        <AccordionContent className="pb-1 pt-0">
-          <div className="mb-2 flex flex-wrap items-center gap-1.5">
-            <Badge variant="secondary" className="text-[10px]">
-              {rarity}
-            </Badge>
-            <Badge variant="outline" className="text-[10px]">
-              {CATEGORY_LABELS[armor.category] ?? armor.category}
-            </Badge>
-            {armor.stealthDisadvantage && (
-              <Badge variant="outline" className="text-[10px]">
-                Stealth Disadvantage
-              </Badge>
-            )}
-          </div>
+    <LibraryDetailAccordion
+      value="armor-details"
+      icon={Icon}
+      title={armor.name}
+      accentClass={accentClass}
+      inline={inline}
+    >
+      {showHomebrewDetails && onRarityChange && (
+        <div className="mb-3">
+          <RarityButtonGroup value={rarity} onChange={onRarityChange} />
+        </div>
+      )}
+      <div className="mb-2 flex flex-wrap items-center gap-1.5">
+        <Badge variant="secondary" className="text-[10px]">
+          {rarity}
+        </Badge>
+        <Badge variant="outline" className="text-[10px]">
+          {CATEGORY_LABELS[armor.category] ?? armor.category}
+        </Badge>
+        {armor.stealthDisadvantage && (
+          <Badge variant="outline" className="text-[10px]">
+            Stealth Disadvantage
+          </Badge>
+        )}
+      </div>
 
-          <div className="mb-3 grid grid-cols-2 gap-2 text-xs">
-            <StatBox label="AC" value={formatArmorSlotDetail(armor)} />
-            <StatBox label="DEX Modifier" value={dexLabel} />
-            <StatBox
-              label="Rune Slots"
-              value={`${equipped.runeSlots} slot${equipped.runeSlots !== 1 ? "s" : ""}`}
-            />
-            <StatBox label="Weight" value={`${armor.weight} lb`} />
-          </div>
+      <div className="mb-3 grid grid-cols-2 gap-2 text-xs">
+        <StatBox label="AC" value={formatArmorSlotDetail(armor)} />
+        <StatBox label="DEX Modifier" value={dexLabel} />
+        <StatBox
+          label="Rune Slots"
+          value={`${equipped.runeSlots} slot${equipped.runeSlots !== 1 ? "s" : ""}`}
+        />
+        <StatBox label="Weight" value={`${armor.weight} lb`} />
+      </div>
 
-          <RuneFeaturesSection runes={runes} effectKind="armor" />
-        </AccordionContent>
-      </AccordionItem>
-    </Accordion>
+      <RuneFeaturesSection runes={runes} effectKind="armor" />
+    </LibraryDetailAccordion>
   );
 }

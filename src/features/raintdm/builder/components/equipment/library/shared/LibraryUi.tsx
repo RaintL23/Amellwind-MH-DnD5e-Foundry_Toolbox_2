@@ -1,3 +1,4 @@
+import { useState } from "react";
 import { Check } from "lucide-react";
 import { cn } from "@/shared/utils/cn";
 import type { RpgbotRatingLookupEntry } from "@/features/raintdm/builder/data/rpgbot-ratings.types";
@@ -5,13 +6,14 @@ import { RpgbotRatingBadge } from "@/features/raintdm/builder/components/shared/
 import {
   LibraryBackToListButton,
   LibraryInfoButton,
+  LibraryRowDetails,
 } from "@/features/raintdm/builder/components/shared/LibraryInfoButton";
 import { RPGBOT_ROW_ACCENT } from "@/features/raintdm/builder/utils/library-variant.utils";
 import { RARITY_BADGE } from "../constants";
 
 export function SectionLabel({ children }: { children: React.ReactNode }) {
   return (
-    <p className="px-1 pb-1 text-[10px] font-medium uppercase tracking-wide text-primary">
+    <p className="px-1 pb-1 text-[11px] font-medium uppercase tracking-wide text-primary">
       {children}
     </p>
   );
@@ -23,7 +25,7 @@ export function EmptyState({ text }: { text: string }) {
   );
 }
 
-export { LibraryInfoButton, LibraryBackToListButton };
+export { LibraryInfoButton, LibraryBackToListButton, LibraryRowDetails };
 
 export function LibraryItemBadge({
   children,
@@ -67,7 +69,7 @@ export function ItemRow({
   disabledHint,
   rpgbotRating,
   onClick,
-  onInfo,
+  renderDetails,
 }: {
   icon: React.ReactNode;
   name: string;
@@ -81,67 +83,89 @@ export function ItemRow({
   disabledHint?: string;
   rpgbotRating?: RpgbotRatingLookupEntry | null;
   onClick: () => void;
-  /** When set, shows an info button that opens details without selecting. */
-  onInfo?: () => void;
+  /** Details shown inline (accordion) under the row, without selecting it. */
+  renderDetails?: () => React.ReactNode;
 }) {
+  const [expanded, setExpanded] = useState(false);
+
   return (
     <div
       className={cn(
-        "mb-1 flex w-full items-center justify-between rounded-md border border-l-2 px-2 py-1.5 text-xs transition-colors",
+        "mb-1 w-full rounded-md border border-l-2 px-2 py-1.5 text-xs transition-colors",
         rpgbotRating
           ? RPGBOT_ROW_ACCENT[rpgbotRating.rating]
           : "border-l-transparent",
         equipped ? "border-violet-400/40 bg-violet-400/5" : "border-border/60",
-        disabled ? "opacity-40" : "hover:bg-muted/50",
+        disabled && !expanded && "opacity-40",
+        !disabled && !expanded && "hover:bg-muted/50",
       )}
     >
-      <button
-        type="button"
-        onClick={onClick}
-        disabled={disabled}
-        title={disabled ? disabledHint : undefined}
-        className={cn(
-          "min-w-0 flex-1 text-left",
-          disabled ? "cursor-not-allowed" : "cursor-pointer",
-        )}
-      >
-        <div className="flex items-center gap-1 font-medium text-foreground">
-          {icon}
-          <span className="truncate">{name}</span>
-          {rpgbotRating && <RpgbotRatingBadge rating={rpgbotRating} />}
-          {equipped && <Check className="h-3 w-3 shrink-0 text-emerald-400" />}
-        </div>
-        {meta}
-      </button>
-      <div className="ml-2 flex shrink-0 items-center gap-1.5">
-        {trailing && (
-          <span
-            className="max-w-[16rem] text-[10px] text-muted-foreground"
-            title={trailingTitle ?? trailing}
-          >
-            {trailing}
-          </span>
-        )}
-        {rarity && RARITY_BADGE[rarity] && (
-          <span
-            className={cn(
-              "rounded px-1.5 py-0.5 text-[10px] font-medium",
-              RARITY_BADGE[rarity],
+      <div className="flex items-center justify-between">
+        <button
+          type="button"
+          onClick={onClick}
+          disabled={disabled}
+          title={disabled ? disabledHint : undefined}
+          className={cn(
+            "min-w-0 flex-1 text-left",
+            disabled ? "cursor-not-allowed" : "cursor-pointer",
+            disabled && expanded && "opacity-40",
+          )}
+        >
+          <div className="flex items-center gap-1 font-medium text-foreground">
+            {icon}
+            <span className="truncate">{name}</span>
+            {rpgbotRating && <RpgbotRatingBadge rating={rpgbotRating} />}
+            {equipped && (
+              <Check className="h-3 w-3 shrink-0 text-emerald-400" />
             )}
-          >
-            {rarity}
-          </span>
-        )}
-        {source && (
-          <span
-            className="rounded border border-border/50 bg-muted/40 px-1.5 py-0.5 text-[10px] font-medium text-muted-foreground"
-            title={source.title}
-          >
-            {source.code}
-          </span>
-        )}
-        {onInfo && <LibraryInfoButton label={name} onClick={onInfo} />}
+          </div>
+          {meta}
+          {disabled && disabledHint && (
+            <p className="pl-5 pt-0.5 text-[11px] text-amber-700/90 dark:text-amber-300/90">
+              {disabledHint}
+            </p>
+          )}
+        </button>
+        <div className="ml-2 flex shrink-0 items-center gap-1.5">
+          {trailing && (
+            <span
+              className="max-w-[16rem] text-[10px] text-muted-foreground"
+              title={trailingTitle ?? trailing}
+            >
+              {trailing}
+            </span>
+          )}
+          {rarity && RARITY_BADGE[rarity] && (
+            <span
+              className={cn(
+                "rounded px-1.5 py-0.5 text-[10px] font-medium",
+                RARITY_BADGE[rarity],
+              )}
+            >
+              {rarity}
+            </span>
+          )}
+          {source && (
+            <span
+              className="rounded border border-border/50 bg-muted/40 px-1.5 py-0.5 text-[10px] font-medium text-muted-foreground"
+              title={source.title}
+            >
+              {source.code}
+            </span>
+          )}
+          {renderDetails && (
+            <LibraryInfoButton
+              label={name}
+              expanded={expanded}
+              onClick={() => setExpanded((prev) => !prev)}
+            />
+          )}
+        </div>
       </div>
+      {expanded && renderDetails && (
+        <LibraryRowDetails>{renderDetails()}</LibraryRowDetails>
+      )}
     </div>
   );
 }
