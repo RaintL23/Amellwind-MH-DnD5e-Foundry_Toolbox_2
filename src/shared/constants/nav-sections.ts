@@ -87,18 +87,6 @@ export const NAV_SECTIONS: NavSectionDef[] = [
         ],
       },
       {
-        label: "Weapons",
-        items: [
-          {
-            to: "/weapon-forge",
-            label: "Weapon Forge",
-            icon: Hammer,
-            description:
-              "Browse curated RaintDM weapons or create and edit custom ones for your table.",
-          },
-        ],
-      },
-      {
         label: "Items",
         items: [
           {
@@ -107,6 +95,13 @@ export const NAV_SECTIONS: NavSectionDef[] = [
             icon: Layers,
             description:
               "Browse curated RaintDM items and craft them with Amellwind Combo List recipes.",
+          },
+          {
+            to: "/weapon-forge",
+            label: "Weapon Forge",
+            icon: Hammer,
+            description:
+              "Browse curated RaintDM weapons or create and edit custom ones for your table.",
           },
         ],
       },
