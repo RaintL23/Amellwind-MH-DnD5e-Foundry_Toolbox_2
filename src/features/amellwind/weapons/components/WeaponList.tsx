@@ -120,16 +120,19 @@ export function WeaponList() {
   return (
     <div className="flex flex-col h-full min-h-0">
       <div className="shrink-0 border-b border-border px-4 py-4 md:px-6 md:py-5">
-        <div className="flex items-center gap-3 mb-1">
-          <Swords className="h-6 w-6 text-primary" />
-          <h1 className="text-xl font-bold text-foreground">Hunter Weapons</h1>
+        <div className="flex items-center gap-2 sm:gap-3 mb-1">
+          <Swords className="h-5 w-5 sm:h-6 sm:w-6 shrink-0 text-primary" />
+          <h1 className="text-lg sm:text-xl font-bold text-foreground truncate">
+            Hunter Weapons
+          </h1>
           {!loading && (
-            <span className="ml-2 rounded-full bg-muted px-2.5 py-0.5 text-xs text-muted-foreground">
-              {filtered.length} / {weapons.length}
+            <span className="shrink-0 rounded-full bg-muted px-2 py-0.5 text-xs text-muted-foreground">
+              {filtered.length}
+              <span className="hidden sm:inline"> / {weapons.length}</span>
             </span>
           )}
         </div>
-        <p className="text-sm text-muted-foreground">
+        <p className="hidden sm:block text-sm text-muted-foreground">
           Hunter weapons from Monster Hunter adapted to the D&D 5e system. Each
           scales from Common to Legendary.
         </p>
@@ -159,7 +162,7 @@ export function WeaponList() {
             </button>
           </div>
         ) : (
-          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-3 sm:gap-4">
             {filtered.map((weapon) => (
               <WeaponCard
                 key={weapon.name}

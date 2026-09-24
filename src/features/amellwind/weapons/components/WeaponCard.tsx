@@ -18,8 +18,7 @@ import { Card } from "@/components/ui/card";
 import { HintTooltip } from "@/shared/components/HintTooltip";
 import { Weight, Coins } from "lucide-react";
 
-const BADGE_SIZE_XS =
-  "rounded px-1 py-px text-[9px] font-medium";
+const BADGE_SIZE_XS = "rounded px-1 py-px text-[9px] font-medium";
 
 const PROFICIENCY_BADGE_CLASSES = cn(
   BADGE_SIZE_XS,
@@ -42,6 +41,10 @@ const DMG_TYPE_ICON_BG: Record<string, string> = {
   P: "bg-blue-950/60",
   B: "bg-orange-950/60",
 };
+
+/** Keep property / proficiency chips from wrapping into tall cards. */
+const MAX_PROPERTY_BADGES = 2;
+const MAX_COMPAT_BADGES = 1;
 
 interface WeaponCardProps {
   weapon: Weapon;
@@ -79,20 +82,27 @@ export function WeaponCard({ weapon, onClick }: WeaponCardProps) {
         : "(modes)"
       : null;
 
+  const visibleProperties = weapon.properties.slice(0, MAX_PROPERTY_BADGES);
+  const hiddenPropertyCount =
+    weapon.properties.length - visibleProperties.length;
+  const compatible = proficiencyRule?.compatible ?? [];
+  const visibleCompat = compatible.slice(0, MAX_COMPAT_BADGES);
+  const hiddenCompatCount = compatible.length - visibleCompat.length;
+
   return (
     <Card
       asChild
       className={cn(
-        "w-full text-left p-4 transition-all duration-200 hover:bg-card/80 hover:shadow-lg hover:-translate-y-0.5 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring",
+        "w-full text-left p-3 sm:p-4 transition-all duration-200 hover:bg-card/80 hover:shadow-lg hover:-translate-y-0.5 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring",
         borderHover,
       )}
     >
       <button type="button" onClick={onClick}>
-        {/* Header: icono + nombre */}
-        <div className="flex items-start gap-3 mb-3">
+        {/* Header: icon + name */}
+        <div className="flex items-start gap-2.5 sm:gap-3 mb-2 sm:mb-3">
           <div
             className={cn(
-              "rounded-md p-2 shrink-0 flex items-center justify-center",
+              "rounded-md p-1.5 sm:p-2 shrink-0 flex items-center justify-center",
               iconBg,
             )}
           >
@@ -102,47 +112,88 @@ export function WeaponCard({ weapon, onClick }: WeaponCardProps) {
             />
           </div>
           <div className="min-w-0 flex-1">
-            <h3 className="font-semibold text-foreground leading-tight truncate">
+            <h3 className="font-semibold text-foreground leading-tight truncate text-sm sm:text-base">
               {weapon.name}
             </h3>
             {weapon.range && (
-              <p className="text-xs text-muted-foreground mt-0.5">
+              <p className="hidden sm:block text-xs text-muted-foreground mt-0.5">
                 Range: {weapon.range}
               </p>
             )}
             {showBadgeRow && (
               <div className="flex flex-wrap items-center gap-1 mt-1">
-                <WeaponCategoryBadges
-                  weapon={weapon}
-                  size="xs"
-                  inline
-                />
+                <WeaponCategoryBadges weapon={weapon} size="xs" inline />
                 {proficiencyRule?.requiresShield && proficiencyTooltip && (
                   <HintTooltip content={proficiencyTooltip}>
-                    <Badge variant="outline" className={PROFICIENCY_BADGE_CLASSES}>
+                    <Badge
+                      variant="outline"
+                      className={cn(
+                        PROFICIENCY_BADGE_CLASSES,
+                        "hidden md:inline-flex",
+                      )}
+                    >
                       Shield
                     </Badge>
                   </HintTooltip>
                 )}
-                {proficiencyRule?.compatible.map((proficiency) => (
+                {visibleCompat.map((proficiency) => (
                   <HintTooltip
                     key={proficiency}
                     content={proficiencyTooltip ?? proficiency}
                   >
-                    <Badge variant="outline" className={PROFICIENCY_BADGE_CLASSES}>
+                    <Badge
+                      variant="outline"
+                      className={cn(
+                        PROFICIENCY_BADGE_CLASSES,
+                        "hidden sm:inline-flex xl:hidden",
+                      )}
+                    >
                       {proficiency}
                     </Badge>
                   </HintTooltip>
                 ))}
-                {weapon.properties.map((prop) => (
+                {hiddenCompatCount > 0 && (
+                  <HintTooltip
+                    content={compatible.slice(MAX_COMPAT_BADGES).join(", ")}
+                  >
+                    <Badge
+                      variant="outline"
+                      className={cn(
+                        PROFICIENCY_BADGE_CLASSES,
+                        "hidden sm:inline-flex xl:hidden",
+                      )}
+                    >
+                      +{hiddenCompatCount}
+                    </Badge>
+                  </HintTooltip>
+                )}
+                {visibleProperties.map((prop) => (
                   <Badge
                     key={prop}
                     variant="outline"
-                    className={PROPERTY_BADGE_CLASSES}
+                    className={cn(
+                      PROPERTY_BADGE_CLASSES,
+                      "hidden sm:inline-flex xl:hidden",
+                    )}
                   >
                     {PROPERTY_LABELS[prop] ?? prop}
                   </Badge>
                 ))}
+                {hiddenPropertyCount > 0 && (
+                  <Badge
+                    variant="outline"
+                    title={weapon.properties
+                      .slice(MAX_PROPERTY_BADGES)
+                      .map((p) => PROPERTY_LABELS[p] ?? p)
+                      .join(", ")}
+                    className={cn(
+                      PROPERTY_BADGE_CLASSES,
+                      "hidden sm:inline-flex xl:hidden",
+                    )}
+                  >
+                    +{hiddenPropertyCount}
+                  </Badge>
+                )}
                 {weapon.isFocus && (
                   <Badge
                     variant="outline"
@@ -159,21 +210,26 @@ export function WeaponCard({ weapon, onClick }: WeaponCardProps) {
           </div>
         </div>
 
-        {/* Daño */}
-        <div className="flex items-baseline gap-1.5 mb-3">
-          <span className={cn("text-2xl font-bold tabular-nums", accentText)}>
+        {/* Damage */}
+        <div className="flex items-baseline gap-1.5 mb-2 sm:mb-3">
+          <span
+            className={cn(
+              "text-xl sm:text-2xl font-bold tabular-nums",
+              accentText,
+            )}
+          >
             {damageDisplay}
           </span>
           <span className="text-sm text-muted-foreground">{dmgLabel}</span>
           {modeHint && (
-            <span className="text-xs text-muted-foreground/60">
+            <span className="hidden md:inline text-xs text-muted-foreground/60">
               {modeHint}
             </span>
           )}
         </div>
 
-        {/* Footer: peso + valor */}
-        <div className="flex items-center gap-4 text-xs text-muted-foreground border-t border-border/50 pt-2.5 mt-2">
+        {/* Footer: weight + value */}
+        <div className="flex items-center gap-3 sm:gap-4 text-xs text-muted-foreground border-t border-border/50 pt-2 sm:pt-2.5 mt-1 sm:mt-2">
           <span className="flex items-center gap-1">
             <Weight className="h-3 w-3" />
             {weapon.weight} lb
@@ -183,7 +239,7 @@ export function WeaponCard({ weapon, onClick }: WeaponCardProps) {
             {formatWeaponValue(weapon.valueCp)}
           </span>
           {weapon.includesShield && weapon.acBonus !== undefined && (
-            <span className="ml-auto text-teal-400 font-medium">
+            <span className="ml-auto hidden sm:inline text-teal-400 font-medium">
               +{weapon.acBonus} AC (shield)
             </span>
           )}
