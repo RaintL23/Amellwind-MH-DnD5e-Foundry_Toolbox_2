@@ -6,8 +6,8 @@ import { useEffect, useState } from "react";
 import { Link, NavLink, useLocation } from "react-router-dom";
 import {
   ChevronDown,
-  ChevronLeft,
-  ChevronRight,
+  PanelLeftClose,
+  PanelLeftOpen,
   X,
   Lock,
 } from "lucide-react";
@@ -33,7 +33,9 @@ function isNavItemActive(pathname: string, to: string) {
 }
 
 function groupHasActiveRoute(pathname: string, group: NavGroupDef) {
-  return group.items.some((item) => item.to && isNavItemActive(pathname, item.to));
+  return group.items.some(
+    (item) => item.to && isNavItemActive(pathname, item.to),
+  );
 }
 
 function NavItemLink({
@@ -174,7 +176,8 @@ function SidebarNav({
   onMobileClose: () => void;
 }) {
   const { pathname } = useLocation();
-  const groupKey = (sectionId: string, groupLabel: string) => `${sectionId}__${groupLabel}`;
+  const groupKey = (sectionId: string, groupLabel: string) =>
+    `${sectionId}__${groupLabel}`;
 
   const [openGroups, setOpenGroups] = useState<Record<string, boolean>>(() =>
     Object.fromEntries(
@@ -189,7 +192,9 @@ function SidebarNav({
       section.groups.forEach((group) => {
         if (groupHasActiveRoute(pathname, group)) {
           const key = groupKey(section.id, group.label);
-          setOpenGroups((prev) => (prev[key] ? prev : { ...prev, [key]: true }));
+          setOpenGroups((prev) =>
+            prev[key] ? prev : { ...prev, [key]: true },
+          );
         }
       });
     });
@@ -214,31 +219,29 @@ function SidebarNav({
             </p>
           )}
           <div className="flex flex-col gap-0.5">
-            {section.groups.length === 1 ? (
-              section.groups[0].items.map((item) => (
-                <NavItemLink
-                  key={item.to ?? item.label}
-                  {...item}
-                  collapsed={collapsed}
-                  onMobileClose={onMobileClose}
-                />
-              ))
-            ) : (
-              section.groups.map((group) => {
-                const key = groupKey(section.id, group.label);
-                return (
-                  <SidebarNavGroup
-                    key={key}
-                    sectionId={section.id}
-                    group={group}
+            {section.groups.length === 1
+              ? section.groups[0].items.map((item) => (
+                  <NavItemLink
+                    key={item.to ?? item.label}
+                    {...item}
                     collapsed={collapsed}
-                    open={openGroups[key] ?? false}
-                    onToggle={() => toggleGroup(key)}
                     onMobileClose={onMobileClose}
                   />
-                );
-              })
-            )}
+                ))
+              : section.groups.map((group) => {
+                  const key = groupKey(section.id, group.label);
+                  return (
+                    <SidebarNavGroup
+                      key={key}
+                      sectionId={section.id}
+                      group={group}
+                      collapsed={collapsed}
+                      open={openGroups[key] ?? false}
+                      onToggle={() => toggleGroup(key)}
+                      onMobileClose={onMobileClose}
+                    />
+                  );
+                })}
           </div>
         </div>
       ))}
@@ -259,41 +262,63 @@ export function Sidebar({
         collapsed ? "w-16" : "w-60",
       )}
     >
-      {/* Logo / título */}
+      {/* Logo + collapse (arriba, convención moderna) */}
       <div
         className={cn(
-          "flex items-center border-b border-border shrink-0",
-          collapsed ? "justify-center px-2 py-5" : "gap-2 px-4 py-5",
+          "flex shrink-0 items-center border-b border-border",
+          collapsed ? "flex-col gap-2 px-2 py-3" : "gap-2 px-3 py-3",
         )}
       >
         <Link
           to="/"
           className={cn(
-            "flex items-center min-w-0 hover:opacity-80 transition-opacity",
-            collapsed ? "" : "gap-2 flex-1",
+            "flex min-w-0 items-center hover:opacity-80 transition-opacity",
+            collapsed ? "justify-center" : "gap-2 flex-1",
           )}
           aria-label="Ir al inicio"
         >
-        <img
-          src="/icon/icon_propose_no_bg.png"
-          alt=""
-          className="h-7 w-7 shrink-0 object-contain"
-        />
-        {!collapsed && (
-          <div className="flex flex-col leading-tight min-w-0">
-            <span className="text-sm font-bold text-foreground truncate">
-              MH DnD5e
-            </span>
-            <span className="text-xs text-muted-foreground truncate">
-              Toolbox
-            </span>
-          </div>
-        )}
+          <img
+            src="/icon/icon_propose_no_bg.png"
+            alt=""
+            className="h-7 w-7 shrink-0 object-contain"
+          />
+          {!collapsed && (
+            <div className="flex min-w-0 flex-col leading-tight">
+              <span className="truncate text-sm font-bold text-foreground">
+                MH DnD5e
+              </span>
+              <span className="truncate text-xs text-muted-foreground">
+                Toolbox
+              </span>
+            </div>
+          )}
         </Link>
-        {/* Botón cerrar en mobile */}
+
+        {/* Collapse — desktop only, top-right */}
         <button
+          type="button"
+          onClick={onToggleCollapse}
+          className={cn(
+            "hidden h-8 shrink-0 items-center justify-center rounded-md border border-border bg-background text-muted-foreground transition-colors hover:bg-accent hover:text-accent-foreground md:inline-flex",
+            collapsed ? "w-8" : "gap-1.5 px-2.5 text-xs font-medium",
+          )}
+          aria-label={collapsed ? "Expand sidebar" : "Collapse sidebar"}
+          title={collapsed ? "Expand sidebar" : "Collapse sidebar"}
+        >
+          {collapsed ? (
+            <PanelLeftOpen className="h-4 w-4" />
+          ) : (
+            <>
+              <PanelLeftClose className="h-3.5 w-3.5" />
+            </>
+          )}
+        </button>
+
+        {/* Close — mobile only */}
+        <button
+          type="button"
           onClick={onMobileClose}
-          className="ml-auto md:hidden p-1 rounded hover:bg-accent text-muted-foreground"
+          className="ml-auto rounded p-1 text-muted-foreground hover:bg-accent md:hidden"
           aria-label="Close menu"
         >
           <X className="h-4 w-4" />
@@ -303,29 +328,11 @@ export function Sidebar({
       {/* Navegación */}
       <SidebarNav collapsed={collapsed} onMobileClose={onMobileClose} />
 
-      {/* Footer + botón collapse (solo desktop) */}
-      <div className="border-t border-border shrink-0">
+      {/* Footer: theme */}
+      <div className="shrink-0 border-t border-border">
         <ThemeSelector collapsed={collapsed} />
-        {/* Botón collapse — oculto en mobile */}
-        <button
-          onClick={onToggleCollapse}
-          className={cn(
-            "hidden md:flex w-full items-center px-3 py-2.5 text-xs text-muted-foreground hover:bg-accent hover:text-accent-foreground transition-colors",
-            collapsed ? "justify-center" : "gap-2",
-          )}
-          aria-label={collapsed ? "Expand sidebar" : "Collapse sidebar"}
-        >
-          {collapsed ? (
-            <ChevronRight className="h-4 w-4" />
-          ) : (
-            <>
-              <ChevronLeft className="h-4 w-4" />
-              <span>Collapse</span>
-            </>
-          )}
-        </button>
         {!collapsed && (
-          <p className="px-4 py-2 text-xs text-muted-foreground text-center border-t border-border">
+          <p className="border-t border-border px-4 py-2 text-center text-xs text-muted-foreground">
             Amellwind Homebrew
           </p>
         )}

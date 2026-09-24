@@ -1,4 +1,5 @@
 import { Link } from "react-router-dom";
+import type { ReactNode } from "react";
 import { Hammer, ImportIcon } from "lucide-react";
 import {
   Card,
@@ -16,15 +17,27 @@ import {
   type NavSectionDef,
 } from "@/shared/constants/nav-sections";
 
-function navSectionById(id: string): NavSectionDef {
-  const section = NAV_SECTIONS.find((s) => s.id === id);
-  if (!section) throw new Error(`Missing nav section: ${id}`);
-  return section;
-}
-
-const amellwindSection = navSectionById("amellwind");
-const raintDmSection = navSectionById("amellwind-raintdm");
-const dndSection = navSectionById("dnd5e");
+/** Section blurbs aligned with Sidebar order (NAV_SECTIONS). */
+const SECTION_DESCRIPTIONS: Record<string, ReactNode> = {
+  "amellwind-raintdm":
+    "RaintDM variants on Amellwind's 2014 Monster Hunter homebrew — house-rule tweaks for my tables and campaigns.",
+  amellwind:
+    "Exclusive content from the Amellwind Monster Hunter D&D 5e system.",
+  dnd5e: (
+    <>
+      Official reference data loaded from{" "}
+      <a
+        href="https://5e.tools"
+        target="_blank"
+        rel="noopener noreferrer"
+        className="underline underline-offset-2 hover:text-foreground transition-colors"
+      >
+        5etools
+      </a>
+      . Not homebrew content from Amellwind.
+    </>
+  ),
+};
 
 function SectionCard({ item }: { item: NavItemDef }) {
   const Icon = item.icon;
@@ -53,53 +66,69 @@ function SectionCard({ item }: { item: NavItemDef }) {
 }
 
 function HomeSectionGroups({
-  section,
+  groups,
 }: {
-  section: Pick<NavSectionDef, "groups">;
+  groups: NavGroupDef[];
 }) {
   return (
-    <>
-      {section.groups.map((group: NavGroupDef) => (
+    <div className="space-y-6">
+      {groups.map((group) => (
         <div key={group.label} className="space-y-3">
           <h3 className="text-xs font-semibold uppercase tracking-widest text-muted-foreground">
             {group.label}
           </h3>
-          <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-3">
+          <div className="grid grid-cols-1 gap-3 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4">
             {group.items.map((item) => (
               <SectionCard key={item.to} item={item} />
             ))}
           </div>
         </div>
       ))}
-    </>
+    </div>
+  );
+}
+
+function HomeNavSection({ section }: { section: NavSectionDef }) {
+  return (
+    <section className="space-y-5">
+      <div>
+        <h2 className="text-lg font-semibold">{section.label}</h2>
+        {SECTION_DESCRIPTIONS[section.id] && (
+          <p className="mt-0.5 text-xs text-muted-foreground">
+            {SECTION_DESCRIPTIONS[section.id]}
+          </p>
+        )}
+      </div>
+      <HomeSectionGroups groups={section.groups} />
+    </section>
   );
 }
 
 export function HomePage() {
   return (
-    <div className="p-6 max-w-6xl mx-auto space-y-10">
+    <div className="mx-auto max-w-6xl space-y-10 p-6">
       {/* Hero */}
       <section className="space-y-3">
         <div className="flex items-center gap-3">
-          <Hammer className="h-7 w-7 text-primary shrink-0" />
+          <Hammer className="h-7 w-7 shrink-0 text-primary" />
           <h1 className="text-2xl font-bold tracking-tight">
             Amellwind MH DnD5e Toolbox
           </h1>
         </div>
-        <p className="text-muted-foreground text-sm max-w-3xl leading-relaxed">
+        <p className="max-w-3xl text-sm leading-relaxed text-muted-foreground">
           Web toolkit for{" "}
-          <span className="text-foreground font-medium">Dungeon Masters</span>{" "}
+          <span className="font-medium text-foreground">Dungeon Masters</span>{" "}
           and players of the{" "}
-          <span className="text-foreground font-medium">Amellwind</span>{" "}
+          <span className="font-medium text-foreground">Amellwind</span>{" "}
           homebrew, combining{" "}
-          <span className="text-foreground font-medium">Monster Hunter</span>{" "}
-          with <span className="text-foreground font-medium">D&amp;D 5e</span>.
+          <span className="font-medium text-foreground">Monster Hunter</span>{" "}
+          with <span className="font-medium text-foreground">D&amp;D 5e</span>.
           All data is synchronized and cached in your browser for offline access
           between sessions.
         </p>
         <div className="flex flex-wrap gap-2 pt-1">
           <Badge variant="secondary">
-            <ImportIcon className="h-3 w-3 mr-1" />
+            <ImportIcon className="mr-1 h-3 w-3" />
             Export / Import Foundry VTT
           </Badge>
           <Badge variant="secondary">Offline after initial load</Badge>
@@ -107,56 +136,13 @@ export function HomePage() {
         </div>
       </section>
 
-      <Separator />
-
-      {/* Amellwind sections */}
-      <section className="space-y-7">
-        <div>
-          <h2 className="text-lg font-semibold">Amellwind Homebrew</h2>
-          <p className="text-xs text-muted-foreground mt-0.5">
-            Exclusive content from the Amellwind Monster Hunter D&amp;D 5e
-            system.
-          </p>
+      {/* Same section order and groups as the Sidebar */}
+      {NAV_SECTIONS.map((section, index) => (
+        <div key={section.id} className="space-y-10">
+          {index > 0 && <Separator />}
+          <HomeNavSection section={section} />
         </div>
-
-        <HomeSectionGroups section={amellwindSection} />
-      </section>
-
-      <Separator />
-
-      {/* Amellwind (RaintDM) sections */}
-      <section className="space-y-7">
-        <div>
-          <h2 className="text-lg font-semibold">Amellwind (RaintDM)</h2>
-          <p className="text-xs text-muted-foreground mt-0.5">
-            RaintDM variants on Amellwind&apos;s 2014 Monster Hunter homebrew —
-            house-rule tweaks for my tables and campaigns.
-          </p>
-        </div>
-        <HomeSectionGroups section={raintDmSection} />
-      </section>
-
-      <Separator />
-
-      {/* D&D 5e sections */}
-      <section className="space-y-7">
-        <div>
-          <h2 className="text-lg font-semibold">D&D 5e Compendium</h2>
-          <p className="text-xs text-muted-foreground mt-0.5">
-            Official reference data loaded from{" "}
-            <a
-              href="https://5e.tools"
-              target="_blank"
-              rel="noopener noreferrer"
-              className="underline underline-offset-2 hover:text-foreground transition-colors"
-            >
-              5etools
-            </a>
-            . Not homebrew content from Amellwind.
-          </p>
-        </div>
-        <HomeSectionGroups section={dndSection} />
-      </section>
+      ))}
 
       {/* Footer note */}
       <Separator />
