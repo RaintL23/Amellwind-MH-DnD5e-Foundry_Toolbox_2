@@ -121,7 +121,7 @@ Providers **por ruta** (no globales):
 
 ### Sidebar y navegación
 
-El `Sidebar` agrupa links en grupos colapsables organizados bajo tres secciones: **Amellwind Homebrew**, **Amellwind (RaintDM)** y **D&D 5e Compendium**. Soporta **colapso en desktop** (solo iconos) y **drawer en mobile** con overlay. Incluye **`ThemeSelector`** en el footer. La configuración vive en `NAV_SECTIONS` (`src/shared/constants/nav-sections.ts`); cada sección tiene `id` + `label` + `groups`, y cada grupo tiene `label` + `items` (con `description` / `badge` para Home). `Sidebar` y `HomePage` consumen el mismo mapa. Hunt Planner está en **World and Exploration**.
+El `Sidebar` agrupa links en grupos colapsables organizados bajo tres secciones: **Amellwind Homebrew**, **Amellwind (RaintDM)** y **D&D 5e Compendium**. Soporta **colapso en desktop** (solo iconos) y **drawer en mobile** con overlay. Incluye **`ThemeSelector`** (botón icono) junto al collapse en el header. La configuración vive en `NAV_SECTIONS` (`src/shared/constants/nav-sections.ts`); cada sección tiene `id` + `label` + `groups`, y cada grupo tiene `label` + `items` (con `description` / `badge` para Home). `Sidebar` y `HomePage` consumen el mismo mapa. Hunt Planner está en **World and Exploration**.
 
 **Amellwind (RaintDM)** agrupa el Character Builder (hub de personaje de toda la app), el Damage Calculator (también listado en Amellwind Homebrew) y las variantes de mesa de RaintDM sobre el homebrew 2014 de Amellwind (Weapon Forge, Items Forge). Si una sección tiene un solo grupo, el Sidebar renderiza los links planos bajo el título de sección (sin acordeón extra).
 

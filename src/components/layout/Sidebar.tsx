@@ -294,49 +294,40 @@ export function Sidebar({
           )}
         </Link>
 
-        {/* Collapse — desktop only, top-right */}
-        <button
-          type="button"
-          onClick={onToggleCollapse}
+        {/* Theme + collapse (desktop) / close (mobile) */}
+        <div
           className={cn(
-            "hidden h-8 shrink-0 items-center justify-center rounded-md border border-border bg-background text-muted-foreground transition-colors hover:bg-accent hover:text-accent-foreground md:inline-flex",
-            collapsed ? "w-8" : "gap-1.5 px-2.5 text-xs font-medium",
+            "flex shrink-0 items-center gap-1.5",
+            collapsed ? "flex-col" : "ml-auto",
           )}
-          aria-label={collapsed ? "Expand sidebar" : "Collapse sidebar"}
-          title={collapsed ? "Expand sidebar" : "Collapse sidebar"}
         >
-          {collapsed ? (
-            <PanelLeftOpen className="h-4 w-4" />
-          ) : (
-            <>
+          <ThemeSelector />
+          <button
+            type="button"
+            onClick={onToggleCollapse}
+            className="hidden h-8 w-8 shrink-0 items-center justify-center rounded-md border border-border bg-background text-muted-foreground transition-colors hover:bg-accent hover:text-accent-foreground md:inline-flex"
+            aria-label={collapsed ? "Expand sidebar" : "Collapse sidebar"}
+            title={collapsed ? "Expand sidebar" : "Collapse sidebar"}
+          >
+            {collapsed ? (
+              <PanelLeftOpen className="h-4 w-4" />
+            ) : (
               <PanelLeftClose className="h-3.5 w-3.5" />
-            </>
-          )}
-        </button>
-
-        {/* Close — mobile only */}
-        <button
-          type="button"
-          onClick={onMobileClose}
-          className="ml-auto rounded p-1 text-muted-foreground hover:bg-accent md:hidden"
-          aria-label="Close menu"
-        >
-          <X className="h-4 w-4" />
-        </button>
+            )}
+          </button>
+          <button
+            type="button"
+            onClick={onMobileClose}
+            className="rounded p-1 text-muted-foreground hover:bg-accent md:hidden"
+            aria-label="Close menu"
+          >
+            <X className="h-4 w-4" />
+          </button>
+        </div>
       </div>
 
       {/* Navegación */}
       <SidebarNav collapsed={collapsed} onMobileClose={onMobileClose} />
-
-      {/* Footer: theme */}
-      <div className="shrink-0 border-t border-border">
-        <ThemeSelector collapsed={collapsed} />
-        {!collapsed && (
-          <p className="border-t border-border px-4 py-2 text-center text-xs text-muted-foreground">
-            Amellwind Homebrew
-          </p>
-        )}
-      </div>
     </aside>
   );
 

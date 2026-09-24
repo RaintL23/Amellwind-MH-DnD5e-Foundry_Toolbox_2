@@ -61,10 +61,14 @@ export type NavSectionDef = {
 export const NAV_SECTIONS: NavSectionDef[] = [
   {
     id: "amellwind-raintdm",
-    label: "Amellwind (RaintDM)",
+    label: "RaintDM",
     groups: [
       {
-        label: "Character",
+        label: "GM Tools",
+        items: [],
+      },
+      {
+        label: "Character Tools",
         items: [
           {
             to: "/builder",
