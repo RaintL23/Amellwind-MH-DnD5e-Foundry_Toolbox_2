@@ -21,10 +21,10 @@ const PERSONALITY_STORAGE_KEY = "mh-builder-personality";
 export function loadUseAmellwindHomebrew(): boolean {
   try {
     const raw = localStorage.getItem(HOMEBREW_STORAGE_KEY);
-    if (raw === null) return true;
+    if (raw === null) return false;
     return raw === "true";
   } catch {
-    return true;
+    return false;
   }
 }
 

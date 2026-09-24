@@ -1,4 +1,4 @@
-import { useRef, type ChangeEvent, type ReactNode } from "react";
+import { useRef, useState, type ChangeEvent, type ReactNode } from "react";
 import {
   Dices,
   Download,
@@ -8,10 +8,12 @@ import {
   Upload,
   User,
 } from "lucide-react";
+import { toast } from "sonner";
 import { useCharacterSheetExport } from "../../hooks/useCharacterSheetExport";
 import { useBuilderCharacterExport } from "../../hooks/useBuilderCharacterExport";
 import { useBuilderCharacterImport } from "../../hooks/useBuilderCharacterImport";
 import { useBuildCompleteness } from "../../context/BuildCompletenessContext";
+import { useBuilderSlotSelection } from "../../hooks/useBuilderSlotSelection";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Checkbox } from "@/components/ui/checkbox";
@@ -40,11 +42,14 @@ import {
   formatAlignmentLabel,
   parseAlignmentAxes,
 } from "../../utils/alignment.utils";
+import { getFeatSlotLevels } from "../../utils/builder-class.utils";
 import { AbilityScoresSection } from "./ability-scores/AbilityScoresSection";
 import { BuilderPanel } from "../shared/BuilderPanel";
 import { CompletenessHighlightBanner } from "../shared/CompletenessHighlightBanner";
+import { ConfirmActionDialog } from "../shared/ConfirmActionDialog";
 import { MulticlassPanel } from "./MulticlassPanel";
 import { NumberStepper } from "../shared";
+import type { BuildCompletenessIssue } from "../../utils/build-completeness.types";
 
 // Set to true to re-enable Foundry VTT JSON export/import once the exporter is ready.
 const FOUNDRY_JSON_UI_ENABLED = false;
@@ -55,7 +60,7 @@ const FOUNDRY_DISABLED_TITLE =
 
 function SectionHeading({ children }: { children: ReactNode }) {
   return (
-    <p className="text-[10px] font-semibold uppercase tracking-wide text-muted-foreground/80">
+    <p className="text-[11px] font-semibold uppercase tracking-wide text-muted-foreground/80">
       {children}
     </p>
   );
@@ -71,12 +76,18 @@ function FieldLabel({
   return (
     <Label
       htmlFor={htmlFor}
-      className="text-[10px] font-medium text-muted-foreground"
+      className="text-[11px] font-medium text-muted-foreground"
     >
       {children}
     </Label>
   );
 }
+
+type PendingConfirm =
+  | { kind: "reset" }
+  | { kind: "randomize" }
+  | { kind: "level"; nextLevel: number; lostFeatSlots: number }
+  | { kind: "multiclass-off" };
 
 export function StatsPanel() {
   const {
@@ -89,6 +100,8 @@ export function StatsPanel() {
     resetBuild,
     multiclassEnabled,
     setMulticlassEnabled,
+    featSelections,
+    class: classSelection,
   } = useCharacterBuilder();
   const { randomize, isRandomizing, canRandomize } = useCharacterRandomizer();
   const {
@@ -112,9 +125,82 @@ export function StatsPanel() {
     clearHighlight,
     highlightActive,
     issues,
+    goToSection,
+    liveResult,
   } = useBuildCompleteness();
+  const { selectSlot } = useBuilderSlotSelection();
   const { lawChaos, goodEvil } = parseAlignmentAxes(character.alignment);
   const alignmentLabel = formatAlignmentLabel(lawChaos, goodEvil);
+  const [pendingConfirm, setPendingConfirm] = useState<PendingConfirm | null>(
+    null,
+  );
+  const buildHasStarted = liveResult.hasStarted;
+
+  function handleLevelChange(nextLevel: number) {
+    if (multiclassEnabled) return;
+    if (nextLevel >= character.level) {
+      setLevel(nextLevel);
+      return;
+    }
+    const className = classSelection?.name ?? "";
+    const currentSlots = getFeatSlotLevels(className, character.level).length;
+    const nextSlots = getFeatSlotLevels(className, nextLevel).length;
+    const filledBeyond = featSelections.slice(nextSlots).filter(Boolean).length;
+    if (filledBeyond > 0 || currentSlots > nextSlots) {
+      setPendingConfirm({
+        kind: "level",
+        nextLevel,
+        lostFeatSlots: Math.max(filledBeyond, currentSlots - nextSlots),
+      });
+      return;
+    }
+    setLevel(nextLevel);
+  }
+
+  function handleMulticlassToggle(checked: boolean) {
+    if (checked) {
+      setMulticlassEnabled(true);
+      return;
+    }
+    if (multiclassEnabled) {
+      setPendingConfirm({ kind: "multiclass-off" });
+      return;
+    }
+    setMulticlassEnabled(false);
+  }
+
+  function runPendingConfirm() {
+    if (!pendingConfirm) return;
+    switch (pendingConfirm.kind) {
+      case "reset":
+        clearHighlight();
+        resetBuild();
+        toast.message("Build reset");
+        break;
+      case "randomize":
+        clearHighlight();
+        void randomize().then(() => toast.message("Character randomized"));
+        break;
+      case "level":
+        setLevel(pendingConfirm.nextLevel);
+        toast.message(
+          pendingConfirm.lostFeatSlots > 0
+            ? `Level set to ${pendingConfirm.nextLevel} · ${pendingConfirm.lostFeatSlots} feat pick${pendingConfirm.lostFeatSlots === 1 ? "" : "s"} removed`
+            : `Level set to ${pendingConfirm.nextLevel}`,
+        );
+        break;
+      case "multiclass-off":
+        setMulticlassEnabled(false);
+        toast.message("Multiclass disabled");
+        break;
+    }
+  }
+
+  function handleIssueClick(issue: BuildCompletenessIssue) {
+    activateHighlight();
+    if (issue.slot) selectSlot(issue.slot);
+    goToSection(issue.section);
+  }
 
   async function handleExportPdf() {
     const result = evaluate();
@@ -134,9 +220,44 @@ export function StatsPanel() {
     void importBuilderFromFile(file);
   }
 
+  const confirmCopy =
+    pendingConfirm?.kind === "reset"
+      ? {
+          title: "Reset character?",
+          description:
+            "This clears the entire build and cannot be undone. Autosave will be wiped.",
+          confirmLabel: "Reset build",
+        }
+      : pendingConfirm?.kind === "randomize"
+        ? {
+            title: "Randomize character?",
+            description:
+              "This replaces your current choices with a randomized build at the same level.",
+            confirmLabel: "Randomize",
+          }
+        : pendingConfirm?.kind === "level"
+          ? {
+              title: `Lower level to ${pendingConfirm.nextLevel}?`,
+              description:
+                "Lowering level removes feat slots and optional features that no longer apply.",
+              confirmLabel: "Lower level",
+              lossItems: [
+                `${pendingConfirm.lostFeatSlots} feat pick${pendingConfirm.lostFeatSlots === 1 ? "" : "s"} may be removed`,
+              ],
+            }
+          : pendingConfirm?.kind === "multiclass-off"
+            ? {
+                title: "Disable multiclass?",
+                description:
+                  "Additional class entries will be cleared and total level stays on your primary class.",
+                confirmLabel: "Disable multiclass",
+              }
+            : null;
+
   return (
     <TooltipProvider delayDuration={300}>
       <BuilderPanel
+        sectionId="ability-scores"
         title={
           <>
             <User className="h-3.5 w-3.5" aria-hidden /> Character
@@ -246,8 +367,11 @@ export function StatsPanel() {
                   size="icon"
                   className={ICON_BUTTON_CLASS}
                   onClick={() => {
-                    clearHighlight();
-                    resetBuild();
+                    if (buildHasStarted) setPendingConfirm({ kind: "reset" });
+                    else {
+                      clearHighlight();
+                      resetBuild();
+                    }
                   }}
                   aria-label="Reset character"
                 >
@@ -265,8 +389,12 @@ export function StatsPanel() {
                   className={ICON_BUTTON_CLASS}
                   disabled={!canRandomize || isRandomizing}
                   onClick={() => {
-                    clearHighlight();
-                    void randomize();
+                    if (buildHasStarted)
+                      setPendingConfirm({ kind: "randomize" });
+                    else {
+                      clearHighlight();
+                      void randomize();
+                    }
                   }}
                   aria-label="Randomize character"
                 >
@@ -323,7 +451,7 @@ export function StatsPanel() {
                     value={character.level}
                     min={1}
                     max={20}
-                    onChange={setLevel}
+                    onChange={handleLevelChange}
                     ariaLabel="Level"
                     disabled={multiclassEnabled}
                     title={
@@ -392,7 +520,7 @@ export function StatsPanel() {
                 id="multiclass-toggle"
                 checked={multiclassEnabled}
                 onCheckedChange={(checked) =>
-                  setMulticlassEnabled(checked === true)
+                  handleMulticlassToggle(checked === true)
                 }
                 className="mt-0.5 h-3.5 w-3.5"
                 aria-label="Activate multiclass"
@@ -421,28 +549,31 @@ export function StatsPanel() {
           builderImportSummary ? (
             <div className="space-y-1.5">
               {highlightActive && issues.length > 0 && (
-                <CompletenessHighlightBanner issues={issues} />
+                <CompletenessHighlightBanner
+                  issues={issues}
+                  onIssueClick={handleIssueClick}
+                />
               )}
               {exportError && (
-                <p className="text-[10px] text-destructive">{exportError}</p>
+                <p className="text-[11px] text-destructive">{exportError}</p>
               )}
               {builderExportError && (
-                <p className="text-[10px] text-destructive">
+                <p className="text-[11px] text-destructive">
                   {builderExportError}
                 </p>
               )}
               {importingBuilder && (
-                <p className="text-[10px] text-muted-foreground">
+                <p className="text-[11px] text-muted-foreground">
                   Importing Builder JSON…
                 </p>
               )}
               {builderImportError && (
-                <p className="text-[10px] text-destructive">
+                <p className="text-[11px] text-destructive">
                   {builderImportError}
                 </p>
               )}
               {builderImportSummary && (
-                <div className="space-y-1 rounded border border-border bg-muted/40 p-2 text-[10px]">
+                <div className="space-y-1 rounded border border-border bg-muted/40 p-2 text-[11px]">
                   <div className="flex items-center justify-between gap-2">
                     <span className="font-medium text-foreground">
                       Loaded: {builderImportSummary.name}
@@ -466,6 +597,22 @@ export function StatsPanel() {
           ) : null}
         </div>
       </BuilderPanel>
+
+      {confirmCopy && (
+        <ConfirmActionDialog
+          open={pendingConfirm !== null}
+          onOpenChange={(open) => {
+            if (!open) setPendingConfirm(null);
+          }}
+          title={confirmCopy.title}
+          description={confirmCopy.description}
+          lossItems={
+            "lossItems" in confirmCopy ? confirmCopy.lossItems : undefined
+          }
+          confirmLabel={confirmCopy.confirmLabel}
+          onConfirm={runPendingConfirm}
+        />
+      )}
     </TooltipProvider>
   );
 }

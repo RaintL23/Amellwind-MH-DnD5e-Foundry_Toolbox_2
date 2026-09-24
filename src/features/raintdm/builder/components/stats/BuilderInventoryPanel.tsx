@@ -1,5 +1,7 @@
 import { Link } from "react-router-dom";
 import { Check, Package, Scale, Trash2, X } from "lucide-react";
+import { useState } from "react";
+import { toast } from "sonner";
 import {
   Accordion,
   AccordionContent,
@@ -43,6 +45,7 @@ import {
   isIntegratedShieldEntry,
   isTrinketEntry,
 } from "../../utils/equipment-inventory.utils";
+import { ConfirmActionDialog } from "../shared/ConfirmActionDialog";
 
 const KIND_LABELS: Record<CartItemKind, string> = {
   weapon: "Weapon",
@@ -212,7 +215,10 @@ export function BuilderInventoryPanel() {
   function handleClearInventory() {
     clearEquipment();
     clearInventory();
+    toast.message("Inventory cleared");
   }
+
+  const [clearConfirmOpen, setClearConfirmOpen] = useState(false);
 
   function handleRemove(entry: CartEntry, kind: CartItemKind) {
     const weapon =
@@ -242,7 +248,10 @@ export function BuilderInventoryPanel() {
   }
 
   return (
-    <div className="rounded-lg border border-border/60 bg-card">
+    <div
+      data-builder-section="inventory"
+      className="scroll-mt-14 rounded-lg border border-border/60 bg-card"
+    >
       <Accordion type="single" collapsible>
         <AccordionItem value="inventory" className="border-0">
           <AccordionTrigger className="gap-1.5 px-3.5 py-3 text-[11px] font-medium uppercase tracking-wider text-muted-foreground hover:no-underline">
@@ -316,7 +325,7 @@ export function BuilderInventoryPanel() {
                 )}
                 <button
                   type="button"
-                  onClick={handleClearInventory}
+                  onClick={() => setClearConfirmOpen(true)}
                   className="flex w-full items-center justify-center gap-1.5 rounded-md border border-destructive/30 bg-destructive/5 px-2.5 py-2 text-[11px] font-medium text-destructive transition-colors hover:bg-destructive/10"
                 >
                   <Trash2 className="h-3.5 w-3.5" aria-hidden />
@@ -384,6 +393,15 @@ export function BuilderInventoryPanel() {
           </AccordionContent>
         </AccordionItem>
       </Accordion>
+
+      <ConfirmActionDialog
+        open={clearConfirmOpen}
+        onOpenChange={setClearConfirmOpen}
+        title="Clear inventory?"
+        description="This removes all inventory items and unequips weapons, armor, and trinkets."
+        confirmLabel="Clear inventory"
+        onConfirm={handleClearInventory}
+      />
     </div>
   );
 }

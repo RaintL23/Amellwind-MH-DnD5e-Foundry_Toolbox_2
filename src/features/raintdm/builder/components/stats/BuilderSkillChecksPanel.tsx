@@ -179,6 +179,7 @@ export function BuilderSkillChecksPanel() {
 
   return (
     <BuilderPanel
+      sectionId="skills"
       highlighted={highlighted}
       title={
         <>

@@ -1,7 +1,15 @@
 import { lazy, Suspense, useMemo, useState } from "react";
 import { Link } from "react-router-dom";
-import { ChevronDown, Lightbulb, ExternalLink } from "lucide-react";
-import { cn } from "@/shared/utils/cn";
+import { ExternalLink, Lightbulb } from "lucide-react";
+import { Button } from "@/components/ui/button";
+import {
+  Dialog,
+  DialogBody,
+  DialogContent,
+  DialogDescription,
+  DialogHeader,
+  DialogTitle,
+} from "@/components/ui/dialog";
 import {
   getDndLevelBracket,
   getLevelBracket,
@@ -18,6 +26,7 @@ import {
   DND_BUILDER_WORKFLOW_STEPS,
   DND_STARTING_EQUIPMENT_TABLE,
 } from "@/features/dnd/character-guide/data/dnd-character-guide.data";
+
 const GuideTable = lazy(() =>
   import("@/features/amellwind/character-guide/components/GuideTable").then((m) => ({
     default: m.GuideTable,
@@ -28,9 +37,10 @@ function findTableRow(table: { rows: string[][] }, bracket: string) {
   return table.rows.find((row) => row[0] === bracket);
 }
 
+/** Tips button + dialog; content switches with Amellwind Homebrew on/off. */
 export function CharacterCreationTipsPanel() {
-  const [open, setOpen] = useState(false);
   const { character, useAmellwindHomebrew } = useCharacterBuilder();
+  const [open, setOpen] = useState(false);
   const levelBracket = getLevelBracket(character.level);
   const dndLevelBracket = getDndLevelBracket(character.level);
 
@@ -51,58 +61,58 @@ export function CharacterCreationTipsPanel() {
     ? BUILDER_WORKFLOW_STEPS
     : DND_BUILDER_WORKFLOW_STEPS;
 
-  const panelTitle = useAmellwindHomebrew
+  const dialogTitle = useAmellwindHomebrew
     ? "Amellwind Character Creation Tips"
     : "D&D Character Creation Tips";
 
-  return (
-    <div className="rounded-lg border border-primary/20 bg-primary/5 overflow-hidden">
-      <button
-        type="button"
-        onClick={() => setOpen((v) => !v)}
-        aria-expanded={open}
-        className="flex w-full items-center gap-2 px-4 py-3 text-left hover:bg-primary/10 transition-colors"
-      >
-        <Lightbulb className="h-4 w-4 text-primary shrink-0" />
-        <span className="text-sm font-semibold text-foreground flex-1">
-          {panelTitle}
-        </span>
-        <Link
-          to={
-            useAmellwindHomebrew
-              ? "/character-guide"
-              : "/dnd-character-guide"
-          }
-          onClick={(e) => e.stopPropagation()}
-          className="hidden sm:inline-flex items-center gap-1 text-xs text-primary hover:underline mr-2"
-        >
-          Full guide
-          <ExternalLink className="h-3 w-3" />
-        </Link>
-        <ChevronDown
-          className={cn(
-            "h-4 w-4 text-muted-foreground transition-transform duration-200",
-            open && "rotate-180",
-          )}
-        />
-      </button>
+  const guideHref = useAmellwindHomebrew
+    ? "/character-guide"
+    : "/dnd-character-guide";
 
-      <div
-        className={cn(
-          "grid transition-[grid-template-rows] duration-200 ease-out",
-          open ? "grid-rows-[1fr]" : "grid-rows-[0fr]",
-        )}
+  return (
+    <>
+      <Button
+        type="button"
+        variant="outline"
+        size="sm"
+        className="h-auto shrink-0 gap-1.5 self-stretch px-3 py-2"
+        onClick={() => setOpen(true)}
+        aria-haspopup="dialog"
+        aria-expanded={open}
       >
-        <div className="overflow-hidden">
-          <div className="px-4 pb-4 space-y-4 border-t border-primary/10">
+        <Lightbulb className="h-3.5 w-3.5 text-primary" />
+        Tips
+      </Button>
+
+      <Dialog open={open} onOpenChange={setOpen}>
+        <DialogContent className="max-w-2xl gap-0 p-0">
+          <DialogHeader className="p-5 pb-3">
+            <DialogTitle className="flex items-center gap-2 text-base">
+              <Lightbulb className="h-4 w-4 text-primary shrink-0" />
+              {dialogTitle}
+            </DialogTitle>
+            <DialogDescription className="text-sm">
+              Suggested workflow and starting gear for the current Builder mode
+              {useAmellwindHomebrew ? " (Amellwind Homebrew)" : " (D&D 5e)"}.
+            </DialogDescription>
+            <Link
+              to={guideHref}
+              className="inline-flex w-fit items-center gap-1 text-xs text-primary hover:underline"
+            >
+              Full guide
+              <ExternalLink className="h-3 w-3" />
+            </Link>
+          </DialogHeader>
+
+          <DialogBody className="space-y-4 px-5 pb-5">
             <div>
-              <h3 className="text-xs font-semibold uppercase tracking-wide text-muted-foreground mb-2">
+              <h3 className="mb-2 text-xs font-semibold uppercase tracking-wide text-muted-foreground">
                 Suggested workflow
               </h3>
               <ol className="space-y-2">
                 {workflowSteps.map((step) => (
                   <li key={step.step} className="flex gap-2 text-sm">
-                    <span className="shrink-0 flex h-5 w-5 items-center justify-center rounded-full bg-primary/20 text-[10px] font-bold text-primary">
+                    <span className="flex h-5 w-5 shrink-0 items-center justify-center rounded-full bg-primary/20 text-[10px] font-bold text-primary">
                       {step.step}
                     </span>
                     <div className="min-w-0">
@@ -118,7 +128,7 @@ export function CharacterCreationTipsPanel() {
                           {" "}
                           <Link
                             to={step.link.to}
-                            className="text-primary hover:underline whitespace-nowrap"
+                            className="whitespace-nowrap text-primary hover:underline"
                           >
                             {step.link.label}
                           </Link>
@@ -132,18 +142,16 @@ export function CharacterCreationTipsPanel() {
 
             {character.level > 1 && useAmellwindHomebrew && (
               <div>
-                <h3 className="text-xs font-semibold uppercase tracking-wide text-muted-foreground mb-2">
+                <h3 className="mb-2 text-xs font-semibold uppercase tracking-wide text-muted-foreground">
                   Starting gear for level {character.level} ({levelBracket})
                 </h3>
                 <div className="grid gap-3 lg:grid-cols-2">
-                  <div className="rounded-md border border-border bg-card/80 p-3 space-y-2">
-                    <p className="text-xs font-medium text-foreground">
-                      Wealth
-                    </p>
+                  <div className="space-y-2 rounded-md border border-border bg-card/80 p-3">
+                    <p className="text-xs font-medium text-foreground">Wealth</p>
                     <p className="text-sm text-muted-foreground">
                       {amellwindRecommendations.wealth?.[1] ?? "—"}
                     </p>
-                    <p className="text-xs font-medium text-foreground pt-1">
+                    <p className="pt-1 text-xs font-medium text-foreground">
                       Weapons
                     </p>
                     <p className="text-sm text-muted-foreground">
@@ -153,14 +161,14 @@ export function CharacterCreationTipsPanel() {
                       Materials: {amellwindRecommendations.weapons?.[2] ?? "—"}
                     </p>
                   </div>
-                  <div className="rounded-md border border-border bg-card/80 p-3 space-y-2">
+                  <div className="space-y-2 rounded-md border border-border bg-card/80 p-3">
                     <p className="text-xs font-medium text-foreground">
                       Armor materials
                     </p>
                     <p className="text-sm text-muted-foreground">
                       {amellwindRecommendations.armor?.[1] ?? "—"}
                     </p>
-                    <p className="text-xs font-medium text-foreground pt-1">
+                    <p className="pt-1 text-xs font-medium text-foreground">
                       Monster materials
                     </p>
                     <p className="text-sm text-muted-foreground">
@@ -182,17 +190,18 @@ export function CharacterCreationTipsPanel() {
 
             {character.level > 1 && !useAmellwindHomebrew && (
               <div>
-                <h3 className="text-xs font-semibold uppercase tracking-wide text-muted-foreground mb-2">
-                  Starting equipment for level {character.level} ({dndLevelBracket})
+                <h3 className="mb-2 text-xs font-semibold uppercase tracking-wide text-muted-foreground">
+                  Starting equipment for level {character.level} (
+                  {dndLevelBracket})
                 </h3>
-                <div className="rounded-md border border-border bg-card/80 p-3 space-y-2">
+                <div className="space-y-2 rounded-md border border-border bg-card/80 p-3">
                   <p className="text-xs font-medium text-foreground">
                     Equipment and money
                   </p>
                   <p className="text-sm text-muted-foreground">
                     {dndRecommendations.equipment?.[1] ?? "—"}
                   </p>
-                  <p className="text-xs font-medium text-foreground pt-1">
+                  <p className="pt-1 text-xs font-medium text-foreground">
                     Magic items
                   </p>
                   <p className="text-sm text-muted-foreground">
@@ -207,7 +216,7 @@ export function CharacterCreationTipsPanel() {
                     />
                   </Suspense>
                 </div>
-                <p className="mt-2 text-xs text-muted-foreground italic">
+                <p className="mt-2 text-xs italic text-muted-foreground">
                   The DM decides whether your character starts with more than
                   standard level-1 equipment. These values are a guide only.
                 </p>
@@ -215,15 +224,15 @@ export function CharacterCreationTipsPanel() {
             )}
 
             {useAmellwindHomebrew && (
-              <p className="text-xs text-muted-foreground italic">
+              <p className="text-xs italic text-muted-foreground">
                 All options in Amellwind&apos;s Guide require DM approval.
                 Artificers gain extra material slots instead of extra attunements
                 at levels 10, 14, and 18.
               </p>
             )}
-          </div>
-        </div>
-      </div>
-    </div>
+          </DialogBody>
+        </DialogContent>
+      </Dialog>
+    </>
   );
 }

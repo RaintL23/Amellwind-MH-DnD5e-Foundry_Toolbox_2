@@ -1,4 +1,3 @@
-import { useState, useCallback } from "react";
 import {
   EquipmentSlotType,
   CharacterIdentitySlot,
@@ -12,6 +11,7 @@ import {
   BuilderMulticlassClassSlot,
   BuilderMulticlassSubclassSlot,
 } from "@/shared/types";
+import { useBuilderSlotSelectionContext, type BuilderSlotSelectionContextValue } from "../context/BuilderSlotSelectionContext";
 import { PACT_SPELL_SLOT } from "../utils/pact-magic.utils";
 import { isBonusSpellPoolSlot } from "../utils/cantrip-pools.utils";
 
@@ -59,21 +59,7 @@ export function toSpellLevelSlot(level: number): SpellLevelSlot {
   return `spell-level-${level}`;
 }
 
-export function useBuilderSlotSelection() {
-  const [selectedSlot, setSelectedSlot] = useState<BuilderSlotSelection>(null);
-
-  const selectSlot = useCallback((slot: BuilderSlotSelection) => {
-    setSelectedSlot(slot);
-  }, []);
-
-  const clearSelection = useCallback(() => {
-    setSelectedSlot(null);
-  }, []);
-
-  return {
-    selectedSlot,
-    selectSlot,
-    clearSelection,
-    setSelectedSlot,
-  };
+/** Reads shared slot selection from BuilderSlotSelectionProvider. */
+export function useBuilderSlotSelection(): BuilderSlotSelectionContextValue {
+  return useBuilderSlotSelectionContext();
 }

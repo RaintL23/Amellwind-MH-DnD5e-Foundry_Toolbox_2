@@ -7,6 +7,10 @@ import {
   createEmptyCompletenessInput,
   hasIssueId,
 } from "./completeness-input.fixture";
+import {
+  countCompletenessProgress,
+  groupCompletenessSteps,
+} from "./group-completeness-steps.utils";
 
 function minimalClass(overrides: Partial<Class> = {}): Class {
   return {
@@ -242,5 +246,63 @@ describe("evaluateBuildCompleteness", () => {
     );
 
     expect(hasIssueId(result.issues, "spells-cantrips-class")).toBe(false);
+  });
+});
+
+describe("groupCompletenessSteps", () => {
+  it("groups identity class issues under Class & Feats and species under Origin", () => {
+    const result = evaluateBuildCompleteness(
+      createEmptyCompletenessInput({
+        classSelection: { id: "fighter|xphb", name: "Fighter" },
+        classData: minimalClass(),
+      }),
+    );
+    const steps = groupCompletenessSteps(result);
+
+    const origin = steps.find((s) => s.id === "origin");
+    const classFeats = steps.find((s) => s.id === "class-feats");
+    expect(origin?.complete).toBe(false);
+    expect(origin?.issues.some((i) => i.id === "identity-species")).toBe(true);
+    expect(classFeats?.issues.some((i) => i.id === "identity-class")).toBe(
+      false,
+    );
+    // Class is already chosen — no identity-class issue; species/background pending in origin
+    expect(origin?.issues.some((i) => i.id === "identity-background")).toBe(
+      true,
+    );
+  });
+
+  it("omits spells step when not a caster and no spell issues", () => {
+    const result = evaluateBuildCompleteness(
+      createEmptyCompletenessInput({
+        classSelection: { id: "fighter|xphb", name: "Fighter" },
+        classData: minimalClass(),
+        species: { id: "human|xphb", name: "Human" },
+        background: { id: "soldier|xphb", name: "Soldier" },
+      }),
+    );
+    const steps = groupCompletenessSteps(result, { isSpellcaster: false });
+    expect(steps.some((s) => s.id === "spells")).toBe(false);
+  });
+
+  it("includes spells step for casters even with no spell issues yet", () => {
+    const result = evaluateBuildCompleteness(
+      createEmptyCompletenessInput({
+        classSelection: { id: "wizard|xphb", name: "Wizard" },
+        classData: minimalClass({ id: "wizard|xphb", name: "Wizard" }),
+        species: { id: "human|xphb", name: "Human" },
+        background: { id: "sage|xphb", name: "Sage" },
+        spellcasting: spellcastingStub({
+          cantripCount: 3,
+          classCantripsSelected: 3,
+          selectedCantripCount: 3,
+        }),
+      }),
+    );
+    const steps = groupCompletenessSteps(result, { isSpellcaster: true });
+    expect(steps.some((s) => s.id === "spells")).toBe(true);
+    const progress = countCompletenessProgress(steps);
+    expect(progress.total).toBeGreaterThan(0);
+    expect(progress.completed).toBeLessThanOrEqual(progress.total);
   });
 });

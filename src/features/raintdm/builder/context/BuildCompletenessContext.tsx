@@ -2,6 +2,7 @@ import {
   createContext,
   useCallback,
   useContext,
+  useDeferredValue,
   useEffect,
   useMemo,
   useState,
@@ -21,17 +22,57 @@ import type {
   BuildCompletenessResult,
   BuildCompletenessSection,
 } from "../utils/build-completeness.types";
+import {
+  countCompletenessProgress,
+  groupCompletenessSteps,
+  type CompletenessStep,
+} from "../utils/build-completeness/group-completeness-steps.utils";
 
 interface BuildCompletenessContextValue {
   highlightActive: boolean;
   issues: BuildCompletenessIssue[];
+  /** Live completeness result (deferred) for the progress checklist. */
+  liveResult: BuildCompletenessResult;
+  liveSteps: CompletenessStep[];
+  liveProgress: { completed: number; total: number; percent: number };
   evaluate: () => BuildCompletenessResult;
   activateHighlight: () => void;
   clearHighlight: () => void;
+  /** Scroll to a builder section and optionally activate highlight. */
+  goToSection: (section: BuildCompletenessSection) => void;
 }
 
 const BuildCompletenessContext =
   createContext<BuildCompletenessContextValue | null>(null);
+
+const SECTION_TO_ANCHOR: Record<BuildCompletenessSection, string> = {
+  identity: "identity",
+  feats: "identity",
+  "optional-features": "identity",
+  "ability-scores": "ability-scores",
+  skills: "skills",
+  tools: "tools",
+  languages: "languages",
+  defenses: "defenses",
+  "starting-equipment": "inventory",
+  spells: "spells",
+};
+
+export function scrollToBuilderSection(section: BuildCompletenessSection) {
+  const anchorId = SECTION_TO_ANCHOR[section] ?? section;
+  const el = document.querySelector(
+    `[data-builder-section="${anchorId}"]`,
+  );
+  if (el instanceof HTMLElement) {
+    const prefersReduced = window.matchMedia(
+      "(prefers-reduced-motion: reduce)",
+    ).matches;
+    el.scrollIntoView({
+      behavior: prefersReduced ? "auto" : "smooth",
+      block: "start",
+    });
+  }
+}
 
 export function BuildCompletenessProvider({
   children,
@@ -102,14 +143,32 @@ export function BuildCompletenessProvider({
     [builder, classData, subclassData, speciesData, dndBackground, inventory.items, spellcasting],
   );
 
+  const deferredInput = useDeferredValue(input);
+
+  const liveResult = useMemo(
+    () => evaluateBuildCompleteness(deferredInput),
+    [deferredInput],
+  );
+
+  const liveSteps = useMemo(
+    () =>
+      groupCompletenessSteps(liveResult, {
+        isSpellcaster: spellcasting?.isSpellcaster ?? false,
+      }),
+    [liveResult, spellcasting?.isSpellcaster],
+  );
+
+  const liveProgress = useMemo(
+    () => countCompletenessProgress(liveSteps),
+    [liveSteps],
+  );
+
   const computeResult = useCallback(
     () => evaluateBuildCompleteness(input),
     [input],
   );
 
-  // Only run the (non-trivial) completeness evaluation while the highlight is
-  // active. Otherwise defer it to on-demand `evaluate()` calls, so routine
-  // builder edits don't pay for a full evaluation on every render.
+  // Highlight path: evaluate while highlight is active so banners stay live.
   const currentResult = useMemo(
     () => (highlightActive ? computeResult() : null),
     [highlightActive, computeResult],
@@ -130,6 +189,17 @@ export function BuildCompletenessProvider({
     setHighlightActive(false);
   }, []);
 
+  const goToSection = useCallback(
+    (section: BuildCompletenessSection) => {
+      setHighlightActive(true);
+      // Defer scroll so accordion open / highlight paint can run first.
+      requestAnimationFrame(() => {
+        scrollToBuilderSection(section);
+      });
+    },
+    [],
+  );
+
   useEffect(() => {
     if (highlightActive && currentResult && currentResult.issues.length === 0) {
       setHighlightActive(false);
@@ -140,11 +210,25 @@ export function BuildCompletenessProvider({
     () => ({
       highlightActive,
       issues,
+      liveResult,
+      liveSteps,
+      liveProgress,
       evaluate,
       activateHighlight,
       clearHighlight,
+      goToSection,
     }),
-    [highlightActive, issues, evaluate, activateHighlight, clearHighlight],
+    [
+      highlightActive,
+      issues,
+      liveResult,
+      liveSteps,
+      liveProgress,
+      evaluate,
+      activateHighlight,
+      clearHighlight,
+      goToSection,
+    ],
   );
 
   return (
@@ -168,8 +252,10 @@ export function useSectionCompletenessHighlight(
   section: BuildCompletenessSection,
   highlightKey?: string,
 ) {
-  const { highlightActive, issues } = useBuildCompleteness();
-  const sectionIssues = issues.filter((issue) => issue.section === section);
+  const { highlightActive, issues, liveResult } = useBuildCompleteness();
+  // Prefer live issues when highlight is off so accordions can still show pending badges.
+  const sourceIssues = highlightActive ? issues : liveResult.issues;
+  const sectionIssues = sourceIssues.filter((issue) => issue.section === section);
   const matchedIssues = highlightKey
     ? sectionIssues.filter(
         (issue) => !issue.highlightKey || issue.highlightKey === highlightKey,
@@ -178,6 +264,7 @@ export function useSectionCompletenessHighlight(
 
   return {
     highlighted: highlightActive && matchedIssues.length > 0,
+    hasPending: matchedIssues.length > 0,
     issues: matchedIssues,
   };
 }

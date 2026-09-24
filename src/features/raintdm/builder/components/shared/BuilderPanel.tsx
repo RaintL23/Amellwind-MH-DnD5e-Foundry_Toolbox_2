@@ -7,6 +7,8 @@ interface BuilderPanelProps {
   children: ReactNode;
   className?: string;
   highlighted?: boolean;
+  /** Anchor id for progress deep-links (`data-builder-section`). */
+  sectionId?: string;
 }
 
 export function BuilderPanel({
@@ -15,11 +17,13 @@ export function BuilderPanel({
   children,
   className,
   highlighted = false,
+  sectionId,
 }: Readonly<BuilderPanelProps>) {
   return (
     <div
+      data-builder-section={sectionId}
       className={cn(
-        "rounded-lg border border-border/60 bg-card p-3.5",
+        "scroll-mt-14 rounded-lg border border-border/60 bg-card p-3.5",
         highlighted &&
           "border-amber-500/60 bg-amber-500/5 ring-1 ring-amber-500/30",
         className,

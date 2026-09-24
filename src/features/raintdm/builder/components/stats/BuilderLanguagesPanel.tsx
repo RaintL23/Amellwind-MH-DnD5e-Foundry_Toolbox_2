@@ -1,4 +1,5 @@
 import { Languages } from "lucide-react";
+import { useEffect, useState } from "react";
 import { cn } from "@/shared/utils/cn";
 import { useSectionCompletenessHighlight } from "../../context/BuildCompletenessContext";
 import { CompletenessHighlightBanner } from "../shared/CompletenessHighlightBanner";
@@ -100,8 +101,15 @@ export function BuilderLanguagesPanel() {
   const bgGrants = pending.filter((g) => g.source.type === "background");
   const classGrants = pending.filter((g) => g.source.type === "class");
   const hasPickers = pending.length > 0;
-  const { highlighted, issues: languageIssues } =
+  const { highlighted, hasPending, issues: languageIssues } =
     useSectionCompletenessHighlight("languages");
+  const [accordionValue, setAccordionValue] = useState<string | undefined>();
+
+  useEffect(() => {
+    if (highlighted || hasPending) {
+      setAccordionValue("languages");
+    }
+  }, [highlighted, hasPending]);
 
   const speciesFixed = fixedLanguagesFromGrants(allLanguageGrants, "species");
   const backgroundFixed = fixedLanguagesFromGrants(allLanguageGrants, "background");
@@ -120,21 +128,34 @@ export function BuilderLanguagesPanel() {
 
   return (
     <div
+      data-builder-section="languages"
       className={cn(
-        "rounded-lg border border-border/60 bg-card",
+        "scroll-mt-14 rounded-lg border border-border/60 bg-card",
         highlighted &&
           "border-amber-500/60 bg-amber-500/5 ring-1 ring-amber-500/30",
       )}
     >
-      <Accordion type="single" collapsible>
+      <Accordion
+        type="single"
+        collapsible
+        value={accordionValue}
+        onValueChange={setAccordionValue}
+      >
         <AccordionItem value="languages" className="border-0">
           <AccordionTrigger className="gap-1.5 px-3.5 py-3 text-[11px] font-medium uppercase tracking-wider text-muted-foreground hover:no-underline">
             <span className="flex items-center gap-1.5">
               <Languages className="h-3.5 w-3.5" aria-hidden />
               Languages
-              {resolvedLanguageItems.length > 0 && (
-                <span className="rounded-full bg-primary/20 px-1.5 py-0.5 text-[10px] font-semibold normal-case tracking-normal text-primary">
-                  {resolvedLanguageItems.length}
+              {(resolvedLanguageItems.length > 0 || hasPending) && (
+                <span
+                  className={cn(
+                    "rounded-full px-1.5 py-0.5 text-[10px] font-semibold normal-case tracking-normal",
+                    hasPending
+                      ? "bg-amber-500/20 text-amber-700 dark:text-amber-300"
+                      : "bg-primary/20 text-primary",
+                  )}
+                >
+                  {hasPending ? "picks left" : resolvedLanguageItems.length}
                 </span>
               )}
             </span>

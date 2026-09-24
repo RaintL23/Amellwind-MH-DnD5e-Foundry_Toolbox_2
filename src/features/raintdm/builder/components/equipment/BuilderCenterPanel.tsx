@@ -5,7 +5,7 @@
  * render grids always, then one contextual panel (weapon/armor/runes/library/etc.).
  * Slot click → selectSlot; unequip → handleUnequipSlot then re-select so library reopens.
  */
-import { Sparkles, Sword, Users } from "lucide-react";
+import { Sparkles, Sword, Users, X } from "lucide-react";
 import { useCharacterBuilder } from "../../context/CharacterBuilderContext";
 import {
   useBuilderSlotSelection,
@@ -33,10 +33,8 @@ import {
   resolveOptionalFeatureProgressions,
 } from "../../utils/class-optional-features.utils";
 import { resolveEffectiveOriginFeatChooseTarget } from "../../utils/origin-feat.constants";
-import { useEffect, useMemo } from "react";
+import { useEffect, useMemo, useRef } from "react";
 import { RuneAssignmentPanel } from "./RuneAssignmentPanel";
-import { WeaponDetailPanel } from "./WeaponDetailPanel";
-import { ArmorDetailPanel } from "./ArmorDetailPanel";
 import { IdentityGridPanel } from "./IdentityGridPanel";
 import { EquipmentGridPanel } from "./EquipmentGridPanel";
 import { SpellcastingGridPanel } from "./SpellcastingGridPanel";
@@ -47,6 +45,7 @@ import { BuilderLibraryPanel } from "./library/BuilderLibraryPanel";
 import { BackstoryNotesPanel } from "./BackstoryNotesPanel";
 import { FactionLibraryPanel } from "./library/FactionLibraryPanel";
 import { BuilderPanel } from "../shared/BuilderPanel";
+import { Button } from "@/components/ui/button";
 import { isOffHandSlotOccupied } from "@/features/amellwind/weapons/utils/weapon-hands.utils";
 import { useSpellcastingContext } from "../../context/SpellcastingContext";
 import { useSpellCatalog } from "../../hooks/useSpellCatalog";
@@ -62,6 +61,7 @@ import {
 import { isSpeciesLineageSpell } from "../../utils/species-spell-grants.utils";
 import { useEffectiveAbilityScores } from "../../hooks/useEffectiveAbilityScores";
 import { getAbilityModifier } from "@/shared/utils/cr.utils";
+import { formatBuilderSlotLabel } from "../../utils/builder-slot-label.utils";
 
 export function BuilderCenterPanel() {
   // ─── Builder + slot selection state ───
@@ -90,9 +90,6 @@ export function BuilderCenterPanel() {
     integratedShieldAcBonus,
     equippedShield,
     standaloneShieldAcBonus,
-    setWeaponRarity,
-    setArmorRarity,
-    setWeaponMode,
     setSpecies,
     setBackground,
     setClass,
@@ -126,6 +123,8 @@ export function BuilderCenterPanel() {
 
   const { selectedSlot, selectSlot, clearSelection } =
     useBuilderSlotSelection();
+  const contextualPanelRef = useRef<HTMLDivElement>(null);
+  const contextualHeadingRef = useRef<HTMLHeadingElement>(null);
   const { classData } = useSelectedClass();
   const subclassData = useSelectedSubclass();
   const {
@@ -196,29 +195,6 @@ export function BuilderCenterPanel() {
       setSubclass(null);
     }
   }, [classData, primaryClassLevel, subclass, setSubclass]);
-
-  // ─── Weapon / off-hand context for detail + rune panels ───
-  const selectedWeapon =
-    selectedSlot === "mainHand"
-      ? mainHand
-      : selectedSlot === "offHand"
-        ? offHand
-        : null;
-
-  const offHandOccupied = isOffHandSlotOccupied(
-    offHand,
-    equippedShield,
-    hasIntegratedShield,
-  );
-
-  const weaponGripContext =
-    selectedSlot === "mainHand" || selectedSlot === "offHand"
-      ? {
-          weaponSlot: selectedSlot,
-          offHandOccupied,
-          mainHandOccupied: !!mainHand,
-        }
-      : null;
 
   // Runes only for Amellwind gear slots (not identity / spells / shields).
   const showRunePanel =
@@ -424,19 +400,46 @@ export function BuilderCenterPanel() {
       selectedSlot === "offHand" ||
       selectedSlot === "armor");
 
+  const showContextualPanel =
+    showBackstoryPanel ||
+    showFactionPanel ||
+    showSpellLibrary ||
+    showOptionalFeatureLibrary ||
+    showLibrary ||
+    showRunePanel;
+
+  // Auto-scroll + focus the contextual panel when the selected slot changes.
+  useEffect(() => {
+    if (!selectedSlot || !showContextualPanel) return;
+    const prefersReduced = window.matchMedia(
+      "(prefers-reduced-motion: reduce)",
+    ).matches;
+    const panel = contextualPanelRef.current;
+    if (panel) {
+      panel.scrollIntoView({
+        behavior: prefersReduced ? "auto" : "smooth",
+        block: "start",
+      });
+    }
+    requestAnimationFrame(() => {
+      contextualHeadingRef.current?.focus();
+    });
+  }, [selectedSlot, showContextualPanel]);
+
   return (
     <div className="flex min-w-0 flex-col gap-2.5">
       {/* ─── Always-visible grids ─── */}
       <BuilderPanel
+        sectionId="identity"
         title={
           <>
             <Users className="h-3.5 w-3.5" aria-hidden />
-            Character Stuff
+            Identity &amp; Class
           </>
         }
         action={
           <span className="text-[11px] text-muted-foreground">
-            click to change
+            Select a slot to edit
           </span>
         }
       >
@@ -470,6 +473,7 @@ export function BuilderCenterPanel() {
       </BuilderPanel>
 
       <BuilderPanel
+        sectionId="equipment"
         title={
           <>
             <Sword className="h-3.5 w-3.5" aria-hidden />
@@ -478,7 +482,7 @@ export function BuilderCenterPanel() {
         }
         action={
           <span className="text-[11px] text-muted-foreground">
-            click to change
+            Select a slot to edit
           </span>
         }
       >
@@ -504,6 +508,7 @@ export function BuilderCenterPanel() {
 
       {showSpellcastingSection && (
         <BuilderPanel
+          sectionId="spells"
           title={
             <>
               <Sparkles className="h-3.5 w-3.5" aria-hidden />
@@ -528,6 +533,10 @@ export function BuilderCenterPanel() {
                       : "Known"}{" "}
                   {spellcastingInfo.selectedSpellCount}/
                   {spellcastingInfo.maxPreparedOrKnown}
+                  {spellcastingInfo.selectedSpellCount >=
+                  spellcastingInfo.maxPreparedOrKnown
+                    ? " (full)"
+                    : " (available)"}
                   {spellcastingInfo.usesUnifiedPactPool &&
                     spellcastingInfo.pactSlotCount > 0 && (
                       <span className="text-muted-foreground">
@@ -535,7 +544,8 @@ export function BuilderCenterPanel() {
                         · {spellcastingInfo.pactSlotCount} slot
                         {spellcastingInfo.pactSlotCount !== 1
                           ? "s"
-                          : ""} (niv. {spellcastingInfo.pactMaxSpellLevel})
+                          : ""}{" "}
+                        (lvl {spellcastingInfo.pactMaxSpellLevel})
                       </span>
                     )}
                 </span>
@@ -548,7 +558,7 @@ export function BuilderCenterPanel() {
               </span>
             ) : (
               <span className="text-[11px] text-muted-foreground">
-                click to select
+                Select a slot to edit
               </span>
             )
           }
@@ -572,73 +582,79 @@ export function BuilderCenterPanel() {
       )}
 
       {/* ─── Contextual panels (mutually driven by selectedSlot) ─── */}
-      {selectedWeapon &&
-        useAmellwindHomebrew &&
-        (selectedSlot === "mainHand" || selectedSlot === "offHand") && (
-          <WeaponDetailPanel
-            equipped={selectedWeapon}
-            gripContext={weaponGripContext!}
-            showHomebrewDetails={useAmellwindHomebrew}
-            onRarityChange={(r) => setWeaponRarity(selectedSlot, r)}
-            onModeChange={(modeIndex) =>
-              setWeaponMode(selectedSlot, modeIndex)
-            }
-          />
-        )}
+      {showContextualPanel && selectedSlot && (
+        <div
+          ref={contextualPanelRef}
+          className="scroll-mt-14 space-y-2.5 rounded-lg border border-border/60 bg-card/80 p-3"
+        >
+          <div className="flex items-center justify-between gap-2">
+            <h2
+              ref={contextualHeadingRef}
+              tabIndex={-1}
+              className="text-[11px] font-semibold uppercase tracking-wider text-muted-foreground outline-none"
+            >
+              Editing: {formatBuilderSlotLabel(selectedSlot)}
+            </h2>
+            <Button
+              type="button"
+              variant="ghost"
+              size="sm"
+              className="h-7 gap-1 px-2 text-[11px]"
+              onClick={clearSelection}
+              aria-label="Close editor"
+            >
+              <X className="h-3.5 w-3.5" aria-hidden />
+              Close
+            </Button>
+          </div>
 
-      {selectedSlot === "armor" && armor && (
-        <ArmorDetailPanel
-          armor={armor}
-          showHomebrewDetails={useAmellwindHomebrew}
-          onRarityChange={setArmorRarity}
-        />
+          {showRunePanel && (
+            <RuneAssignmentPanel slot={selectedSlot} onClose={clearSelection} />
+          )}
+
+          {showBackstoryPanel && <BackstoryNotesPanel />}
+
+          {useAmellwindHomebrew && showFactionPanel && <FactionLibraryPanel />}
+
+          {showSpellLibrary && (
+            <SpellLibraryPanel
+              selectedSlot={selectedSlot}
+              className={
+                classSelection?.name ??
+                speciesSpellGrants.groupLabel ??
+                "Character"
+              }
+              speciesName={species?.name}
+              characterLevel={character.level}
+              spellcastingInfo={spellcastingInfo}
+              spellSelections={spellSelections}
+              allSpells={allSpells}
+              spellsLoading={spellsLoading}
+              spellLevelByName={spellLevelByName}
+              allowSpellPicks={allowSpellPicks}
+              onAddSpell={addSpell}
+              onRemoveSpell={removeSpell}
+            />
+          )}
+
+          {showOptionalFeatureLibrary &&
+            isOptionalFeatureSlot(selectedSlot) &&
+            classData && (
+              <OptionalFeatureLibraryPanel
+                selectedSlot={selectedSlot}
+                progressions={optionalProgressions}
+                classData={classData}
+                subclass={subclassData}
+                level={character.level}
+                selections={optionalFeatureSelections}
+                onSetSelections={setOptionalFeaturesForProgression}
+                weaponProficiencies={resolvedWeaponItems}
+              />
+            )}
+
+          {showLibrary && <BuilderLibraryPanel selectedSlot={selectedSlot} />}
+        </div>
       )}
-
-      {showRunePanel && selectedSlot && (
-        <RuneAssignmentPanel slot={selectedSlot} onClose={clearSelection} />
-      )}
-
-      {showBackstoryPanel && <BackstoryNotesPanel />}
-
-      {useAmellwindHomebrew && showFactionPanel && <FactionLibraryPanel />}
-
-      {showSpellLibrary && selectedSlot && (
-        <SpellLibraryPanel
-          selectedSlot={selectedSlot}
-          className={
-            classSelection?.name ??
-            speciesSpellGrants.groupLabel ??
-            "Character"
-          }
-          speciesName={species?.name}
-          characterLevel={character.level}
-          spellcastingInfo={spellcastingInfo}
-          spellSelections={spellSelections}
-          allSpells={allSpells}
-          spellsLoading={spellsLoading}
-          spellLevelByName={spellLevelByName}
-          allowSpellPicks={allowSpellPicks}
-          onAddSpell={addSpell}
-          onRemoveSpell={removeSpell}
-        />
-      )}
-
-      {showOptionalFeatureLibrary &&
-        isOptionalFeatureSlot(selectedSlot) &&
-        classData && (
-          <OptionalFeatureLibraryPanel
-            selectedSlot={selectedSlot}
-            progressions={optionalProgressions}
-            classData={classData}
-            subclass={subclassData}
-            level={character.level}
-            selections={optionalFeatureSelections}
-            onSetSelections={setOptionalFeaturesForProgression}
-            weaponProficiencies={resolvedWeaponItems}
-          />
-        )}
-
-      {showLibrary && <BuilderLibraryPanel selectedSlot={selectedSlot} />}
     </div>
   );
 }

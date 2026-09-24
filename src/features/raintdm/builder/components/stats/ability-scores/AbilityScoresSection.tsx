@@ -1,9 +1,12 @@
+import { useState } from "react";
 import { OriginBonusesPanel } from "./OriginBonusesPanel";
 import { GenerationMethodSelector } from "./GenerationMethodSelector";
 import { MethodHintPanels } from "./MethodHintPanels";
 import { AbilityScoreGrid } from "./AbilityScoreGrid";
 import { useAbilityScoreBreakdowns } from "./useAbilityScoreBreakdowns";
 import { useAbilityGenerationState } from "./useAbilityGenerationState";
+import { ConfirmActionDialog } from "../../shared/ConfirmActionDialog";
+import type { GenerationMethod } from "./constants";
 
 export function AbilityScoresSection({
   compact = false,
@@ -31,6 +34,25 @@ export function AbilityScoresSection({
   } = useAbilityGenerationState();
 
   const { getBreakdown } = useAbilityScoreBreakdowns();
+  const [pendingMethod, setPendingMethod] = useState<GenerationMethod | null>(
+    null,
+  );
+
+  function hasAssignedScores(): boolean {
+    if (method === "standard" || method === "dice") {
+      return Object.keys(assignments).length > 0 || pool.length > 0;
+    }
+    return Object.values(character.abilities).some((v) => v !== 8 && v !== 10);
+  }
+
+  function onMethodChange(next: GenerationMethod) {
+    if (next === method) return;
+    if (hasAssignedScores()) {
+      setPendingMethod(next);
+      return;
+    }
+    handleMethodChange(next);
+  }
 
   return (
     <div className="space-y-2">
@@ -38,7 +60,7 @@ export function AbilityScoresSection({
       <GenerationMethodSelector
         compact={compact}
         method={method}
-        onMethodChange={handleMethodChange}
+        onMethodChange={onMethodChange}
       />
       <MethodHintPanels
         method={method}
@@ -74,6 +96,19 @@ export function AbilityScoresSection({
         onRollDice={rollDice}
         onHeroicRollsChange={setHeroicRolls}
         placement="after"
+      />
+
+      <ConfirmActionDialog
+        open={pendingMethod !== null}
+        onOpenChange={(open) => {
+          if (!open) setPendingMethod(null);
+        }}
+        title="Change ability score method?"
+        description="Switching methods resets your current ability score assignments."
+        confirmLabel="Change method"
+        onConfirm={() => {
+          if (pendingMethod) handleMethodChange(pendingMethod);
+        }}
       />
     </div>
   );
