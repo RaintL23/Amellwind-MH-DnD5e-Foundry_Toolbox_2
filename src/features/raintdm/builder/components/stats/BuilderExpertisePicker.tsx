@@ -52,6 +52,18 @@ export function BuilderExpertisePicker({
           >
             <p className="mb-1.5 text-[10px] font-medium uppercase tracking-wide text-violet-600 dark:text-violet-400">
               {grant.source.name} — Expertise (choose {grant.count})
+              {Math.max(0, grant.count - chosen.length) > 0 ? (
+                <span className="normal-case text-muted-foreground/80">
+                  {" "}
+                  ({Math.max(0, grant.count - chosen.length)} of {grant.count}{" "}
+                  remaining)
+                </span>
+              ) : (
+                <span className="normal-case text-muted-foreground/80">
+                  {" "}
+                  (done)
+                </span>
+              )}
             </p>
             {eligibleSkills.length === 0 ? (
               <p className="text-[10px] text-muted-foreground">

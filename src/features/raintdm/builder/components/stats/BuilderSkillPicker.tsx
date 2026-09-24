@@ -95,11 +95,14 @@ export function BuilderSkillPicker({
             {remainingPicks === 0 ? " (done)" : ""})
           </span>
         )}
-        {coveredInList.length === 0 && remainingPicks > 0 && remainingPicks < totalCount && (
+        {coveredInList.length === 0 && remainingPicks > 0 && (
           <span className="normal-case text-muted-foreground/80">
             {" "}
-            (pick {remainingPicks} more)
+            ({remainingPicks} of {totalCount} remaining)
           </span>
+        )}
+        {coveredInList.length === 0 && remainingPicks === 0 && (
+          <span className="normal-case text-muted-foreground/80"> (done)</span>
         )}
       </p>
       <div className="flex flex-wrap gap-1">

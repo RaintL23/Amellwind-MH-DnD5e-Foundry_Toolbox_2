@@ -121,7 +121,7 @@ export function MulticlassPanel() {
 
       <p className="text-[9px] leading-relaxed text-muted-foreground">
         Requires 13+ in the primary ability score of each class. Levels are
-        added to the total character level (max. 20).
+        added to the total character level (max 20).
       </p>
     </div>
   );

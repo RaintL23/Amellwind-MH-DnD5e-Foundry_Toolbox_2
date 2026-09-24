@@ -27,14 +27,14 @@ export function applyFeatAsiBonuses(
     if (!feat) return;
 
     const featLevel = slotLevels[index];
-    const levelLabel = featLevel ? ` (nivel ${featLevel})` : "";
+    const levelLabel = featLevel ? ` (level ${featLevel})` : "";
 
     if (isAsiFeatSelection(feat)) {
       const choices = feat.asiChoices;
       if (!choices) return;
 
       const label = featLevel
-        ? `ASI (nivel ${featLevel})`
+        ? `ASI (level ${featLevel})`
         : `ASI (${feat.name})`;
 
       if (choices.mode === "plus2" && choices.plus2) {

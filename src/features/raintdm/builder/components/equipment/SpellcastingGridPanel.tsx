@@ -49,15 +49,15 @@ function collectSpeciesSpellLevels(
 
 const SPELL_LEVEL_LABELS: Record<number, string> = {
   0: "Cantrips",
-  1: "Nivel 1",
-  2: "Nivel 2",
-  3: "Nivel 3",
-  4: "Nivel 4",
-  5: "Nivel 5",
-  6: "Nivel 6",
-  7: "Nivel 7",
-  8: "Nivel 8",
-  9: "Nivel 9",
+  1: "Level 1",
+  2: "Level 2",
+  3: "Level 3",
+  4: "Level 4",
+  5: "Level 5",
+  6: "Level 6",
+  7: "Level 7",
+  8: "Level 8",
+  9: "Level 9",
 };
 
 const SPELL_LEVEL_COLORS: Record<number, string> = {
@@ -246,7 +246,7 @@ function getPactPoolEquipped(
     spellcastingInfo.pactMaxSpellLevel > 0
   ) {
     summaryParts.push(
-      `${spellcastingInfo.pactSlotCount} slot${spellcastingInfo.pactSlotCount !== 1 ? "s" : ""} (niv. ${spellcastingInfo.pactMaxSpellLevel})`,
+        `${spellcastingInfo.pactSlotCount} slot${spellcastingInfo.pactSlotCount !== 1 ? "s" : ""} (lvl ${spellcastingInfo.pactMaxSpellLevel})`,
     );
   }
 

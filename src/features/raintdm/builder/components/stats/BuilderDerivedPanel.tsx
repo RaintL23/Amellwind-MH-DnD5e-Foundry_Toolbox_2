@@ -7,31 +7,49 @@ import { useCharacterArmorClass } from "../../hooks/useCharacterArmorClass";
 import { useCharacterHitPoints } from "../../hooks/useCharacterHitPoints";
 import { useCharacterSpeed } from "../../hooks/useCharacterSpeed";
 import { useEffectiveAbilityScores } from "../../hooks/useEffectiveAbilityScores";
+import { useSpellcastingContext } from "../../context/SpellcastingContext";
+import { computeSpellcastingAttackStats } from "../../utils/spellcasting-stats.utils";
 import { BuilderPanel } from "../shared/BuilderPanel";
 import { HintTooltip } from "@/shared/components/HintTooltip";
 
 export function BuilderDerivedPanel() {
-  const { character, class: classSelection, useAmellwindHomebrew } =
-    useCharacterBuilder();
+  const {
+    character,
+    class: classSelection,
+    useAmellwindHomebrew,
+  } = useCharacterBuilder();
   const hitPointStats = useCharacterHitPoints();
   const armorClass = useCharacterArmorClass();
   const speedStats = useCharacterSpeed();
   const effectiveScores = useEffectiveAbilityScores();
   const attunement = getAttunementInfo(classSelection?.name, character.level);
+  const { spellcasting } = useSpellcastingContext();
+  const proficiencyBonus = character.getProficiencyBonus();
+
+  const perceptionMod =
+    getAbilityModifier(effectiveScores.wis) +
+    character.getSkillProficiencyLevel("prc") * proficiencyBonus;
+  const passivePerception = 10 + perceptionMod;
+
+  const spellAttackStats = spellcasting?.isSpellcaster
+    ? computeSpellcastingAttackStats(
+        spellcasting.spellcastingAbility,
+        proficiencyBonus,
+        (key) => getAbilityModifier(effectiveScores[key]),
+      )
+    : null;
 
   return (
     <BuilderPanel
+      sectionId="combat-stats"
       title={
         <>
-          <Shield className="h-3.5 w-3.5" aria-hidden /> Other Stats
+          <Shield className="h-3.5 w-3.5" aria-hidden /> General Stats
         </>
       }
     >
       <div className="space-y-0">
-        <DerivedRow
-          label="Proficiency"
-          value={`+${character.getProficiencyBonus()}`}
-        />
+        <DerivedRow label="Proficiency" value={`+${proficiencyBonus}`} />
         <DerivedRow
           label="Hit Points"
           value={hitPointStats ? String(hitPointStats.max) : "—"}
@@ -53,6 +71,24 @@ export function BuilderDerivedPanel() {
           value={formatModifier(getAbilityModifier(effectiveScores.dex))}
         />
         <DerivedRow
+          label="Passive Perception"
+          value={String(passivePerception)}
+        />
+        {spellAttackStats &&
+          spellAttackStats.spellAttackBonus !== undefined &&
+          spellAttackStats.spellSaveDc !== undefined && (
+            <>
+              <DerivedRow
+                label="Spell Attack"
+                value={spellAttackStats.spellAttackBonus}
+              />
+              <DerivedRow
+                label="Spell Save DC"
+                value={spellAttackStats.spellSaveDc}
+              />
+            </>
+          )}
+        <DerivedRow
           label="Attunement"
           value={`${attunement.attunementSlots} slots`}
           valueTooltip={attunement.tooltip}
@@ -60,12 +96,12 @@ export function BuilderDerivedPanel() {
         {useAmellwindHomebrew &&
           attunement.isArtificer &&
           attunement.artificerBonusMaterialSlots > 0 && (
-          <DerivedRow
-            label="Bonus Material Slots"
-            value={`+${attunement.artificerBonusMaterialSlots} (weapon & armor)`}
-            valueTooltip={attunement.tooltip}
-          />
-        )}
+            <DerivedRow
+              label="Bonus Material Slots"
+              value={`+${attunement.artificerBonusMaterialSlots} (weapon & armor)`}
+              valueTooltip={attunement.tooltip}
+            />
+          )}
       </div>
     </BuilderPanel>
   );

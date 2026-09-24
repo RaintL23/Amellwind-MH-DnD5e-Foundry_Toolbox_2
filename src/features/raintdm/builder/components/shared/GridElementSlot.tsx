@@ -1,6 +1,12 @@
 import { ReactNode } from "react";
 import { Lock, Plus, X } from "lucide-react";
 import { cn } from "@/shared/utils/cn";
+import {
+  Tooltip,
+  TooltipContent,
+  TooltipProvider,
+  TooltipTrigger,
+} from "@/components/ui/tooltip";
 
 type SlotAccent = "default" | "weapon" | "armor";
 
@@ -48,7 +54,7 @@ export function GridElementSlot({
         <Lock className="h-4 w-4 text-muted-foreground" />
         <span className="text-[11px] text-muted-foreground">{label}</span>
         {disabledHint && (
-          <span className="text-[9px] leading-tight text-muted-foreground/70">
+          <span className="text-[11px] leading-tight text-muted-foreground/70">
             {disabledHint}
           </span>
         )}
@@ -61,7 +67,7 @@ export function GridElementSlot({
       <button
         type="button"
         onClick={onClickEquip}
-        title={emptyTitle ?? `Equipar ${label}`}
+        title={emptyTitle ?? `Equip ${label}`}
         className={cn(
           "flex min-h-[72px] w-full flex-col items-center justify-center gap-1 rounded-md border border-dashed p-2 text-[11px] text-muted-foreground transition-all hover:text-foreground",
           highlighted
@@ -77,45 +83,50 @@ export function GridElementSlot({
   }
 
   return (
-    <div className="relative w-full">
-      <button
-        type="button"
-        onClick={onClickDetails}
-        onDoubleClick={onClickEquip}
-        title={`${equipped.name} — click for details, double-click to change`}
-        className={cn(
-          "flex min-h-[72px] w-full flex-col items-center justify-center gap-0.5 rounded-md border border-solid p-2 text-center transition-all",
-          highlighted
-            ? "border-amber-500/70 bg-amber-500/10 ring-1 ring-amber-500/40 hover:border-amber-500"
-            : "border-border/70 bg-card hover:border-primary/40",
-          isSelected && "border-primary bg-primary/10 ring-1 ring-primary/30",
-          ACCENT_CLASS[accent],
-        )}
-      >
-        {icon}
-        <span className="w-full truncate text-[11px] font-medium text-foreground">
-          {equipped.name}
-        </span>
-        {equipped.detail && (
-          <span className="text-[10px] text-muted-foreground">
-            {equipped.detail}
-          </span>
-        )}
-      </button>
-      {onUnequip && (
+    <TooltipProvider delayDuration={300}>
+      <div className="relative w-full">
         <button
           type="button"
-          onClick={(e) => {
-            e.stopPropagation();
-            onUnequip();
-          }}
-          title={`Remove ${label}`}
-          aria-label={`Remove ${label}`}
-          className="absolute -right-1 -top-1 flex h-4 w-4 items-center justify-center rounded-full bg-destructive text-destructive-foreground shadow-sm transition-opacity hover:opacity-90"
+          onClick={onClickDetails}
+          title={`${equipped.name} — click to view or change`}
+          className={cn(
+            "flex min-h-[72px] w-full flex-col items-center justify-center gap-0.5 rounded-md border border-solid p-2 text-center transition-all",
+            highlighted
+              ? "border-amber-500/70 bg-amber-500/10 ring-1 ring-amber-500/40 hover:border-amber-500"
+              : "border-border/70 bg-card hover:border-primary/40",
+            isSelected && "border-primary bg-primary/10 ring-1 ring-primary/30",
+            ACCENT_CLASS[accent],
+          )}
         >
-          <X className="h-2.5 w-2.5" strokeWidth={3} />
+          {icon}
+          <span className="w-full truncate text-[11px] font-medium text-foreground">
+            {equipped.name}
+          </span>
+          {equipped.detail && (
+            <span className="text-[11px] text-muted-foreground">
+              {equipped.detail}
+            </span>
+          )}
         </button>
-      )}
-    </div>
+        {onUnequip && (
+          <Tooltip>
+            <TooltipTrigger asChild>
+              <button
+                type="button"
+                onClick={(e) => {
+                  e.stopPropagation();
+                  onUnequip();
+                }}
+                aria-label={`Remove ${label}`}
+                className="absolute -right-1.5 -top-1.5 flex h-6 w-6 items-center justify-center rounded-full bg-destructive text-destructive-foreground shadow-sm transition-opacity hover:opacity-90"
+              >
+                <X className="h-3 w-3" strokeWidth={3} />
+              </button>
+            </TooltipTrigger>
+            <TooltipContent side="top">Remove {label}</TooltipContent>
+          </Tooltip>
+        )}
+      </div>
+    </TooltipProvider>
   );
 }

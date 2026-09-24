@@ -77,7 +77,7 @@ export function MethodHintPanels({
               className="h-6 px-2 text-[10px]"
               onClick={onInitPointBuy}
             >
-              Reset (8 points)
+              Reset to 8s
             </Button>
           </div>
         </>

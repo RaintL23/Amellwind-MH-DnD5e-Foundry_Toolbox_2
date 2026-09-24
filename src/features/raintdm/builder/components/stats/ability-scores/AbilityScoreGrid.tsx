@@ -90,7 +90,7 @@ export function AbilityScoreGrid({
                 </option>
               ))}
             </Select>
-            {poolScore !== undefined && breakdown.bonus > 0 && (
+            {poolScore !== undefined && (
               <HintTooltip
                 content={formatBonusTooltip(breakdown)}
                 className="max-w-[14rem] text-center"

@@ -92,10 +92,10 @@ export function BuilderLanguagePicker({
     <div className={PICKER_CONTAINER_CLASS}>
       <p className="mb-1.5 text-[10px] font-medium uppercase tracking-wide text-muted-foreground">
         {label ?? grantSourceName} — choose {totalCount}
-        {remainingPicks > 0 && remainingPicks < totalCount && (
+        {remainingPicks > 0 && (
           <span className="normal-case text-muted-foreground/80">
             {" "}
-            (pick {remainingPicks} more)
+            ({remainingPicks} of {totalCount} remaining)
           </span>
         )}
         {remainingPicks === 0 && chosen.length >= totalCount && (
