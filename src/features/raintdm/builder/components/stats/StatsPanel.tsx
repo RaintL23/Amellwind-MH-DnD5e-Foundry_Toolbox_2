@@ -5,6 +5,7 @@ import {
   FileDown,
   FileJson,
   RotateCcw,
+  ScrollText,
   Upload,
   User,
 } from "lucide-react";
@@ -12,6 +13,7 @@ import { toast } from "sonner";
 import { useCharacterSheetExport } from "../../hooks/useCharacterSheetExport";
 import { useBuilderCharacterExport } from "../../hooks/useBuilderCharacterExport";
 import { useBuilderCharacterImport } from "../../hooks/useBuilderCharacterImport";
+import { useSendToPlaySheet } from "@/features/raintdm/character-sheet/hooks/useSendToPlaySheet";
 import { useBuildCompleteness } from "../../context/BuildCompletenessContext";
 import { useBuilderSlotSelection } from "../../hooks/useBuilderSlotSelection";
 import { Button } from "@/components/ui/button";
@@ -112,6 +114,12 @@ export function StatsPanel() {
   } = useCharacterSheetExport();
   const { exportCharacter, error: builderExportError } =
     useBuilderCharacterExport();
+  const {
+    busy: sendingToSheet,
+    sendNew,
+    updateExisting,
+    linkedId,
+  } = useSendToPlaySheet();
   const {
     importFromFile: importBuilderFromFile,
     importing: importingBuilder,
@@ -217,6 +225,35 @@ export function StatsPanel() {
     await exportSheet();
   }
 
+  function ensureBuildReadyToSend(): boolean {
+    const result = evaluate();
+    if (!result.hasStarted) {
+      toast.error("Build a character before sending to Character Sheet");
+      return false;
+    }
+    if (result.shouldBlockExport) {
+      activateHighlight();
+      toast.error(
+        result.issues.length === 1
+          ? "Finish the pending creation check before sending"
+          : `Finish ${result.issues.length} pending creation checks before sending`,
+      );
+      return false;
+    }
+    clearHighlight();
+    return true;
+  }
+
+  function handleSendToSheet() {
+    if (!ensureBuildReadyToSend()) return;
+    void sendNew();
+  }
+
+  function handleUpdateLinkedSheet() {
+    if (!ensureBuildReadyToSend()) return;
+    void updateExisting();
+  }
+
   function handleBuilderFileSelected(event: ChangeEvent<HTMLInputElement>) {
     const file = event.target.files?.[0];
     event.target.value = "";
@@ -317,6 +354,24 @@ export function StatsPanel() {
                       Download Builder JSON
                     </DropdownMenuItem>
                     <DropdownMenuItem
+                      className="gap-2 text-xs"
+                      disabled={sendingToSheet}
+                      onSelect={handleSendToSheet}
+                    >
+                      <ScrollText className="h-3.5 w-3.5 shrink-0" aria-hidden />
+                      Send to Character Sheet
+                    </DropdownMenuItem>
+                    {linkedId ? (
+                      <DropdownMenuItem
+                        className="gap-2 text-xs"
+                        disabled={sendingToSheet}
+                        onSelect={handleUpdateLinkedSheet}
+                      >
+                        <ScrollText className="h-3.5 w-3.5 shrink-0" aria-hidden />
+                        Update linked Sheet
+                      </DropdownMenuItem>
+                    ) : null}
+                    <DropdownMenuItem
                       className="gap-2 text-xs text-muted-foreground"
                       disabled={!FOUNDRY_JSON_UI_ENABLED}
                       title={FOUNDRY_DISABLED_TITLE}
@@ -352,6 +407,24 @@ export function StatsPanel() {
                   <FileJson className="h-3.5 w-3.5 shrink-0" aria-hidden />
                   Builder JSON
                 </DropdownMenuItem>
+                <DropdownMenuItem
+                  className="gap-2 text-xs"
+                  disabled={sendingToSheet}
+                  onSelect={handleSendToSheet}
+                >
+                  <ScrollText className="h-3.5 w-3.5 shrink-0" aria-hidden />
+                  Send to Character Sheet
+                </DropdownMenuItem>
+                {linkedId ? (
+                  <DropdownMenuItem
+                    className="gap-2 text-xs"
+                    disabled={sendingToSheet}
+                    onSelect={handleUpdateLinkedSheet}
+                  >
+                    <ScrollText className="h-3.5 w-3.5 shrink-0" aria-hidden />
+                    Update linked Sheet
+                  </DropdownMenuItem>
+                ) : null}
                 <DropdownMenuItem
                   className="gap-2 text-xs text-muted-foreground"
                   disabled={!FOUNDRY_JSON_UI_ENABLED}

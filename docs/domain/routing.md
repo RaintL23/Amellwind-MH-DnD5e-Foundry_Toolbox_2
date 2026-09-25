@@ -41,6 +41,8 @@ Todas las rutas de página se cargan con **`React.lazy`** y `<Suspense>` (fallba
 
 ── Amellwind (RaintDM) ──
 /builder                   → Character Builder (ALPHA, export/import Foundry VTT)
+/sheet                     → Character Sheet roster (import Builder JSON)
+/sheet/:characterId        → In-session Character Sheet
 /combat-tracker            → Combat Tracker (GM initiative, HP, death saves)
 /weapon-forge              → Weapon Forge (variantes RaintDM + armas custom)
 /weapon-forge/new          → Crear arma custom

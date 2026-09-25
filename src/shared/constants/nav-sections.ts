@@ -87,6 +87,14 @@ export const NAV_SECTIONS: NavSectionDef[] = [
             badge: "ALPHA",
           },
           {
+            to: "/sheet",
+            label: "Character Sheet",
+            icon: ScrollText,
+            description:
+              "In-session play sheet: HP, actions, spells, rests, inventory, and conditions.",
+            badge: "ALPHA",
+          },
+          {
             to: "/damage-calculator",
             label: "Damage Calculator",
             icon: Calculator,

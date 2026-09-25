@@ -237,6 +237,16 @@ const CombatTrackerPage = lazy(() =>
     }),
   ),
 );
+const CharacterRosterPage = lazy(() =>
+  import("@/features/raintdm/character-sheet/components/CharacterRosterPage").then(
+    (m) => ({ default: m.CharacterRosterPage }),
+  ),
+);
+const CharacterSheetPage = lazy(() =>
+  import("@/features/raintdm/character-sheet/components/CharacterSheetPage").then(
+    (m) => ({ default: m.CharacterSheetPage }),
+  ),
+);
 const ShopGeneratorPage = lazy(() =>
   import("@/features/dnd/shop-generator/components/ShopGeneratorPage").then(
     (m) => ({
@@ -512,6 +522,22 @@ export default function App() {
                 element={
                   <Suspense fallback={<PageFallback />}>
                     <CombatTrackerPage />
+                  </Suspense>
+                }
+              />
+              <Route
+                path="sheet"
+                element={
+                  <Suspense fallback={<PageFallback />}>
+                    <CharacterRosterPage />
+                  </Suspense>
+                }
+              />
+              <Route
+                path="sheet/:characterId"
+                element={
+                  <Suspense fallback={<PageFallback />}>
+                    <CharacterSheetPage />
                   </Suspense>
                 }
               />

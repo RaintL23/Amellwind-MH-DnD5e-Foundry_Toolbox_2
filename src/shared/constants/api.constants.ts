@@ -80,9 +80,9 @@ export const CACHE_TTL_MS = 24 * 60 * 60 * 1000;
 
 export const DB_NAME = "mh-dnd5e-toolbox";
 // v2: adds the additive `fivetools_cache` store (persists the 5etools compendium).
-// The upgrade only creates missing stores, so existing mm_*/gtmh_* data is
-// preserved intact when migrating v1 → v2.
-export const DB_VERSION = 2;
+// v3: adds `play_characters` for in-session Character Sheet records.
+// The upgrade only creates missing stores, so existing data is preserved.
+export const DB_VERSION = 3;
 
 export const STORES = {
   MM_CURRENT: "mm_current",
@@ -93,6 +93,8 @@ export const STORES = {
   GTMH_META: "gtmh_meta",
   /** Read-through cache for the 5etools compendium (source of truth for offline use). */
   FIVETOOLS_CACHE: "fivetools_cache",
+  /** In-session Character Sheet records (PlayCharacterRecord by id). */
+  PLAY_CHARACTERS: "play_characters",
 } as const;
 
 export const FIVETOOLS_DATA_BASE_URL = `${GITHUB_RAW}/${FIVETOOLS_MIRROR}/${FIVETOOLS_REF}/data`;
