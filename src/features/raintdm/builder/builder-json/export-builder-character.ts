@@ -1,6 +1,6 @@
 /**
- * Builds and downloads a BuilderCharacterJson file in the browser.
- * No portrait/token images are included — only the build state.
+ * Builds and downloads a BuilderCharacterJson file in the browser: the full
+ * restorable build state, portrait/token art, and a read-only provenance block.
  */
 import type { CartEntry } from "@/shared/types";
 import type { CharacterBuilderContextValue } from "../context/character-builder.types";
@@ -10,22 +10,35 @@ import {
   BUILDER_CHARACTER_JSON_VERSION,
   BUILDER_SNAPSHOT_VERSION,
   type BuilderCharacterJson,
+  type BuilderCharacterProvenance,
 } from "./builder-character.types";
 
 /** Builds the typed envelope from live builder state (sync, no side effects). */
 export function buildBuilderCharacterJson(
   builder: CharacterBuilderContextValue,
   inventory: { items: CartEntry[] },
+  provenance?: BuilderCharacterProvenance,
 ): BuilderCharacterJson {
   const payload = buildBuilderPersistPayload(builder, inventory);
+  const hasArt = Boolean(builder.portraitImage || builder.tokenImage);
   return {
     kind: BUILDER_CHARACTER_JSON_KIND,
     version: BUILDER_CHARACTER_JSON_VERSION,
     snapshotVersion: BUILDER_SNAPSHOT_VERSION,
+    exportedAt: new Date().toISOString(),
     identity: payload.identity,
     core: payload.core,
     multiclass: payload.multiclass,
     snapshot: payload.snapshot,
+    ...(hasArt
+      ? {
+          art: {
+            portrait: builder.portraitImage,
+            token: builder.tokenImage,
+          },
+        }
+      : {}),
+    ...(provenance ? { provenance } : {}),
   };
 }
 

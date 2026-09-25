@@ -1,11 +1,14 @@
 /**
  * Validates an unknown JSON value as a BuilderCharacterJson envelope.
- * Returns the typed envelope on success, or a human-readable error string.
+ * Returns the typed, normalized envelope on success, or a human-readable error.
+ * Missing optional fields (from older exports) are filled with defaults.
  */
+import { normalizeBuilderPersistedBuild } from "../storage/builder-autosave.storage";
 import {
   BUILDER_CHARACTER_JSON_KIND,
   BUILDER_CHARACTER_JSON_VERSION,
   BUILDER_SNAPSHOT_VERSION,
+  type BuilderCharacterArt,
   type BuilderCharacterJson,
 } from "./builder-character.types";
 
@@ -13,8 +16,20 @@ export type ParseBuilderCharacterResult =
   | { ok: true; data: BuilderCharacterJson }
   | { ok: false; error: string };
 
+function toImageDataUrl(value: unknown): string | null {
+  return typeof value === "string" && value.startsWith("data:image/") ? value : null;
+}
+
+function parseArt(value: unknown): BuilderCharacterArt | undefined {
+  if (typeof value !== "object" || value === null) return undefined;
+  const art = value as Record<string, unknown>;
+  const portrait = toImageDataUrl(art.portrait);
+  const token = toImageDataUrl(art.token);
+  return portrait || token ? { portrait, token } : undefined;
+}
+
 export function parseBuilderCharacter(raw: unknown): ParseBuilderCharacterResult {
-  if (typeof raw !== "object" || raw === null) {
+  if (typeof raw !== "object" || raw === null || Array.isArray(raw)) {
     return { ok: false, error: "Invalid file: not a JSON object." };
   }
 
@@ -54,14 +69,21 @@ export function parseBuilderCharacter(raw: unknown): ParseBuilderCharacterResult
     };
   }
 
-  if (
-    typeof obj["identity"] !== "object" ||
-    typeof obj["core"] !== "object" ||
-    typeof obj["multiclass"] !== "object" ||
-    typeof obj["snapshot"] !== "object"
-  ) {
-    return { ok: false, error: "Invalid Builder JSON: missing required fields." };
+  const build = normalizeBuilderPersistedBuild(obj);
+  if (!build) {
+    return { ok: false, error: "Invalid Builder JSON: missing or malformed required fields." };
   }
 
-  return { ok: true, data: raw as BuilderCharacterJson };
+  const art = parseArt(obj["art"]);
+  return {
+    ok: true,
+    data: {
+      kind: BUILDER_CHARACTER_JSON_KIND,
+      version: BUILDER_CHARACTER_JSON_VERSION,
+      snapshotVersion: BUILDER_SNAPSHOT_VERSION,
+      ...(typeof obj["exportedAt"] === "string" ? { exportedAt: obj["exportedAt"] } : {}),
+      ...build,
+      ...(art ? { art } : {}),
+    },
+  };
 }

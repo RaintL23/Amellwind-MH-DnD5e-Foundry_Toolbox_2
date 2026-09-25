@@ -90,6 +90,16 @@ Fuente de verdad: `evaluateBuildCompleteness` (`builder/utils/build-completeness
 - **`useActiveResolvedFeats`** — resuelve las dotes activas no-ASI (origin feats de especie/trasfondo + slots elegidos) a objetos `Feat` completos; fuente única para los hooks derivados de HP/velocidad.
 - **`computeEffectiveAbilityScores` / `useEffectiveAbilityScores`** — scores finales (base + Tasha/species/background ASI + feat ASI + ability increases de dotes con elección, p. ej. Piercer STR/DEX). Fuente de verdad para modificadores de AC, HP, iniciativa, skills/saves, combate/DPT, spellcasting y exports (PDF / Foundry). `character.abilities` sigue siendo solo la generación base editable.
 
+#### Builder JSON (export / import nativo)
+
+Menú JSON del `StatsPanel` → **Download Builder JSON** / **Import → Builder JSON** (`builder-json/`, hooks `useBuilderCharacterExport` / `useBuilderCharacterImport`). Pensado para guardar y recargar player characters sin pérdida.
+
+- **Sobre** (`BuilderCharacterJson`, `kind: "amellwind-builder-character"`, `version` 1, `snapshotVersion` 1): `identity` (refs class/subclass/species/background) + `core` (nombre, tamaño, alineamiento, nivel total, ability scores base) + `multiclass` + `snapshot` (`BuilderChoiceSnapshot`, el mismo que usan el autosave y el flag Foundry) + `art` opcional (retrato/token data URL) + `exportedAt`.
+- **Snapshot**: todas las decisiones — homebrew, método ASI, facción, personalidad, **backstory**, feats (con `asiChoices` / `abilityIncreaseChoices` / `spellListClassChoice`), origin feats, optional features por progresión, Tasha / species / background ASI, skills / expertise / tools / **armas de especie** / idiomas / defensas elegidas, hechizos por pool, equipo exacto (rareza, modo de arma, runas) e inventario.
+- **`provenance`** (solo lectura, se regenera en cada export y se **ignora** al importar): explica por qué el personaje tiene cada cosa — clases con features por nivel (`from` clase/subclase), feats con su slot (`Level 4 … feat slot`, `Origin feat from background (…)`, `Origin feat granted by <optional feature>`), optional features (`Fighter: Fighting Style`), skills/tools/idiomas/armaduras/armas/defensas con sus fuentes (`Class: Fighter`, `Species: Elf`, …), saves, hechizos con su pool (clase, pacto, linaje de especie, pool de dote), hechizos otorgados, bonos de origen, scores base vs finales y equipo.
+- **Import**: `parseBuilderCharacter` valida `kind`/versiones y **normaliza** (`normalizeBuilderPersistedBuild` + `normalizeBuilderSnapshot`): campos ausentes de exports antiguos toman defaults vacíos; `backstoryNotes` ausente no pisa las notas locales; `art` solo acepta `data:image/…`. Si el build actual ya empezó, pide confirmación (`ConfirmActionDialog`).
+- **Orden de restauración**: `flushSync(resetBuild + homebrew)` y luego `rehydrateBuilderState` con los setters del render post-reset. El reset debe commitearse antes porque los loaders de identidad/grants están keyed por id: si el personaje importado comparte clase/especie/trasfondo con el build actual, un reset batcheado no recargaría `classData` / `speciesData` / grants.
+
 #### Export / Import a Foundry VTT
 
 El builder puede **exportar** el personaje a un actor `character` de **Foundry VTT (sistema dnd5e v12 / 4.4.4)** e **importar** de vuelta un JSON de actor. Botones en el `StatsPanel`.

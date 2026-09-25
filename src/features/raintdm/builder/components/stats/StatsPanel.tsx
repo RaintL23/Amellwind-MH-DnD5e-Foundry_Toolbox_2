@@ -87,7 +87,8 @@ type PendingConfirm =
   | { kind: "reset" }
   | { kind: "randomize" }
   | { kind: "level"; nextLevel: number; lostFeatSlots: number }
-  | { kind: "multiclass-off" };
+  | { kind: "multiclass-off" }
+  | { kind: "import"; file: File };
 
 export function StatsPanel() {
   const {
@@ -193,6 +194,10 @@ export function StatsPanel() {
         setMulticlassEnabled(false);
         toast.message("Multiclass disabled");
         break;
+      case "import":
+        clearHighlight();
+        void importBuilderFromFile(pendingConfirm.file);
+        break;
     }
   }
 
@@ -216,6 +221,10 @@ export function StatsPanel() {
     const file = event.target.files?.[0];
     event.target.value = "";
     if (!file) return;
+    if (buildHasStarted) {
+      setPendingConfirm({ kind: "import", file });
+      return;
+    }
     clearHighlight();
     void importBuilderFromFile(file);
   }
@@ -252,7 +261,13 @@ export function StatsPanel() {
                   "Additional class entries will be cleared and total level stays on your primary class.",
                 confirmLabel: "Disable multiclass",
               }
-            : null;
+            : pendingConfirm?.kind === "import"
+              ? {
+                  title: "Replace current character?",
+                  description: `Loading "${pendingConfirm.file.name}" replaces the entire current build. Download it as Builder JSON first if you want to keep it.`,
+                  confirmLabel: "Load character",
+                }
+              : null;
 
   return (
     <TooltipProvider delayDuration={300}>
@@ -582,6 +597,7 @@ export function StatsPanel() {
                       {builderImportSummary.speciesName &&
                         ` · ${builderImportSummary.speciesName}`}
                       {` · Lv ${builderImportSummary.level}`}
+                      {builderImportSummary.restoredArt && " · portrait/token"}
                     </span>
                     <button
                       type="button"

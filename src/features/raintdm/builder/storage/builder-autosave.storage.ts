@@ -14,8 +14,11 @@ import type {
 } from "@/shared/types";
 import type { BuilderMulticlassEntry } from "@/shared/types/character.types";
 import { readJson, removeKey, writeJson } from "@/shared/utils/local-storage.utils";
-import type { BuilderChoiceSnapshot } from "../foundry-export/builder-snapshot";
-import { BUILDER_SNAPSHOT_VERSION } from "../foundry-export/builder-snapshot";
+import {
+  BUILDER_SNAPSHOT_VERSION,
+  normalizeBuilderSnapshot,
+  type BuilderChoiceSnapshot,
+} from "../foundry-export/builder-snapshot";
 
 const STORAGE_KEY = "mh-builder-autosave";
 
@@ -52,14 +55,102 @@ export interface BuilderAutosaveState {
   snapshot: BuilderChoiceSnapshot;
 }
 
+export type BuilderPersistedBuild = Omit<
+  BuilderAutosaveState,
+  "version" | "snapshotVersion"
+>;
+
+type UnknownRecord = Record<string, unknown>;
+
+function isRecord(value: unknown): value is UnknownRecord {
+  return typeof value === "object" && value !== null && !Array.isArray(value);
+}
+
+function normalizeSelectionRef(value: unknown): CharacterSelectionRef | null {
+  if (!isRecord(value)) return null;
+  if (typeof value.id !== "string" || typeof value.name !== "string") return null;
+  return {
+    id: value.id,
+    name: value.name,
+    subraceId: typeof value.subraceId === "string" ? value.subraceId : null,
+    subraceName: typeof value.subraceName === "string" ? value.subraceName : null,
+  };
+}
+
+function clampInt(value: unknown, min: number, max: number, fallback: number): number {
+  if (typeof value !== "number" || !Number.isFinite(value)) return fallback;
+  return Math.min(max, Math.max(min, Math.round(value)));
+}
+
+const ABILITY_KEYS = ["str", "dex", "con", "int", "wis", "cha"] as const;
+
+/**
+ * Validates identity/core/multiclass/snapshot of a persisted build and fills
+ * defaults for missing optional pieces. Returns null when the shape is not a
+ * restorable build (wrong snapshot version, missing sections).
+ */
+export function normalizeBuilderPersistedBuild(
+  raw: UnknownRecord,
+): BuilderPersistedBuild | null {
+  const snapshot = normalizeBuilderSnapshot(raw.snapshot);
+  if (!snapshot) return null;
+  if (!isRecord(raw.identity) || !isRecord(raw.core)) return null;
+
+  const identity = raw.identity;
+  const core = raw.core;
+  const multiclass = isRecord(raw.multiclass) ? raw.multiclass : {};
+  const rawAbilities = isRecord(core.abilities) ? core.abilities : {};
+
+  const abilities = Object.fromEntries(
+    ABILITY_KEYS.map((key) => [key, clampInt(rawAbilities[key], 1, 30, 10)]),
+  ) as unknown as AbilityScores;
+
+  const entries: BuilderMulticlassEntry[] = Array.isArray(multiclass.entries)
+    ? multiclass.entries.filter(isRecord).map((entry) => ({
+        classRef: normalizeSelectionRef(entry.classRef),
+        subclass: normalizeSelectionRef(entry.subclass),
+        level: clampInt(entry.level, 0, 19, 1),
+      }))
+    : [];
+
+  return {
+    identity: {
+      class: normalizeSelectionRef(identity.class),
+      subclass: normalizeSelectionRef(identity.subclass),
+      species: normalizeSelectionRef(identity.species),
+      background: normalizeSelectionRef(identity.background),
+    },
+    core: {
+      name: typeof core.name === "string" ? core.name : "Hunter",
+      size: core.size === "S" ? "S" : "M",
+      alignment: Array.isArray(core.alignment)
+        ? core.alignment.filter((a): a is string => typeof a === "string")
+        : [],
+      level: clampInt(core.level, 1, 20, 1),
+      abilities,
+    },
+    multiclass: {
+      enabled: multiclass.enabled === true && entries.length > 0,
+      entries,
+      primaryClassLevel: clampInt(multiclass.primaryClassLevel, 1, 20, 1),
+    },
+    snapshot,
+  };
+}
+
 /** Reads the saved build, or null when absent/incompatible/corrupt. */
 export function loadBuilderAutosave(): BuilderAutosaveState | null {
-  const raw = readJson<BuilderAutosaveState | null>(STORAGE_KEY, null);
-  if (!raw || typeof raw !== "object") return null;
+  const raw = readJson<unknown>(STORAGE_KEY, null);
+  if (!isRecord(raw)) return null;
   if (raw.version !== BUILDER_AUTOSAVE_VERSION) return null;
   if (raw.snapshotVersion !== BUILDER_SNAPSHOT_VERSION) return null;
-  if (!raw.snapshot || !raw.identity || !raw.core || !raw.multiclass) return null;
-  return raw;
+  const build = normalizeBuilderPersistedBuild(raw);
+  if (!build) return null;
+  return {
+    version: BUILDER_AUTOSAVE_VERSION,
+    snapshotVersion: BUILDER_SNAPSHOT_VERSION,
+    ...build,
+  };
 }
 
 export function persistBuilderAutosave(

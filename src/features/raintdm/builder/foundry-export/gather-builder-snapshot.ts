@@ -26,6 +26,7 @@ export function gatherBuilderSnapshot(
     attacksPerTurnOverride: builder.attacksPerTurnOverride,
     faction: builder.faction,
     personality: builder.personality,
+    backstoryNotes: builder.backstoryNotes,
 
     featSelections: builder.featSelections,
     speciesOriginFeat: builder.speciesOriginFeat,
@@ -53,6 +54,7 @@ export function gatherBuilderSnapshot(
     classToolChoices: builder.classToolChoices,
     backgroundToolChoices: builder.backgroundToolChoices,
     speciesToolChoices: builder.speciesToolChoices,
+    speciesWeaponChoices: builder.speciesWeaponChoices,
     classLanguageChoices: builder.classLanguageChoices,
     backgroundLanguageChoices: builder.backgroundLanguageChoices,
     speciesLanguageChoices: builder.speciesLanguageChoices,

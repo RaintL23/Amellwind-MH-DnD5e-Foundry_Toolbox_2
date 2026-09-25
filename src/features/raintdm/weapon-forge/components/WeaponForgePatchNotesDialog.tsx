@@ -26,7 +26,11 @@ import type {
 
 type DayWeaponGroup = {
   weapon: WeaponForgePatchWeapon;
-  blocks: { summary: string; commit: string; changes: WeaponForgePatchChange[] }[];
+  blocks: {
+    summary: string;
+    commit: string;
+    changes: WeaponForgePatchChange[];
+  }[];
 };
 
 const KIND_META: Record<

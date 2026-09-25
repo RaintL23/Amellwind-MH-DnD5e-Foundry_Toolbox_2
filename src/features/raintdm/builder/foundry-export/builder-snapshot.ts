@@ -27,7 +27,10 @@ import type {
   SkillKey,
 } from "@/shared/types";
 import type { StandaloneShieldItem } from "../data/shield.data";
-import type { BuilderPersonality } from "../storage/builder.storage";
+import {
+  EMPTY_BUILDER_PERSONALITY,
+  type BuilderPersonality,
+} from "../storage/builder.storage";
 import type { AbilityScoreGenerationMethod } from "../utils/ability-scores";
 
 /** Module namespace used for the Foundry actor/item `flags` object. */
@@ -63,6 +66,11 @@ export interface BuilderChoiceSnapshot {
   attacksPerTurnOverride: number | null;
   faction: BackgroundFaction | null;
   personality: BuilderPersonality;
+  /**
+   * Free-form backstory. Optional because snapshots written before it was
+   * added must not wipe the notes persisted separately in localStorage.
+   */
+  backstoryNotes?: string;
 
   // ── Feats & optional features ──
   featSelections: (BuilderFeatSelection | null)[];
@@ -92,6 +100,7 @@ export interface BuilderChoiceSnapshot {
   classToolChoices: Record<number, string[]>;
   backgroundToolChoices: string[];
   speciesToolChoices: string[];
+  speciesWeaponChoices: string[];
   classLanguageChoices: Record<number, string[]>;
   backgroundLanguageChoices: string[];
   speciesLanguageChoices: string[];
@@ -111,18 +120,115 @@ export function toBuilderSnapshotFlags(
   return { [TOOLBOX_FLAG_NAMESPACE]: { builderSnapshot: snapshot } };
 }
 
+// ─── Normalization ────────────────────────────────────────────────────────────
+
+type UnknownRecord = Record<string, unknown>;
+
+function isRecord(value: unknown): value is UnknownRecord {
+  return typeof value === "object" && value !== null && !Array.isArray(value);
+}
+
+function arrayOr<T>(value: unknown): T[] {
+  return Array.isArray(value) ? (value as T[]) : [];
+}
+
+function recordOr<T>(value: unknown): Record<string, T> {
+  return isRecord(value) ? (value as Record<string, T>) : {};
+}
+
+function nullableOr<T>(value: unknown): T | null {
+  return value === undefined ? null : (value as T | null);
+}
+
+/**
+ * Validates the version and fills every missing field with its empty default,
+ * so snapshots written by older builds (or edited by hand) restore without
+ * crashing on absent arrays/records. Returns `null` for unsupported versions.
+ */
+export function normalizeBuilderSnapshot(raw: unknown): BuilderChoiceSnapshot | null {
+  if (!isRecord(raw) || raw.version !== BUILDER_SNAPSHOT_VERSION) return null;
+  const eq = isRecord(raw.equipment) ? raw.equipment : {};
+  const personality = isRecord(raw.personality) ? raw.personality : {};
+
+  return {
+    version: BUILDER_SNAPSHOT_VERSION,
+    useAmellwindHomebrew: raw.useAmellwindHomebrew === true,
+    abilityScoreMethod:
+      typeof raw.abilityScoreMethod === "string"
+        ? (raw.abilityScoreMethod as AbilityScoreGenerationMethod)
+        : "manual",
+    useUnarmedStrike: raw.useUnarmedStrike === true,
+    attacksPerTurnOverride:
+      typeof raw.attacksPerTurnOverride === "number"
+        ? raw.attacksPerTurnOverride
+        : null,
+    faction: nullableOr<BackgroundFaction>(raw.faction),
+    personality: {
+      ...EMPTY_BUILDER_PERSONALITY,
+      ...(personality as Partial<BuilderPersonality>),
+    },
+    ...(typeof raw.backstoryNotes === "string"
+      ? { backstoryNotes: raw.backstoryNotes }
+      : {}),
+
+    featSelections: arrayOr<BuilderFeatSelection | null>(raw.featSelections),
+    speciesOriginFeat: nullableOr<BuilderFeatSelection>(raw.speciesOriginFeat),
+    backgroundOriginFeat: nullableOr<BuilderFeatSelection>(raw.backgroundOriginFeat),
+    optionalFeatureOriginFeats: arrayOr<BuilderFeatSelection | null>(
+      raw.optionalFeatureOriginFeats,
+    ),
+    originFeatSkillChoices: arrayOr<SkillKey>(raw.originFeatSkillChoices),
+    optionalFeatureOriginFeatSkillChoices: recordOr<SkillKey[]>(
+      raw.optionalFeatureOriginFeatSkillChoices,
+    ),
+    optionalFeatureSelections: recordOr<
+      BuilderOptionalFeatureSelections[string]
+    >(raw.optionalFeatureSelections),
+    speciesSpellGroupChoice: nullableOr<string>(raw.speciesSpellGroupChoice),
+
+    useTashaOrigin: raw.useTashaOrigin === true,
+    tashaPlus2: nullableOr<AbilityKey>(raw.tashaPlus2),
+    tashaPlus1: nullableOr<AbilityKey>(raw.tashaPlus1),
+    speciesAbilityChoices: arrayOr<AbilityKey | null>(raw.speciesAbilityChoices),
+    backgroundAsiMode: nullableOr<BackgroundAsiMode>(raw.backgroundAsiMode),
+    backgroundAsiPlus2: nullableOr<AbilityKey>(raw.backgroundAsiPlus2),
+    backgroundAsiPlus1: nullableOr<AbilityKey>(raw.backgroundAsiPlus1),
+
+    classSkillChoices: recordOr<SkillKey[]>(raw.classSkillChoices),
+    backgroundSkillChoices: arrayOr<SkillKey>(raw.backgroundSkillChoices),
+    speciesSkillChoices: arrayOr<SkillKey>(raw.speciesSkillChoices),
+    featSkillChoices: recordOr<SkillKey[]>(raw.featSkillChoices),
+    expertiseChoices: recordOr<SkillKey[]>(raw.expertiseChoices),
+    classToolChoices: recordOr<string[]>(raw.classToolChoices),
+    backgroundToolChoices: arrayOr<string>(raw.backgroundToolChoices),
+    speciesToolChoices: arrayOr<string>(raw.speciesToolChoices),
+    speciesWeaponChoices: arrayOr<string>(raw.speciesWeaponChoices),
+    classLanguageChoices: recordOr<string[]>(raw.classLanguageChoices),
+    backgroundLanguageChoices: arrayOr<string>(raw.backgroundLanguageChoices),
+    speciesLanguageChoices: arrayOr<string>(raw.speciesLanguageChoices),
+    speciesDefenseChoices: recordOr<DamageType[]>(raw.speciesDefenseChoices),
+
+    spellSelections: recordOr<BuilderSpellSelections[number]>(raw.spellSelections),
+
+    equipment: {
+      mainHand: nullableOr<EquippedWeapon>(eq.mainHand),
+      offHand: nullableOr<EquippedWeapon>(eq.offHand),
+      armor: nullableOr<EquippedArmor>(eq.armor),
+      shield: nullableOr<StandaloneShieldItem>(eq.shield),
+      trinket1: nullableOr<EquippedTrinket>(eq.trinket1),
+      trinket2: nullableOr<EquippedTrinket>(eq.trinket2),
+      inventory: arrayOr<CartEntry>(eq.inventory),
+    },
+  };
+}
+
 /**
  * Reads and version-checks a builder snapshot from a Foundry document's `flags`.
  * Returns `null` when the flag is missing or the version is unsupported.
  */
 export function readBuilderSnapshot(flags: unknown): BuilderChoiceSnapshot | null {
-  if (typeof flags !== "object" || flags === null) return null;
-  const namespaced = (flags as Record<string, unknown>)[TOOLBOX_FLAG_NAMESPACE];
-  if (typeof namespaced !== "object" || namespaced === null) return null;
-  const snapshot = (namespaced as Record<string, unknown>).builderSnapshot;
-  if (typeof snapshot !== "object" || snapshot === null) return null;
-  if ((snapshot as Record<string, unknown>).version !== BUILDER_SNAPSHOT_VERSION) {
-    return null;
-  }
-  return snapshot as BuilderChoiceSnapshot;
+  if (!isRecord(flags)) return null;
+  const namespaced = flags[TOOLBOX_FLAG_NAMESPACE];
+  if (!isRecord(namespaced)) return null;
+  return normalizeBuilderSnapshot(namespaced.builderSnapshot);
 }

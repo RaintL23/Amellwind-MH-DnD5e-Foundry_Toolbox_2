@@ -4,6 +4,7 @@ export type { FoundryActor } from "@/shared/foundry";
 export {
   TOOLBOX_FLAG_NAMESPACE,
   BUILDER_SNAPSHOT_VERSION,
+  normalizeBuilderSnapshot,
   readBuilderSnapshot,
   toBuilderSnapshotFlags,
 } from "./builder-snapshot";

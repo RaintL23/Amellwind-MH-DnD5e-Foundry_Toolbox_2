@@ -31,6 +31,9 @@ export function applyBuilderSnapshot(
   builder.setAttacksPerTurnOverride(snap.attacksPerTurnOverride);
   builder.setFaction(snap.faction);
   builder.setPersonality(snap.personality);
+  if (typeof snap.backstoryNotes === "string") {
+    builder.setBackstoryNotes(snap.backstoryNotes);
+  }
 
   // ── Ability score origin choices ──
   builder.setUseTashaOrigin(snap.useTashaOrigin);
@@ -98,6 +101,7 @@ export function applyBuilderSnapshot(
   }
   builder.setBackgroundToolChoices(snap.backgroundToolChoices);
   builder.setSpeciesToolChoices(snap.speciesToolChoices);
+  builder.setSpeciesWeaponChoices(snap.speciesWeaponChoices ?? []);
   for (const [index, choices] of Object.entries(snap.classLanguageChoices)) {
     builder.setClassLanguageChoicesAtIndex(Number(index), choices);
   }
@@ -129,7 +133,7 @@ export function applyBuilderSnapshot(
           ? 1
           : 0;
     if (modeIndex > 0) builder.setWeaponMode(slot, modeIndex);
-    entry.runes.forEach((rune, index) => {
+    (entry.runes ?? []).forEach((rune, index) => {
       if (rune) builder.assignWeaponRune(slot, index, rune);
     });
   };
@@ -139,7 +143,7 @@ export function applyBuilderSnapshot(
   if (eq.armor) {
     builder.equipArmor(eq.armor.armor);
     builder.setArmorRarity(eq.armor.rarity);
-    eq.armor.runes.forEach((rune, index) => {
+    (eq.armor.runes ?? []).forEach((rune, index) => {
       if (rune) builder.assignArmorRune(index, rune);
     });
   }

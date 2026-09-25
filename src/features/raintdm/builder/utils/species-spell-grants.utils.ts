@@ -1,6 +1,6 @@
 import type { BuilderSpellSelection, DndRace, Spell, Species } from "@/shared/types";
 import type { SpeciesNamedSpellGroup } from "@/shared/types/dnd-race.types";
-import { getSpellsByName } from "@/features/dnd/spells/services/spell.service";
+import { getAllSpells } from "@/features/dnd/spells/services/spell.service";
 import { normalizeSpellRef } from "./subclass-spells.utils";
 
 export const SPECIES_LINEAGE_SPELL_SOURCE = "species-lineage";
@@ -78,14 +78,6 @@ export function resolveActiveSpellGroup(
   );
 }
 
-function resolveSpellLevel(spellName: string, spells: Spell[]): number {
-  const normalized = normalizeSpellRef(spellName).toLowerCase();
-  const match =
-    spells.find((spell) => spell.name.toLowerCase() === normalized) ??
-    spells[0];
-  return match?.level ?? 1;
-}
-
 function makeSelection(
   name: string,
   level: number,
@@ -105,35 +97,18 @@ export async function buildSpeciesLineageSpellSelections(
   choice: string | null,
   characterLevel: number,
 ): Promise<BuilderSpellSelection[]> {
-  const group = resolveActiveSpellGroup(source, choice);
-  const selections: BuilderSpellSelection[] = [];
-  const seen = new Set<string>();
-
-  const pushSelection = (selection: BuilderSpellSelection) => {
-    if (seen.has(selection.id)) return;
-    seen.add(selection.id);
-    selections.push(selection);
-  };
-
-  for (const cantripName of source.universalCantrips ?? []) {
-    pushSelection(makeSelection(cantripName, 0));
-  }
-
-  if (!group) return selections;
-
-  for (const cantripName of group.cantrips) {
-    pushSelection(makeSelection(cantripName, 0));
-  }
-
-  for (const grant of group.innateSpells ?? []) {
-    if (characterLevel < grant.unlockedAtCharacterLevel) continue;
-    const spells = await getSpellsByName(grant.name);
-    const level = resolveSpellLevel(grant.name, spells);
-    const school = spells[0]?.schoolName;
-    pushSelection(makeSelection(grant.name, level, school));
-  }
-
-  return selections;
+  // Catalog lookup is case-insensitive; exact-name service lookups miss refs
+  // like "Pass Without Trace" vs the catalog's "Pass without Trace".
+  const needsCatalog =
+    (source.universalCantrips?.length ?? 0) > 0 ||
+    resolveActiveSpellGroup(source, choice) !== null;
+  const allSpells = needsCatalog ? await getAllSpells() : [];
+  return buildSpeciesLineageSpellSelectionsFromCatalog(
+    source,
+    choice,
+    characterLevel,
+    allSpells,
+  );
 }
 
 /** @deprecated Use {@link buildSpeciesLineageSpellSelections} with a spell grant source. */
