@@ -604,9 +604,8 @@ export function useIdentitySlice({
     if (!species) {
       setSpeciesOriginFeatGrant(null);
       setSpeciesOriginFeatGrantReady(true);
-      userOriginFeatRef.current = null;
+      // Do not clear userOriginFeatRef — background may still own the choose pick.
       setSpeciesOriginFeatState(null);
-      setOriginFeatSkillChoicesState([]);
       return;
     }
 
@@ -666,7 +665,7 @@ export function useIdentitySlice({
     species?.subraceId,
     syncing,
     useAmellwindHomebrew,
-    backgroundRef,
+    backgroundRef?.id,
     restoreUserOriginFeatChoice,
     backgroundOriginFeatGrant,
   ]);
@@ -675,7 +674,7 @@ export function useIdentitySlice({
     if (!backgroundRef) {
       setBackgroundOriginFeatGrant(null);
       setBackgroundOriginFeatGrantReady(true);
-      userOriginFeatRef.current = null;
+      // Do not clear userOriginFeatRef — species may still own the choose pick.
       setBackgroundOriginFeatState(null);
       return;
     }
@@ -708,17 +707,23 @@ export function useIdentitySlice({
 
       const isAmellwindBackground =
         !!mhBackground && (await isAmellwindBackgroundSelection(backgroundRef!));
+      // AGMH: every Amellwind background grants a choose Origin Feat. Prefer that
+      // over catalog fields so sync races never treat the grant as missing and
+      // wipe the user's pick (which then gets persisted by autosave).
       const grant =
-        dndBackground?.originFeatGrant ??
-        mhBackground?.originFeatGrant ??
-        (isAmellwindBackground ? AMELLWIND_BACKGROUND_ORIGIN_FEAT_GRANT : null);
+        useAmellwindHomebrew && (isAmellwindBackground || mhBackground)
+          ? AMELLWIND_BACKGROUND_ORIGIN_FEAT_GRANT
+          : (dndBackground?.originFeatGrant ??
+            mhBackground?.originFeatGrant ??
+            (isAmellwindBackground
+              ? AMELLWIND_BACKGROUND_ORIGIN_FEAT_GRANT
+              : null));
       setBackgroundOriginFeatGrant(grant);
 
       if (!grant) {
-        if (dndBackground || mhBackground) {
-          userOriginFeatRef.current = null;
-          setBackgroundOriginFeatState(null);
-        }
+        // Clear only the background slot — never userOriginFeatRef (species may
+        // still own a choose pick).
+        setBackgroundOriginFeatState(null);
         setBackgroundOriginFeatGrantReady(true);
         return;
       }

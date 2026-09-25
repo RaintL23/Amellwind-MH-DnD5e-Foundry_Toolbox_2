@@ -1,4 +1,5 @@
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
+import type { BuilderFeatSelection } from "@/shared/types";
 import { useDebouncedValue } from "@/shared/hooks/useDebouncedValue";
 import { useCharacterBuilder } from "../context/CharacterBuilderContext";
 import { useBuilderInventory } from "../context/BuilderInventoryContext";
@@ -21,6 +22,11 @@ function originFeatPersistKey(payload: BuilderPersistPayload): string {
   });
 }
 
+interface PendingOriginFeatRestore {
+  species: BuilderFeatSelection | null;
+  background: BuilderFeatSelection | null;
+}
+
 /**
  * Autosaves the active build to localStorage and rehydrates it on mount so the
  * builder survives reloads and browser restarts. Rendered inside the builder
@@ -31,6 +37,9 @@ export function BuilderAutosaveSync() {
   const inventory = useBuilderInventory();
   const hydratedRef = useRef(false);
   const lastWrittenRef = useRef<string | null>(null);
+  const pendingOriginFeatRestoreRef = useRef<PendingOriginFeatRestore | null>(
+    null,
+  );
   const [hydrationSettled, setHydrationSettled] = useState(false);
 
   useEffect(() => {
@@ -38,6 +47,13 @@ export function BuilderAutosaveSync() {
     hydratedRef.current = true;
     const saved = loadBuilderAutosave();
     if (saved) {
+      // Keep a copy so we can re-apply after async origin-feat grant loaders
+      // finish — those loaders historically raced rehydrate and wiped the pick,
+      // then autosave persisted the empty slot.
+      pendingOriginFeatRestoreRef.current = {
+        species: saved.snapshot.speciesOriginFeat,
+        background: saved.snapshot.backgroundOriginFeat,
+      };
       rehydrateBuilderState(builder, inventory, saved);
       lastWrittenRef.current = JSON.stringify({
         identity: saved.identity,
@@ -51,6 +67,36 @@ export function BuilderAutosaveSync() {
     setHydrationSettled(true);
   }, [builder, inventory]);
 
+  // Re-apply saved origin feats once grants settle (covers loader races on remount).
+  useEffect(() => {
+    if (!hydrationSettled) return;
+    if (!builder.originFeatGrantsReady) return;
+
+    const pending = pendingOriginFeatRestoreRef.current;
+    if (!pending) return;
+    pendingOriginFeatRestoreRef.current = null;
+
+    const pendingFeat = pending.species ?? pending.background;
+    if (!pendingFeat) return;
+
+    const alreadyPresent =
+      !!builder.speciesOriginFeat || !!builder.backgroundOriginFeat;
+    if (alreadyPresent) return;
+
+    if (pending.species) {
+      builder.setSpeciesOriginFeat(pending.species);
+    } else if (pending.background) {
+      builder.setBackgroundOriginFeat(pending.background);
+    }
+  }, [
+    hydrationSettled,
+    builder.originFeatGrantsReady,
+    builder.speciesOriginFeat,
+    builder.backgroundOriginFeat,
+    builder.setSpeciesOriginFeat,
+    builder.setBackgroundOriginFeat,
+  ]);
+
   const payload = useMemo(
     () => buildBuilderPersistPayload(builder, { items: inventory.items }),
     [builder, inventory.items],
@@ -61,6 +107,18 @@ export function BuilderAutosaveSync() {
   const flushAutosave = useCallback(() => {
     const latest = payloadRef.current;
     if (!hasBuildContent(latest)) return;
+
+    // While a remount restore is pending, do not persist an empty origin-feat
+    // slot (grant loaders may have raced). Other fields can still wait for the
+    // restore effect; the on-disk autosave still holds the good snapshot.
+    const pending = pendingOriginFeatRestoreRef.current;
+    if (pending && (pending.species || pending.background)) {
+      const liveHasOriginFeat =
+        !!latest.snapshot.speciesOriginFeat ||
+        !!latest.snapshot.backgroundOriginFeat;
+      if (!liveHasOriginFeat) return;
+    }
+
     const serialized = JSON.stringify(latest);
     if (serialized === lastWrittenRef.current) return;
     lastWrittenRef.current = serialized;
@@ -73,6 +131,15 @@ export function BuilderAutosaveSync() {
   useEffect(() => {
     if (!hydrationSettled) return;
     if (!hasBuildContent(debounced)) return;
+
+    const pending = pendingOriginFeatRestoreRef.current;
+    if (pending && (pending.species || pending.background)) {
+      const liveHasOriginFeat =
+        !!debounced.snapshot.speciesOriginFeat ||
+        !!debounced.snapshot.backgroundOriginFeat;
+      if (!liveHasOriginFeat) return;
+    }
+
     const serialized = JSON.stringify(debounced);
     if (serialized === lastWrittenRef.current) return;
     lastWrittenRef.current = serialized;
