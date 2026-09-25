@@ -5,6 +5,7 @@
 import type { CartEntry } from "@/shared/types";
 import type { CharacterBuilderContextValue } from "../context/character-builder.types";
 import { buildBuilderPersistPayload } from "../storage/builder-persist";
+import type { BuilderPersistedBuild } from "../storage/builder-autosave.storage";
 import {
   BUILDER_CHARACTER_JSON_KIND,
   BUILDER_CHARACTER_JSON_VERSION,
@@ -12,6 +13,28 @@ import {
   type BuilderCharacterJson,
   type BuilderCharacterProvenance,
 } from "./builder-character.types";
+
+/** Builds the typed envelope from a persisted autosave / import payload. */
+export function builderCharacterJsonFromPersistedBuild(
+  saved: BuilderPersistedBuild,
+  options?: {
+    art?: BuilderCharacterJson["art"];
+    provenance?: BuilderCharacterProvenance;
+  },
+): BuilderCharacterJson {
+  return {
+    kind: BUILDER_CHARACTER_JSON_KIND,
+    version: BUILDER_CHARACTER_JSON_VERSION,
+    snapshotVersion: BUILDER_SNAPSHOT_VERSION,
+    exportedAt: new Date().toISOString(),
+    identity: saved.identity,
+    core: saved.core,
+    multiclass: saved.multiclass,
+    snapshot: saved.snapshot,
+    ...(options?.art ? { art: options.art } : {}),
+    ...(options?.provenance ? { provenance: options.provenance } : {}),
+  };
+}
 
 /** Builds the typed envelope from live builder state (sync, no side effects). */
 export function buildBuilderCharacterJson(
@@ -21,15 +44,7 @@ export function buildBuilderCharacterJson(
 ): BuilderCharacterJson {
   const payload = buildBuilderPersistPayload(builder, inventory);
   const hasArt = Boolean(builder.portraitImage || builder.tokenImage);
-  return {
-    kind: BUILDER_CHARACTER_JSON_KIND,
-    version: BUILDER_CHARACTER_JSON_VERSION,
-    snapshotVersion: BUILDER_SNAPSHOT_VERSION,
-    exportedAt: new Date().toISOString(),
-    identity: payload.identity,
-    core: payload.core,
-    multiclass: payload.multiclass,
-    snapshot: payload.snapshot,
+  return builderCharacterJsonFromPersistedBuild(payload, {
     ...(hasArt
       ? {
           art: {
@@ -39,7 +54,7 @@ export function buildBuilderCharacterJson(
         }
       : {}),
     ...(provenance ? { provenance } : {}),
-  };
+  });
 }
 
 /** Slugifies a string segment for use in a filename. */

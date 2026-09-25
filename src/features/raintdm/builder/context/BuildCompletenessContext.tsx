@@ -27,6 +27,7 @@ import {
   groupCompletenessSteps,
   type CompletenessStep,
 } from "../utils/build-completeness/group-completeness-steps.utils";
+import { persistBuilderExportGate } from "../storage/builder-export-gate.storage";
 
 interface BuildCompletenessContextValue {
   highlightActive: boolean;
@@ -205,6 +206,16 @@ export function BuildCompletenessProvider({
       setHighlightActive(false);
     }
   }, [highlightActive, currentResult]);
+
+  // Non-deferred gate so Character Sheet "Load from Builder" matches export rules.
+  useEffect(() => {
+    const result = evaluateBuildCompleteness(input);
+    persistBuilderExportGate({
+      hasStarted: result.hasStarted,
+      shouldBlockExport: result.shouldBlockExport,
+      issueCount: result.issues.length,
+    });
+  }, [input]);
 
   const value = useMemo(
     () => ({

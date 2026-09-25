@@ -9,6 +9,7 @@ export type {
 } from "./builder-character.types";
 export {
   buildBuilderCharacterJson,
+  builderCharacterJsonFromPersistedBuild,
   downloadBuilderCharacterJson,
 } from "./export-builder-character";
 export { buildCharacterProvenance } from "./build-character-provenance";
