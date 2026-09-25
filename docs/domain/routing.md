@@ -41,6 +41,7 @@ Todas las rutas de página se cargan con **`React.lazy`** y `<Suspense>` (fallba
 
 ── Amellwind (RaintDM) ──
 /builder                   → Character Builder (ALPHA, export/import Foundry VTT)
+/combat-tracker            → Combat Tracker (GM initiative, HP, death saves)
 /weapon-forge              → Weapon Forge (variantes RaintDM + armas custom)
 /weapon-forge/new          → Crear arma custom
 /weapon-forge/edit/:id     → Editar arma custom
@@ -135,6 +136,7 @@ El equipo equipable del Builder proviene de ítems añadidos al carrito en Shops
 | Amellwind Homebrew  | Weapons, Runes, and Equipment | Weapons, Runes, Material Effects, Items                                     |
 | Amellwind Homebrew  | World and Exploration         | Hunt Planner, Environments, Resources, Shops, Cooking, Combo List, Downtime |
 | Amellwind Homebrew  | NPCs and Companions           | Monstie Sidekick, NPC Generator                                             |
+| Amellwind (RaintDM) | GM Tools                     | Combat Tracker                                                              |
 | Amellwind (RaintDM) | Character                     | Builder, Damage Calculator                                                  |
 | Amellwind (RaintDM) | Weapons                       | Weapon Forge, Items Forge                                                   |
 | D&D 5e Compendium   | Spells and Classes            | Spells, Classes                                                             |

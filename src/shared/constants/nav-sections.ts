@@ -65,7 +65,15 @@ export const NAV_SECTIONS: NavSectionDef[] = [
     groups: [
       {
         label: "GM Tools",
-        items: [],
+        items: [
+          {
+            to: "/combat-tracker",
+            label: "Combat Tracker",
+            icon: Swords,
+            description:
+              "GM initiative order, HP, and death saves for the table.",
+          },
+        ],
       },
       {
         label: "Character Tools",

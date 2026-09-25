@@ -230,6 +230,13 @@ const EncounterCalculatorPage = lazy(() =>
     }),
   ),
 );
+const CombatTrackerPage = lazy(() =>
+  import("@/features/raintdm/combat-tracker/components/CombatTrackerPage").then(
+    (m) => ({
+      default: m.CombatTrackerPage,
+    }),
+  ),
+);
 const ShopGeneratorPage = lazy(() =>
   import("@/features/dnd/shop-generator/components/ShopGeneratorPage").then(
     (m) => ({
@@ -500,6 +507,14 @@ export default function App() {
                 }
               />
               {/* ── RaintDM forges ── */}
+              <Route
+                path="combat-tracker"
+                element={
+                  <Suspense fallback={<PageFallback />}>
+                    <CombatTrackerPage />
+                  </Suspense>
+                }
+              />
               <Route
                 path="weapon-forge"
                 element={

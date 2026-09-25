@@ -20,6 +20,7 @@ Technical source of truth for Amellwind / 5etools / Foundry domain rules, split 
 | [`features-world.md`](./features-world.md) | small | Resources, Environments |
 | [`features-rune-planner.md`](./features-rune-planner.md) | small | Rune `BuildDrawer` |
 | [`features-builder.md`](./features-builder.md) | medium | Character Builder (ALPHA) |
+| [`features-combat-tracker.md`](./features-combat-tracker.md) | small | Combat Tracker (GM Tools) |
 | [`features-amellwind-tools.md`](./features-amellwind-tools.md) | small | Damage calc, species, guide, Monstie, NPC, Downtime |
 | [`features-dnd.md`](./features-dnd.md) | small | 5e compendium, Xanathar, shop generator |
 
@@ -27,6 +28,7 @@ Technical source of truth for Amellwind / 5etools / Foundry domain rules, split 
 
 | Task | Open |
 | --- | --- |
+| Combat Tracker (GM init / HP / death saves) | `features-combat-tracker.md` |
 | Character Builder / completeness / export gates | `features-builder.md` + skill `builder-validation` |
 | Foundry character export/import (SPA) | `features-builder.md` + `src/shared/foundry/` |
 | Foundry NPC/monster module (Alatreon, packs) | skill `foundry-monsters` — **not** actor JSON dumps |
