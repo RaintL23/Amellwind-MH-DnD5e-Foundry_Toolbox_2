@@ -6,6 +6,18 @@ import type {
   PlayInventoryItemKind,
   PlayInventoryItemSource,
 } from "./play-character.types";
+import {
+  parseWeaponPropertyList,
+  weaponAttackMods,
+} from "./weapon-attack.utils";
+
+export interface PlayWeaponAttackOpts {
+  strMod?: number;
+  dexMod?: number;
+  proficiencyBonus?: number;
+  /** @deprecated Prefer strMod + dexMod for per-weapon ability. */
+  attackAbilityMod?: number;
+}
 
 function parseWeightLb(raw: string | number | null | undefined): number {
   if (typeof raw === "number" && Number.isFinite(raw)) return raw;
@@ -97,9 +109,25 @@ export function playItemFromCustom(
   });
 }
 
+function resolveWeaponMods(
+  props: string[],
+  opts?: PlayWeaponAttackOpts,
+): { attackBonus: number; damageMod: number } {
+  const pb = opts?.proficiencyBonus ?? 0;
+  const strMod = opts?.strMod ?? opts?.attackAbilityMod ?? 0;
+  const dexMod = opts?.dexMod ?? opts?.attackAbilityMod ?? 0;
+  const { attackBonus, damageMod } = weaponAttackMods(
+    props,
+    strMod,
+    dexMod,
+    pb,
+  );
+  return { attackBonus, damageMod };
+}
+
 export function playItemFromDndItem(
   item: DndItem,
-  opts?: { attackAbilityMod?: number; proficiencyBonus?: number },
+  opts?: PlayWeaponAttackOpts,
 ): PlayInventoryItem {
   const requiresAttunement = Boolean(item.attunement);
   const weightLb = parseWeightLb(item.weight);
@@ -141,8 +169,8 @@ export function playItemFromDndItem(
   }
 
   if (isDndWeapon(item)) {
-    const mod = opts?.attackAbilityMod ?? 0;
-    const pb = opts?.proficiencyBonus ?? 0;
+    const props = parseWeaponPropertyList(item.properties);
+    const { attackBonus, damageMod } = resolveWeaponMods(props, opts);
     const dmg = item.damage ?? "1d4";
     return basePlayItem({
       name: item.name,
@@ -153,9 +181,9 @@ export function playItemFromDndItem(
       catalogId: item.id,
       summary,
       isWeapon: true,
-      attackBonus: mod + pb,
-      damageExpression: `${dmg}${mod >= 0 ? "+" : ""}${mod}`,
-      properties: item.properties ? [item.properties] : undefined,
+      attackBonus,
+      damageExpression: `${dmg}${damageMod >= 0 ? "+" : ""}${damageMod}`,
+      properties: props.length ? props : undefined,
     });
   }
 
@@ -173,14 +201,10 @@ export function playItemFromDndItem(
 
 export function playItemFromWeapon(
   weapon: Weapon,
-  opts?: {
-    source?: PlayInventoryItemSource;
-    attackAbilityMod?: number;
-    proficiencyBonus?: number;
-  },
+  opts?: PlayWeaponAttackOpts & { source?: PlayInventoryItemSource },
 ): PlayInventoryItem {
-  const mod = opts?.attackAbilityMod ?? 0;
-  const pb = opts?.proficiencyBonus ?? 0;
+  const props = (weapon.properties ?? []).map(String);
+  const { attackBonus, damageMod } = resolveWeaponMods(props, opts);
   const source =
     opts?.source ??
     (weapon.contentSource === "dnd" ? "dnd" : "amellwind");
@@ -195,9 +219,9 @@ export function playItemFromWeapon(
       .filter(Boolean)
       .join(" · "),
     isWeapon: true,
-    attackBonus: mod + pb,
-    damageExpression: `${weapon.dmg1 || "1d4"}${mod >= 0 ? "+" : ""}${mod}`,
-    properties: (weapon.properties ?? []).map(String),
+    attackBonus,
+    damageExpression: `${weapon.dmg1 || "1d4"}${damageMod >= 0 ? "+" : ""}${damageMod}`,
+    properties: props,
   });
 }
 
@@ -256,8 +280,5 @@ export interface PlayInventoryCatalogEntry {
   descriptionContent?: StatBlockContent[];
   /** Plain-text fallback description (weapons, armor, MH gear). */
   descriptionText?: string;
-  toItem: (opts?: {
-    attackAbilityMod?: number;
-    proficiencyBonus?: number;
-  }) => PlayInventoryItem;
+  toItem: (opts?: PlayWeaponAttackOpts) => PlayInventoryItem;
 }

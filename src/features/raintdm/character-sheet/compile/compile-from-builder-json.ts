@@ -25,6 +25,7 @@ import {
 import type {
   AbilityKey,
   AbilityScores,
+  CharacterSelectionRef,
   Class,
   Feat,
   SkillKey,
@@ -32,6 +33,26 @@ import type {
   Spell,
   Subclass,
 } from "@/shared/types";
+import {
+  detectFeatHitPointBonus,
+  getCharacterHitPointBreakdown,
+  parseHitDieFaces,
+} from "@/features/raintdm/builder/utils/character-hit-points";
+import {
+  buildClassLevelEntries,
+  getMulticlassHitDicePool,
+  getMulticlassHitPointBreakdown,
+  getPrimaryClassLevel,
+  type BuilderClassLevelEntry,
+} from "@/features/raintdm/builder/utils/multiclass.utils";
+import {
+  getMulticlassCasterLevel,
+  getMulticlassSpellSlotCounts,
+} from "@/shared/utils/multiclass-spell-slots.utils";
+import {
+  isLightProperty,
+  weaponAttackMods,
+} from "../utils/weapon-attack.utils";
 import { getAbilityModifier } from "@/shared/utils/cr.utils";
 import { entryToPlainText } from "@/shared/utils/entry-text.utils";
 import { plainFeatureText } from "@/features/raintdm/builder/foundry-export/feature-usage.utils";
@@ -56,7 +77,10 @@ import type {
   PlaySpellcasting,
   RulesEdition,
 } from "../utils/play-character.types";
-import { createInitialSession } from "../utils/play-character.types";
+import {
+  createInitialSession,
+  PLAY_COMPILE_VERSION,
+} from "../utils/play-character.types";
 import type { PlayCharacterRecord } from "../utils/play-character.types";
 
 function featCatalogText(feat: Feat): string {
@@ -96,6 +120,7 @@ function mapCatalogSpellToPlay(
   found: Spell | undefined,
   fallback: { name: string; level?: number; id?: string },
   index: number,
+  opts: { prepared?: boolean } = {},
 ): PlaySpell {
   const name = found?.name ?? fallback.name;
   const levelNum = found?.level ?? fallback.level ?? 0;
@@ -121,7 +146,8 @@ function mapCatalogSpellToPlay(
     components: found?.components,
     description,
     higherLevel,
-    prepared: levelNum === 0,
+    // Player-chosen spells start prepared; cantrips always prepared.
+    prepared: opts.prepared ?? levelNum === 0,
     alwaysPrepared: false,
     bucket: castingTimeToBucket(found?.castingTime),
     ...(statEffects.length > 0 ? { statEffects } : {}),
@@ -133,11 +159,13 @@ function proficiencyBonusAtLevel(level: number): number {
 }
 
 function detectRulesEdition(classData: Class | null | undefined): RulesEdition {
+  if (classData?.edition === "one") return "2024";
   const src = (classData?.source ?? "").toUpperCase();
+  if (src.startsWith("X")) return "2024";
   if (src === "PHB" || src === "DMG" || src === "XGE" || src === "TCE") {
     return "2014";
   }
-  return "2024";
+  return "2014";
 }
 
 function parseSlotTotalsFromClass(
@@ -176,10 +204,11 @@ function parseSlotTotalsFromClass(
     });
   }
 
-  if (pactCount > 0 && pactLevel > 0) {
-    return { slots: {}, pact: { max: pactCount, level: pactLevel } };
-  }
-  return { slots };
+  const pact =
+    pactCount > 0 && pactLevel > 0
+      ? { max: pactCount, level: pactLevel }
+      : undefined;
+  return { slots, pact };
 }
 
 function guessSpellAbility(className: string): AbilityKey | "" {
@@ -190,10 +219,9 @@ function guessSpellAbility(className: string): AbilityKey | "" {
   return "";
 }
 
-async function resolveClass(
-  json: BuilderCharacterJson,
+async function resolveClassRef(
+  ref: CharacterSelectionRef | null | undefined,
 ): Promise<Class | null> {
-  const ref = json.identity.class;
   if (!ref) return null;
   if (ref.id) {
     const byId = await getClassById(ref.id).catch(() => undefined);
@@ -208,9 +236,54 @@ async function resolveClass(
   );
 }
 
+async function resolveClass(json: BuilderCharacterJson): Promise<Class | null> {
+  return resolveClassRef(json.identity.class);
+}
+
+async function buildClassLevelEntriesFromJson(
+  json: BuilderCharacterJson,
+  primaryClassData: Class | null,
+): Promise<BuilderClassLevelEntry[]> {
+  const mc = json.multiclass;
+  const totalLevel = json.core.level || 1;
+  if (!mc?.enabled || !(mc.entries?.length ?? 0)) {
+    return [
+      {
+        classRef: json.identity.class,
+        classData: primaryClassData,
+        level: totalLevel,
+        subclass: json.identity.subclass,
+        isPrimary: true,
+      },
+    ];
+  }
+
+  const primaryLevel =
+    mc.primaryClassLevel ??
+    getPrimaryClassLevel(totalLevel, mc.entries ?? []);
+  const secondaryData = await Promise.all(
+    (mc.entries ?? []).map((entry) => resolveClassRef(entry.classRef)),
+  );
+
+  return buildClassLevelEntries(
+    json.identity.class,
+    primaryClassData,
+    primaryLevel,
+    json.identity.subclass,
+    mc.entries ?? [],
+    secondaryData,
+  );
+}
+
+function featureNameMatch(features: PlayFeature[], needle: string): boolean {
+  const n = needle.trim().toLowerCase();
+  return features.some((f) => f.name.trim().toLowerCase() === n);
+}
+
 function buildAttacksFromEquipment(
   json: BuilderCharacterJson,
-  attackAbilityMod: number,
+  strMod: number,
+  dexMod: number,
   pb: number,
 ): PlayAttack[] {
   const attacks: PlayAttack[] = [];
@@ -224,18 +297,20 @@ function buildAttacksFromEquipment(
     if (!weapon?.weapon) return;
     const w = weapon.weapon;
     const props = (w.properties ?? []).map(String);
-    const mod = attackAbilityMod;
-    const proficient = true;
-    const attackBonus = mod + (proficient ? pb : 0);
+    const isOffHandLight = slot === "off" && isLightProperty(props);
+    const { attackBonus, damageMod } = weaponAttackMods(
+      props,
+      strMod,
+      dexMod,
+      pb,
+      { omitDamageMod: isOffHandLight },
+    );
     const dmg1 = w.dmg1 || "1d4";
     const dmgType = w.dmgType || undefined;
-    const isOffHandLight =
-      slot === "off" && props.some((p) => /light/i.test(p));
-    // Light off-hand bonus attack: no ability mod to damage (TWF style can add it back).
     const withMod = (dice: string) =>
-      isOffHandLight
+      damageMod === 0
         ? dice
-        : `${dice}${mod >= 0 ? "+" : ""}${mod}`;
+        : `${dice}${damageMod >= 0 ? "+" : ""}${damageMod}`;
     attacks.push({
       id: slugId("atk", w.name, idx),
       name: w.name,
@@ -262,7 +337,8 @@ function isGoldPileName(name: string): boolean {
 
 function inventoryFromSnapshot(
   json: BuilderCharacterJson,
-  attackAbilityMod: number,
+  strMod: number,
+  dexMod: number,
   pb: number,
 ): PlayInventoryItem[] {
   const items: PlayInventoryItem[] = [];
@@ -274,7 +350,13 @@ function inventoryFromSnapshot(
   ) => {
     const w = equippedWeapon?.weapon;
     if (!w?.name) return;
-    const mod = attackAbilityMod;
+    const props = (w.properties ?? []).map(String);
+    const { attackBonus, damageMod } = weaponAttackMods(
+      props,
+      strMod,
+      dexMod,
+      pb,
+    );
     const dmg1 = w.dmg1 || "1d4";
     items.push({
       id: slugId("inv", w.name, i++),
@@ -287,9 +369,9 @@ function inventoryFromSnapshot(
       kind: "weapon",
       source: w.contentSource === "dnd" ? "dnd" : "amellwind",
       isWeapon: true,
-      attackBonus: mod + pb,
-      damageExpression: `${dmg1}${mod >= 0 ? "+" : ""}${mod}`,
-      properties: (w.properties ?? []).map(String),
+      attackBonus,
+      damageExpression: `${dmg1}${damageMod >= 0 ? "+" : ""}${damageMod}`,
+      properties: props,
     });
   };
 
@@ -298,20 +380,35 @@ function inventoryFromSnapshot(
 
   if (eq.armor?.armor) {
     const a = eq.armor.armor;
-    items.push({
-      id: slugId("inv", a.name, i++),
-      name: a.name,
-      quantity: 1,
-      weightLb: Number(a.weight) || 0,
-      equipped: true,
-      attuned: false,
-      requiresAttunement: false,
-      kind: "armor",
-      source: a.contentSource === "dnd" ? "dnd" : "amellwind",
-      armorAc: a.baseAC,
-      armorMaxDex: a.maxDexBonus,
-      summary: `AC ${a.baseAC}`,
-    });
+    if (a.category === "clothing") {
+      items.push({
+        id: slugId("inv", a.name, i++),
+        name: a.name,
+        quantity: 1,
+        weightLb: Number(a.weight) || 0,
+        equipped: true,
+        attuned: false,
+        requiresAttunement: false,
+        kind: "gear",
+        source: a.contentSource === "dnd" ? "dnd" : "amellwind",
+        summary: a.name,
+      });
+    } else {
+      items.push({
+        id: slugId("inv", a.name, i++),
+        name: a.name,
+        quantity: 1,
+        weightLb: Number(a.weight) || 0,
+        equipped: true,
+        attuned: false,
+        requiresAttunement: false,
+        kind: "armor",
+        source: a.contentSource === "dnd" ? "dnd" : "amellwind",
+        armorAc: a.baseAC,
+        armorMaxDex: a.maxDexBonus,
+        summary: `AC ${a.baseAC}`,
+      });
+    }
   }
 
   if (eq.shield) {
@@ -385,9 +482,6 @@ function armorClassFromSnapshot(
     base = armor.baseAC + dexPart;
   } else {
     base = 10 + dexMod;
-  }
-  if (eq.shield) {
-    base += eq.shield.acBonus ?? 2;
   }
   return base;
 }
@@ -634,10 +728,27 @@ export async function compilePlayCharacterFromBuilderJson(
     });
   });
 
+  let subclassData: Subclass | null = null;
+  if (classData && json.identity.subclass) {
+    const subs = subclassesForClassVariant(classData);
+    const subRef = json.identity.subclass;
+    subclassData =
+      subs.find((s) => s.id === subRef.id) ??
+      subs.find((s) => s.name.toLowerCase() === (subRef.name ?? "").toLowerCase()) ??
+      null;
+  }
+
+  const resolvedFeatEntities: Feat[] = [];
+  for (const sel of snapshotFeatSelections) {
+    const feat =
+      (sel.id ? featById.get(sel.id) : undefined) ??
+      featByName.get(sel.name.trim().toLowerCase());
+    if (feat) resolvedFeatEntities.push(feat);
+  }
+
   const strMod = abilities.str.mod;
   const dexMod = abilities.dex.mod;
-  const attackMod = Math.max(strMod, dexMod);
-  const attacks = buildAttacksFromEquipment(json, attackMod, pb);
+  const attacks = buildAttacksFromEquipment(json, strMod, dexMod, pb);
 
   // Unarmed strike
   attacks.push({
@@ -657,7 +768,41 @@ export async function compilePlayCharacterFromBuilderJson(
   const allSpellRefs = Object.values(spellSelections).flat();
   const className = json.identity.class?.name ?? "";
   const spellAbility = guessSpellAbility(className);
-  const { slots, pact } = parseSlotTotalsFromClass(classData, level);
+
+  const classLevelEntries = await buildClassLevelEntriesFromJson(
+    json,
+    classData,
+  );
+  const hasMulticlassEntries = Boolean(
+    json.multiclass?.enabled && (json.multiclass.entries?.length ?? 0) > 0,
+  );
+
+  let slots: Record<number, number> = {};
+  let pact: { max: number; level: number } | undefined;
+  const singleClassSlots = parseSlotTotalsFromClass(classData, level);
+  slots = { ...singleClassSlots.slots };
+  pact = singleClassSlots.pact;
+
+  if (hasMulticlassEntries) {
+    const casterLevel = getMulticlassCasterLevel(
+      classLevelEntries.map((entry) => ({
+        classData: entry.classData,
+        level: entry.level,
+        subclassName: entry.subclass?.name ?? null,
+      })),
+    );
+    if (casterLevel > 0) {
+      slots = getMulticlassSpellSlotCounts(casterLevel);
+    }
+    for (const entry of classLevelEntries) {
+      if (entry.classData?.casterProgression !== "pact") continue;
+      const warlockSlots = parseSlotTotalsFromClass(
+        entry.classData,
+        entry.level,
+      );
+      if (warlockSlots.pact) pact = warlockSlots.pact;
+    }
+  }
 
   if (allSpellRefs.length > 0 || Object.keys(slots).length > 0 || pact) {
     const catalog = await getAllSpells().catch(() => [] as Spell[]);
@@ -674,6 +819,7 @@ export async function compilePlayCharacterFromBuilderJson(
           found,
           { name: sel.name, level: sel.level, id: sel.id },
           idx,
+          { prepared: true },
         ),
       );
     });
@@ -705,17 +851,15 @@ export async function compilePlayCharacterFromBuilderJson(
 
     const abilityKey = (toAbilityKey(spellAbility) ?? spellAbility) as AbilityKey | "";
     const spellMod = abilityKey ? abilities[abilityKey].mod : 0;
-    const isPact = Boolean(pact) || /warlock/i.test(className);
+    const isPact = Boolean(pact);
 
     spellcasting = {
       ability: abilityKey || "",
       mod: spellMod,
       saveDc: 8 + pb + spellMod,
       attackBonus: pb + spellMod,
-      slotMax: isPact ? {} : slots,
-      pact: isPact
-        ? pact ?? { max: 1, level: 1 }
-        : undefined,
+      slotMax: slots,
+      pact: isPact ? pact ?? { max: 1, level: 1 } : undefined,
       isPreparedCaster: /(cleric|druid|wizard|paladin|artificer|ranger)/i.test(
         className,
       ),
@@ -725,51 +869,84 @@ export async function compilePlayCharacterFromBuilderJson(
     };
   }
 
-  const hitDie: PlayHitDie[] = [];
-  const rawHit = classData?.hitDie ?? "d8";
-  const dieNorm = rawHit.startsWith("d")
-    ? rawHit.replace(/^1/, "")
-    : `d${rawHit.replace(/\D/g, "") || "8"}`;
-  hitDie.push({
-    die: dieNorm.startsWith("d") ? dieNorm : `d${dieNorm}`,
-    max: level,
-  });
+  const featHpBonuses = resolvedFeatEntities
+    .map((feat) => detectFeatHitPointBonus(feat, level))
+    .filter((b): b is NonNullable<typeof b> => b !== null);
+
+  let hitDie: PlayHitDie[] = [];
+  let hpMax = 1;
+  let multiclassPartial = false;
+
+  if (hasMulticlassEntries) {
+    const mcHp = getMulticlassHitPointBreakdown(
+      classLevelEntries,
+      abilities.con.mod,
+      featHpBonuses,
+    );
+    const pool = getMulticlassHitDicePool(classLevelEntries);
+    if (mcHp && pool) {
+      hpMax = mcHp.max;
+      hitDie = pool.pools.map((p) => ({
+        die: p.die.startsWith("d") ? p.die : `d${p.die}`,
+        max: p.count,
+      }));
+      multiclassPartial = false;
+    } else {
+      multiclassPartial = true;
+    }
+  }
+
+  if (!hitDie.length) {
+    const rawHit = classData?.hitDie ?? "d8";
+    const dieNorm = rawHit.startsWith("d")
+      ? rawHit.replace(/^1/, "")
+      : `d${rawHit.replace(/\D/g, "") || "8"}`;
+    const dieKey = dieNorm.startsWith("d") ? dieNorm : `d${dieNorm}`;
+    hitDie.push({ die: dieKey, max: level });
+
+    const breakdown = getCharacterHitPointBreakdown(
+      level,
+      abilities.con.mod,
+      dieKey,
+      classData?.name ?? className,
+      featHpBonuses,
+    );
+    if (breakdown) {
+      hpMax = breakdown.max;
+    } else {
+      const faces = parseHitDieFaces(dieKey) ?? 8;
+      hpMax =
+        level <= 1
+          ? faces + abilities.con.mod
+          : faces +
+            abilities.con.mod +
+            (level - 1) *
+              (Math.floor(faces / 2) + 1 + abilities.con.mod);
+    }
+  }
 
   const size = normalizeBuilderCreatureSize(json.core.size || "M");
   const capacity = getCarryingCapacity(scores.str, size);
-  const perceptionMod = skills.prc ?? abilities.wis.mod;
-
-  const dieMatch = hitDie[0]?.die.match(/d(\d+)/);
-  const dieSize = dieMatch ? parseInt(dieMatch[1], 10) : 8;
-  const con = abilities.con.mod;
-  const hpMax =
-    level <= 1
-      ? dieSize + con
-      : dieSize +
-        con +
-        (level - 1) * (Math.floor(dieSize / 2) + 1 + con);
+  let passivePerception = 10 + (skills.prc ?? abilities.wis.mod);
+  if (
+    featureNameMatch(features, "Observant") ||
+    resolvedFeatEntities.some((f) => f.name.toLowerCase() === "observant")
+  ) {
+    passivePerception += 5;
+  }
 
   const ac = armorClassFromSnapshot(json, abilities.dex.mod);
 
-  const multiclassPartial = (json.multiclass?.entries?.length ?? 0) > 0;
-
-  let subclassData: Subclass | null = null;
-  if (classData && json.identity.subclass) {
-    const subs = subclassesForClassVariant(classData);
-    const subRef = json.identity.subclass;
-    subclassData =
-      subs.find((s) => s.id === subRef.id) ??
-      subs.find((s) => s.name.toLowerCase() === (subRef.name ?? "").toLowerCase()) ??
-      null;
+  let initiativeMod = abilities.dex.mod;
+  const hasAlert =
+    featureNameMatch(features, "Alert") ||
+    resolvedFeatEntities.some((f) => f.name.toLowerCase() === "alert");
+  if (hasAlert) {
+    initiativeMod += rulesEdition === "2024" ? pb : 5;
+  } else if (featureNameMatch(features, "Jack of All Trades")) {
+    initiativeMod += Math.floor(pb / 2);
   }
 
-  const resolvedFeatEntities: Feat[] = [];
-  for (const sel of snapshotFeatSelections) {
-    const feat =
-      (sel.id ? featById.get(sel.id) : undefined) ??
-      featByName.get(sel.name.trim().toLowerCase());
-    if (feat) resolvedFeatEntities.push(feat);
-  }
   const featSpeedBonuses = resolvedFeatEntities.flatMap((feat) =>
     detectFeatSpeedBonuses(feat),
   );
@@ -820,8 +997,8 @@ export async function compilePlayCharacterFromBuilderJson(
     size: size === "S" ? "S" : "M",
     speedDisplay: speedBreakdown.display,
     speedFt: speedBreakdown.speed.walk ?? 30,
-    initiativeMod: abilities.dex.mod,
-    passivePerception: 10 + perceptionMod,
+    initiativeMod,
+    passivePerception,
     proficiencyBonus: pb,
     armorClass: ac,
     hpMax: Math.max(1, hpMax),
@@ -859,14 +1036,13 @@ function extractGoldFromSnapshot(json: BuilderCharacterJson): number {
 }
 
 function inventoryModsFromCompiled(compiled: PlayCharacterCompiled): {
-  attackAbilityMod: number;
+  strMod: number;
+  dexMod: number;
   proficiencyBonus: number;
 } {
   return {
-    attackAbilityMod: Math.max(
-      compiled.abilities.str.mod,
-      compiled.abilities.dex.mod,
-    ),
+    strMod: compiled.abilities.str.mod,
+    dexMod: compiled.abilities.dex.mod,
     proficiencyBonus: compiled.proficiencyBonus,
   };
 }
@@ -881,7 +1057,8 @@ export async function createPlayCharacterRecord(
   const mods = inventoryModsFromCompiled(compiled);
   session.inventory = inventoryFromSnapshot(
     json,
-    mods.attackAbilityMod,
+    mods.strMod,
+    mods.dexMod,
     mods.proficiencyBonus,
   );
 
@@ -891,6 +1068,7 @@ export async function createPlayCharacterRecord(
   return {
     id: existingId ?? crypto.randomUUID(),
     version: 1,
+    compileVersion: PLAY_COMPILE_VERSION,
     compiled,
     builderJson: json,
     session,
@@ -920,7 +1098,8 @@ export async function recompilePlayCharacterRecord(
       ...session,
       inventory: inventoryFromSnapshot(
         json,
-        mods.attackAbilityMod,
+        mods.strMod,
+        mods.dexMod,
         mods.proficiencyBonus,
       ),
     };
@@ -937,6 +1116,7 @@ export async function recompilePlayCharacterRecord(
     compiled,
     builderJson: json,
     session,
+    compileVersion: PLAY_COMPILE_VERSION,
     updatedAt: new Date().toISOString(),
   };
 }
