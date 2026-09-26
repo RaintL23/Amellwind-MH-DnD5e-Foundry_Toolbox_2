@@ -98,6 +98,11 @@ function parseActivation(text: string): {
 }
 
 function parseRecovery(text: string): FeatureRecoveryPeriod | "" {
+  // "short or long rest" → short rest period (Foundry recovers on short+long).
+  // Check before regain-clause matching so "…short or long rest" is not
+  // captured as long-only via the trailing "long rest" token.
+  if (/\bshort\s+or\s+long\s+rest\b/i.test(text)) return "sr";
+
   // Prefer the clause that restores expended uses of *this* feature.
   const regainClause = text.match(
     /regain\s+all\s+expended\s+uses[^.]{0,80}?(long\s+rest|short\s+rest|dawn)/i,
@@ -126,9 +131,6 @@ function parseRecovery(text: string): FeatureRecoveryPeriod | "" {
     return "lr";
   }
 
-  // "short or long rest" → short rest period (Foundry recovers on short+long).
-  if (/\bshort\s+or\s+long\s+rest\b/i.test(text)) return "sr";
-
   return "";
 }
 
@@ -138,6 +140,12 @@ function abilityModFormula(abilityWord: string, minimumOnce: boolean): string {
   const base = `@abilities.${key}.mod`;
   return minimumOnce ? `max(1, ${base})` : base;
 }
+
+/**
+ * Turn/round cadence ("once per turn") is not a rest-based use pool.
+ * Negative lookahead used after once/twice/thrice word counts.
+ */
+const NOT_TURN_OR_ROUND = String.raw`(?!\s+per\s+(?:turn|round)\b)`;
 
 function parseUsesMax(text: string): string {
   // "a number of times equal to your Proficiency Bonus"
@@ -157,8 +165,12 @@ function parseUsesMax(text: string): string {
   }
 
   // "You can use this feature twice" / "use this trait once"
+  // Skip "once per turn" / "once per round" (e.g. Grappler Punch and Grab).
   const wordCount = text.match(
-    /\b(?:use\s+this\s+(?:feature|trait|ability)|you\s+can\s+use\s+(?:this|it))\s+(once|twice|thrice|one|two|three|four|five|six)\b/i,
+    new RegExp(
+      String.raw`\b(?:use\s+this\s+(?:feature|trait|ability)|you\s+can\s+use\s+(?:this|it))\s+(once|twice|thrice|one|two|three|four|five|six)\b${NOT_TURN_OR_ROUND}`,
+      "i",
+    ),
   );
   if (wordCount) {
     const n = WORD_COUNTS[wordCount[1].toLowerCase()];
@@ -167,13 +179,19 @@ function parseUsesMax(text: string): string {
 
   // "You can use this feature 3 times"
   const digitCount = text.match(
-    /\b(?:use\s+this\s+(?:feature|trait|ability)|you\s+can\s+use\s+(?:this|it))\s+(\d+)\s+times?\b/i,
+    new RegExp(
+      String.raw`\b(?:use\s+this\s+(?:feature|trait|ability)|you\s+can\s+use\s+(?:this|it))\s+(\d+)\s+times?\b${NOT_TURN_OR_ROUND}`,
+      "i",
+    ),
   );
   if (digitCount) return digitCount[1];
 
   // "You can rage twice" / class-specific "You can X N times"
   const namedWord = text.match(
-    /\byou\s+can\s+[a-z][a-z\s]{0,40}?\s+(once|twice|thrice)\b/i,
+    new RegExp(
+      String.raw`\byou\s+can\s+[a-z][a-z\s]{0,40}?\s+(once|twice|thrice)\b${NOT_TURN_OR_ROUND}`,
+      "i",
+    ),
   );
   if (namedWord) {
     const n = WORD_COUNTS[namedWord[1].toLowerCase()];
@@ -230,8 +248,13 @@ export function parseFeatureUsage(description: string | undefined): ParsedFeatur
   }
 
   // "once per long rest" style may set recovery without an explicit count.
+  // Do not treat "once per turn/round" as a use pool.
   let max = usesMax;
-  if (!max && recoveryPeriod && /\bonce\s+per\s+/i.test(text)) {
+  if (
+    !max &&
+    recoveryPeriod &&
+    /\bonce\s+per\s+(?:long\s+rest|short\s+rest|day)\b/i.test(text)
+  ) {
     max = "1";
   }
 
