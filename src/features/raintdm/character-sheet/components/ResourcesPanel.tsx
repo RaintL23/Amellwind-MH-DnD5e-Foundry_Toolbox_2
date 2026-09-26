@@ -1,3 +1,4 @@
+import { memo } from "react";
 import { cn } from "@/shared/utils/cn";
 import { Button } from "@/components/ui/button";
 import type {
@@ -7,6 +8,7 @@ import type {
 } from "../utils/play-character.types";
 import type { PlaySessionAction } from "../utils/play-session-reducer";
 import { formatRecoveryLabel } from "../utils/rest.utils";
+import { UsesPips } from "./UsesPips";
 
 interface ResourcesPanelProps {
   compiled: PlayCharacterCompiled;
@@ -29,23 +31,23 @@ function setResourceSpent(
   dispatch: (a: PlaySessionAction) => void,
 ): void {
   if (r.featureId) {
-    dispatch({ type: "CLEAR_FEATURE_USE", featureId: r.featureId });
-    for (let j = 0; j < newSpent; j++) {
-      dispatch({
-        type: "SPEND_FEATURE_USE",
-        featureId: r.featureId,
-        max: r.max,
-      });
-    }
+    dispatch({
+      type: "SET_FEATURE_USES_SPENT",
+      featureId: r.featureId,
+      spent: newSpent,
+      max: r.max,
+    });
     return;
   }
-  dispatch({ type: "CLEAR_RESOURCE", resourceId: r.id });
-  for (let j = 0; j < newSpent; j++) {
-    dispatch({ type: "SPEND_RESOURCE", resourceId: r.id, max: r.max });
-  }
+  dispatch({
+    type: "SET_RESOURCE_SPENT",
+    resourceId: r.id,
+    spent: newSpent,
+    max: r.max,
+  });
 }
 
-export function ResourcesPanel({
+export const ResourcesPanel = memo(function ResourcesPanel({
   compiled,
   session,
   dispatch,
@@ -78,33 +80,21 @@ export function ResourcesPanel({
                   {formatRecoveryLabel(r.recovery)} · {left}/{r.max}
                 </span>
               </span>
-              <div className="flex shrink-0 gap-1">
-                {Array.from({ length: r.max }, (_, i) => (
-                  <button
-                    key={i}
-                    type="button"
-                    className={cn(
-                      "h-5 w-5 rounded-full border",
-                      i < left
-                        ? "border-primary bg-primary"
-                        : "border-muted-foreground/40",
-                    )}
-                    aria-label={`${r.label} use ${i + 1}`}
-                    onClick={() => {
-                      // Filled = available: click sets remaining to i (spend) or i+1 (restore).
-                      const newLeft = i < left ? i : i + 1;
-                      setResourceSpent(r, r.max - newLeft, dispatch);
-                    }}
-                  />
-                ))}
-              </div>
+              <UsesPips
+                label={r.label}
+                max={r.max}
+                left={left}
+                onSetLeft={(newLeft) =>
+                  setResourceSpent(r, r.max - newLeft, dispatch)
+                }
+              />
             </li>
           );
         })}
       </ul>
     </div>
   );
-}
+});
 
 interface HitDicePanelProps {
   compiled: PlayCharacterCompiled;
@@ -113,7 +103,7 @@ interface HitDicePanelProps {
   className?: string;
 }
 
-export function HitDicePanel({
+export const HitDicePanel = memo(function HitDicePanel({
   compiled,
   session,
   dispatch,
@@ -156,4 +146,4 @@ export function HitDicePanel({
       </ul>
     </div>
   );
-}
+});

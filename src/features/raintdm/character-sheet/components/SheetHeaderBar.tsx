@@ -21,6 +21,7 @@ import type {
   PlaySessionState,
 } from "../utils/play-character.types";
 import type { PlaySessionAction } from "../utils/play-session-reducer";
+import type { ConfirmDialogFn } from "../hooks/useConfirmDialog";
 import { SheetStatStrip } from "./SheetStatStrip";
 import { StatusChips } from "./StatusPanel";
 
@@ -34,6 +35,8 @@ interface SheetHeaderBarProps {
   onRest: (kind: "short" | "long") => void;
   onRollInit: () => void;
   onOpenStatus: () => void;
+  confirm: ConfirmDialogFn;
+  onEditInBuilder: () => void;
 }
 
 export function SheetHeaderBar({
@@ -46,6 +49,8 @@ export function SheetHeaderBar({
   onRest,
   onRollInit,
   onOpenStatus,
+  confirm,
+  onEditInBuilder,
 }: SheetHeaderBarProps) {
   const hpPct = Math.round(
     (session.hp.current / Math.max(1, session.hp.max)) * 100,
@@ -115,8 +120,12 @@ export function SheetHeaderBar({
               >
                 <BedDouble className="h-4 w-4" /> Long Rest
               </DropdownMenuItem>
-              <DropdownMenuItem asChild>
-                <Link to="/builder">Edit in Builder</Link>
+              <DropdownMenuItem
+                onSelect={() => {
+                  window.setTimeout(() => onEditInBuilder(), 0);
+                }}
+              >
+                Edit in Builder
               </DropdownMenuItem>
             </DropdownMenuContent>
           </DropdownMenu>
@@ -166,6 +175,7 @@ export function SheetHeaderBar({
           edition={compiled.rulesEdition}
           dispatch={dispatch}
           onOpenStatus={onOpenStatus}
+          confirm={confirm}
         />
       </div>
     </header>

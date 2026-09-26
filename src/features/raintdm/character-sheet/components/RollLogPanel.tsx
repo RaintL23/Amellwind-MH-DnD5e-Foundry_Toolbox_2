@@ -1,3 +1,4 @@
+import { memo } from "react";
 import { Button } from "@/components/ui/button";
 import { cn } from "@/shared/utils/cn";
 import type { PlayRollEntry } from "../utils/play-character.types";
@@ -23,7 +24,7 @@ interface RollLogPanelProps {
   maxHeightClass?: string;
 }
 
-export function RollLogPanel({
+export const RollLogPanel = memo(function RollLogPanel({
   rolls,
   onClear,
   emptyLabel = "No rolls yet",
@@ -107,4 +108,4 @@ export function RollLogPanel({
       </ul>
     </div>
   );
-}
+});

@@ -44,9 +44,8 @@ export function HpSheet({
   };
   const setTemp = () => {
     dispatch({
-      type: "SET_HP_DELTA",
-      delta: 0,
-      setTempHp: parsed,
+      type: "SET_TEMP_HP",
+      temp: parsed,
     });
   };
 
@@ -196,7 +195,10 @@ export function HpSheet({
                       locks,
                     });
                     if (result.aborted) return;
-                    dispatch({ type: "ROLL_DEATH_SAVE", d20: result.total });
+                    dispatch({
+                      type: "ROLL_DEATH_SAVE",
+                      d20: result.natural ?? result.total,
+                    });
                   })();
                 }}
               >

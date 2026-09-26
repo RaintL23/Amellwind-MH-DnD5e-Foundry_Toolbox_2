@@ -1,4 +1,4 @@
-import { useMemo, useState } from "react";
+import { useDeferredValue, useMemo, useState } from "react";
 import { Input } from "@/components/ui/input";
 import { Card } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
@@ -39,11 +39,12 @@ export function FeaturesPanel({
   dispatch,
 }: FeaturesPanelProps) {
   const [q, setQ] = useState("");
+  const deferredQ = useDeferredValue(q);
   // All character features (every activation bucket). Standard PHB actions stay
   // on the Actions tab only — they are not build-specific traits.
   const features = useMemo(() => {
     const list = compiled.features.filter((f) => f.sourceKind !== "standard");
-    const query = q.trim().toLowerCase();
+    const query = deferredQ.trim().toLowerCase();
     if (!query) return list;
     return list.filter(
       (f) =>
@@ -54,7 +55,7 @@ export function FeaturesPanel({
           e.label.toLowerCase().includes(query),
         ),
     );
-  }, [compiled.features, q]);
+  }, [compiled.features, deferredQ]);
 
   const bySource = useMemo(() => {
     const map = new Map<string, PlayFeature[]>();

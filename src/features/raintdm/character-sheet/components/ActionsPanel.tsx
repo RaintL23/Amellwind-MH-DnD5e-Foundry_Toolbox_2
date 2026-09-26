@@ -1,4 +1,4 @@
-import type { ReactNode } from "react";
+import { useMemo, useRef, type ReactNode } from "react";
 import { AlertTriangle } from "lucide-react";
 import { cn } from "@/shared/utils/cn";
 import type { ActionLocks } from "../utils/condition-effects.data";
@@ -9,8 +9,8 @@ import type {
   PlayFeature,
   PlayInventoryItem,
   PlaySessionState,
+  PlayAttackDamage,
   PlaySpell,
-  PlaySpellcasting,
 } from "../utils/play-character.types";
 import type { PlaySessionAction } from "../utils/play-session-reducer";
 import type { useSheetRoller } from "../hooks/useSheetRoller";
@@ -25,11 +25,20 @@ import {
   AccordionItem,
   AccordionTrigger,
 } from "@/components/ui/accordion";
-import { spellHasAttackRoll } from "../utils/spell-attack.utils";
+import { healingExpressionFromPotionName } from "../utils/inventory-item.utils";
 import {
-  healingExpressionFromPotionName,
-  isPotionItem,
-} from "../utils/inventory-item.utils";
+  availableUpcastLevels,
+  castPlaySpell,
+  isSpellReady,
+  spellEconomyLocked,
+} from "../utils/cast-spell.utils";
+import {
+  drinkPotion,
+  magicActionItems,
+  potionItems,
+  utilizeItems,
+} from "../utils/inventory-play.utils";
+import { UsesPips } from "./UsesPips";
 import {
   spellLevelLabel,
   toDescriptionLines,
@@ -103,47 +112,6 @@ function isUtilizeAction(f: PlayFeature): boolean {
   return f.sourceKind === "standard" && f.name === "Utilize";
 }
 
-function isSpellReady(
-  spell: PlaySpell,
-  session: PlaySessionState,
-  sc: PlaySpellcasting,
-  bucket: PlayActivationBucket,
-): boolean {
-  if (spell.bucket !== bucket) return false;
-  if (spell.level === 0 || spell.alwaysPrepared) return true;
-  if (!sc.isPreparedCaster) return true;
-  return session.preparedSpellIds.includes(spell.id);
-}
-
-function spellEconomyLocked(spell: PlaySpell, locks: ActionLocks): boolean {
-  if (spell.bucket === "bonus") return locks.bonusActions;
-  if (spell.bucket === "reaction") return locks.reactions;
-  return locks.actions;
-}
-
-function magicActionItems(session: PlaySessionState): PlayInventoryItem[] {
-  return session.inventory.filter(
-    (i) =>
-      i.quantity > 0 && (i.attuned || i.requiresAttunement) && !i.isWeapon,
-  );
-}
-
-function utilizeItems(session: PlaySessionState): PlayInventoryItem[] {
-  return session.inventory.filter((i) => {
-    if (i.quantity <= 0 || i.isWeapon || i.attuned || i.requiresAttunement) {
-      return false;
-    }
-    if (isPotionItem(i)) return false;
-    return true;
-  });
-}
-
-function potionItems(session: PlaySessionState): PlayInventoryItem[] {
-  return session.inventory.filter(
-    (i) => i.quantity > 0 && !i.isWeapon && isPotionItem(i),
-  );
-}
-
 export function AttackRow({
   atk,
   locks,
@@ -154,9 +122,14 @@ export function AttackRow({
   atk: PlayAttack;
   locks: ActionLocks;
   onAttack: (atk: PlayAttack) => void;
-  onDamage: (atk: PlayAttack, critical?: boolean) => void;
+  onDamage: (
+    atk: PlayAttack,
+    critical?: boolean,
+    damage?: PlayAttackDamage[],
+  ) => void;
   note?: string;
 }) {
+  const dmgDisabled = locks.attacks;
   return (
     <div className="rounded-md border border-border/70 bg-muted/30 p-2.5">
       <div className="flex flex-wrap items-start justify-between gap-2">
@@ -166,6 +139,9 @@ export function AttackRow({
             {atk.attackBonus >= 0 ? "+" : ""}
             {atk.attackBonus} to hit ·{" "}
             {atk.damage.map((d) => d.expression).join(" / ")}
+            {atk.versatile?.length
+              ? ` (versatile ${atk.versatile.map((d) => d.expression).join(" / ")})`
+              : ""}
           </p>
           {note ? (
             <p className="mt-1 text-[10px] leading-snug text-muted-foreground">
@@ -173,7 +149,7 @@ export function AttackRow({
             </p>
           ) : null}
         </div>
-        <div className="flex gap-1.5">
+        <div className="flex flex-wrap gap-1.5">
           <Button
             type="button"
             size="sm"
@@ -189,62 +165,35 @@ export function AttackRow({
             size="sm"
             variant="outline"
             className="min-h-9"
+            disabled={dmgDisabled}
             onClick={() => onDamage(atk)}
           >
             Dmg
           </Button>
+          {atk.versatile?.length ? (
+            <Button
+              type="button"
+              size="sm"
+              variant="outline"
+              className="min-h-9"
+              disabled={dmgDisabled}
+              onClick={() => onDamage(atk, false, atk.versatile)}
+            >
+              Ver
+            </Button>
+          ) : null}
           <Button
             type="button"
             size="sm"
             variant="outline"
             className="min-h-9"
+            disabled={dmgDisabled}
             onClick={() => onDamage(atk, true)}
           >
             Crit
           </Button>
         </div>
       </div>
-    </div>
-  );
-}
-
-function FeatureUses({
-  featureId,
-  max,
-  spent,
-  onSet,
-}: {
-  featureId: string;
-  max: number;
-  spent: number;
-  onSet: (featureId: string, count: number, max: number) => void;
-}) {
-  if (max <= 0) return null;
-  const left = max - spent;
-  return (
-    <div
-      className="flex items-center gap-1"
-      onClick={(e) => e.stopPropagation()}
-      onKeyDown={(e) => e.stopPropagation()}
-    >
-      {Array.from({ length: max }, (_, i) => (
-        <button
-          key={i}
-          type="button"
-          className={cn(
-            "h-5 w-5 rounded-full border",
-            i < left
-              ? "bg-primary border-primary"
-              : "border-muted-foreground/40",
-          )}
-          aria-label={`Set remaining uses to ${i < left ? i : i + 1}`}
-          onClick={() => {
-            // Filled = available: click sets remaining to i (spend) or i+1 (restore).
-            const newLeft = i < left ? i : i + 1;
-            onSet(featureId, max - newLeft, max);
-          }}
-        />
-      ))}
     </div>
   );
 }
@@ -265,45 +214,77 @@ export function ActionsPanel({
   onOpenTab,
 }: ActionsPanelProps) {
   const sc = compiled.spellcasting;
+  const castingRef = useRef(false);
 
-  const magicSpells =
-    sc?.spells.filter((s) => isSpellReady(s, session, sc, "action")) ?? [];
-  const bonusSpells =
-    sc?.spells.filter((s) => isSpellReady(s, session, sc, "bonus")) ?? [];
-  const reactionSpells =
-    sc?.spells.filter((s) => isSpellReady(s, session, sc, "reaction")) ?? [];
-  const magicItems = magicActionItems(session);
-  const utilizeList = utilizeItems(session);
-  const bonusPotions = potionItems(session);
+  const magicSpells = useMemo(
+    () =>
+      sc?.spells.filter(
+        (s) => s.bucket === "action" && isSpellReady(s, session, sc),
+      ) ?? [],
+    [sc, session],
+  );
+  const bonusSpells = useMemo(
+    () =>
+      sc?.spells.filter(
+        (s) => s.bucket === "bonus" && isSpellReady(s, session, sc),
+      ) ?? [],
+    [sc, session],
+  );
+  const reactionSpells = useMemo(
+    () =>
+      sc?.spells.filter(
+        (s) => s.bucket === "reaction" && isSpellReady(s, session, sc),
+      ) ?? [],
+    [sc, session],
+  );
+  const magicItems = useMemo(
+    () => magicActionItems(session.inventory),
+    [session.inventory],
+  );
+  const utilizeList = useMemo(
+    () => utilizeItems(session.inventory),
+    [session.inventory],
+  );
+  const bonusPotions = useMemo(
+    () => potionItems(session.inventory),
+    [session.inventory],
+  );
 
-  const attacksFor = (bucket: "action" | "bonus"): PlayAttack[] => {
-    if (bucket === "bonus") {
-      // Only true Light off-hand / bonus attacks from compile — never dump every
-      // equipped weapon here. Damage already omits ability mod at compile time.
-      return compiled.attacks.filter((a) => a.bucket === "bonus");
-    }
+  const attacksFor = useMemo(() => {
+    const build = (bucket: "action" | "bonus"): PlayAttack[] => {
+      if (bucket === "bonus") {
+        return compiled.attacks.filter((a) => a.bucket === "bonus");
+      }
 
-    const fromCompiled = compiled.attacks.filter((a) => a.bucket === "action");
-    const compiledNames = new Set(
-      fromCompiled.map((a) => a.name.trim().toLowerCase()),
-    );
-    const fromInventory = session.inventory
-      .filter((i) => i.equipped && i.isWeapon && i.attackBonus != null)
-      .filter((i) => !compiledNames.has(i.name.trim().toLowerCase()))
-      .map((i) => ({
-        id: `inv-atk-${i.id}`,
-        name: i.name,
-        attackBonus: i.attackBonus ?? 0,
-        damage: [{ expression: i.damageExpression ?? "1d4" }],
-        properties: i.properties ?? [],
-        critRange: 20,
-        bucket: "action" as const,
-        sourceKind: "item" as const,
-      }));
-    return [...fromCompiled, ...fromInventory];
-  };
+      const fromCompiled = compiled.attacks.filter((a) => a.bucket === "action");
+      const compiledNames = new Set(
+        fromCompiled.map((a) => a.name.trim().toLowerCase()),
+      );
+      const fromInventory = session.inventory
+        .filter(
+          (i) =>
+            i.equipped &&
+            i.isWeapon &&
+            i.quantity > 0 &&
+            i.attackBonus != null,
+        )
+        .filter((i) => !compiledNames.has(i.name.trim().toLowerCase()))
+        .map((i) => ({
+          id: `inv-atk-${i.id}`,
+          name: i.name,
+          attackBonus: i.attackBonus ?? 0,
+          damage: [{ expression: i.damageExpression ?? "1d4" }],
+          properties: i.properties ?? [],
+          critRange: 20,
+          bucket: "action" as const,
+          sourceKind: "item" as const,
+        }));
+      return [...fromCompiled, ...fromInventory];
+    };
+    return { action: build("action"), bonus: build("bonus") };
+  }, [compiled.attacks, session.inventory]);
 
-  const quickAttacks = attacksFor("action");
+  const quickAttacks = attacksFor.action;
 
   const rollAttack = (atk: PlayAttack) => {
     if (locks.attacks) return;
@@ -315,11 +296,17 @@ export function ActionsPanel({
     });
   };
 
-  const rollDamage = (atk: PlayAttack, critical = false) => {
-    const expr = atk.damage[0]?.expression ?? "1d4";
+  const rollDamage = (
+    atk: PlayAttack,
+    critical = false,
+    damage = atk.damage,
+  ) => {
+    const expr = damage[0]?.expression ?? "1d4";
     const result = rollExpression(expr, { critical });
+    const verNote =
+      damage !== atk.damage && atk.versatile?.length ? " (versatile)" : "";
     logRoll({
-      label: `${atk.name} Damage${critical ? " (crit)" : ""}`,
+      label: `${atk.name} Damage${critical ? " (crit)" : ""}${verNote}`,
       expression: expr,
       total: result.total,
       detail: result.detail,
@@ -327,58 +314,42 @@ export function ActionsPanel({
     });
   };
 
-  const spendSlotForSpell = (spell: PlaySpell) => {
-    if (!sc || spell.level <= 0 || spell.isRitual) return true;
-    const slotLevel = sc.isPactMagic
-      ? sc.pact?.level ?? spell.level
-      : Math.max(spell.level, 1);
-    if (sc.isPactMagic && sc.pact) {
-      if (session.pactSpent >= sc.pact.max) return false;
-      dispatch({ type: "SPEND_PACT", max: sc.pact.max });
-      return true;
-    }
-    const max = sc.slotMax[slotLevel] ?? 0;
-    const spent = session.slotsSpent[slotLevel] ?? 0;
-    if (spent >= max) return false;
-    dispatch({ type: "SPEND_SLOT", level: slotLevel, max });
-    return true;
-  };
-
   const castSpell = (spell: PlaySpell) => {
     if (!sc || spellEconomyLocked(spell, locks)) return;
-    void (async () => {
-      if (spell.isConcentration) {
-        if (session.concentration && session.concentration !== spell.name) {
-          const ok = await confirm({
-            title: "Break concentration?",
-            description: `Cast ${spell.name} and break concentration on ${session.concentration}?`,
-            confirmLabel: "Cast",
-          });
-          if (!ok) return;
-        }
-      }
-      if (!spendSlotForSpell(spell)) return;
-      if (spell.isConcentration) {
-        dispatch({ type: "SET_CONCENTRATION", spellName: spell.name });
-      }
+    if (castingRef.current) return;
+    const slotLevel = sc.isPactMagic
+      ? (sc.pact?.level ?? Math.max(spell.level, 1))
+      : Math.max(spell.level, 1);
+    castingRef.current = true;
+    void castPlaySpell({
+      spell,
+      slotLevel,
+      sc,
+      session,
+      locks,
+      dispatch,
+      rollD20Test,
+      logRoll,
+      confirm,
+      requirePrepared: true,
+    }).finally(() => {
+      castingRef.current = false;
+    });
+  };
 
-      if (spellHasAttackRoll(spell)) {
-        await rollD20Test({
-          label: `Cast ${spell.name}`,
-          modifier: sc.attackBonus,
-          kind: "attack",
-          locks,
-        });
-      } else {
-        logRoll({
-          label: `Cast ${spell.name}`,
-          expression: "—",
-          total: 0,
-          detail: `Cast (DC ${sc.saveDc})`,
-          mode: "normal",
-        });
-      }
-    })();
+  const spellCastDisabled = (spell: PlaySpell): boolean => {
+    if (!sc || spellEconomyLocked(spell, locks)) return true;
+    if (!isSpellReady(spell, session, sc)) return true;
+    if (spell.level === 0 || spell.isRitual) return false;
+    return availableUpcastLevels(spell, session, sc).length === 0;
+  };
+
+  const spellCastTitle = (spell: PlaySpell): string | undefined => {
+    if (!sc || spell.level === 0 || spell.isRitual) return undefined;
+    if (availableUpcastLevels(spell, session, sc).length === 0) {
+      return "No slots";
+    }
+    return undefined;
   };
 
   const logItemUse = (item: PlayInventoryItem, via: "magic" | "utilize") => {
@@ -394,55 +365,9 @@ export function ActionsPanel({
     });
   };
 
-  const consumeInventoryItem = (item: PlayInventoryItem) => {
-    if (item.quantity <= 1) {
-      dispatch({ type: "REMOVE_ITEM", id: item.id });
-      return;
-    }
-    dispatch({
-      type: "UPSERT_ITEM",
-      item: { ...item, quantity: item.quantity - 1 },
-    });
-  };
-
-  const drinkPotion = (item: PlayInventoryItem) => {
-    if (locks.bonusActions) return;
-    const healExpr = healingExpressionFromPotionName(item.name);
-    if (healExpr) {
-      const result = rollExpression(healExpr);
-      dispatch({ type: "SET_HP_DELTA", delta: result.total });
-      logRoll({
-        label: `Drink ${item.name}`,
-        expression: healExpr,
-        total: result.total,
-        detail: `${result.detail} HP restored`,
-        mode: "normal",
-      });
-    } else {
-      logRoll({
-        label: `Drink ${item.name}`,
-        expression: "—",
-        total: 0,
-        detail:
-          item.notes?.trim() ||
-          item.summary?.trim() ||
-          "Potion consumed — apply effects manually if needed",
-        mode: "normal",
-      });
-    }
-    consumeInventoryItem(item);
-  };
-
-  const setUsesSpent = (featureId: string, count: number, max: number) => {
-    dispatch({ type: "CLEAR_FEATURE_USE", featureId });
-    for (let j = 0; j < count && j < max; j++) {
-      dispatch({ type: "SPEND_FEATURE_USE", featureId, max });
-    }
-  };
-
   const featureOptionHint = (f: PlayFeature): string => {
     if (isStandardAttackAction(f)) {
-      const n = attacksFor("action").length;
+      const n = attacksFor.action.length;
       return optionSuffix(n, "option", "options");
     }
     if (isMagicAction(f)) {
@@ -458,7 +383,7 @@ export function ActionsPanel({
     return "";
   };
 
-  const bucketSections = BUCKETS.map(({ key, label, lockKey }) => {
+  const bucketSections = useMemo(() => BUCKETS.map(({ key, label, lockKey }) => {
     const locked = lockKey ? Boolean(locks[lockKey]) : false;
     let feats = compiled.features
       .filter((f) => featureBucket(f, session) === key)
@@ -482,7 +407,8 @@ export function ActionsPanel({
       feats = [BONUS_MAGIC_ACTION, ...feats.filter((f) => !isMagicAction(f))];
     }
 
-    const atks = key === "action" || key === "bonus" ? attacksFor(key) : [];
+    const atks =
+      key === "action" || key === "bonus" ? attacksFor[key] : [];
     const attackHost = feats.find(isStandardAttackAction);
     const nestedUnderAttack =
       key === "action" && attackHost != null ? atks : [];
@@ -506,7 +432,18 @@ export function ActionsPanel({
       bucketPotions,
       itemCount,
     };
-  }).filter((s) => s.itemCount > 0);
+  }).filter((s) => s.itemCount > 0), [
+    compiled.features,
+    session,
+    locks,
+    magicSpells,
+    magicItems,
+    utilizeList,
+    bonusSpells,
+    reactionSpells,
+    bonusPotions,
+    attacksFor,
+  ]);
 
   return (
     <div className="space-y-3">
@@ -635,12 +572,25 @@ export function ActionsPanel({
                                     {hint}
                                   </span>
                                 </span>
-                                <FeatureUses
-                                  featureId={f.id}
-                                  max={max}
-                                  spent={spent}
-                                  onSet={setUsesSpent}
-                                />
+                                <span
+                                  onClick={(e) => e.stopPropagation()}
+                                  onKeyDown={(e) => e.stopPropagation()}
+                                >
+                                  <UsesPips
+                                    label={f.name}
+                                    max={max}
+                                    left={max - spent}
+                                    className="items-center"
+                                    onSetLeft={(newLeft) =>
+                                      dispatch({
+                                        type: "SET_FEATURE_USES_SPENT",
+                                        featureId: f.id,
+                                        spent: max - newLeft,
+                                        max,
+                                      })
+                                    }
+                                  />
+                                </span>
                               </span>
                             </AccordionTrigger>
                             <AccordionContent className="space-y-2 px-3 pb-2.5">
@@ -686,7 +636,8 @@ export function ActionsPanel({
                                     <SpellMiniRow
                                       key={spell.id}
                                       spell={spell}
-                                      locked={spellEconomyLocked(spell, locks)}
+                                      disabled={spellCastDisabled(spell)}
+                                      title={spellCastTitle(spell)}
                                       onCast={() => castSpell(spell)}
                                     />
                                   ))}
@@ -720,7 +671,8 @@ export function ActionsPanel({
                                     <SpellMiniRow
                                       key={spell.id}
                                       spell={spell}
-                                      locked={spellEconomyLocked(spell, locks)}
+                                      disabled={spellCastDisabled(spell)}
+                                      title={spellCastTitle(spell)}
                                       onCast={() => castSpell(spell)}
                                     />
                                   ))}
@@ -788,7 +740,8 @@ export function ActionsPanel({
                                 type="button"
                                 size="sm"
                                 className="min-h-9"
-                                disabled={spellEconomyLocked(spell, locks)}
+                                disabled={spellCastDisabled(spell)}
+                                title={spellCastTitle(spell)}
                                 onClick={() => castSpell(spell)}
                               >
                                 Cast
@@ -841,7 +794,14 @@ export function ActionsPanel({
                                   variant="secondary"
                                   className="min-h-9"
                                   disabled={locks.bonusActions}
-                                  onClick={() => drinkPotion(item)}
+                                  onClick={() =>
+                                    drinkPotion(
+                                      item,
+                                      locks,
+                                      dispatch,
+                                      logRoll,
+                                    )
+                                  }
                                 >
                                   Drink
                                 </Button>
@@ -932,11 +892,13 @@ function MagicUtilizeBlock({
 
 function SpellMiniRow({
   spell,
-  locked,
+  disabled,
+  title,
   onCast,
 }: {
   spell: PlaySpell;
-  locked: boolean;
+  disabled: boolean;
+  title?: string;
   onCast: () => void;
 }) {
   return (
@@ -953,7 +915,8 @@ function SpellMiniRow({
         type="button"
         size="sm"
         className="min-h-9"
-        disabled={locked}
+        disabled={disabled}
+        title={title}
         onClick={onCast}
       >
         Cast

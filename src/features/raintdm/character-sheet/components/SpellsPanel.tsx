@@ -1,4 +1,4 @@
-import { useMemo, useState } from "react";
+import { memo, useDeferredValue, useMemo, useRef, useState } from "react";
 import { ChevronDown } from "lucide-react";
 import { cn } from "@/shared/utils/cn";
 import type { ActionLocks } from "../utils/condition-effects.data";
@@ -28,10 +28,18 @@ import {
 } from "@/components/ui/dropdown-menu";
 import { spellHasAttackRoll } from "../utils/spell-attack.utils";
 import {
+  availableUpcastLevels,
+  canSpendSlotForSpell,
+  castPlaySpell,
+  isSpellReady,
+  spellEconomyLocked,
+} from "../utils/cast-spell.utils";
+import {
   spellLevelLabel,
   toDescriptionLines,
 } from "../utils/description-lines.utils";
 import { DescriptionLines } from "@/shared/components/DescriptionLines";
+import { UsesPips } from "./UsesPips";
 
 interface SpellsPanelProps {
   compiled: PlayCharacterCompiled;
@@ -43,33 +51,17 @@ interface SpellsPanelProps {
   confirm: ConfirmDialogFn;
 }
 
-function spellLocked(spell: PlaySpell, locks: ActionLocks): boolean {
-  if (spell.bucket === "bonus") return locks.bonusActions;
-  if (spell.bucket === "reaction") return locks.reactions;
-  return locks.actions;
-}
-
-function availableUpcastLevels(
-  spell: PlaySpell,
-  session: PlaySessionState,
-  slotMax: Record<number, number>,
-  isPact: boolean,
-  pact?: { max: number; level: number },
-): number[] {
-  if (spell.level === 0 || spell.isRitual) return [];
-  if (isPact && pact) {
-    if (session.pactSpent >= pact.max) return [];
-    return [pact.level];
-  }
-  const levels: number[] = [];
-  for (let lv = Math.max(spell.level, 1); lv <= 9; lv++) {
-    const max = slotMax[lv] ?? 0;
-    if (max <= 0) continue;
-    const spent = session.slotsSpent[lv] ?? 0;
-    if (spent < max) levels.push(lv);
-  }
-  return levels;
-}
+const SpellDescription = memo(function SpellDescription({
+  description,
+}: {
+  description: string;
+}) {
+  const lines = useMemo(
+    () => toDescriptionLines(description),
+    [description],
+  );
+  return <DescriptionLines lines={lines} sizeClass="text-xs" />;
+});
 
 export function SpellsPanel({
   compiled,
@@ -81,21 +73,19 @@ export function SpellsPanel({
   confirm,
 }: SpellsPanelProps) {
   const sc = compiled.spellcasting;
+  const castingRef = useRef(false);
   const [levelFilter, setLevelFilter] = useState<number | "all">("all");
   const [preparedOnly, setPreparedOnly] = useState(false);
   const [q, setQ] = useState("");
+  const deferredQ = useDeferredValue(q);
 
   const spells = useMemo(() => {
     if (!sc) return [];
-    const query = q.trim().toLowerCase();
+    const query = deferredQ.trim().toLowerCase();
     return sc.spells.filter((s) => {
       if (levelFilter !== "all" && s.level !== levelFilter) return false;
       if (preparedOnly) {
-        const prepared =
-          s.alwaysPrepared ||
-          s.level === 0 ||
-          session.preparedSpellIds.includes(s.id);
-        if (!prepared) return false;
+        if (!isSpellReady(s, session, sc)) return false;
       }
       if (
         query &&
@@ -106,7 +96,7 @@ export function SpellsPanel({
       }
       return true;
     });
-  }, [sc, levelFilter, preparedOnly, session.preparedSpellIds, q]);
+  }, [sc, levelFilter, preparedOnly, session, deferredQ]);
 
   const byLevel = useMemo(() => {
     const map = new Map<number, PlaySpell[]>();
@@ -126,58 +116,40 @@ export function SpellsPanel({
     );
   }
 
-  const cast = async (spell: PlaySpell, slotLevel: number) => {
-    if (spellLocked(spell, locks)) return;
-
-    if (spell.isConcentration) {
-      if (session.concentration && session.concentration !== spell.name) {
-        const ok = await confirm({
-          title: "Break concentration?",
-          description: `Cast ${spell.name} and break concentration on ${session.concentration}?`,
-          confirmLabel: "Cast",
-        });
-        if (!ok) return;
-      }
-    }
-
-    if (spell.level > 0 && !spell.isRitual) {
-      if (sc.isPactMagic && sc.pact) {
-        if (session.pactSpent >= sc.pact.max) return;
-        dispatch({ type: "SPEND_PACT", max: sc.pact.max });
-      } else {
-        const max = sc.slotMax[slotLevel] ?? 0;
-        const spent = session.slotsSpent[slotLevel] ?? 0;
-        if (spent >= max) return;
-        dispatch({ type: "SPEND_SLOT", level: slotLevel, max });
-      }
-    }
-    if (spell.isConcentration) {
-      dispatch({ type: "SET_CONCENTRATION", spellName: spell.name });
-    }
-
-    const slotNote =
-      spell.level === 0
-        ? "Cantrip"
-        : sc.isPactMagic
-          ? `Pact Level ${slotLevel}`
-          : `Level ${slotLevel} slot`;
-
-    if (spellHasAttackRoll(spell)) {
-      await rollD20Test({
-        label: `Cast ${spell.name}`,
-        modifier: sc.attackBonus,
-        kind: "attack",
+  const runCast = async (
+    spell: PlaySpell,
+    slotLevel: number,
+    asRitual = false,
+  ) => {
+    if (castingRef.current) return;
+    castingRef.current = true;
+    try {
+      await castPlaySpell({
+        spell,
+        slotLevel,
+        asRitual,
+        sc,
+        session,
         locks,
+        dispatch,
+        rollD20Test,
+        logRoll,
+        confirm,
+        requirePrepared: true,
       });
-    } else {
-      logRoll({
-        label: `Cast ${spell.name}`,
-        expression: "—",
-        total: 0,
-        detail: `${slotNote} · DC ${sc.saveDc}`,
-        mode: "normal",
-      });
+    } finally {
+      castingRef.current = false;
     }
+  };
+
+  const clearConcentration = async () => {
+    const ok = await confirm({
+      title: "End concentration?",
+      description: `Stop concentrating on ${session.concentration}?`,
+      confirmLabel: "End",
+    });
+    if (!ok) return;
+    dispatch({ type: "SET_CONCENTRATION", spellName: null });
   };
 
   const levels = [
@@ -198,9 +170,7 @@ export function SpellsPanel({
           <Badge
             variant="secondary"
             className="h-auto cursor-pointer self-center px-2.5 py-2"
-            onClick={() =>
-              dispatch({ type: "SET_CONCENTRATION", spellName: null })
-            }
+            onClick={() => void clearConcentration()}
           >
             Conc: {session.concentration} ×
           </Badge>
@@ -212,48 +182,59 @@ export function SpellsPanel({
           Spell slots
         </h3>
         <div className="flex flex-wrap gap-3">
-          {sc.isPactMagic && sc.pact
-            ? (() => {
-                const left = sc.pact.max - session.pactSpent;
-                return (
-                  <SlotRow
-                    label={`Pact Level ${sc.pact.level}`}
-                    max={sc.pact.max}
-                    left={left}
-                    onToggle={(i) => {
-                      // Filled = available: click sets remaining to i (spend) or i+1 (restore).
-                      const newLeft = i < left ? i : i + 1;
-                      const newSpent = sc.pact!.max - newLeft;
-                      dispatch({ type: "CLEAR_PACT" });
-                      for (let j = 0; j < newSpent; j++) {
-                        dispatch({ type: "SPEND_PACT", max: sc.pact!.max });
-                      }
-                    }}
-                  />
-                );
-              })()
-            : Object.entries(sc.slotMax).map(([lvl, max]) => {
-                const level = Number(lvl);
-                const spent = session.slotsSpent[level] ?? 0;
-                const left = max - spent;
-                return (
-                  <SlotRow
-                    key={lvl}
+          {sc.isPactMagic && sc.pact ? (
+            <div className="flex items-center gap-2">
+              <span className="w-14 text-xs font-medium tabular-nums">
+                Pact Level {sc.pact.level}{" "}
+                <span className="text-muted-foreground">
+                  {sc.pact.max - session.pactSpent}/{sc.pact.max}
+                </span>
+              </span>
+              <UsesPips
+                label={`Pact Level ${sc.pact.level}`}
+                max={sc.pact.max}
+                left={sc.pact.max - session.pactSpent}
+                pipClassName="h-6 w-6 rounded-sm"
+                onSetLeft={(newLeft) =>
+                  dispatch({
+                    type: "SET_PACT_SPENT",
+                    spent: sc.pact!.max - newLeft,
+                    max: sc.pact!.max,
+                  })
+                }
+              />
+            </div>
+          ) : (
+            Object.entries(sc.slotMax).map(([lvl, max]) => {
+              const level = Number(lvl);
+              const spent = session.slotsSpent[level] ?? 0;
+              const left = max - spent;
+              return (
+                <div key={lvl} className="flex items-center gap-2">
+                  <span className="w-14 text-xs font-medium tabular-nums">
+                    Level {level}{" "}
+                    <span className="text-muted-foreground">
+                      {left}/{max}
+                    </span>
+                  </span>
+                  <UsesPips
                     label={`Level ${level}`}
                     max={max}
                     left={left}
-                    onToggle={(i) => {
-                      // Filled = available: click sets remaining to i (spend) or i+1 (restore).
-                      const newLeft = i < left ? i : i + 1;
-                      const newSpent = max - newLeft;
-                      dispatch({ type: "CLEAR_SLOT", level });
-                      for (let j = 0; j < newSpent; j++) {
-                        dispatch({ type: "SPEND_SLOT", level, max });
-                      }
-                    }}
+                    pipClassName="h-6 w-6 rounded-sm"
+                    onSetLeft={(newLeft) =>
+                      dispatch({
+                        type: "SET_SLOTS_SPENT",
+                        level,
+                        spent: max - newLeft,
+                        max,
+                      })
+                    }
                   />
-                );
-              })}
+                </div>
+              );
+            })
+          )}
         </div>
       </Card>
 
@@ -304,21 +285,32 @@ export function SpellsPanel({
           </h3>
           <Accordion type="multiple" className="space-y-2">
             {list.map((spell) => {
-              const locked = spellLocked(spell, locks);
-              const prepared =
-                spell.alwaysPrepared ||
-                spell.level === 0 ||
-                session.preparedSpellIds.includes(spell.id);
+              const locked = spellEconomyLocked(spell, locks);
+              const prepared = isSpellReady(spell, session, sc);
               const defaultSlot = sc.isPactMagic
-                ? sc.pact?.level ?? spell.level
+                ? (sc.pact?.level ?? spell.level)
                 : Math.max(spell.level, 1);
-              const upcastLevels = availableUpcastLevels(
+              const upcastLevels = availableUpcastLevels(spell, session, sc);
+              const hasSlotForDefault = canSpendSlotForSpell(
                 spell,
                 session,
-                sc.slotMax,
-                sc.isPactMagic,
-                sc.pact,
+                sc,
+                upcastLevels[0] ?? defaultSlot,
+                false,
               );
+              const noSlots =
+                spell.level > 0 &&
+                !spell.isRitual &&
+                upcastLevels.length === 0;
+              const castDisabled =
+                locked ||
+                !prepared ||
+                noSlots ||
+                (spell.level > 0 &&
+                  !spell.isRitual &&
+                  !hasSlotForDefault &&
+                  upcastLevels.length <= 1);
+              const castTitle = noSlots ? "No slots" : undefined;
               const isConcentrating =
                 Boolean(session.concentration) &&
                 session.concentration === spell.name;
@@ -326,6 +318,16 @@ export function SpellsPanel({
                 ? (spell.statEffects ?? [])
                 : [];
               const needsAttack = spellHasAttackRoll(spell);
+
+              const deferCast = (
+                slotLevel: number,
+                asRitual = false,
+              ) => {
+                window.setTimeout(
+                  () => void runCast(spell, slotLevel, asRitual),
+                  0,
+                );
+              };
 
               return (
                 <Card
@@ -388,14 +390,77 @@ export function SpellsPanel({
                               {prepared ? "Prep'd" : "Prep"}
                             </Button>
                           ) : null}
-                          {upcastLevels.length > 1 ? (
+                          {spell.isRitual ? (
                             <DropdownMenu modal={false}>
                               <DropdownMenuTrigger asChild>
                                 <Button
                                   type="button"
                                   size="sm"
                                   className="min-h-9 gap-1"
-                                  disabled={locked}
+                                  disabled={locked || !prepared}
+                                  title={castTitle}
+                                >
+                                  Cast
+                                  <ChevronDown className="h-3.5 w-3.5" />
+                                </Button>
+                              </DropdownMenuTrigger>
+                              <DropdownMenuContent align="end">
+                                {upcastLevels.length > 1 ? (
+                                  upcastLevels.map((lv) => (
+                                    <DropdownMenuItem
+                                      key={lv}
+                                      disabled={!canSpendSlotForSpell(
+                                        spell,
+                                        session,
+                                        sc,
+                                        lv,
+                                        false,
+                                      )}
+                                      onSelect={() => deferCast(lv, false)}
+                                    >
+                                      {lv === spell.level
+                                        ? `Cast with slot (${spellLevelLabel(lv)})`
+                                        : `Upcast ${spellLevelLabel(lv)}`}
+                                    </DropdownMenuItem>
+                                  ))
+                                ) : (
+                                  <DropdownMenuItem
+                                    disabled={
+                                      upcastLevels.length === 0 ||
+                                      !canSpendSlotForSpell(
+                                        spell,
+                                        session,
+                                        sc,
+                                        upcastLevels[0] ?? defaultSlot,
+                                        false,
+                                      )
+                                    }
+                                    onSelect={() =>
+                                      deferCast(
+                                        upcastLevels[0] ?? defaultSlot,
+                                        false,
+                                      )
+                                    }
+                                  >
+                                    Cast with slot
+                                  </DropdownMenuItem>
+                                )}
+                                <DropdownMenuItem
+                                  onSelect={() => deferCast(defaultSlot, true)}
+                                >
+                                  As ritual (no slot)
+                                </DropdownMenuItem>
+                              </DropdownMenuContent>
+                            </DropdownMenu>
+                          ) : upcastLevels.length > 1 ? (
+                            <DropdownMenu modal={false}>
+                              <DropdownMenuTrigger asChild>
+                                <Button
+                                  type="button"
+                                  size="sm"
+                                  className="min-h-9 gap-1"
+                                  disabled={castDisabled}
+                                  title={castTitle}
                                 >
                                   Cast
                                   <ChevronDown className="h-3.5 w-3.5" />
@@ -405,13 +470,7 @@ export function SpellsPanel({
                                 {upcastLevels.map((lv) => (
                                   <DropdownMenuItem
                                     key={lv}
-                                    onSelect={() => {
-                                      // Defer so the menu closes before confirm / roll dialogs open.
-                                      window.setTimeout(
-                                        () => void cast(spell, lv),
-                                        0,
-                                      );
-                                    }}
+                                    onSelect={() => deferCast(lv, false)}
                                   >
                                     {lv === spell.level
                                       ? `Cast (${spellLevelLabel(lv)})`
@@ -425,11 +484,12 @@ export function SpellsPanel({
                               type="button"
                               size="sm"
                               className="min-h-9"
-                              disabled={locked}
+                              disabled={castDisabled}
+                              title={castTitle}
                               onClick={() =>
-                                void cast(
-                                  spell,
+                                deferCast(
                                   upcastLevels[0] ?? defaultSlot,
+                                  false,
                                 )
                               }
                             >
@@ -449,10 +509,7 @@ export function SpellsPanel({
                         {spell.school ? ` · ${spell.school}` : ""}
                       </p>
                       {spell.description ? (
-                        <DescriptionLines
-                          lines={toDescriptionLines(spell.description)}
-                          sizeClass="text-xs"
-                        />
+                        <SpellDescription description={spell.description} />
                       ) : (
                         <p className="text-xs italic text-muted-foreground">
                           No description available for this spell.
@@ -463,10 +520,7 @@ export function SpellsPanel({
                           <p className="text-[11px] font-semibold text-muted-foreground">
                             At Higher Levels
                           </p>
-                          <DescriptionLines
-                            lines={toDescriptionLines(spell.higherLevel)}
-                            sizeClass="text-xs"
-                          />
+                          <SpellDescription description={spell.higherLevel} />
                         </div>
                       ) : null}
                     </AccordionContent>
@@ -491,45 +545,6 @@ function StatBox({ label, value }: { label: string; value: string }) {
         {label}
       </span>
       <span className="text-sm font-bold tabular-nums">{value}</span>
-    </div>
-  );
-}
-
-function SlotRow({
-  label,
-  max,
-  left,
-  onToggle,
-}: {
-  label: string;
-  max: number;
-  left: number;
-  onToggle: (index: number) => void;
-}) {
-  return (
-    <div className="flex items-center gap-2">
-      <span className="w-14 text-xs font-medium tabular-nums">
-        {label}{" "}
-        <span className="text-muted-foreground">
-          {left}/{max}
-        </span>
-      </span>
-      <div className="flex gap-1">
-        {Array.from({ length: max }, (_, i) => (
-          <button
-            key={i}
-            type="button"
-            className={cn(
-              "h-6 w-6 rounded-sm border",
-              i < left
-                ? "border-primary bg-primary"
-                : "border-muted-foreground/40",
-            )}
-            aria-label={`${label} slot ${i + 1}`}
-            onClick={() => onToggle(i)}
-          />
-        ))}
-      </div>
     </div>
   );
 }

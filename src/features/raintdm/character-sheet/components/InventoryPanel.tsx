@@ -1,4 +1,4 @@
-import { useEffect, useMemo, useState } from "react";
+import { useDeferredValue, useEffect, useMemo, useState } from "react";
 import { ChevronDown, MoreHorizontal, Plus } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -28,6 +28,8 @@ import {
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
 import type { ConfirmDialogFn } from "../hooks/useConfirmDialog";
+import { deriveActionLocks } from "../utils/condition-effects.data";
+import type { ActionLocks } from "../utils/condition-effects.data";
 import { getListDndItems } from "@/features/dnd/items/services/dnd-item.service";
 import {
   getDndArmors,
@@ -48,10 +50,15 @@ import type { PlaySessionAction } from "../utils/play-session-reducer";
 import { getEncumbrance } from "../utils/encumbrance.utils";
 import { applyEquipExclusivity } from "../utils/effective-armor-class";
 import {
-  healingExpressionFromPotionName,
   isEquippableInventoryItem,
+  isPotionItem,
   isUsableInventoryItem,
 } from "../utils/inventory-item.utils";
+import {
+  consumeInventoryItem,
+  drinkPotion,
+  stackOrAppendItem,
+} from "../utils/inventory-play.utils";
 import {
   playItemFromArmor,
   playItemFromCustom,
@@ -60,7 +67,6 @@ import {
   playItemFromWeapon,
   type PlayInventoryCatalogEntry,
 } from "../utils/play-inventory-from-catalog";
-import { rollExpression } from "@/shared/utils/dice.utils";
 import type { useSheetRoller } from "../hooks/useSheetRoller";
 import {
   CatalogPickerGrid,
@@ -105,14 +111,13 @@ interface InventoryPanelProps {
   dispatch: (a: PlaySessionAction) => void;
   confirm: ConfirmDialogFn;
   logRoll: ReturnType<typeof useSheetRoller>["logRoll"];
+  locks?: ActionLocks;
 }
 
 function attackOpts(compiled: PlayCharacterCompiled) {
   return {
-    attackAbilityMod: Math.max(
-      compiled.abilities.str.mod,
-      compiled.abilities.dex.mod,
-    ),
+    strMod: compiled.abilities.str.mod,
+    dexMod: compiled.abilities.dex.mod,
     proficiencyBonus: compiled.proficiencyBonus,
   };
 }
@@ -248,12 +253,26 @@ async function loadCatalogEntries(): Promise<PlayInventoryCatalogEntry[]> {
   return entries.sort((a, b) => a.name.localeCompare(b.name));
 }
 
+let catalogCachePromise: Promise<PlayInventoryCatalogEntry[]> | null = null;
+
+/** Module-level cache — remounting the tab does not reload catalog data. */
+function loadInventoryCatalog(): Promise<PlayInventoryCatalogEntry[]> {
+  if (!catalogCachePromise) {
+    catalogCachePromise = loadCatalogEntries().catch((err) => {
+      catalogCachePromise = null;
+      throw err;
+    });
+  }
+  return catalogCachePromise;
+}
+
 export function InventoryPanel({
   compiled,
   session,
   dispatch,
   confirm,
   logRoll,
+  locks,
 }: InventoryPanelProps) {
   const enc = getEncumbrance(compiled, session);
   const [pickerOpen, setPickerOpen] = useState(false);
@@ -263,6 +282,7 @@ export function InventoryPanel({
   const [catalog, setCatalog] = useState<PlayInventoryCatalogEntry[]>([]);
   const [catalogLoading, setCatalogLoading] = useState(false);
   const [q, setQ] = useState("");
+  const deferredQ = useDeferredValue(q);
   const [selectedKeys, setSelectedKeys] = useState<string[]>([]);
   const [quantities, setQuantities] = useState<Record<string, number>>({});
   const [customName, setCustomName] = useState("");
@@ -284,7 +304,7 @@ export function InventoryPanel({
   useEffect(() => {
     if (!pickerOpen || catalog.length > 0) return;
     setCatalogLoading(true);
-    void loadCatalogEntries()
+    void loadInventoryCatalog()
       .then(setCatalog)
       .finally(() => setCatalogLoading(false));
   }, [pickerOpen, catalog.length]);
@@ -296,20 +316,22 @@ export function InventoryPanel({
       setQuantities({});
       setQ("");
       setPreviewEntry(null);
+      setCustomName("");
+      setCustomWeight("0");
     }
   }, [pickerOpen]);
 
   const opts = attackOpts(compiled);
 
   const filtered = useMemo(() => {
-    const query = q.trim().toLowerCase();
+    const query = deferredQ.trim().toLowerCase();
     if (!query) return catalog;
     return catalog.filter(
       (e) =>
         e.name.toLowerCase().includes(query) ||
         (e.summary?.toLowerCase().includes(query) ?? false),
     );
-  }, [catalog, q]);
+  }, [catalog, deferredQ]);
 
   const selectedEntries = useMemo(
     () =>
@@ -338,23 +360,23 @@ export function InventoryPanel({
   };
 
   const confirmSelected = () => {
+    let inv = session.inventory;
     for (const entry of selectedEntries) {
       const qty = Math.max(1, quantities[entry.key] ?? 1);
       const item = entry.toItem(opts);
-      dispatch({
-        type: "UPSERT_ITEM",
-        item: { ...item, quantity: qty },
-      });
+      inv = stackOrAppendItem(inv, { ...item, quantity: qty });
     }
+    dispatch({ type: "SET_INVENTORY", inventory: inv });
     setPickerOpen(false);
   };
 
   const addCustom = () => {
     const n = customName.trim();
     if (!n) return;
+    const item = playItemFromCustom(n, parseFloat(customWeight) || 0);
     dispatch({
-      type: "UPSERT_ITEM",
-      item: playItemFromCustom(n, parseFloat(customWeight) || 0),
+      type: "SET_INVENTORY",
+      inventory: stackOrAppendItem(session.inventory, item),
     });
     setCustomName("");
     setCustomWeight("0");
@@ -384,48 +406,42 @@ export function InventoryPanel({
     dispatch({ type: "REMOVE_ITEM", id: item.id });
   };
 
-  const consumeInventoryItem = (item: PlayInventoryItem) => {
-    if (item.quantity <= 1) {
-      dispatch({ type: "REMOVE_ITEM", id: item.id });
+  const handleUseItem = (item: PlayInventoryItem) => {
+    const actionLocks =
+      locks ?? deriveActionLocks([], 0, compiled.rulesEdition);
+    if (actionLocks.bonusActions || actionLocks.actions) return;
+    if (isPotionItem(item)) {
+      drinkPotion(item, actionLocks, dispatch, logRoll);
       return;
     }
-    dispatch({
-      type: "UPSERT_ITEM",
-      item: { ...item, quantity: item.quantity - 1 },
+    logRoll({
+      label: `Use ${item.name}`,
+      expression: "—",
+      total: 0,
+      detail:
+        item.notes?.trim() ||
+        item.summary?.trim() ||
+        "Item used — apply effects manually if needed",
+      mode: "normal",
     });
+    consumeInventoryItem(item, dispatch);
   };
 
-  const handleUseItem = (item: PlayInventoryItem) => {
-    const healExpr = healingExpressionFromPotionName(item.name);
-    if (healExpr) {
-      const result = rollExpression(healExpr);
-      dispatch({ type: "SET_HP_DELTA", delta: result.total });
-      logRoll({
-        label: `Use ${item.name}`,
-        expression: healExpr,
-        total: result.total,
-        detail: `${result.detail} HP restored`,
-        mode: "normal",
-      });
-    } else {
-      logRoll({
-        label: `Use ${item.name}`,
-        expression: "—",
-        total: 0,
-        detail:
-          item.notes?.trim() ||
-          item.summary?.trim() ||
-          "Item used — apply effects manually if needed",
-        mode: "normal",
-      });
+  const changeQuantity = async (item: PlayInventoryItem, delta: number) => {
+    if (delta < 0 && item.quantity <= 1) {
+      await removeItem(item);
+      return;
     }
-    consumeInventoryItem(item);
+    updateItem({ ...item, quantity: item.quantity + delta });
   };
 
   const cur = session.currency;
 
+  const tabFiltered = (tab: "dnd" | "amellwind") =>
+    filtered.filter((e) => e.tab === tab);
+
   const tabEntries = (tab: "dnd" | "amellwind") =>
-    filtered.filter((e) => e.tab === tab).slice(0, 100);
+    tabFiltered(tab).slice(0, 100);
 
   return (
     <div className="space-y-4">
@@ -572,10 +588,11 @@ export function InventoryPanel({
               key={item.id}
               item={item}
               attunementFull={attuned >= compiled.attunementMax}
-              onChange={updateItem}
+              onQuantityDelta={(delta) => void changeQuantity(item, delta)}
               onEquip={(next) => setEquipped(item, next)}
               onAttune={(next) => setAttuned(item, next)}
               onUse={() => handleUseItem(item)}
+              useDisabled={Boolean(locks?.actions || locks?.bonusActions)}
               onRemove={() => void removeItem(item)}
               onOpenDetail={() => setRowDetail(item)}
             />
@@ -594,10 +611,11 @@ export function InventoryPanel({
               key={item.id}
               item={item}
               attunementFull={attuned >= compiled.attunementMax}
-              onChange={updateItem}
+              onQuantityDelta={(delta) => void changeQuantity(item, delta)}
               onEquip={(next) => setEquipped(item, next)}
               onAttune={(next) => setAttuned(item, next)}
               onUse={() => handleUseItem(item)}
+              useDisabled={Boolean(locks?.actions || locks?.bonusActions)}
               onRemove={() => void removeItem(item)}
               onOpenDetail={() => setRowDetail(item)}
             />
@@ -772,6 +790,12 @@ export function InventoryPanel({
                               No matches
                             </p>
                           ) : null}
+                          {tabFiltered(tab).length > 100 ? (
+                            <p className="col-span-full text-xs text-muted-foreground">
+                              Showing 100 of {tabFiltered(tab).length} — search
+                              to narrow
+                            </p>
+                          ) : null}
                         </CatalogPickerGrid>
                       )}
                     </TabsContent>
@@ -890,19 +914,21 @@ function InventoryCatalogTile({
 function ItemRow({
   item,
   attunementFull,
-  onChange,
+  onQuantityDelta,
   onEquip,
   onAttune,
   onUse,
+  useDisabled,
   onRemove,
   onOpenDetail,
 }: {
   item: PlayInventoryItem;
   attunementFull: boolean;
-  onChange: (i: PlayInventoryItem) => void;
+  onQuantityDelta: (delta: number) => void;
   onEquip: (equipped: boolean) => void;
   onAttune: (attuned: boolean) => void;
   onUse: () => void;
+  useDisabled?: boolean;
   onRemove: () => void;
   onOpenDetail: () => void;
 }) {
@@ -949,12 +975,7 @@ function ItemRow({
           className="h-9 w-9 px-0"
           disabled={item.quantity <= 0}
           aria-label="Decrease quantity"
-          onClick={() =>
-            onChange({
-              ...item,
-              quantity: Math.max(0, item.quantity - 1),
-            })
-          }
+          onClick={() => onQuantityDelta(-1)}
         >
           −
         </Button>
@@ -967,7 +988,7 @@ function ItemRow({
           variant="outline"
           className="h-9 w-9 px-0"
           aria-label="Increase quantity"
-          onClick={() => onChange({ ...item, quantity: item.quantity + 1 })}
+          onClick={() => onQuantityDelta(1)}
         >
           +
         </Button>
@@ -991,7 +1012,7 @@ function ItemRow({
             ) : null}
             {canUse ? (
               <DropdownMenuItem
-                disabled={item.quantity <= 0}
+                disabled={item.quantity <= 0 || useDisabled}
                 onSelect={onUse}
               >
                 Use
