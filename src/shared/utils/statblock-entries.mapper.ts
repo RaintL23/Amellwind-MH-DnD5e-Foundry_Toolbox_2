@@ -70,10 +70,13 @@ export function statBlockContentToPlainText(block: StatBlockContent): string {
         .filter(Boolean)
         .join(" ");
     }
-    case "section":
-      return [block.name, ...block.children.map(statBlockContentToPlainText)]
+    case "section": {
+      const body = block.children
+        .map(statBlockContentToPlainText)
         .filter(Boolean)
-        .join(" ");
+        .join("\n");
+      return [block.name, body].filter(Boolean).join("\n");
+    }
     case "list":
       return block.items
         .map((item) =>
@@ -81,7 +84,7 @@ export function statBlockContentToPlainText(block: StatBlockContent): string {
             ? item.text
             : [item.name, ...item.children.map(statBlockContentToPlainText)].join(" "),
         )
-        .join(" ");
+        .join("\n");
     default:
       return "";
   }

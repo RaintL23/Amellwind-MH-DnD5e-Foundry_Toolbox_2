@@ -16,6 +16,8 @@ import type {
 } from "../utils/play-character.types";
 import type { PlaySessionAction } from "../utils/play-session-reducer";
 import { formatRecoveryLabel } from "../utils/rest.utils";
+import { toDescriptionLines } from "../utils/description-lines.utils";
+import { DescriptionLines } from "@/shared/components/DescriptionLines";
 import { NotesPanel } from "./NotesPanel";
 
 interface FeaturesPanelProps {
@@ -130,9 +132,10 @@ export function FeaturesPanel({
                           {effects.map((e) => e.label).join(" · ")}
                         </p>
                       ) : null}
-                      <p className="whitespace-pre-wrap text-xs text-muted-foreground">
-                        {f.description}
-                      </p>
+                      <DescriptionLines
+                        lines={toDescriptionLines(f.description)}
+                        sizeClass="text-xs"
+                      />
                     </AccordionContent>
                   </AccordionItem>
                 </Card>

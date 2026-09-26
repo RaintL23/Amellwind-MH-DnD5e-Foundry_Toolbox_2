@@ -27,6 +27,11 @@ import {
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
 import { spellHasAttackRoll } from "../utils/spell-attack.utils";
+import {
+  spellLevelLabel,
+  toDescriptionLines,
+} from "../utils/description-lines.utils";
+import { DescriptionLines } from "@/shared/components/DescriptionLines";
 
 interface SpellsPanelProps {
   compiled: PlayCharacterCompiled;
@@ -384,7 +389,7 @@ export function SpellsPanel({
                             </Button>
                           ) : null}
                           {upcastLevels.length > 1 ? (
-                            <DropdownMenu>
+                            <DropdownMenu modal={false}>
                               <DropdownMenuTrigger asChild>
                                 <Button
                                   type="button"
@@ -400,11 +405,17 @@ export function SpellsPanel({
                                 {upcastLevels.map((lv) => (
                                   <DropdownMenuItem
                                     key={lv}
-                                    onClick={() => void cast(spell, lv)}
+                                    onSelect={() => {
+                                      // Defer so the menu closes before confirm / roll dialogs open.
+                                      window.setTimeout(
+                                        () => void cast(spell, lv),
+                                        0,
+                                      );
+                                    }}
                                   >
                                     {lv === spell.level
-                                      ? `Cast (L${lv})`
-                                      : `Upcast L${lv}`}
+                                      ? `Cast (${spellLevelLabel(lv)})`
+                                      : `Upcast ${spellLevelLabel(lv)}`}
                                   </DropdownMenuItem>
                                 ))}
                               </DropdownMenuContent>
@@ -438,9 +449,10 @@ export function SpellsPanel({
                         {spell.school ? ` · ${spell.school}` : ""}
                       </p>
                       {spell.description ? (
-                        <p className="whitespace-pre-wrap text-xs text-muted-foreground">
-                          {spell.description}
-                        </p>
+                        <DescriptionLines
+                          lines={toDescriptionLines(spell.description)}
+                          sizeClass="text-xs"
+                        />
                       ) : (
                         <p className="text-xs italic text-muted-foreground">
                           No description available for this spell.
@@ -451,9 +463,10 @@ export function SpellsPanel({
                           <p className="text-[11px] font-semibold text-muted-foreground">
                             At Higher Levels
                           </p>
-                          <p className="whitespace-pre-wrap text-xs text-muted-foreground">
-                            {spell.higherLevel}
-                          </p>
+                          <DescriptionLines
+                            lines={toDescriptionLines(spell.higherLevel)}
+                            sizeClass="text-xs"
+                          />
                         </div>
                       ) : null}
                     </AccordionContent>
