@@ -5,12 +5,20 @@ import type {
   PlaySessionState,
 } from "./play-character.types";
 
+function looksLikeClothing(item: PlayInventoryItem): boolean {
+  if (/clothing|clothes|common clothes|traveler's clothes|robe|outfit/i.test(item.name)) {
+    return true;
+  }
+  return item.kind === "gear" && item.armorAc == null;
+}
+
 function isEquippedArmor(item: PlayInventoryItem): boolean {
   return (
     item.equipped &&
     item.quantity > 0 &&
     item.kind === "armor" &&
-    item.armorAc != null
+    item.armorAc != null &&
+    !looksLikeClothing(item)
   );
 }
 
@@ -25,8 +33,8 @@ function isEquippedShield(item: PlayInventoryItem): boolean {
 
 /**
  * Session AC from equipped armor/shield + DEX + acAdjust.
- * Does not model Unarmored Defense / natural armor (compiled.armorClass
- * is used as the unarmored floor when no armor is worn).
+ * `compiled.armorClass` is shield-free (unarmored floor or worn armor base
+ * from compile, including Unarmored Defense when modeled there).
  */
 export function getEffectiveArmorClass(
   compiled: PlayCharacterCompiled,
@@ -45,7 +53,8 @@ export function getEffectiveArmorClass(
         : Math.min(dexMod, maxDex);
     base = armor.armorAc + dexPart;
   } else {
-    base = Math.max(compiled.armorClass, 10 + dexMod);
+    // Do not max with 10+DEX — compile already baked unarmored/UD into armorClass.
+    base = compiled.armorClass;
   }
 
   const shieldPart = shield

@@ -18,7 +18,7 @@ import {
   applyEquipExclusivity,
   getEffectiveArmorClass,
 } from "./effective-armor-class";
-import { resolveEffectiveRollMode } from "./derive-action-locks";
+import { resolveEffectiveRollMode, rollModeForKind } from "./derive-action-locks";
 import type { PlayInventoryItem } from "./play-character.types";
 
 function stubCompiled(
@@ -213,6 +213,62 @@ describe("resolveEffectiveRollMode", () => {
   });
 });
 
+describe("rollModeForKind", () => {
+  it("save ignores ability-check-only disadvantage", () => {
+    const locks = deriveActionLocks([], 1, "2014");
+    expect(locks.abilityCheckDisadvantage).toBe(true);
+    expect(rollModeForKind("advantage", "save", locks, "wis")).toBe(
+      "advantage",
+    );
+  });
+
+  it("advantage and d20TestDisadvantage cancel to normal on saves", () => {
+    const locks = {
+      ...deriveActionLocks([], 0, "2024"),
+      d20TestDisadvantage: true,
+    };
+    expect(rollModeForKind("advantage", "save", locks, "wis")).toBe("normal");
+  });
+});
+
+describe("SET_FEATURE_USES_SPENT", () => {
+  it("sets spent atomically without incrementing", () => {
+    const compiled = stubCompiled();
+    let session = createInitialSession(compiled);
+    session = {
+      ...session,
+      featureUsesSpent: { "second-wind": 1 },
+    };
+    const next = playSessionReducer(compiled, session, {
+      type: "SET_FEATURE_USES_SPENT",
+      featureId: "second-wind",
+      spent: 0,
+      max: 1,
+    });
+    expect(next.session.featureUsesSpent["second-wind"]).toBeUndefined();
+  });
+});
+
+describe("applyRest hit dice recovery", () => {
+  it("recovers largest spent dice first on 2014 long rest", () => {
+    const compiled = stubCompiled({
+      rulesEdition: "2014",
+      hitDice: [
+        { die: "d6", max: 3 },
+        { die: "d10", max: 2 },
+      ],
+    });
+    let session = createInitialSession(compiled);
+    session = {
+      ...session,
+      hitDiceSpent: { d6: 2, d10: 1 },
+    };
+    const next = applyRest(compiled, session, "long");
+    expect(next.hitDiceSpent.d10).toBeUndefined();
+    expect(next.hitDiceSpent.d6).toBe(1);
+  });
+});
+
 describe("rest + session reducer", () => {
   it("short rest clears SR feature uses", () => {
     const compiled = stubCompiled();
@@ -332,11 +388,29 @@ describe("getEffectiveArmorClass", () => {
     };
   }
 
-  it("uses unarmored floor from compiled when nothing equipped", () => {
-    // stubCompiled has AC 16 and DEX +2 → max(16, 12) = 16
-    const compiled = stubCompiled();
+  it("uses compiled unarmored AC when nothing equipped", () => {
+    const compiled = stubCompiled({ armorClass: 16 });
     const session = createInitialSession(compiled);
     expect(getEffectiveArmorClass(compiled, session)).toBe(16);
+  });
+
+  it("unarmored compiled AC plus shield does not double-count", () => {
+    const compiled = stubCompiled({ armorClass: 12 });
+    const session = createInitialSession(compiled);
+    session.inventory = [
+      {
+        id: "shield",
+        name: "Shield",
+        quantity: 1,
+        weightLb: 6,
+        equipped: true,
+        attuned: false,
+        requiresAttunement: false,
+        kind: "shield",
+        shieldBonus: 2,
+      },
+    ];
+    expect(getEffectiveArmorClass(compiled, session)).toBe(14);
   });
 
   it("applies chain shirt with DEX capped at 2", () => {

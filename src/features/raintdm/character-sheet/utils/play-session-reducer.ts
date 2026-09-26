@@ -16,6 +16,7 @@ import { applyRest, spendHitDie } from "./rest.utils";
 export type PlaySessionAction =
   | { type: "SET_HP_DELTA"; delta: number; critical?: boolean; setTempHp?: number }
   | { type: "SET_HP_ABSOLUTE"; current: number; temp?: number }
+  | { type: "SET_TEMP_HP"; temp: number }
   | { type: "SET_DEATH_SAVES"; side: "successes" | "failures"; count: number }
   | { type: "ROLL_DEATH_SAVE"; d20: number }
   | { type: "SET_EXHAUSTION"; level: number }
@@ -26,12 +27,16 @@ export type PlaySessionAction =
   | { type: "SET_CONCENTRATION"; spellName: string | null }
   | { type: "SPEND_FEATURE_USE"; featureId: string; max: number }
   | { type: "CLEAR_FEATURE_USE"; featureId: string }
+  | { type: "SET_FEATURE_USES_SPENT"; featureId: string; spent: number; max: number }
   | { type: "SPEND_RESOURCE"; resourceId: string; max: number }
   | { type: "CLEAR_RESOURCE"; resourceId: string }
+  | { type: "SET_RESOURCE_SPENT"; resourceId: string; spent: number; max: number }
   | { type: "SPEND_SLOT"; level: number; max: number }
   | { type: "CLEAR_SLOT"; level: number }
+  | { type: "SET_SLOTS_SPENT"; level: number; spent: number; max: number }
   | { type: "SPEND_PACT"; max: number }
   | { type: "CLEAR_PACT" }
+  | { type: "SET_PACT_SPENT"; spent: number; max: number }
   | { type: "SET_PREPARED"; spellIds: string[] }
   | { type: "TOGGLE_PREPARED"; spellId: string }
   | { type: "SET_FEATURE_OVERRIDE"; featureId: string; bucket?: string; usesMax?: number }
@@ -46,7 +51,8 @@ export type PlaySessionAction =
   | { type: "LONG_REST" }
   | { type: "SPEND_HIT_DIE"; dieKey: string }
   | { type: "REPLACE_SESSION"; session: PlaySessionState }
-  | { type: "SYNC_CLAMP"; compiled: PlayCharacterCompiled };
+  | { type: "SYNC_CLAMP"; compiled: PlayCharacterCompiled }
+  | { type: "MIGRATE_EXHAUSTION_CONDITIONS" };
 
 export interface PlaySessionReduceResult {
   session: PlaySessionState;
@@ -100,6 +106,14 @@ export function playSessionReducer(
         },
       };
     }
+    case "SET_TEMP_HP": {
+      return {
+        session: {
+          ...session,
+          hp: { ...session.hp, temp: Math.max(0, Math.floor(action.temp)) },
+        },
+      };
+    }
     case "SET_DEATH_SAVES": {
       const actor = setDeathSaveCountOnActor(asPc(session), action.side, action.count);
       return { session: { ...session, deathSaves: actor.deathSaves } };
@@ -122,7 +136,29 @@ export function playSessionReducer(
           exhaustion: Math.max(0, Math.min(6, action.level)),
         },
       };
-    case "ADD_CONDITION":
+    case "ADD_CONDITION": {
+      const nameKey = action.condition.name.trim().toLowerCase();
+      if (nameKey === "exhaustion" || nameKey === "exhausted") {
+        const level = Math.max(
+          1,
+          action.condition.level ?? session.exhaustion + 1,
+        );
+        return {
+          session: {
+            ...session,
+            exhaustion: Math.min(6, level),
+            concentration: action.condition.effectOverride?.denyConcentration
+              ? null
+              : session.concentration,
+          },
+        };
+      }
+      const already = session.conditions.some(
+        (c) =>
+          c.name.trim().toLowerCase() === nameKey &&
+          c.kind === action.condition.kind,
+      );
+      if (already) return { session };
       return {
         session: {
           ...session,
@@ -132,6 +168,28 @@ export function playSessionReducer(
             : session.concentration,
         },
       };
+    }
+    case "MIGRATE_EXHAUSTION_CONDITIONS": {
+      const exhaustionConds = session.conditions.filter((c) => {
+        const n = c.name.trim().toLowerCase();
+        return n === "exhaustion" || n === "exhausted";
+      });
+      if (exhaustionConds.length === 0) return { session };
+      const fromInst = Math.max(
+        0,
+        ...exhaustionConds.map((c) => c.level ?? 1),
+      );
+      return {
+        session: {
+          ...session,
+          exhaustion: Math.max(session.exhaustion, Math.min(6, fromInst)),
+          conditions: session.conditions.filter((c) => {
+            const n = c.name.trim().toLowerCase();
+            return n !== "exhaustion" && n !== "exhausted";
+          }),
+        },
+      };
+    }
     case "REMOVE_CONDITION":
       return {
         session: {
@@ -170,6 +228,13 @@ export function playSessionReducer(
       delete featureUsesSpent[action.featureId];
       return { session: { ...session, featureUsesSpent } };
     }
+    case "SET_FEATURE_USES_SPENT": {
+      const spent = Math.max(0, Math.min(action.max, action.spent));
+      const featureUsesSpent = { ...session.featureUsesSpent };
+      if (spent <= 0) delete featureUsesSpent[action.featureId];
+      else featureUsesSpent[action.featureId] = spent;
+      return { session: { ...session, featureUsesSpent } };
+    }
     case "SPEND_RESOURCE": {
       const spent = session.resourcesSpent[action.resourceId] ?? 0;
       if (spent >= action.max) return { session };
@@ -186,6 +251,13 @@ export function playSessionReducer(
     case "CLEAR_RESOURCE": {
       const resourcesSpent = { ...session.resourcesSpent };
       delete resourcesSpent[action.resourceId];
+      return { session: { ...session, resourcesSpent } };
+    }
+    case "SET_RESOURCE_SPENT": {
+      const spent = Math.max(0, Math.min(action.max, action.spent));
+      const resourcesSpent = { ...session.resourcesSpent };
+      if (spent <= 0) delete resourcesSpent[action.resourceId];
+      else resourcesSpent[action.resourceId] = spent;
       return { session: { ...session, resourcesSpent } };
     }
     case "SPEND_SLOT": {
@@ -206,12 +278,23 @@ export function playSessionReducer(
       delete slotsSpent[action.level];
       return { session: { ...session, slotsSpent } };
     }
+    case "SET_SLOTS_SPENT": {
+      const spent = Math.max(0, Math.min(action.max, action.spent));
+      const slotsSpent = { ...session.slotsSpent };
+      if (spent <= 0) delete slotsSpent[action.level];
+      else slotsSpent[action.level] = spent;
+      return { session: { ...session, slotsSpent } };
+    }
     case "SPEND_PACT": {
       if (session.pactSpent >= action.max) return { session };
       return { session: { ...session, pactSpent: session.pactSpent + 1 } };
     }
     case "CLEAR_PACT":
       return { session: { ...session, pactSpent: 0 } };
+    case "SET_PACT_SPENT": {
+      const spent = Math.max(0, Math.min(action.max, action.spent));
+      return { session: { ...session, pactSpent: spent } };
+    }
     case "SET_PREPARED":
       return { session: { ...session, preparedSpellIds: action.spellIds } };
     case "TOGGLE_PREPARED": {

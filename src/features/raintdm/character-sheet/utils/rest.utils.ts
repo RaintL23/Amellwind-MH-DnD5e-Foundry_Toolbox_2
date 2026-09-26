@@ -146,8 +146,14 @@ export function applyRest(
     let hitDiceSpent = { ...next.hitDiceSpent };
     if (preview.hitDiceRecover && preview.hitDiceRecover > 0) {
       let toRecover = preview.hitDiceRecover;
-      // Prefer recovering from largest pools first
-      const keys = Object.keys(hitDiceSpent).sort();
+      // Prefer recovering from largest die pools first (d12 before d10, …)
+      const dieSize = (key: string) => {
+        const m = key.match(/(\d+)/);
+        return m ? parseInt(m[1], 10) : 0;
+      };
+      const keys = Object.keys(hitDiceSpent).sort(
+        (a, b) => dieSize(b) - dieSize(a),
+      );
       for (const key of keys) {
         if (toRecover <= 0) break;
         const cur = hitDiceSpent[key] ?? 0;

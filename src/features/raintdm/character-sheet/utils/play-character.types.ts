@@ -308,9 +308,14 @@ export interface PlaySessionState {
   useVariantEncumbrance: boolean;
 }
 
+/** Bump when compile output shape / rules change so sheets recompile once. */
+export const PLAY_COMPILE_VERSION = 2;
+
 export interface PlayCharacterRecord {
   id: string;
   version: 1;
+  /** Set after a successful compile/recompile; missing → treat as 0. */
+  compileVersion?: number;
   compiled: PlayCharacterCompiled;
   builderJson: BuilderCharacterJson;
   session: PlaySessionState;

@@ -1,6 +1,5 @@
-import type {
-  ActionLocks,
-} from "./condition-effects.data";
+import type { AbilityKey } from "@/shared/types";
+import type { ActionLocks } from "./condition-effects.data";
 export {
   deriveActionLocks,
   exhaustionEffects,
@@ -11,6 +10,8 @@ export {
 export type { ActionLocks } from "./condition-effects.data";
 
 import type { RollMode } from "./play-character.types";
+
+export type SheetRollKind = "attack" | "check" | "save" | "init" | "death";
 
 /**
  * Combine user roll mode with condition-forced disadvantage.
@@ -29,24 +30,51 @@ export function resolveEffectiveRollMode(
   return "normal";
 }
 
+/** Forced disadvantage for a d20 test kind (exhaustion / conditions). */
+export function forcedDisadvantageForKind(
+  kind: SheetRollKind,
+  locks: ActionLocks,
+  ability?: AbilityKey,
+): boolean {
+  if (kind === "attack") {
+    return locks.attackDisadvantage || locks.d20TestDisadvantage;
+  }
+  if (kind === "check" || kind === "init") {
+    return locks.abilityCheckDisadvantage || locks.d20TestDisadvantage;
+  }
+  // save / death: saving-throw disadvantage + flat D20 Test disadvantage only
+  // (not ability-check disadvantage from Exhaustion 2014 level 1)
+  const saveDis = locks.savingThrowDisadvantage;
+  const saveForced =
+    saveDis === "all" ||
+    (ability != null && Array.isArray(saveDis) && saveDis.includes(ability));
+  return saveForced || locks.d20TestDisadvantage;
+}
+
+export function rollModeForKind(
+  userMode: RollMode,
+  kind: SheetRollKind,
+  locks: ActionLocks,
+  ability?: AbilityKey,
+): RollMode {
+  return resolveEffectiveRollMode(
+    userMode,
+    forcedDisadvantageForKind(kind, locks, ability),
+  );
+}
+
 export function attackRollMode(
   userMode: RollMode,
   locks: ActionLocks,
 ): RollMode {
-  return resolveEffectiveRollMode(
-    userMode,
-    locks.attackDisadvantage || locks.d20TestDisadvantage,
-  );
+  return rollModeForKind(userMode, "attack", locks);
 }
 
 export function checkRollMode(
   userMode: RollMode,
   locks: ActionLocks,
 ): RollMode {
-  return resolveEffectiveRollMode(
-    userMode,
-    locks.abilityCheckDisadvantage || locks.d20TestDisadvantage,
-  );
+  return rollModeForKind(userMode, "check", locks);
 }
 
 /**
