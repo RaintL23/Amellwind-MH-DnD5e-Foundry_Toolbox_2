@@ -26,6 +26,7 @@ export type ConfirmDialogFn = (opts: {
 
 /**
  * Promise-based confirm dialog (replaces window.confirm for sheet UX).
+ * Opening a new confirm resolves any prior pending promise with false.
  */
 export function useConfirmDialog(): {
   confirm: ConfirmDialogFn;
@@ -44,6 +45,11 @@ export function useConfirmDialog(): {
 
   const confirm = useCallback<ConfirmDialogFn>((opts) => {
     return new Promise<boolean>((resolve) => {
+      const prev = stateRef.current;
+      if (prev) {
+        stateRef.current = null;
+        prev.resolve(false);
+      }
       const next: ConfirmState = {
         title: opts.title,
         description: opts.description,

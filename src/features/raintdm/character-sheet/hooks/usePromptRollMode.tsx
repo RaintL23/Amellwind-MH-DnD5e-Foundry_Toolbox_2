@@ -26,6 +26,7 @@ const MODE_OPTIONS: { mode: RollMode; label: string; hint: string }[] = [
 /**
  * Promise-based roll-mode chooser for d20 tests (attack / check / save / init).
  * Cancel (overlay / Esc / X) resolves to null — caller should abort the roll.
+ * Opening a new prompt resolves any prior pending promise with null.
  */
 export function usePromptRollMode(): {
   promptRollMode: PromptRollModeFn;
@@ -44,6 +45,11 @@ export function usePromptRollMode(): {
 
   const promptRollMode = useCallback<PromptRollModeFn>((label) => {
     return new Promise<RollMode | null>((resolve) => {
+      const prev = promptRef.current;
+      if (prev) {
+        promptRef.current = null;
+        prev.resolve(null);
+      }
       const next = { label: label?.trim() || "Roll", resolve };
       promptRef.current = next;
       setPrompt(next);

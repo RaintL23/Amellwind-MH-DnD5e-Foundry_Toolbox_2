@@ -14,6 +14,7 @@ import { useCharacterSheetExport } from "../../hooks/useCharacterSheetExport";
 import { useBuilderCharacterExport } from "../../hooks/useBuilderCharacterExport";
 import { useBuilderCharacterImport } from "../../hooks/useBuilderCharacterImport";
 import { useSendToPlaySheet } from "@/features/raintdm/character-sheet/hooks/useSendToPlaySheet";
+import { useConfirmDialog } from "@/features/raintdm/character-sheet/hooks/useConfirmDialog";
 import { useBuildCompleteness } from "../../context/BuildCompletenessContext";
 import { useBuilderSlotSelection } from "../../hooks/useBuilderSlotSelection";
 import { Button } from "@/components/ui/button";
@@ -114,12 +115,13 @@ export function StatsPanel() {
   } = useCharacterSheetExport();
   const { exportCharacter, error: builderExportError } =
     useBuilderCharacterExport();
+  const { confirm, confirmDialog } = useConfirmDialog();
   const {
     busy: sendingToSheet,
     sendNew,
     updateExisting,
     linkedId,
-  } = useSendToPlaySheet();
+  } = useSendToPlaySheet(confirm);
   const {
     importFromFile: importBuilderFromFile,
     importing: importingBuilder,
@@ -702,6 +704,7 @@ export function StatsPanel() {
           onConfirm={runPendingConfirm}
         />
       )}
+      {confirmDialog}
     </TooltipProvider>
   );
 }

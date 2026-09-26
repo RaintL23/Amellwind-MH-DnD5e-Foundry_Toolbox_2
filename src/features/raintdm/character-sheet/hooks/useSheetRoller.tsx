@@ -5,8 +5,8 @@ import { rollD20 } from "@/shared/utils/dice.utils";
 import type { ActionLocks } from "../utils/condition-effects.data";
 import {
   applyD20TestPenalty,
-  attackRollMode,
-  checkRollMode,
+  rollModeForKind,
+  type SheetRollKind,
 } from "../utils/derive-action-locks";
 import type { PlayRollEntry, RollMode } from "../utils/play-character.types";
 import {
@@ -14,7 +14,7 @@ import {
   type PromptRollModeFn,
 } from "./usePromptRollMode";
 
-export type SheetRollKind = "attack" | "check" | "save" | "init" | "death";
+export type { SheetRollKind };
 
 export interface SheetRollOpts {
   label: string;
@@ -137,20 +137,7 @@ export function useSheetRoller(addRoll: AddRollFn): {
         };
       }
 
-      let mode: RollMode =
-        kind === "attack"
-          ? attackRollMode(userMode, locks)
-          : checkRollMode(userMode, locks);
-
-      if (kind === "save" && ability) {
-        const saveDis = locks.savingThrowDisadvantage;
-        const forced =
-          saveDis === "all" ||
-          (Array.isArray(saveDis) && saveDis.includes(ability)) ||
-          locks.d20TestDisadvantage;
-        if (forced && mode === "advantage") mode = "normal";
-        else if (forced && mode === "normal") mode = "disadvantage";
-      }
+      const mode = rollModeForKind(userMode, kind, locks, ability);
 
       const d20 = rollD20(mode);
       const natural = d20.rolls[0];
