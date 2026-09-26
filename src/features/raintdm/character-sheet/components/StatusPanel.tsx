@@ -30,6 +30,8 @@ import {
 import { Badge } from "@/components/ui/badge";
 import { StatBlockContentView } from "@/components/statblock/StatBlockContentView";
 import type { StatBlockContent } from "@/shared/types/statblock-content.types";
+import { statBlockContentsToPlainText } from "@/shared/utils/statblock-entries.mapper";
+import { HintTooltip } from "@/shared/components/HintTooltip";
 import {
   CatalogPickerGrid,
   CatalogPickerTile,
@@ -46,6 +48,15 @@ interface CatalogEntry {
   source: PlayConditionSource;
 }
 
+/** Full rules text for hover / persistence (summary alone is only the first block). */
+function catalogEntryDescription(entry: {
+  content: StatBlockContent[];
+  summary?: string;
+}): string {
+  const full = statBlockContentsToPlainText(entry.content).trim();
+  return full || entry.summary?.trim() || "";
+}
+
 function dedupeByName(entries: CatalogEntry[]): CatalogEntry[] {
   const seen = new Map<string, CatalogEntry>();
   for (const entry of entries) {
@@ -53,6 +64,51 @@ function dedupeByName(entries: CatalogEntry[]): CatalogEntry[] {
     if (!seen.has(key)) seen.set(key, entry);
   }
   return Array.from(seen.values());
+}
+
+async function loadStatusCatalog(): Promise<CatalogEntry[]> {
+  const [dndC, dndD, mhC, mhD] = await Promise.all([
+    getListDndConditions().catch(() => []),
+    getListDndDiseases().catch(() => []),
+    getAllConditions().catch(() => []),
+    getAllDiseases().catch(() => []),
+  ]);
+  return dedupeByName([
+    ...dndC.map((c) => ({
+      id: c.id,
+      name: c.name,
+      summary: c.summary,
+      content: c.content,
+      kind: (c.category === "status"
+        ? "status"
+        : "condition") as PlayConditionKind,
+      source: "dnd" as const,
+    })),
+    ...dndD.map((d) => ({
+      id: d.id,
+      name: d.name,
+      summary: d.summary,
+      content: d.content,
+      kind: "disease" as const,
+      source: "dnd" as const,
+    })),
+    ...mhC.map((c) => ({
+      id: c.id,
+      name: c.name,
+      summary: c.summary,
+      content: c.content,
+      kind: "condition" as const,
+      source: "amellwind" as const,
+    })),
+    ...mhD.map((d) => ({
+      id: d.id,
+      name: d.name,
+      summary: d.summary,
+      content: d.content,
+      kind: "disease" as const,
+      source: "amellwind" as const,
+    })),
+  ]);
 }
 
 interface StatusChipsProps {
@@ -69,11 +125,40 @@ export function StatusChips({
   dispatch,
   onOpenStatus,
 }: StatusChipsProps) {
+  const [descriptions, setDescriptions] = useState<Map<string, string>>(
+    () => new Map(),
+  );
   const exhaustionSummary = exhaustionLevelSummary(session.exhaustion, edition);
   const hasAnything =
     session.conditions.length > 0 ||
     session.exhaustion > 0 ||
     Boolean(session.concentration);
+
+  useEffect(() => {
+    let cancelled = false;
+    void loadStatusCatalog().then((entries) => {
+      if (cancelled) return;
+      const next = new Map<string, string>();
+      for (const entry of entries) {
+        const text = catalogEntryDescription(entry);
+        if (!text) continue;
+        next.set(entry.id, text);
+        next.set(entry.name.toLowerCase(), text);
+      }
+      setDescriptions(next);
+    });
+    return () => {
+      cancelled = true;
+    };
+  }, []);
+
+  const tipFor = (c: PlayConditionInstance): string => {
+    const fromCatalog =
+      (c.refId ? descriptions.get(c.refId) : undefined) ??
+      descriptions.get(c.name.toLowerCase());
+    // Prefer catalog so already-applied chips with truncated summary still show full rules.
+    return fromCatalog ?? c.summary ?? "Click to remove";
+  };
 
   return (
     <div className="flex flex-wrap items-center gap-1.5">
@@ -87,40 +172,55 @@ export function StatusChips({
         Status
       </Button>
       {session.conditions.map((c) => (
-        <Badge
+        <HintTooltip
           key={c.id}
-          variant="secondary"
-          className="cursor-pointer gap-1"
-          onClick={() => dispatch({ type: "REMOVE_CONDITION", id: c.id })}
-          title={c.summary ?? "Click to remove"}
+          content={tipFor(c)}
+          className="max-w-sm text-left"
         >
-          {c.name}
-          {c.level != null ? ` ${c.level}` : ""}
-          <X className="h-3 w-3 opacity-60" />
-        </Badge>
+          <span className="inline-flex">
+            <Badge
+              variant="secondary"
+              className="cursor-pointer gap-1"
+              onClick={() => dispatch({ type: "REMOVE_CONDITION", id: c.id })}
+            >
+              {c.name}
+              {c.level != null ? ` ${c.level}` : ""}
+              <X className="h-3 w-3 opacity-60" />
+            </Badge>
+          </span>
+        </HintTooltip>
       ))}
       {session.exhaustion > 0 ? (
-        <Badge
-          variant="outline"
-          className="cursor-pointer"
-          title={exhaustionSummary ?? undefined}
-          onClick={onOpenStatus}
+        <HintTooltip
+          content={exhaustionSummary ?? "Exhaustion"}
+          className="max-w-sm text-left"
         >
-          Exhaustion {session.exhaustion}
-        </Badge>
+          <span className="inline-flex">
+            <Badge
+              variant="outline"
+              className="cursor-pointer"
+              onClick={onOpenStatus}
+            >
+              Exhaustion {session.exhaustion}
+            </Badge>
+          </span>
+        </HintTooltip>
       ) : null}
       {session.concentration ? (
-        <Badge
-          variant="secondary"
-          className="cursor-pointer gap-1"
-          onClick={() =>
-            dispatch({ type: "SET_CONCENTRATION", spellName: null })
-          }
-          title="Clear concentration"
-        >
-          Conc: {session.concentration}
-          <X className="h-3 w-3 opacity-60" />
-        </Badge>
+        <HintTooltip content="Clear concentration">
+          <span className="inline-flex">
+            <Badge
+              variant="secondary"
+              className="cursor-pointer gap-1"
+              onClick={() =>
+                dispatch({ type: "SET_CONCENTRATION", spellName: null })
+              }
+            >
+              Conc: {session.concentration}
+              <X className="h-3 w-3 opacity-60" />
+            </Badge>
+          </span>
+        </HintTooltip>
       ) : null}
       {!hasAnything ? (
         <span className="text-xs text-muted-foreground">No conditions</span>
@@ -149,60 +249,17 @@ export function StatusSheet({
   const [catalog, setCatalog] = useState<CatalogEntry[]>([]);
   const [q, setQ] = useState("");
   const [detail, setDetail] = useState<CatalogEntry | null>(null);
-  const [pickerOpen, setPickerOpen] = useState(false);
+  /** Single sheet steps — never stack a second Radix dialog (pointer-events freeze). */
+  const [view, setView] = useState<"main" | "picker" | "detail">("main");
 
   useEffect(() => {
-    void (async () => {
-      const [dndC, dndD, mhC, mhD] = await Promise.all([
-        getListDndConditions().catch(() => []),
-        getListDndDiseases().catch(() => []),
-        getAllConditions().catch(() => []),
-        getAllDiseases().catch(() => []),
-      ]);
-      const entries: CatalogEntry[] = [
-        ...dndC.map((c) => ({
-          id: c.id,
-          name: c.name,
-          summary: c.summary,
-          content: c.content,
-          kind: (c.category === "status"
-            ? "status"
-            : "condition") as PlayConditionKind,
-          source: "dnd" as const,
-        })),
-        ...dndD.map((d) => ({
-          id: d.id,
-          name: d.name,
-          summary: d.summary,
-          content: d.content,
-          kind: "disease" as const,
-          source: "dnd" as const,
-        })),
-        ...mhC.map((c) => ({
-          id: c.id,
-          name: c.name,
-          summary: c.summary,
-          content: c.content,
-          kind: "condition" as const,
-          source: "amellwind" as const,
-        })),
-        ...mhD.map((d) => ({
-          id: d.id,
-          name: d.name,
-          summary: d.summary,
-          content: d.content,
-          kind: "disease" as const,
-          source: "amellwind" as const,
-        })),
-      ];
-      setCatalog(dedupeByName(entries));
-    })();
+    void loadStatusCatalog().then(setCatalog);
   }, []);
 
   useEffect(() => {
     if (!open) {
       setDetail(null);
-      setPickerOpen(false);
+      setView("main");
       setQ("");
     }
   }, [open]);
@@ -215,13 +272,14 @@ export function StatusSheet({
 
   const apply = async (entry: CatalogEntry) => {
     const effects = lookupConditionEffects(entry.name);
+    const description = catalogEntryDescription(entry);
     const inst: PlayConditionInstance = {
       id: crypto.randomUUID(),
       kind: entry.kind,
       source: entry.source,
       refId: entry.id,
       name: entry.name,
-      summary: entry.summary,
+      summary: description || undefined,
       level:
         entry.name.toLowerCase() === "exhaustion"
           ? Math.max(1, session.exhaustion || 1)
@@ -245,7 +303,7 @@ export function StatusSheet({
       });
     }
     setDetail(null);
-    setPickerOpen(false);
+    setView("main");
   };
 
   const exhaustionSummary = exhaustionLevelSummary(session.exhaustion, edition);
@@ -260,214 +318,227 @@ export function StatusSheet({
       .slice(0, 80);
 
   return (
-    <>
-      <Sheet open={open} onOpenChange={onOpenChange}>
-        <SheetContent
-          side="bottom"
-          className="max-h-[85dvh] md:inset-x-auto md:left-1/2 md:right-auto md:w-full md:max-w-lg md:-translate-x-1/2"
-        >
-          <SheetHeader>
-            <SheetTitle>Status</SheetTitle>
-          </SheetHeader>
-          <SheetBody className="space-y-4">
-            <div className="space-y-2">
-              <div className="flex items-center justify-between">
-                <span className="text-sm font-semibold">Conditions</span>
-                <Button
-                  type="button"
-                  size="sm"
-                  className="min-h-9"
-                  onClick={() => setPickerOpen(true)}
-                >
-                  + Add
-                </Button>
-              </div>
-              {session.conditions.length === 0 ? (
-                <p className="text-xs text-muted-foreground">None</p>
-              ) : (
-                <div className="flex flex-wrap gap-1.5">
-                  {session.conditions.map((c) => (
-                    <Badge
-                      key={c.id}
-                      variant="secondary"
-                      className="cursor-pointer gap-1"
-                      onClick={() =>
-                        dispatch({ type: "REMOVE_CONDITION", id: c.id })
-                      }
-                    >
-                      {c.name}
-                      {c.level != null ? ` ${c.level}` : ""} ×
-                    </Badge>
-                  ))}
-                </div>
-              )}
-            </div>
-
-            <div className="space-y-1">
-              <div className="flex items-center gap-2 text-sm">
-                <span className="text-muted-foreground">Exhaustion</span>
-                <Button
-                  type="button"
-                  size="sm"
-                  variant="outline"
-                  className="h-9 w-9"
-                  onClick={() =>
-                    dispatch({
-                      type: "SET_EXHAUSTION",
-                      level: session.exhaustion - 1,
-                    })
-                  }
-                >
-                  −
-                </Button>
-                <span className="w-6 text-center font-semibold">
-                  {session.exhaustion}
-                </span>
-                <Button
-                  type="button"
-                  size="sm"
-                  variant="outline"
-                  className="h-9 w-9"
-                  onClick={() =>
-                    dispatch({
-                      type: "SET_EXHAUSTION",
-                      level: session.exhaustion + 1,
-                    })
-                  }
-                >
-                  +
-                </Button>
-              </div>
-              {exhaustionSummary ? (
-                <p className="text-[11px] leading-snug text-muted-foreground">
-                  {exhaustionSummary}
-                </p>
+    <Sheet open={open} onOpenChange={onOpenChange}>
+      <SheetContent
+        side="bottom"
+        className="max-h-[85dvh] md:inset-x-auto md:left-1/2 md:right-auto md:w-full md:max-w-lg md:-translate-x-1/2"
+      >
+        {view === "detail" && detail ? (
+          <>
+            <SheetHeader>
+              <SheetTitle>{detail.name}</SheetTitle>
+              {lookupConditionEffects(detail.name) ? (
+                <p className="text-[11px] text-primary">Has sheet effects</p>
               ) : null}
+            </SheetHeader>
+            <SheetBody>
+              {detail.content.length > 0 ? (
+                <StatBlockContentView content={detail.content} />
+              ) : detail.summary ? (
+                <p className="whitespace-pre-wrap text-sm leading-relaxed text-muted-foreground">
+                  {detail.summary}
+                </p>
+              ) : (
+                <p className="text-sm text-muted-foreground">
+                  No description available.
+                </p>
+              )}
+            </SheetBody>
+            <div className="flex shrink-0 gap-2 border-t border-border p-4">
+              <Button
+                type="button"
+                variant="outline"
+                className="h-11 flex-1"
+                onClick={() => {
+                  setDetail(null);
+                  setView("picker");
+                }}
+              >
+                Back
+              </Button>
+              <Button
+                type="button"
+                className="h-11 flex-1"
+                onClick={() => void apply(detail)}
+              >
+                Add
+              </Button>
             </div>
-
-            {session.concentration ? (
-              <div className="flex items-center justify-between rounded-md border border-border px-3 py-2 text-sm">
-                <span>
-                  Concentrating on{" "}
-                  <strong>{session.concentration}</strong>
-                </span>
-                <Button
-                  type="button"
-                  size="sm"
-                  variant="ghost"
-                  onClick={() =>
-                    dispatch({ type: "SET_CONCENTRATION", spellName: null })
-                  }
-                >
-                  Clear
-                </Button>
-              </div>
-            ) : null}
-          </SheetBody>
-        </SheetContent>
-      </Sheet>
-
-      <Sheet open={pickerOpen} onOpenChange={setPickerOpen}>
-        <SheetContent side="bottom" className="max-h-[85dvh]">
-          {detail ? (
-            <>
-              <SheetHeader>
-                <SheetTitle>{detail.name}</SheetTitle>
-                {lookupConditionEffects(detail.name) ? (
-                  <p className="text-[11px] text-primary">Has sheet effects</p>
-                ) : null}
-              </SheetHeader>
-              <SheetBody>
-                {detail.content.length > 0 ? (
-                  <StatBlockContentView content={detail.content} />
-                ) : detail.summary ? (
-                  <p className="whitespace-pre-wrap text-sm leading-relaxed text-muted-foreground">
-                    {detail.summary}
-                  </p>
+          </>
+        ) : view === "picker" ? (
+          <>
+            <SheetHeader>
+              <SheetTitle>Add condition</SheetTitle>
+            </SheetHeader>
+            <SheetBody className="space-y-3">
+              <Button
+                type="button"
+                variant="ghost"
+                size="sm"
+                onClick={() => {
+                  setDetail(null);
+                  setView("main");
+                }}
+              >
+                ← Back
+              </Button>
+              <Input
+                placeholder="Search…"
+                value={q}
+                onChange={(e) => setQ(e.target.value)}
+                autoFocus
+              />
+              <Tabs defaultValue="condition">
+                <TabsList className="grid h-auto w-full grid-cols-2 gap-1 sm:grid-cols-4">
+                  <TabsTrigger value="condition">Conditions</TabsTrigger>
+                  <TabsTrigger value="status">Status</TabsTrigger>
+                  <TabsTrigger value="disease">Diseases</TabsTrigger>
+                  <TabsTrigger value="amellwind">Amellwind</TabsTrigger>
+                </TabsList>
+                {(
+                  ["condition", "status", "disease", "amellwind"] as const
+                ).map((tab) => (
+                  <TabsContent key={tab} value={tab} className="mt-3">
+                    <CatalogPickerGrid>
+                      {tabEntries(tab).map((e) => {
+                        const hasEffects = Boolean(
+                          lookupConditionEffects(e.name),
+                        );
+                        return (
+                          <CatalogPickerTile
+                            key={`${e.source}-${e.id}`}
+                            title={e.name}
+                            subtitle={
+                              hasEffects
+                                ? "Sheet effects"
+                                : e.summary ?? null
+                            }
+                            className={
+                              hasEffects
+                                ? "[&_span:last-child]:text-primary"
+                                : undefined
+                            }
+                            onClick={() => {
+                              setDetail(e);
+                              setView("detail");
+                            }}
+                          />
+                        );
+                      })}
+                      {tabEntries(tab).length === 0 ? (
+                        <p className="col-span-full py-6 text-center text-sm text-muted-foreground">
+                          No matches
+                        </p>
+                      ) : null}
+                    </CatalogPickerGrid>
+                  </TabsContent>
+                ))}
+              </Tabs>
+            </SheetBody>
+          </>
+        ) : (
+          <>
+            <SheetHeader>
+              <SheetTitle>Status</SheetTitle>
+            </SheetHeader>
+            <SheetBody className="space-y-4">
+              <div className="space-y-2">
+                <div className="flex items-center justify-between">
+                  <span className="text-sm font-semibold">Conditions</span>
+                  <Button
+                    type="button"
+                    size="sm"
+                    className="min-h-9"
+                    onClick={() => setView("picker")}
+                  >
+                    + Add
+                  </Button>
+                </div>
+                {session.conditions.length === 0 ? (
+                  <p className="text-xs text-muted-foreground">None</p>
                 ) : (
-                  <p className="text-sm text-muted-foreground">
-                    No description available.
-                  </p>
+                  <div className="flex flex-wrap gap-1.5">
+                    {session.conditions.map((c) => (
+                      <Badge
+                        key={c.id}
+                        variant="secondary"
+                        className="cursor-pointer gap-1"
+                        onClick={() =>
+                          dispatch({ type: "REMOVE_CONDITION", id: c.id })
+                        }
+                      >
+                        {c.name}
+                        {c.level != null ? ` ${c.level}` : ""} ×
+                      </Badge>
+                    ))}
+                  </div>
                 )}
-              </SheetBody>
-              <div className="flex shrink-0 gap-2 border-t border-border p-4">
-                <Button
-                  type="button"
-                  variant="outline"
-                  className="h-11 flex-1"
-                  onClick={() => setDetail(null)}
-                >
-                  Back
-                </Button>
-                <Button
-                  type="button"
-                  className="h-11 flex-1"
-                  onClick={() => void apply(detail)}
-                >
-                  Add
-                </Button>
               </div>
-            </>
-          ) : (
-            <>
-              <SheetHeader>
-                <SheetTitle>Add condition</SheetTitle>
-              </SheetHeader>
-              <SheetBody className="space-y-3">
-                <Input
-                  placeholder="Search…"
-                  value={q}
-                  onChange={(e) => setQ(e.target.value)}
-                  autoFocus
-                />
-                <Tabs defaultValue="condition">
-                  <TabsList className="grid h-auto w-full grid-cols-2 gap-1 sm:grid-cols-4">
-                    <TabsTrigger value="condition">Conditions</TabsTrigger>
-                    <TabsTrigger value="status">Status</TabsTrigger>
-                    <TabsTrigger value="disease">Diseases</TabsTrigger>
-                    <TabsTrigger value="amellwind">Amellwind</TabsTrigger>
-                  </TabsList>
-                  {(
-                    ["condition", "status", "disease", "amellwind"] as const
-                  ).map((tab) => (
-                    <TabsContent key={tab} value={tab} className="mt-3">
-                      <CatalogPickerGrid>
-                        {tabEntries(tab).map((e) => {
-                          const hasEffects = Boolean(
-                            lookupConditionEffects(e.name),
-                          );
-                          return (
-                            <CatalogPickerTile
-                              key={`${e.source}-${e.id}`}
-                              title={e.name}
-                              subtitle={
-                                hasEffects
-                                  ? "Sheet effects"
-                                  : e.summary ?? null
-                              }
-                              className={
-                                hasEffects
-                                  ? "[&_span:last-child]:text-primary"
-                                  : undefined
-                              }
-                              onClick={() => setDetail(e)}
-                            />
-                          );
-                        })}
-                        {tabEntries(tab).length === 0 ? (
-                          <p className="col-span-full py-6 text-center text-sm text-muted-foreground">
-                            No matches
-                          </p>
-                        ) : null}
-                      </CatalogPickerGrid>
-                    </TabsContent>
-                  ))}
-                </Tabs>
-              </SheetBody>
-            </>
-          )}
-        </SheetContent>
-      </Sheet>
-    </>
+
+              <div className="space-y-1">
+                <div className="flex items-center gap-2 text-sm">
+                  <span className="text-muted-foreground">Exhaustion</span>
+                  <Button
+                    type="button"
+                    size="sm"
+                    variant="outline"
+                    className="h-9 w-9"
+                    onClick={() =>
+                      dispatch({
+                        type: "SET_EXHAUSTION",
+                        level: session.exhaustion - 1,
+                      })
+                    }
+                  >
+                    −
+                  </Button>
+                  <span className="w-6 text-center font-semibold">
+                    {session.exhaustion}
+                  </span>
+                  <Button
+                    type="button"
+                    size="sm"
+                    variant="outline"
+                    className="h-9 w-9"
+                    onClick={() =>
+                      dispatch({
+                        type: "SET_EXHAUSTION",
+                        level: session.exhaustion + 1,
+                      })
+                    }
+                  >
+                    +
+                  </Button>
+                </div>
+                {exhaustionSummary ? (
+                  <p className="text-[11px] leading-snug text-muted-foreground">
+                    {exhaustionSummary}
+                  </p>
+                ) : null}
+              </div>
+
+              {session.concentration ? (
+                <div className="flex items-center justify-between rounded-md border border-border px-3 py-2 text-sm">
+                  <span>
+                    Concentrating on{" "}
+                    <strong>{session.concentration}</strong>
+                  </span>
+                  <Button
+                    type="button"
+                    size="sm"
+                    variant="ghost"
+                    onClick={() =>
+                      dispatch({ type: "SET_CONCENTRATION", spellName: null })
+                    }
+                  >
+                    Clear
+                  </Button>
+                </div>
+              ) : null}
+            </SheetBody>
+          </>
+        )}
+      </SheetContent>
+    </Sheet>
   );
 }

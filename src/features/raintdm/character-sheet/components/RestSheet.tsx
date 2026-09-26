@@ -54,10 +54,7 @@ export function RestSheet({
         if (!o) onOpenChange(false);
       }}
     >
-      <SheetContent
-        className="md:inset-x-auto md:left-1/2 md:right-auto md:w-full md:max-w-lg md:-translate-x-1/2 md:rounded-t-xl"
-        onCloseAutoFocus={(e) => e.preventDefault()}
-      >
+      <SheetContent className="md:inset-x-auto md:left-1/2 md:right-auto md:w-full md:max-w-lg md:-translate-x-1/2 md:rounded-t-xl">
         <SheetHeader>
           <SheetTitle>
             {restKind === "short" ? "Short Rest" : "Long Rest"}

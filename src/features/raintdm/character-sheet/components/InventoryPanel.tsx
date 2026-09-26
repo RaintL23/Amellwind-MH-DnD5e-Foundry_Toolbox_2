@@ -67,13 +67,6 @@ import {
   CatalogPickerTile,
 } from "./CatalogPickerGrid";
 import { useCatalogItemPreview } from "./useCatalogItemPreview";
-import {
-  Dialog,
-  DialogBody,
-  DialogContent,
-  DialogHeader,
-  DialogTitle,
-} from "@/components/ui/dialog";
 import { StatBlockContentView } from "@/components/statblock/StatBlockContentView";
 import type { ArmorItem, MHItem, Weapon } from "@/shared/types";
 import type { DndItem } from "@/shared/types/dnd-item.types";
@@ -264,9 +257,9 @@ export function InventoryPanel({
 }: InventoryPanelProps) {
   const enc = getEncumbrance(compiled, session);
   const [pickerOpen, setPickerOpen] = useState(false);
-  const [pickerStep, setPickerStep] = useState<"browse" | "quantities">(
-    "browse",
-  );
+  const [pickerStep, setPickerStep] = useState<
+    "browse" | "preview" | "quantities"
+  >("browse");
   const [catalog, setCatalog] = useState<PlayInventoryCatalogEntry[]>([]);
   const [catalogLoading, setCatalogLoading] = useState(false);
   const [q, setQ] = useState("");
@@ -302,6 +295,7 @@ export function InventoryPanel({
       setSelectedKeys([]);
       setQuantities({});
       setQ("");
+      setPreviewEntry(null);
     }
   }, [pickerOpen]);
 
@@ -620,7 +614,9 @@ export function InventoryPanel({
             <SheetTitle>
               {pickerStep === "quantities"
                 ? "Quantities"
-                : "Add item"}
+                : pickerStep === "preview"
+                  ? (previewEntry?.name ?? "Item")
+                  : "Add item"}
             </SheetTitle>
           </SheetHeader>
           <SheetBody className="space-y-3">
@@ -704,6 +700,39 @@ export function InventoryPanel({
                   Add {selectedEntries.length} to inventory
                 </Button>
               </div>
+            ) : pickerStep === "preview" && previewEntry ? (
+              <div className="space-y-3">
+                <Button
+                  type="button"
+                  variant="ghost"
+                  size="sm"
+                  onClick={() => {
+                    setPreviewEntry(null);
+                    setPickerStep("browse");
+                  }}
+                >
+                  ← Back
+                </Button>
+                {previewEntry.summary ? (
+                  <p className="text-sm text-muted-foreground">
+                    {previewEntry.summary}
+                  </p>
+                ) : null}
+                {previewEntry.descriptionContent &&
+                previewEntry.descriptionContent.length > 0 ? (
+                  <StatBlockContentView
+                    content={previewEntry.descriptionContent}
+                  />
+                ) : previewEntry.descriptionText ? (
+                  <p className="whitespace-pre-wrap text-sm leading-relaxed text-muted-foreground">
+                    {previewEntry.descriptionText}
+                  </p>
+                ) : (
+                  <p className="text-sm text-muted-foreground">
+                    No description available for this item.
+                  </p>
+                )}
+              </div>
             ) : (
               <>
                 <Input
@@ -732,7 +761,10 @@ export function InventoryPanel({
                               entry={entry}
                               selected={selectedKeys.includes(entry.key)}
                               onToggle={() => toggleSelected(entry.key)}
-                              onPreview={() => setPreviewEntry(entry)}
+                              onPreview={() => {
+                                setPreviewEntry(entry);
+                                setPickerStep("preview");
+                              }}
                             />
                           ))}
                           {tabEntries(tab).length === 0 ? (
@@ -824,38 +856,6 @@ export function InventoryPanel({
           </SheetBody>
         </SheetContent>
       </Sheet>
-
-      <Dialog
-        open={previewEntry != null}
-        onOpenChange={(open) => {
-          if (!open) setPreviewEntry(null);
-        }}
-      >
-        <DialogContent className="max-w-lg">
-          <DialogHeader>
-            <DialogTitle>{previewEntry?.name}</DialogTitle>
-            {previewEntry?.summary ? (
-              <p className="text-sm text-muted-foreground">
-                {previewEntry.summary}
-              </p>
-            ) : null}
-          </DialogHeader>
-          <DialogBody className="space-y-3 text-sm">
-            {previewEntry?.descriptionContent &&
-            previewEntry.descriptionContent.length > 0 ? (
-              <StatBlockContentView content={previewEntry.descriptionContent} />
-            ) : previewEntry?.descriptionText ? (
-              <p className="whitespace-pre-wrap leading-relaxed text-muted-foreground">
-                {previewEntry.descriptionText}
-              </p>
-            ) : (
-              <p className="text-muted-foreground">
-                No description available for this item.
-              </p>
-            )}
-          </DialogBody>
-        </DialogContent>
-      </Dialog>
     </div>
   );
 }
@@ -971,7 +971,7 @@ function ItemRow({
         >
           +
         </Button>
-        <DropdownMenu>
+        <DropdownMenu modal={false}>
           <DropdownMenuTrigger asChild>
             <Button
               type="button"
@@ -985,14 +985,14 @@ function ItemRow({
           </DropdownMenuTrigger>
           <DropdownMenuContent align="end">
             {canEquip ? (
-              <DropdownMenuItem onClick={() => onEquip(!item.equipped)}>
+              <DropdownMenuItem onSelect={() => onEquip(!item.equipped)}>
                 {item.equipped ? "Unequip" : "Equip"}
               </DropdownMenuItem>
             ) : null}
             {canUse ? (
               <DropdownMenuItem
                 disabled={item.quantity <= 0}
-                onClick={onUse}
+                onSelect={onUse}
               >
                 Use
               </DropdownMenuItem>
@@ -1000,16 +1000,26 @@ function ItemRow({
             {canAttune ? (
               <DropdownMenuItem
                 disabled={attuneDisabled && !item.attuned}
-                onClick={() => onAttune(!item.attuned)}
+                onSelect={() => onAttune(!item.attuned)}
               >
                 {item.attuned ? "Unattune" : "Attune"}
               </DropdownMenuItem>
             ) : null}
-            <DropdownMenuItem onClick={onOpenDetail}>Details</DropdownMenuItem>
+            <DropdownMenuItem
+              onSelect={() => {
+                // Defer so the menu fully closes before the detail sheet opens
+                // (avoids Radix pointer-events lock on body).
+                window.setTimeout(onOpenDetail, 0);
+              }}
+            >
+              Details
+            </DropdownMenuItem>
             <DropdownMenuSeparator />
             <DropdownMenuItem
               className="text-destructive focus:text-destructive"
-              onClick={onRemove}
+              onSelect={() => {
+                window.setTimeout(() => void onRemove(), 0);
+              }}
             >
               Remove
             </DropdownMenuItem>
