@@ -30,6 +30,11 @@ import {
   healingExpressionFromPotionName,
   isPotionItem,
 } from "../utils/inventory-item.utils";
+import {
+  spellLevelLabel,
+  toDescriptionLines,
+} from "../utils/description-lines.utils";
+import { DescriptionLines } from "@/shared/components/DescriptionLines";
 
 const BUCKETS: {
   key: PlayActivationBucket;
@@ -44,6 +49,20 @@ const BUCKETS: {
 
 const FREE_ACTIONS_BLURB =
   "Some things cost no Action, Bonus Action, or Reaction. On your turn you can usually communicate briefly, drop a held item, or take one free object interaction (draw/sheathe a weapon, open a door, pick something up). Features that say they require no action work the same way — ask your DM when unsure.";
+
+const BONUS_MAGIC_ACTION: PlayFeature = {
+  id: "std-magic-bonus",
+  name: "Magic Action",
+  sourceKind: "standard",
+  sourceLabel: "Standard",
+  description:
+    "Cast a spell with a casting time of a Bonus Action (XPHB). This uses your Bonus Action.",
+  activation: "bonus",
+  bucket: "bonus",
+};
+
+const LIGHT_BONUS_ATTACK_NOTE =
+  "Light bonus attack: damage does not add your ability modifier unless you have the Two-Weapon Fighting style (or a similar feature).";
 
 export type ActionsPanelTab = "spells" | "inventory";
 
@@ -130,11 +149,13 @@ export function AttackRow({
   locks,
   onAttack,
   onDamage,
+  note,
 }: {
   atk: PlayAttack;
   locks: ActionLocks;
   onAttack: (atk: PlayAttack) => void;
   onDamage: (atk: PlayAttack, critical?: boolean) => void;
+  note?: string;
 }) {
   return (
     <div className="rounded-md border border-border/70 bg-muted/30 p-2.5">
@@ -146,6 +167,11 @@ export function AttackRow({
             {atk.attackBonus} to hit ·{" "}
             {atk.damage.map((d) => d.expression).join(" / ")}
           </p>
+          {note ? (
+            <p className="mt-1 text-[10px] leading-snug text-muted-foreground">
+              {note}
+            </p>
+          ) : null}
         </div>
         <div className="flex gap-1.5">
           <Button
@@ -250,10 +276,20 @@ export function ActionsPanel({
   const utilizeList = utilizeItems(session);
   const bonusPotions = potionItems(session);
 
-  const attacksFor = (bucket: "action" | "bonus"): PlayAttack[] => [
-    ...compiled.attacks.filter((a) => a.bucket === bucket),
-    ...session.inventory
+  const attacksFor = (bucket: "action" | "bonus"): PlayAttack[] => {
+    if (bucket === "bonus") {
+      // Only true Light off-hand / bonus attacks from compile — never dump every
+      // equipped weapon here. Damage already omits ability mod at compile time.
+      return compiled.attacks.filter((a) => a.bucket === "bonus");
+    }
+
+    const fromCompiled = compiled.attacks.filter((a) => a.bucket === "action");
+    const compiledNames = new Set(
+      fromCompiled.map((a) => a.name.trim().toLowerCase()),
+    );
+    const fromInventory = session.inventory
       .filter((i) => i.equipped && i.isWeapon && i.attackBonus != null)
+      .filter((i) => !compiledNames.has(i.name.trim().toLowerCase()))
       .map((i) => ({
         id: `inv-atk-${i.id}`,
         name: i.name,
@@ -261,10 +297,11 @@ export function ActionsPanel({
         damage: [{ expression: i.damageExpression ?? "1d4" }],
         properties: i.properties ?? [],
         critRange: 20,
-        bucket,
+        bucket: "action" as const,
         sourceKind: "item" as const,
-      })),
-  ];
+      }));
+    return [...fromCompiled, ...fromInventory];
+  };
 
   const quickAttacks = attacksFor("action");
 
@@ -409,6 +446,9 @@ export function ActionsPanel({
       return optionSuffix(n, "option", "options");
     }
     if (isMagicAction(f)) {
+      if (f.bucket === "bonus") {
+        return optionSuffix(bonusSpells.length, "option", "options");
+      }
       const n = magicSpells.length + magicItems.length;
       return optionSuffix(n, "option", "options");
     }
@@ -420,7 +460,7 @@ export function ActionsPanel({
 
   const bucketSections = BUCKETS.map(({ key, label, lockKey }) => {
     const locked = lockKey ? Boolean(locks[lockKey]) : false;
-    const feats = compiled.features
+    let feats = compiled.features
       .filter((f) => featureBucket(f, session) === key)
       .map((f) =>
         isMagicAction(f) && f.name === "Magic"
@@ -436,17 +476,19 @@ export function ActionsPanel({
         }
         return true;
       });
+
+    // Bonus-action spells spend the Magic Action economy — nest under a host.
+    if (key === "bonus" && bonusSpells.length > 0) {
+      feats = [BONUS_MAGIC_ACTION, ...feats.filter((f) => !isMagicAction(f))];
+    }
+
     const atks = key === "action" || key === "bonus" ? attacksFor(key) : [];
     const attackHost = feats.find(isStandardAttackAction);
     const nestedUnderAttack =
       key === "action" && attackHost != null ? atks : [];
     const topLevelAttacks = nestedUnderAttack.length > 0 ? [] : atks;
-    const bucketSpells =
-      key === "bonus"
-        ? bonusSpells
-        : key === "reaction"
-          ? reactionSpells
-          : [];
+    // Reaction spells stay top-level; bonus spells nest under Magic Action.
+    const bucketSpells = key === "reaction" ? reactionSpells : [];
     const bucketPotions = key === "bonus" ? bonusPotions : [];
     const itemCount =
       feats.length +
@@ -544,6 +586,9 @@ export function ActionsPanel({
                         locks={locks}
                         onAttack={rollAttack}
                         onDamage={rollDamage}
+                        note={
+                          key === "bonus" ? LIGHT_BONUS_ATTACK_NOTE : undefined
+                        }
                       />
                     ))}
                     {feats.map((f) => {
@@ -553,7 +598,9 @@ export function ActionsPanel({
                         isStandardAttackAction(f) && key === "action"
                           ? nestedUnderAttack
                           : [];
-                      const showMagic = isMagicAction(f) && key === "action";
+                      const showMagic =
+                        isMagicAction(f) &&
+                        (key === "action" || key === "bonus");
                       const showUtilize =
                         isUtilizeAction(f) && key === "action";
                       const hint = featureOptionHint(f);
@@ -598,9 +645,10 @@ export function ActionsPanel({
                             </AccordionTrigger>
                             <AccordionContent className="space-y-2 px-3 pb-2.5">
                               {f.description ? (
-                                <p className="whitespace-pre-wrap text-xs text-muted-foreground">
-                                  {f.description}
-                                </p>
+                                <DescriptionLines
+                                  lines={toDescriptionLines(f.description)}
+                                  sizeClass="text-xs"
+                                />
                               ) : null}
 
                               {nestedAttacks.length > 0 ? (
@@ -620,7 +668,7 @@ export function ActionsPanel({
                                 </div>
                               ) : null}
 
-                              {showMagic ? (
+                              {showMagic && key === "action" ? (
                                 <MagicUtilizeBlock
                                   title="Spells & magic items"
                                   empty={
@@ -652,6 +700,28 @@ export function ActionsPanel({
                                       onAction={() =>
                                         logItemUse(item, "magic")
                                       }
+                                    />
+                                  ))}
+                                </MagicUtilizeBlock>
+                              ) : null}
+
+                              {showMagic && key === "bonus" ? (
+                                <MagicUtilizeBlock
+                                  title="Bonus Action spells"
+                                  empty={
+                                    bonusSpells.length === 0
+                                      ? "No Bonus Action spells prepared."
+                                      : null
+                                  }
+                                  openLabel={sc ? "Open Spells" : null}
+                                  onOpen={() => onOpenTab?.("spells")}
+                                >
+                                  {bonusSpells.map((spell) => (
+                                    <SpellMiniRow
+                                      key={spell.id}
+                                      spell={spell}
+                                      locked={spellEconomyLocked(spell, locks)}
+                                      onCast={() => castSpell(spell)}
                                     />
                                   ))}
                                 </MagicUtilizeBlock>
@@ -699,10 +769,7 @@ export function ActionsPanel({
                                 {spell.name}
                               </span>
                               <span className="text-[10px] font-normal uppercase tracking-wide text-muted-foreground">
-                                Spell
-                                {spell.level === 0
-                                  ? " · Cantrip"
-                                  : ` · L${spell.level}`}
+                                Spell · {spellLevelLabel(spell.level)}
                                 {spell.castingTime
                                   ? ` · ${spell.castingTime}`
                                   : ""}
@@ -711,9 +778,10 @@ export function ActionsPanel({
                           </AccordionTrigger>
                           <AccordionContent className="space-y-2 px-3 pb-2.5">
                             {spell.description ? (
-                              <p className="whitespace-pre-wrap text-xs text-muted-foreground">
-                                {spell.description}
-                              </p>
+                              <DescriptionLines
+                                lines={toDescriptionLines(spell.description)}
+                                sizeClass="text-xs"
+                              />
                             ) : null}
                             <div className="flex flex-wrap gap-1.5">
                               <Button
@@ -876,7 +944,7 @@ function SpellMiniRow({
       <div className="min-w-0">
         <p className="text-sm font-medium">{spell.name}</p>
         <p className="text-xs text-muted-foreground">
-          {spell.level === 0 ? "Cantrip" : `L${spell.level}`}
+          {spellLevelLabel(spell.level)}
           {spell.castingTime ? ` · ${spell.castingTime}` : ""}
           {spell.isConcentration ? " · C" : ""}
         </p>

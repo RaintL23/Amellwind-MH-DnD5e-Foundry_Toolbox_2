@@ -216,11 +216,11 @@ function buildAttacksFromEquipment(
   const attacks: PlayAttack[] = [];
   const eq = json.snapshot.equipment;
   const hands = [
-    { slot: "main", weapon: eq.mainHand, bucket: "action" as const },
-    { slot: "off", weapon: eq.offHand, bucket: "bonus" as const },
+    { slot: "main" as const, weapon: eq.mainHand },
+    { slot: "off" as const, weapon: eq.offHand },
   ];
 
-  hands.forEach(({ slot, weapon, bucket }, idx) => {
+  hands.forEach(({ slot, weapon }, idx) => {
     if (!weapon?.weapon) return;
     const w = weapon.weapon;
     const props = (w.properties ?? []).map(String);
@@ -229,19 +229,26 @@ function buildAttacksFromEquipment(
     const attackBonus = mod + (proficient ? pb : 0);
     const dmg1 = w.dmg1 || "1d4";
     const dmgType = w.dmgType || undefined;
+    const isOffHandLight =
+      slot === "off" && props.some((p) => /light/i.test(p));
+    // Light off-hand bonus attack: no ability mod to damage (TWF style can add it back).
+    const withMod = (dice: string) =>
+      isOffHandLight
+        ? dice
+        : `${dice}${mod >= 0 ? "+" : ""}${mod}`;
     attacks.push({
       id: slugId("atk", w.name, idx),
       name: w.name,
       attackBonus,
-      damage: [{ expression: `${dmg1}${mod >= 0 ? "+" : ""}${mod}`, type: dmgType }],
+      damage: [{ expression: withMod(dmg1), type: dmgType }],
       versatile: w.dmg2
-        ? [{ expression: `${w.dmg2}${mod >= 0 ? "+" : ""}${mod}`, type: dmgType }]
+        ? [{ expression: withMod(w.dmg2), type: dmgType }]
         : undefined,
       range: w.range ? String(w.range) : undefined,
       properties: props,
       mastery: w.mastery ? String(w.mastery) : undefined,
       critRange: 20,
-      bucket: slot === "off" && props.some((p) => /light/i.test(p)) ? "bonus" : bucket === "bonus" ? "action" : "action",
+      bucket: isOffHandLight ? "bonus" : "action",
       sourceKind: "item",
     });
   });

@@ -44,7 +44,7 @@ Compilation: `compilePlayCharacterFromBuilderJson` loads catalogs by refs and bu
 
 ## Conditions / Status
 
-Header chips + **Status** sheet (stepper for Exhaustion, Add condition picker). Picker loads the **deduped** D&D list (`getListDndConditions` / `getListDndDiseases`) so PHB vs XPHB printings of the same name appear once; Amellwind entries stay under their tab. Detail view uses full `StatBlockContent`. Concentration clear and breaking concentration use a confirm dialog (not `window.confirm`).
+Header chips + **Status** sheet (stepper for Exhaustion, Add condition picker). The Status UI is a **single** Sheet with internal steps (`main` → `picker` → `detail`) — never stack a second Sheet/Dialog on top (Radix leaves `body { pointer-events: none }` and freezes the app). Picker loads the **deduped** D&D list (`getListDndConditions` / `getListDndDiseases`) so PHB vs XPHB printings of the same name appear once; Amellwind entries stay under their tab. Detail view uses full `StatBlockContent`. Concentration clear and breaking concentration use a confirm dialog (not `window.confirm`).
 
 Catalog entries are prose-only. Curated map `CONDITION_EFFECTS` + `deriveActionLocks` greys out Action / Bonus / Reaction / attacks when conditions like Incapacitated apply. Exhaustion uses 2014 vs 2024 tables via `rulesEdition`:
 
@@ -53,7 +53,7 @@ Catalog entries are prose-only. Curated map `CONDITION_EFFECTS` + `deriveActionL
 
 ## Center panels (Actions / Features / Spells)
 
-**Actions** tab: **Quick attacks** strip (equipped / compiled weapons with Attack / Dmg / Crit, no accordion). Then **Card + Accordion** per economy bucket (**Actions** open by default; Bonus / Reactions / Other closed). Empty buckets hidden. Always-present **Free Actions** info card. Nested Magical Action / Utilize / Attack lists behave as before. Links jump to Spells / Inventory.
+**Actions** tab: **Quick attacks** strip (equipped / compiled weapons with Attack / Dmg / Crit, no accordion). Then **Card + Accordion** per economy bucket (**Actions** open by default; Bonus / Reactions / Other closed). Empty buckets hidden. Always-present **Free Actions** info card. Nested Magical Action / Utilize / Attack lists behave as before. **Bonus Action spells** nest under a **Magic Action** host in the Bonus Actions bucket (same economy as casting via Magic). **Light off-hand / bonus weapon attacks** omit the ability modifier from damage (Two-Weapon Fighting / Light property) and show a short rule note. Spell level labels use **Level N** (not `L1`). Feature / spell / action descriptions render via `DescriptionLines` (bullets and option titles split for readability). Links jump to Spells / Inventory.
 
 **Features** tab: all character features (every activation bucket), grouped by source with counts; sticky search; Action/Bonus/Reaction badges when applicable; Notes at the bottom. Standard PHB actions stay on Actions only. Actionable features also remain on the **Actions** tab for play.
 
@@ -69,9 +69,13 @@ Catalog entries are prose-only. Curated map `CONDITION_EFFECTS` + `deriveActionL
 
 Summary card (weight bar, attunement pips, currency). **+ Add item** in the Equipped header. Rows: name + badges, quantity stepper, overflow menu — **Equip** only for weapons/armor/shields, **Use** for consumables (potions, scrolls, …; healing potions roll + consume), **Attune** only when the item requires attunement (or is already attuned), plus Details / Remove. Coin weight, variant encumbrance, and AC adjust live under a **Settings** collapsible (Switch / input).
 
-Add-item sheet tabs: D&D / Amellwind / Custom (multi-select + quantities; long-press preview). Equip exclusivity and attunement limits unchanged.
+Add-item sheet tabs: D&D / Amellwind / Custom (multi-select + quantities; long-press preview as an in-sheet step, not a nested Dialog). Equip exclusivity and attunement limits unchanged.
 
 **AC (header):** `getEffectiveArmorClass` from equipped armor/shield + DEX + `session.acAdjust`.
+
+## Overlay / pointer-events (Radix)
+
+Do **not** open a Sheet/Dialog from a modal `DropdownMenu` without `modal={false}` + `setTimeout(0)` before opening (see SheetHeaderBar rest menu, Inventory row menu, Spells upcast Cast). Do **not** stack two Sheets or a Dialog on an open Sheet for browse→detail flows — use internal steps. `SheetContent` / `DialogContent` call `clearStaleBodyPointerLock` on close as a safety net.
 
 ## Session rules (summary)
 
