@@ -136,6 +136,7 @@ export function SpellsPanel({
         logRoll,
         confirm,
         requirePrepared: true,
+        characterLevel: compiled.level,
       });
     } finally {
       castingRef.current = false;

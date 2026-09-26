@@ -64,7 +64,7 @@ Curated map `CONDITION_EFFECTS` + `deriveActionLocks` greys out Action / Bonus /
 
 **Features** tab: all character features grouped by source; sticky deferred search; Notes at the bottom.
 
-**Spells**: slot pips (`SET_SLOTS_SPENT` / `SET_PACT_SPENT` atomic). Cast checks prepared; ritual spells offer “Cast with slot” / “As ritual (no slot)”. Slot spend happens only after a successful cast resolution.
+**Spells**: slot pips (`SET_SLOTS_SPENT` / `SET_PACT_SPENT` atomic). Cast checks prepared; ritual spells offer “Cast with slot” / “As ritual (no slot)”. Slot spend happens only after a successful cast resolution. Cast rolls heal/damage dice parsed from the spell text (`resolveSpellEffectRoll`: spellcasting mod, upcast dice, cantrip level bands); utility spells without cast-time dice still log a placeholder entry.
 
 **Roll Log**: toast on each roll; persisted per character.
 

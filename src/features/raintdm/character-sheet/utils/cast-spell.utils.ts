@@ -1,3 +1,4 @@
+import { rollExpression } from "@/shared/utils/dice.utils";
 import type { ActionLocks } from "./condition-effects.data";
 import type {
   PlaySessionState,
@@ -8,6 +9,7 @@ import type { PlaySessionAction } from "./play-session-reducer";
 import type { ConfirmDialogFn } from "../hooks/useConfirmDialog";
 import type { useSheetRoller } from "../hooks/useSheetRoller";
 import { spellHasAttackRoll } from "./spell-attack.utils";
+import { resolveSpellEffectRoll } from "./spell-effect-dice.utils";
 
 export function spellEconomyLocked(
   spell: PlaySpell,
@@ -78,6 +80,8 @@ export interface CastSpellOpts {
   confirm: ConfirmDialogFn;
   /** Require prepared check (Spells tab + Actions) */
   requirePrepared?: boolean;
+  /** Character level (cantrip damage bands). Defaults to 1. */
+  characterLevel?: number;
 }
 
 /**
@@ -99,6 +103,7 @@ export async function castPlaySpell(
     logRoll,
     confirm,
     requirePrepared = true,
+    characterLevel = 1,
   } = opts;
 
   if (spellEconomyLocked(spell, locks)) return "locked";
@@ -133,6 +138,28 @@ export async function castPlaySpell(
           ? `Pact Level ${slotLevel}`
           : `Level ${slotLevel} slot`;
 
+  const effect = resolveSpellEffectRoll(spell, {
+    slotLevel,
+    spellMod: sc.mod,
+    characterLevel,
+  });
+  const hasSave = /\bsaving throw\b/i.test(spell.description ?? "");
+
+  const logEffectRoll = (label: string) => {
+    if (!effect) return;
+    const rolled = rollExpression(effect.expression);
+    const detailParts = [slotNote];
+    if (hasSave) detailParts.push(`DC ${sc.saveDc}`);
+    detailParts.push(rolled.detail);
+    logRoll({
+      label,
+      expression: effect.expression,
+      total: rolled.total,
+      detail: detailParts.join(" · "),
+      mode: "normal",
+    });
+  };
+
   if (spellHasAttackRoll(spell)) {
     const result = await rollD20Test({
       label: `Cast ${spell.name}`,
@@ -141,12 +168,19 @@ export async function castPlaySpell(
       locks,
     });
     if (result.aborted) return "aborted";
+    if (effect) {
+      logEffectRoll(`Cast ${spell.name} ${effect.label}`);
+    }
+  } else if (effect) {
+    logEffectRoll(`Cast ${spell.name}`);
   } else {
     logRoll({
       label: `Cast ${spell.name}`,
       expression: "—",
       total: 0,
-      detail: `${slotNote} · DC ${sc.saveDc}`,
+      detail: hasSave
+        ? `${slotNote} · DC ${sc.saveDc}`
+        : slotNote,
       mode: "normal",
     });
   }

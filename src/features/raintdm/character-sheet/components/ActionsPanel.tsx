@@ -332,6 +332,7 @@ export function ActionsPanel({
       logRoll,
       confirm,
       requirePrepared: true,
+      characterLevel: compiled.level,
     }).finally(() => {
       castingRef.current = false;
     });
