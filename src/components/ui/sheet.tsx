@@ -1,6 +1,7 @@
 import * as RadixDialog from "@radix-ui/react-dialog";
 import { X } from "lucide-react";
 import { cn } from "@/shared/utils/cn";
+import { clearStaleBodyPointerLock } from "@/shared/utils/clear-stale-body-pointer-lock";
 
 /** Bottom-sheet style dialog for mobile play UI (Radix Dialog, no new deps). */
 export const Sheet = RadixDialog.Root;
@@ -11,6 +12,7 @@ export function SheetContent({
   className,
   children,
   side = "bottom",
+  onCloseAutoFocus,
   ...props
 }: RadixDialog.DialogContentProps & { side?: "bottom" | "right" }) {
   return (
@@ -26,6 +28,11 @@ export function SheetContent({
           className,
         )}
         {...props}
+        onCloseAutoFocus={(e) => {
+          onCloseAutoFocus?.(e);
+          e.preventDefault();
+          clearStaleBodyPointerLock();
+        }}
       >
         <div className="mx-auto mt-2 mb-1 h-1.5 w-10 shrink-0 rounded-full bg-muted-foreground/30 md:hidden" />
         {children}

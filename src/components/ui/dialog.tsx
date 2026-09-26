@@ -1,6 +1,7 @@
 import * as RadixDialog from "@radix-ui/react-dialog";
 import { X } from "lucide-react";
 import { cn } from "@/shared/utils/cn";
+import { clearStaleBodyPointerLock } from "@/shared/utils/clear-stale-body-pointer-lock";
 
 export const Dialog = RadixDialog.Root;
 export const DialogTrigger = RadixDialog.Trigger;
@@ -9,6 +10,7 @@ export function DialogContent({
   className,
   overlayClassName,
   children,
+  onCloseAutoFocus,
   ...props
 }: RadixDialog.DialogContentProps & { overlayClassName?: string }) {
   return (
@@ -25,6 +27,11 @@ export function DialogContent({
           className
         )}
         {...props}
+        onCloseAutoFocus={(e) => {
+          onCloseAutoFocus?.(e);
+          e.preventDefault();
+          clearStaleBodyPointerLock();
+        }}
       >
         {children}
         <RadixDialog.Close className="absolute right-4 top-4 rounded-sm opacity-70 ring-offset-background transition-opacity hover:opacity-100 focus:outline-none focus:ring-2 focus:ring-ring focus:ring-offset-2 disabled:pointer-events-none z-10">
