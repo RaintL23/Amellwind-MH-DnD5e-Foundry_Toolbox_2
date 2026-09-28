@@ -215,6 +215,7 @@ async function enrichIdentityDescriptions(
       fluff: raceFluff,
       fluffText: builder.speciesData?.fluff,
       traits: builder.speciesData?.traits ?? [],
+      speciesTraitChoices: builder.speciesTraitChoices ?? {},
     });
     if (html) input.raceInfo.description = html;
     if (raceFluff.img) input.raceInfo.img = raceFluff.img;

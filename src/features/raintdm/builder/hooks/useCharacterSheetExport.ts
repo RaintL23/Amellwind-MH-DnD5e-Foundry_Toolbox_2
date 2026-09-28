@@ -248,7 +248,10 @@ export function useCharacterSheetExport() {
       feats: featLines.join("\n"),
       classFeatures: classFeatures.line1,
       classFeatures2: classFeatures.line2,
-      speciesTraits: getSpeciesTraitsExport(builder.speciesData),
+      speciesTraits: getSpeciesTraitsExport(
+        builder.speciesData,
+        builder.speciesTraitChoices ?? {},
+      ),
       equipment: buildEquipmentExport({
         items: inventory.items,
         mainHandName: builder.mainHand?.weapon.name,

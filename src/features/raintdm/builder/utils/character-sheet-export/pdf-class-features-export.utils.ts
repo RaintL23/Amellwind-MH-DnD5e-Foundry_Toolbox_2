@@ -6,6 +6,11 @@ import type {
   Subclass,
 } from "@/shared/types";
 import { getOptionalFeatureCountAtLevel } from "@/features/dnd/classes/utils/optional-feature-progression.utils";
+import {
+  resolveSpeciesTraitEntries,
+  resolveTraitChoiceSelection,
+} from "@/features/raintdm/builder/utils/species-trait-choice.utils";
+import { shouldOmitClassFeatureForChoices } from "@/features/raintdm/builder/utils/feature-choice-description.utils";
 
 /**
  * Features whose content is handled elsewhere (spell list, spell slots) and
@@ -136,6 +141,16 @@ export function getClassFeaturesExport(
         const name = feature.displayName || feature.name;
         if (isOmittedFeature(name)) continue;
         if (handledNames.has(name.toLowerCase())) continue;
+        if (
+          optionalFeatureSelections &&
+          shouldOmitClassFeatureForChoices(
+            name,
+            allProgressions,
+            optionalFeatureSelections,
+          )
+        ) {
+          continue;
+        }
         entries.push(formatFeatureEntry(name, feature.description));
       }
     }
@@ -150,6 +165,16 @@ export function getClassFeaturesExport(
         const name = feature.displayName || feature.name;
         if (isOmittedFeature(name)) continue;
         if (handledNames.has(name.toLowerCase())) continue;
+        if (
+          optionalFeatureSelections &&
+          shouldOmitClassFeatureForChoices(
+            name,
+            allProgressions,
+            optionalFeatureSelections,
+          )
+        ) {
+          continue;
+        }
         entries.push(formatFeatureEntry(name, feature.description));
       }
     }
@@ -203,9 +228,18 @@ export function getClassFeaturesExport(
   };
 }
 
-export function getSpeciesTraitsExport(speciesData: Species | null): string {
+export function getSpeciesTraitsExport(
+  speciesData: Species | null,
+  speciesTraitChoices: Record<string, string> = {},
+): string {
   if (!speciesData?.traits.length) return speciesData?.name ?? "";
   return speciesData.traits
-    .map((trait) => formatFeatureEntry(trait.name, trait.entries))
+    .map((trait) => {
+      const selected = resolveTraitChoiceSelection(trait, speciesTraitChoices);
+      const entries = resolveSpeciesTraitEntries(trait, selected, {
+        showAllWhenUnselected: false,
+      });
+      return formatFeatureEntry(trait.name, entries);
+    })
     .join("\n\n");
 }

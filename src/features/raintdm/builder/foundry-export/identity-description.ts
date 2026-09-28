@@ -12,6 +12,11 @@ import type {
 import type { SpeciesTrait } from "@/shared/types/species.types";
 import { escapeHtml, foundryDividerHtml } from "@/shared/foundry";
 import {
+  resolveSpeciesTraitEntries,
+  resolveTraitChoiceSelection,
+  type SpeciesTraitChoices,
+} from "@/features/raintdm/builder/utils/species-trait-choice.utils";
+import {
   renderFiveToolsEntries,
   type FluffArtResult,
 } from "./fluff-description";
@@ -128,12 +133,19 @@ function renderFeaturesHtml(
   return blocks.join("");
 }
 
-function renderTraitsHtml(traits: SpeciesTrait[]): string {
+function renderTraitsHtml(
+  traits: SpeciesTrait[],
+  speciesTraitChoices: SpeciesTraitChoices = {},
+): string {
   return traits
     .map((trait) => {
       const name = trait.name.trim();
       if (!name) return "";
-      const body = (trait.entries ?? [])
+      const selected = resolveTraitChoiceSelection(trait, speciesTraitChoices);
+      const entries = resolveSpeciesTraitEntries(trait, selected, {
+        showAllWhenUnselected: false,
+      });
+      const body = entries
         .map((line) => {
           const t = line.trim();
           return t ? `<p>${t}</p>` : "";
@@ -204,6 +216,7 @@ export function buildRaceIdentityDescription(input: {
   /** Plain mapped fluff text fallback when remote fluff HTML is empty. */
   fluffText?: string;
   traits: SpeciesTrait[];
+  speciesTraitChoices?: SpeciesTraitChoices;
 }): string {
   const fluffHtml =
     input.fluff?.html ||
@@ -215,7 +228,10 @@ export function buildRaceIdentityDescription(input: {
           .map((b) => `<p>${b.replace(/\n/g, "<br/>")}</p>`)
           .join("")
       : "");
-  const traitsHtml = renderTraitsHtml(input.traits);
+  const traitsHtml = renderTraitsHtml(
+    input.traits,
+    input.speciesTraitChoices ?? {},
+  );
   return joinParts(fluffHtml, traitsHtml);
 }
 

@@ -10,6 +10,19 @@ import {
   getCharacterSpeedBreakdown,
 } from "@/features/raintdm/builder/utils/character-speed";
 import { resolveSpeciesParts } from "@/features/raintdm/builder/utils/species-resolution.utils";
+import {
+  resolveSpeciesTraitEntries,
+  resolveTraitChoiceSelection,
+} from "@/features/raintdm/builder/utils/species-trait-choice.utils";
+import {
+  findFeatureChoiceProgressionForFeature,
+  shouldOmitClassFeatureForChoices,
+} from "@/features/raintdm/builder/utils/feature-choice-description.utils";
+import {
+  applyFeatDamageTypeChoiceToText,
+  parseFeatDamageTypeOptions,
+} from "@/features/raintdm/builder/utils/feat-damage-type-choice.utils";
+import { getProgressionPicks } from "@/features/raintdm/builder/utils/class-optional-features.utils";
 import { getAllFeats } from "@/features/amellwind/feats/services/feat.service";
 import { getAllClasses, getClassById } from "@/features/dnd/classes/services/class.service";
 import { subclassesForClassVariant } from "@/features/dnd/classes/utils/class-subclass.utils";
@@ -27,7 +40,9 @@ import type {
   AbilityScores,
   CharacterSelectionRef,
   Class,
+  DamageType,
   Feat,
+  OptionalFeatureProgression,
   SkillKey,
   SpeciesTrait,
   Spell,
@@ -83,19 +98,36 @@ import {
 } from "../utils/play-character.types";
 import type { PlayCharacterRecord } from "../utils/play-character.types";
 
-function featCatalogText(feat: Feat): string {
+function featCatalogText(
+  feat: Feat,
+  damageTypeChoice?: DamageType | null,
+): string {
   const parts = [...feat.paragraphs];
   for (const section of feat.sections) {
     if (section.name) parts.push(section.name);
     parts.push(...section.paragraphs);
   }
-  return parts.filter(Boolean).join("\n\n").trim();
+  const raw = parts.filter(Boolean).join("\n\n").trim();
+  return applyFeatDamageTypeChoiceToText(
+    raw,
+    damageTypeChoice,
+    parseFeatDamageTypeOptions(feat),
+  );
 }
 
-function traitPlainDescription(trait: SpeciesTrait): string {
-  const fromContent = entryToPlainText(trait).trim();
+function traitPlainDescription(
+  trait: SpeciesTrait,
+  selectedOptionId?: string | null,
+): string {
+  const entries = resolveSpeciesTraitEntries(trait, selectedOptionId ?? null, {
+    showAllWhenUnselected: !selectedOptionId,
+  });
+  const fromContent = entryToPlainText({
+    ...trait,
+    entries,
+  }).trim();
   if (fromContent) return fromContent;
-  return (trait.entries ?? []).join("\n").trim();
+  return entries.join("\n").trim();
 }
 
 function collectSpeciesTraits(
@@ -557,6 +589,7 @@ export async function compilePlayCharacterFromBuilderJson(
   const speciesTraitByName = new Map(
     speciesTraitCatalog.map((t) => [t.name.trim().toLowerCase(), t]),
   );
+  const speciesTraitChoices = json.snapshot.speciesTraitChoices ?? {};
   const speciesDarkvision = speciesBase?.darkvision;
   const speciesResistances = (speciesBase?.resistances ?? []).map(String);
 
@@ -583,13 +616,76 @@ export async function compilePlayCharacterFromBuilderJson(
     ...(json.snapshot.optionalFeatureOriginFeats ?? []),
   ].filter((s): s is NonNullable<typeof s> => Boolean(s?.id || s?.name));
 
-  const resolveFeatText = (name: string, id?: string): string | null => {
+  const resolveFeatText = (
+    name: string,
+    id?: string,
+    damageTypeChoice?: DamageType | null,
+  ): string | null => {
     const fromId = id ? featById.get(id) : undefined;
     const fromName = featByName.get(name.trim().toLowerCase());
     const feat = fromId ?? fromName;
     if (!feat) return null;
-    const text = featCatalogText(feat);
+    const text = featCatalogText(feat, damageTypeChoice);
     return text || null;
+  };
+
+  let subclassData: Subclass | null = null;
+  if (classData && json.identity.subclass) {
+    const subs = subclassesForClassVariant(classData);
+    const subRef = json.identity.subclass;
+    subclassData =
+      subs.find((s) => s.id === subRef.id) ??
+      subs.find(
+        (s) => s.name.toLowerCase() === (subRef.name ?? "").toLowerCase(),
+      ) ??
+      null;
+  }
+
+  const allChoiceProgressions: OptionalFeatureProgression[] = [
+    ...(classData?.optionalFeatureProgressions ?? []),
+    ...(subclassData?.optionalFeatureProgressions ?? []),
+  ];
+  const optionalFeatureSelections =
+    json.snapshot.optionalFeatureSelections ?? {};
+
+  const resolveClassFeatureDescription = (
+    featureName: string,
+    description: string[],
+  ): string => {
+    const progression = findFeatureChoiceProgressionForFeature(
+      featureName,
+      allChoiceProgressions,
+    );
+    if (!progression) {
+      return description.join("\n").trim() || featureName;
+    }
+    const picks = getProgressionPicks(
+      optionalFeatureSelections,
+      progression.id,
+    );
+    // Keep intro (+ any already-selected option lines). Do not re-append picks:
+    // selected options already appear as their own feature rows.
+    const selectedNames = new Set(
+      picks.map((pick) => pick.name.trim().toLowerCase()),
+    );
+    const optionNames = new Set(
+      (progression.choiceOptions ?? []).map((option) =>
+        option.name.trim().toLowerCase(),
+      ),
+    );
+    const filtered = description.filter((line) => {
+      const lower = line.trim().toLowerCase();
+      const matched = [...optionNames].find(
+        (name) =>
+          lower === name ||
+          lower.startsWith(`${name}:`) ||
+          lower.startsWith(`• ${name}`) ||
+          lower.startsWith(`- ${name}`),
+      );
+      if (!matched) return true;
+      return selectedNames.has(matched);
+    });
+    return filtered.join("\n").trim() || featureName;
   };
 
   const addFeature = (
@@ -617,12 +713,24 @@ export async function compilePlayCharacterFromBuilderJson(
 
   for (const cls of json.provenance?.classes ?? []) {
     for (const f of cls.features) {
+      if (
+        shouldOmitClassFeatureForChoices(
+          f.name,
+          allChoiceProgressions,
+          optionalFeatureSelections,
+        )
+      ) {
+        continue;
+      }
       addFeature(f.name, `${f.from}`, "class", cls.name, f.level);
     }
   }
   for (const traitName of json.provenance?.species?.traits ?? []) {
     const trait = speciesTraitByName.get(traitName.trim().toLowerCase());
-    const desc = trait ? traitPlainDescription(trait) : "";
+    const selected = trait
+      ? resolveTraitChoiceSelection(trait, speciesTraitChoices)
+      : null;
+    const desc = trait ? traitPlainDescription(trait, selected) : "";
     addFeature(
       traitName,
       desc || traitName,
@@ -637,7 +745,8 @@ export async function compilePlayCharacterFromBuilderJson(
         f.name.toLowerCase() === trait.name.toLowerCase(),
     );
     if (already) continue;
-    const desc = traitPlainDescription(trait);
+    const selected = resolveTraitChoiceSelection(trait, speciesTraitChoices);
+    const desc = traitPlainDescription(trait, selected);
     addFeature(
       trait.name,
       desc || trait.name,
@@ -650,7 +759,11 @@ export async function compilePlayCharacterFromBuilderJson(
     const sel = snapshotFeatSelections.find(
       (s) => s.name.toLowerCase() === feat.name.toLowerCase(),
     );
-    const catalogDesc = resolveFeatText(feat.name, sel?.id);
+    const catalogDesc = resolveFeatText(
+      feat.name,
+      sel?.id,
+      sel?.damageTypeChoice,
+    );
     addFeature(
       feat.name,
       catalogDesc || feat.grantedBy,
@@ -665,11 +778,24 @@ export async function compilePlayCharacterFromBuilderJson(
         f.name.toLowerCase() === sel.name.toLowerCase(),
     );
     if (already) continue;
-    const catalogDesc = resolveFeatText(sel.name, sel.id);
+    const catalogDesc = resolveFeatText(
+      sel.name,
+      sel.id,
+      sel.damageTypeChoice,
+    );
     addFeature(sel.name, catalogDesc || sel.name, "feat", sel.source || "Feat");
   }
 
   for (const ofeat of json.provenance?.optionalFeatures ?? []) {
+    if (
+      shouldOmitClassFeatureForChoices(
+        ofeat.name,
+        allChoiceProgressions,
+        optionalFeatureSelections,
+      )
+    ) {
+      continue;
+    }
     const opt = optionalByName.get(ofeat.name.trim().toLowerCase());
     const desc =
       (opt?.entries ?? []).join("\n").trim() ||
@@ -678,12 +804,40 @@ export async function compilePlayCharacterFromBuilderJson(
     addFeature(ofeat.name, desc, "class", "Optional Feature");
   }
 
-  // Enrich from class progression when available
+  // Enrich from class / subclass progression when available
+  const progressionSources: Array<{
+    rows: NonNullable<Class["progression"]>;
+    label: string;
+  }> = [];
   if (classData?.progression) {
-    for (const row of classData.progression) {
+    progressionSources.push({
+      rows: classData.progression,
+      label: classData.name,
+    });
+  }
+  if (subclassData?.progression) {
+    progressionSources.push({
+      rows: subclassData.progression,
+      label: subclassData.name,
+    });
+  }
+
+  for (const source of progressionSources) {
+    for (const row of source.rows) {
       if (row.level > level) continue;
       for (const f of row.features) {
-        const desc = (f.description ?? []).join("\n") || f.name;
+        if (
+          shouldOmitClassFeatureForChoices(
+            f.name,
+            allChoiceProgressions,
+            optionalFeatureSelections,
+          )
+        ) {
+          continue;
+        }
+        const desc =
+          resolveClassFeatureDescription(f.name, f.description ?? []) ||
+          f.name;
         const already = features.some(
           (x) => x.name.toLowerCase() === f.name.toLowerCase(),
         );
@@ -705,7 +859,7 @@ export async function compilePlayCharacterFromBuilderJson(
               name: f.name,
               description: desc,
               sourceKind: "class",
-              sourceLabel: classData.name,
+              sourceLabel: source.label,
               level: row.level,
               proficiencyBonus: pb,
               primaryAbilityMod: primaryMod,
@@ -715,7 +869,7 @@ export async function compilePlayCharacterFromBuilderJson(
           }
           continue;
         }
-        addFeature(f.name, desc, "class", classData.name, row.level);
+        addFeature(f.name, desc, "class", source.label, row.level);
       }
     }
   }
@@ -727,16 +881,6 @@ export async function compilePlayCharacterFromBuilderJson(
       id: `standard-${idx}`,
     });
   });
-
-  let subclassData: Subclass | null = null;
-  if (classData && json.identity.subclass) {
-    const subs = subclassesForClassVariant(classData);
-    const subRef = json.identity.subclass;
-    subclassData =
-      subs.find((s) => s.id === subRef.id) ??
-      subs.find((s) => s.name.toLowerCase() === (subRef.name ?? "").toLowerCase()) ??
-      null;
-  }
 
   const resolvedFeatEntities: Feat[] = [];
   for (const sel of snapshotFeatSelections) {
