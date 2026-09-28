@@ -1,6 +1,7 @@
 import type { AbilityKey, BuilderFeatSelection, DndFeat } from "@/shared/types";
 import type { OriginFeatGrant } from "@/shared/utils/origin-feat-grant.parser";
 import { buildFeatAbilityIncreaseChoices } from "./feat-ability-increase-choices.utils";
+import { parseFeatDamageTypeOptions } from "./feat-damage-type-choice.utils";
 import { isDnd2024Feat } from "./dnd-feat-edition.utils";
 
 export { AMELLWIND_BACKGROUND_ORIGIN_FEAT_GRANT } from "@/features/amellwind/backgrounds/constants/origin-feat.constants";
@@ -94,6 +95,14 @@ export function dndFeatToBuilderSelection(
         abilityPriority: options?.abilityPriority,
       },
     );
+  }
+
+  const damageTypes = parseFeatDamageTypeOptions(feat);
+  if (damageTypes?.length) {
+    selection.damageTypeChoice =
+      options?.randomizeAbilityIncreases === true
+        ? (damageTypes[Math.floor(Math.random() * damageTypes.length)] ?? null)
+        : null;
   }
 
   return selection;
