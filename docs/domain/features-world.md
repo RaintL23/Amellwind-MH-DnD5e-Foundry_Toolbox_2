@@ -77,5 +77,11 @@ MHMM local sheets get `monster.environment` from Appendix A (`22-appendices.md`)
 - **Common large** monsters are toggleable chips; you can also **add** extra monsters beyond the tier list. The selected subset feeds prep-table generation.
 - Prep tables generate die-sized counts: Signs/Minor Challenges **8 (d8)**, Major Challenges/Benefits **4 (d4)**.
 
+**Combat difficulty (Hunting Party)**:
+
+- Uses `getHuntCombatDifficulty` in `hunt-party.utils.ts`: **(total quarry CR ÷ hunters) vs APL** (medium when ratio ≈ 1). Not DMG adjusted-XP.
+- Boss HP scaling (`getScaledBossHp` / Amellwind 3–6 PC multipliers) is separate from that rating.
+- The D&D **Encounter Calculator** (`/encounter-calculator`) uses RAW DMG XP thresholds + monster multipliers — the same quarry can rate differently there. UI disclaimer links to that tool.
+
 ---
 

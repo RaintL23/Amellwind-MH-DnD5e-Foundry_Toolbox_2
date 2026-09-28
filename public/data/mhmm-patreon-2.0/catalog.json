@@ -5,8 +5,8 @@
   "staging": false,
   "wiredToApp": true,
   "runtimeOverlay": "supplement.json",
-  "monsterCount": 404,
-  "newVsGithubCount": 119,
+  "monsterCount": 410,
+  "newVsGithubCount": 125,
   "monsters": [
     {
       "name": "Chatacabra",
@@ -50323,7 +50323,7 @@
         "fly": 40
       },
       "bio": [
-        "One of frostfang barioth's most defining features is the tusks, which have taken on a dark hue, which is contrasted by the icy white coloration at the front, giving the monster's overall tusks a more chilling appearance. The frostfang barioth also sports thicker fur across its forelimbs and face, sporting an aged look compared to the standard individual. Finally, much of the frostfang barioth's body is covered with a form of frost to reflect upon its amplified abilities to use its sub-zero breath. The frostfang barioth has a sub-zero breath attack, very similar to that of velkhana's, that leaves a trail of frost on the ground that lingers for a few seconds. These frost trails will cause the creatures that touches them to be covered in frost. The frostfang barioth also maintains much of its physical prowess similar to the original monster, allowing it to deal heavy damage to anyone who is unfortunate enough to get caught by the debilitating effects of its icy breath. However, the frostfang barioth tends to use its breath attack more and jumps around less often. Rugged Pleura You have resistance to fire damage while you wear this armor. S.Barioth Lash You are immune to fire damage while you wear this armor. Hvy Indigo Tusks While you're wearing this armor, you can speak its command word as an action to cast the blur spell. When cast using this property your body is obscured by dust, sand, and other debris. You can use this property twice, regaining all expended uses when you finish a long rest. WEAPON MATERIAL EFFECTS S.Barioth Cortex While attuned to this weapon, sand and dust whip around it like a micro dust devil. S.Barioth Fur (Spellcaster only) This weapon has 4 runes. While holding it, you can use an action to expend 1 or more of its charges to cast one of the following spells from it, using your spell save DC: mirror image (2 charges), or wall of sand (2 charges). The weapon regains 1d4 expended runes daily at dawn. If you expend the weapon's last rune, roll a d20. On a 1, you can't regain any runes on this weapon for 1 week. S.Barioth Talon Your Dexterity score is 16 while attuned to this weapon. It has no effect on you if your Dexterity is already 16 or higher. Rugged Pleura Your weapon deals an extra 1d6 slashing damage. S.Barioth Lash (Druid, Sorcerer, & Wizard only) This weapon has 6 runes. While holding it, you can use an action to expend 1 or more of its runes to cast the dust devil spell from it. For 1 rune, you cast the 2nd-level version of the spell. You can increase the spell slot level by one for each additional rune you expend. The weapon regains 1d6 + 1 expended runes daily at dawn. If you expend the weapon's last rune, roll a d20. On a 1, you can't regain any runes on this weapon for 1 week. Hvy Indigo Tusks Your weapon deals an extra 1d8 slashing damage."
+        "One of frostfang barioth's most defining features is the tusks, which have taken on a dark hue, which is contrasted by the icy white coloration at the front, giving the monster's overall tusks a more chilling appearance. The frostfang barioth also sports thicker fur across its forelimbs and face, sporting an aged look compared to the standard individual. Finally, much of the frostfang barioth's body is covered with a form of frost to reflect upon its amplified abilities to use its sub-zero breath. The frostfang barioth has a sub-zero breath attack, very similar to that of velkhana's, that leaves a trail of frost on the ground that lingers for a few seconds. These frost trails will cause the creatures that touches them to be covered in frost. The frostfang barioth also maintains much of its physical prowess similar to the original monster, allowing it to deal heavy damage to anyone who is unfortunate enough to get caught by the debilitating effects of its icy breath. However, the frostfang barioth tends to use its breath attack more and jumps around less often."
       ],
       "lootRolls": 3,
       "loot": [
@@ -50384,7 +50384,7 @@
         {
           "carveChance": "344",
           "captureChance": "—",
-          "name": "Frostfang Material Bonus When a character has three frostfang materials socketed into their equipment, they gain the Frostfang Absolute Art bonus. Frostfang Absolute Art. (Hammer Only) Punishing Draw. During the first round of combat you can use the hammer's mighty weapon property without expending a use.",
+          "name": "Frostfang Material Bonus",
           "slots": [
             "O"
           ]
@@ -50399,8 +50399,8 @@
             "A",
             "W"
           ],
-          "armorEffect": null,
-          "weaponEffect": null,
+          "armorEffect": "While you wear this armor, you ignore difficult terrain created by ice or snow and you can tolerate temperatures as low as -50 degrees Fahrenheit without any additional protection. If you wear heavy clothes, you can tolerate temperatures as low as -100 degrees Fahrenheit.",
+          "weaponEffect": "Quick Sheath. While attuned to this weapon, you can always sheath it as a free action even if you have already drawn a weapon as part of your move action.",
           "otherEffect": null
         },
         {
@@ -50411,8 +50411,8 @@
             "A",
             "W"
           ],
-          "armorEffect": null,
-          "weaponEffect": null,
+          "armorEffect": "While you are wearing this armor you have advantage on Charisma (Intimidation) checks, but your demeanor is cold-hearted. Kind words come out as uncaring or hurtful, your generosity comes off as self-serving, etc.",
+          "weaponEffect": "Hitter. When a creature must succeed on a saving throw or be stunned by the effect of a weapon attack, increase the save DC by 2.",
           "otherEffect": null
         },
         {
@@ -50423,8 +50423,8 @@
             "A",
             "W"
           ],
-          "armorEffect": null,
-          "weaponEffect": null,
+          "armorEffect": "While wearing this armor, you can move up, down, and across vertical surfaces and upside down along ceilings, while leaving your hands free. You have a climbing speed equal to your walking speed. However, the armor doesn't allow you to move this way on a slippery surface, such as one covered by oil, but it does work on ice and snow.",
+          "weaponEffect": "Critical Draw+. When you take the Attack action for the first time in a combat encounter while wielding this weapon, the melee weapon attacks with that action score a critical hit on a roll of 15 or higher.",
           "otherEffect": null
         },
         {
@@ -50435,8 +50435,8 @@
             "A",
             "W"
           ],
-          "armorEffect": null,
-          "weaponEffect": null,
+          "armorEffect": "You have resistance to cold damage while you wear this armor.",
+          "weaponEffect": "Your weapon deals an extra 1d6 cold damage.",
           "otherEffect": null
         },
         {
@@ -50447,8 +50447,8 @@
             "A",
             "W"
           ],
-          "armorEffect": null,
-          "weaponEffect": null,
+          "armorEffect": "(Sorcerer, Warlock, and Wizard only) This armor has two runes that it regains daily at dawn. As an action you can expend one of these runes to coat your armor in magical ice, gaining 25 temporary hit points. If a creature hits you with a melee attack while you have these hit points, the creature takes 25 cold damage.",
+          "weaponEffect": "While you are attuned to this weapon, your cold spells bypasses a creature's resistance to cold damage and deals half damage to a creature that has immunity to cold damage.",
           "otherEffect": null
         },
         {
@@ -50459,12 +50459,12 @@
             "A",
             "W"
           ],
-          "armorEffect": null,
-          "weaponEffect": null,
+          "armorEffect": "You are immune to cold damage while you wear this armor.",
+          "weaponEffect": "Critical Eye+. Your weapon attacks critical hit range is increased by 2.",
           "otherEffect": null
         },
         {
-          "name": "Frostfang Material Bonus When a character has three frostfang materials socketed into their equipment, they gain the Frostfang Absolute Art bonus. Frostfang Absolute Art. (Hammer Only) Punishing Draw. During the first round of combat you can use the hammer's mighty weapon property without expending a use.",
+          "name": "Frostfang Material Bonus",
           "carveChance": "344",
           "captureChance": "—",
           "slots": [
@@ -50472,7 +50472,7 @@
           ],
           "armorEffect": null,
           "weaponEffect": null,
-          "otherEffect": null
+          "otherEffect": "When a character has three frostfang materials socketed into their equipment, they gain the Frostfang Absolute Art bonus. Frostfang Absolute Art. (Hammer Only) Punishing Draw. During the first round of combat you can use the hammer's mighty weapon property without expending a use."
         }
       ],
       "familySlug": "frostfang-barioth.md",
@@ -60248,7 +60248,7 @@
             "W"
           ],
           "armorEffect": "While you are attuned to this armor, you can use a bonus action to speak its command word and exhale fire at a target within 30 feet of you. The target must make a DC 16 Dexterity saving throw, taking 4d6 fire damage on a failed save, or half as much damage on a successful one. You can use this property a number of times equal to half your proficiency bonus, regaining all expended uses when you finish a long rest.",
-          "weaponEffect": null,
+          "weaponEffect": "Your weapon deals an extra 1d6 fire damage.",
           "otherEffect": null
         },
         {
@@ -60258,7 +60258,7 @@
           "slots": [
             "A"
           ],
-          "armorEffect": null,
+          "armorEffect": "You have a +1 bonus to your AC while you wear this armor.",
           "weaponEffect": null,
           "otherEffect": null
         },
@@ -60269,7 +60269,7 @@
           "slots": [
             "A"
           ],
-          "armorEffect": null,
+          "armorEffect": "When you must succeed on a saving throw or be knocked prone, you do so with advantage.",
           "weaponEffect": null,
           "otherEffect": null
         },
@@ -60281,8 +60281,8 @@
             "A",
             "W"
           ],
-          "armorEffect": null,
-          "weaponEffect": null,
+          "armorEffect": "You suffer no harm from temperatures as warm as 120 degrees Fahrenheit while you wear this armor.",
+          "weaponEffect": "You can use a bonus action to speak this weapon's command word, causing flames to erupt from the weapon. These flames shed bright light in a 40-foot radius and dim light for an additional 40 feet.",
           "otherEffect": null
         },
         {
@@ -60294,9 +60294,9 @@
             "W",
             "O"
           ],
-          "armorEffect": null,
-          "weaponEffect": null,
-          "otherEffect": null
+          "armorEffect": "Archaeologist+. When you successfully gather a bone resource, you instead gather 1d4.",
+          "weaponEffect": "When you hit a creature with this weapon, it must make a DC 12 Wisdom saving throw or be frightened of you for 1 minute. The frightened creature can repeat the save at the end of each of its turns, ending the effect on a success. On a successful save, the target is immune to this effect for 24 hours.",
+          "otherEffect": "Very rare armor or weapon upgrade material."
         },
         {
           "name": "Rathalos Wing",
@@ -60305,7 +60305,7 @@
           "slots": [
             "A"
           ],
-          "armorEffect": null,
+          "armorEffect": "While you are attuned to this armor you can cast the fly spell. Once you use this property, you can't use it again until the next dawn.",
           "weaponEffect": null,
           "otherEffect": null
         },
@@ -60317,8 +60317,8 @@
             "A",
             "W"
           ],
-          "armorEffect": null,
-          "weaponEffect": null,
+          "armorEffect": "You have resistance to fire damage while you wear this armor.",
+          "weaponEffect": "Critical Eye. Your weapon attacks critical hit range is increased by 1.",
           "otherEffect": null
         },
         {
@@ -60329,8 +60329,8 @@
             "A",
             "W"
           ],
-          "armorEffect": null,
-          "weaponEffect": null,
+          "armorEffect": "You are immune to fire damage while you wear this armor.",
+          "weaponEffect": "Your weapon deals an extra 1d8 fire damage.",
           "otherEffect": null
         }
       ],
@@ -81971,7 +81971,7 @@
           "slots": [
             "A"
           ],
-          "armorEffect": null,
+          "armorEffect": "You have a +1 bonus to Insight checks while you wear this armor.",
           "weaponEffect": null,
           "otherEffect": null
         },
@@ -81983,7 +81983,7 @@
             "W"
           ],
           "armorEffect": null,
-          "weaponEffect": null,
+          "weaponEffect": "When you cast a spell that deals cold damage, add half of your proficiency bonus to that damage.",
           "otherEffect": null
         },
         {
@@ -81995,7 +81995,7 @@
           ],
           "armorEffect": null,
           "weaponEffect": null,
-          "otherEffect": null
+          "otherEffect": "A crafting material used to make sonic bombs."
         },
         {
           "name": "Giadrome Hide",
@@ -82005,8 +82005,8 @@
             "A",
             "W"
           ],
-          "armorEffect": null,
-          "weaponEffect": null,
+          "armorEffect": "You reduce cold damage you take by 3 while you wear this armor.",
+          "weaponEffect": "Icy wind and snowflakes bluster around this weapon, even in warm environments. While touching it, you can walk on the surface of the lightest snow, leaving no footprints.",
           "otherEffect": null
         },
         {
@@ -82017,8 +82017,8 @@
             "A",
             "W"
           ],
-          "armorEffect": null,
-          "weaponEffect": null,
+          "armorEffect": "The air around you is always unnaturally cold while you wear this armor. Your breath becomes visible, and frost continually forms on the surface of your hair, weapons, and armor. Additionally, you suffer no ill effect from being in extremely cold environments.",
+          "weaponEffect": "The first time you make a Carve check on a creature, you do so with advantage.",
           "otherEffect": null
         },
         {
@@ -82029,8 +82029,8 @@
             "A",
             "W"
           ],
-          "armorEffect": null,
-          "weaponEffect": null,
+          "armorEffect": "Detect. You gain a +1 bonus to your passive Perception while you wear this armor.",
+          "weaponEffect": "(Druid, Sorcerer, Warlock, or Wizard) While attuned to this weapon you know the frostbite cantrip.",
           "otherEffect": null
         }
       ],
@@ -92568,6 +92568,1026 @@
           "text": "When the Guardian hits a creature with a melee weapon attack, the target takes additional force damage based on the Guardian's CR (see table below). Additionally each creature within 5 feet of the target must succeed on a Dexterity saving throw with a DC equal 8 + the guardian's proficiency bonus + the guardian's Strength modifier, taking the same amount of force damage as the target on a failed save. CR Force Damage 0–4 1d4 5–8 2d6 9–12 2d8 13–16 3d6 17–20 3d8 21+ 4d8 Wylk Crystals. When the guardian uses Wylk Explosion there is a 25% chance for a crystal to form from the explosion's energy. This crystal can be attacked and destroyed (AC 10; HP 5; immunity to poison and psychic damage). Destroying the crystal creates an explosion and each creature within 10 feet of it must succeed on a Dexterity saving throw equal to 8 + the guardian's proficiency bonus + the guardian's Strength modifier or be knocked prone and take damage equal to the damage on the wylk table above. The damage type is the same as the damage type that destroyed it, except bludgeoning, piercing, or slashing damage, which deals force damage.",
           "entries": [
             "When the Guardian hits a creature with a melee weapon attack, the target takes additional force damage based on the Guardian's CR (see table below). Additionally each creature within 5 feet of the target must succeed on a Dexterity saving throw with a DC equal 8 + the guardian's proficiency bonus + the guardian's Strength modifier, taking the same amount of force damage as the target on a failed save. CR Force Damage 0–4 1d4 5–8 2d6 9–12 2d8 13–16 3d6 17–20 3d8 21+ 4d8 Wylk Crystals. When the guardian uses Wylk Explosion there is a 25% chance for a crystal to form from the explosion's energy. This crystal can be attacked and destroyed (AC 10; HP 5; immunity to poison and psychic damage). Destroying the crystal creates an explosion and each creature within 10 feet of it must succeed on a Dexterity saving throw equal to 8 + the guardian's proficiency bonus + the guardian's Strength modifier or be knocked prone and take damage equal to the damage on the wylk table above. The damage type is the same as the damage type that destroyed it, except bludgeoning, piercing, or slashing damage, which deals force damage."
+          ]
+        }
+      ]
+    },
+    {
+      "name": "Omega Microbe",
+      "slug": "omega-microbe",
+      "group": "Elder Dragons",
+      "cr": "1",
+      "pdfPage": 201,
+      "inGithubJson": false,
+      "source": "MHMM-Patreon-2.0",
+      "size": "Small",
+      "creatureType": "construct",
+      "alignment": "unaligned",
+      "abilities": {
+        "str": 1,
+        "dex": 13,
+        "con": 18,
+        "int": 1,
+        "wis": 8,
+        "cha": 3
+      },
+      "ac": {
+        "ac": 11
+      },
+      "hp": {
+        "average": 7,
+        "formula": "1d6 + 4"
+      },
+      "speed": {
+        "walk": 30,
+        "climb": 30
+      },
+      "familySlug": "omega-microbe.md",
+      "file": "monsters/elder-dragons/omega-microbe.md",
+      "traits": [
+        {
+          "name": "Death Burst",
+          "text": "The omega microbe explodes when it drops to 0 hit points. Each creature within 10 feet of it must make a DC 14 Dexterity saving throw. On a failed save, the creature takes 18 (4d8) fire damage and is pushed 10 feet in a random direction away from the omega microbe. On a successful save, it takes half as much damage and isn't pushed.",
+          "entries": [
+            "The omega microbe explodes when it drops to 0 hit points. Each creature within 10 feet of it must make a DC 14 Dexterity saving throw. On a failed save, the creature takes 18 (4d8) fire damage and is pushed 10 feet in a random direction away from the omega microbe. On a successful save, it takes half as much damage and isn't pushed."
+          ]
+        }
+      ],
+      "actions": [
+        {
+          "name": "Detonate",
+          "text": "The omega microbe reduces its hit points to 0.",
+          "entries": [
+            "The omega microbe reduces its hit points to 0."
+          ]
+        }
+      ]
+    },
+    {
+      "name": "Savage Omega Planetes",
+      "slug": "savage-omega-planetes",
+      "group": "Elder Dragons",
+      "cr": "23",
+      "pdfPage": 200,
+      "inGithubJson": false,
+      "source": "MHMM-Patreon-2.0",
+      "size": "Huge",
+      "creatureType": "construct",
+      "alignment": "chaotic neutral",
+      "abilities": {
+        "str": 25,
+        "dex": 16,
+        "con": 24,
+        "int": 22,
+        "wis": 18,
+        "cha": 10
+      },
+      "ac": {
+        "ac": 20,
+        "from": [
+          "natural armor"
+        ]
+      },
+      "hp": {
+        "average": 351,
+        "formula": "26d12 + 182"
+      },
+      "speed": {
+        "walk": 50
+      },
+      "lootRolls": 4,
+      "loot": [
+        {
+          "carveChance": "1-6",
+          "captureChance": "—",
+          "name": "Omega Screw",
+          "slots": [
+            "A",
+            "W"
+          ]
+        },
+        {
+          "carveChance": "7-10",
+          "captureChance": "—",
+          "name": "Omega Spring",
+          "slots": [
+            "A",
+            "W"
+          ]
+        },
+        {
+          "carveChance": "11-14",
+          "captureChance": "—",
+          "name": "Omega Pedal",
+          "slots": [
+            "A",
+            "W"
+          ]
+        },
+        {
+          "carveChance": "15-17",
+          "captureChance": "—",
+          "name": "Omega Lens",
+          "slots": [
+            "A",
+            "W"
+          ]
+        },
+        {
+          "carveChance": "18-19",
+          "captureChance": "—",
+          "name": "Omega Axle",
+          "slots": [
+            "A",
+            "W"
+          ]
+        },
+        {
+          "carveChance": "20",
+          "captureChance": "—",
+          "name": "Omega Nodule",
+          "slots": [
+            "A",
+            "W"
+          ]
+        }
+      ],
+      "materials": [
+        {
+          "name": "Omega Screw",
+          "carveChance": "1-6",
+          "captureChance": "—",
+          "slots": [
+            "A",
+            "W"
+          ],
+          "armorEffect": "While attuned to this armor you can use a bonus action to make an Intelligence (Arcana) or Intelligence (History) check against the creature's carve DC. On a successful check, you learn one damage type or condition the creature has vulnerability, resistance, or immunity to. You can use this property a number of times equal to your proficiency bonus, regaining all expended uses when you finish a long rest.",
+          "weaponEffect": "Quick Sheath. While attuned to this weapon, you can always sheath it as a free action even if you have already drawn a weapon as part of your move action.",
+          "otherEffect": null
+        },
+        {
+          "name": "Omega Spring",
+          "carveChance": "7-10",
+          "captureChance": "—",
+          "slots": [
+            "A",
+            "W"
+          ],
+          "armorEffect": "Divine Blessing+3. While wearing this armor, you have a pool of divine dice equal to your proficiency bonus, which are d10s. When you take damage that you aren't immune or resistant to, you can expend one or more divine dice to reduce the damage by the total rolled. You regain all expended dice when you finish a long rest.",
+          "weaponEffect": "Weakness Exploit+. When you have advantage on an attack roll with this weapon and you hit the target, you can have your weapon deal its maximum damage if the lower of the two d20 rolls would also hit the target (all extra damage dice must still be rolled). You can use this property a number of times equal to your Strength or Dexterity modifier (your choice), regaining all expended uses when you finish a short or long rest.",
+          "otherEffect": null
+        },
+        {
+          "name": "Omega Pedal",
+          "carveChance": "11-14",
+          "captureChance": "—",
+          "slots": [
+            "A",
+            "W"
+          ],
+          "armorEffect": "Constitution+. While you are attuned to this armor, you can reroll a Constitution saving throw that you fail. If you do so, you must use the new roll. You can use this property twice, regaining all expended uses when you finish a long rest.",
+          "weaponEffect": "Partbreaker+3. You deal an extra 1d10 damage when you critically hit with this weapon.",
+          "otherEffect": null
+        },
+        {
+          "name": "Omega Lens",
+          "carveChance": "15-17",
+          "captureChance": "—",
+          "slots": [
+            "A",
+            "W"
+          ],
+          "armorEffect": "You can't gain the exhaustion condition, be poisoned or knocked unconscious while you are wearing this armor.",
+          "weaponEffect": "Agitator. Your weapon attacks critical hit range is increased by 1 and your weapon deals an extra 1d6 weapon damage. (This material counts as both a critical eye material and a \"your weapon deals an extra damage material\")",
+          "otherEffect": null
+        },
+        {
+          "name": "Omega Axle",
+          "carveChance": "18-19",
+          "captureChance": "—",
+          "slots": [
+            "A",
+            "W"
+          ],
+          "armorEffect": "Evade Window+. This armor has 5 runes, and it regains 1d5 expended runes daily at dawn. When you fail a Dexterity saving throw while wearing it, you can use your reaction to expend 1 of its runes to succeed on that saving throw instead.",
+          "weaponEffect": "Latent Power +2. When you are reduced to half of your maximum hit points for the first time in combat or at the start of your turn on the 10th round of combat, whichever comes first, you gain the effects of the haste spell for 1 minute. Once used, you must finish a short or long rest before you can use this property again.",
+          "otherEffect": null
+        },
+        {
+          "name": "Omega Nodule",
+          "carveChance": "20",
+          "captureChance": "—",
+          "slots": [
+            "A",
+            "W"
+          ],
+          "armorEffect": "You are immune to force damage and have resistance to one other damage type of your choice (choose one when you place this material into your armor) while you wear this armor.",
+          "weaponEffect": "Chain Crit. Every consecutive hit on a creature increases your crit range by 1 until you score a critical hit, miss an attack, or hit a different creature.",
+          "otherEffect": null
+        }
+      ],
+      "familySlug": "savage-omega-planetes.md",
+      "file": "monsters/elder-dragons/savage-omega-planetes.md",
+      "traits": [
+        {
+          "name": "Pantokrator Mode (Mythic Trait; Recharges after a Short or Long Rest)",
+          "text": "If the omega planetes would be reduced to 0 hit points, its current hit point total instead resets to 351 (26d12 + 182) hit points, it recharges its Recharge Attack, regains all expended legendary resistances, creates a clone nerscylla in a space within 30 feet of it, and enters a Charging State for four rounds. While charging the omega planetes is immune to all damage and other effects, its movement is reduced to 0, and it can't use actions, reactions, or legendary actions. At the start of its turn on the fourth round it uses its Giant Laser, but the area is a 300-foot radius-sphere around it. When the clone nerscylla is defeated, it creates a 20-foot radius sphere force field as if by the omega planetes' Shield Generator. The force field lasts until the omega planetes uses Giant Laser, or for one round if the laser has already been fired.",
+          "entries": [
+            "If the omega planetes would be reduced to 0 hit points, its current hit point total instead resets to 351 (26d12 + 182) hit points, it recharges its Recharge Attack, regains all expended legendary resistances, creates a clone nerscylla in a space within 30 feet of it, and enters a Charging State for four rounds.",
+            "While charging the omega planetes is immune to all damage and other effects, its movement is reduced to 0, and it can't use actions, reactions, or legendary actions. At the start of its turn on the fourth round it uses its Giant Laser, but the area is a 300-foot radius-sphere around it. When the clone nerscylla is defeated, it creates a 20-foot radius sphere force field as if by the omega planetes' Shield Generator. The force field lasts until the omega planetes uses Giant Laser, or for one round if the laser has already been fired."
+          ]
+        },
+        {
+          "name": "Immutable Form",
+          "text": "The omega planetes is immune to any spell or effect that would alter its form.",
+          "entries": [
+            "The omega planetes is immune to any spell or effect that would alter its form."
+          ]
+        },
+        {
+          "name": "Legendary Resistance (3/Day)",
+          "text": "If the omega planetes fails a saving throw, it can choose to succeed instead.",
+          "entries": [
+            "If the omega planetes fails a saving throw, it can choose to succeed instead."
+          ]
+        },
+        {
+          "name": "Magic Resistance",
+          "text": "The omega planetes has advantage on saving throws against spells and other magical effects.",
+          "entries": [
+            "The omega planetes has advantage on saving throws against spells and other magical effects."
+          ]
+        },
+        {
+          "name": "Magic Weapons",
+          "text": "The omega planetes's weapon attacks are magical.",
+          "entries": [
+            "The omega planetes's weapon attacks are magical."
+          ]
+        },
+        {
+          "name": "Mark of Emnity",
+          "text": "The omega planetes targets creature wielding shields with its melee weapon attacks except when a creature critically hits the omega planetes, it will instead target that creature until the end of its next turn.",
+          "entries": [
+            "The omega planetes targets creature wielding shields with its melee weapon attacks except when a creature critically hits the omega planetes, it will instead target that creature until the end of its next turn."
+          ]
+        },
+        {
+          "name": "Shield Generator",
+          "text": "When the omega planetes takes 30 or more damage from a single attack or is critically hit, it will drop a shield generator on the ground in an unoccupied space within 5 feet of it. A creature that picks up the shield generator can use an action to activate it, creating a force field in a 10-foot-cubed area around it. The force field lasts for 1 minute and when a creature must make a saving throw against an effect from the omega planetes while in it, it automatically succeeds on the save and takes no damage from it; the force field then shatters.",
+          "entries": [
+            "When the omega planetes takes 30 or more damage from a single attack or is critically hit, it will drop a shield generator on the ground in an unoccupied space within 5 feet of it.",
+            "A creature that picks up the shield generator can use an action to activate it, creating a force field in a 10-foot-cubed area around it. The force field lasts for 1 minute and when a creature must make a saving throw against an effect from the omega planetes while in it, it automatically succeeds on the save and takes no damage from it; the force field then shatters."
+          ]
+        }
+      ],
+      "actions": [
+        {
+          "name": "Multiattack",
+          "text": "The omega planetes makes three attacks, each of which can be a Slam or a Laser Blast attack. It can replace any of these attacks with a use of Ballistic Impact.",
+          "entries": [
+            "The omega planetes makes three attacks, each of which can be a Slam or a Laser Blast attack. It can replace any of these attacks with a use of Ballistic Impact."
+          ]
+        },
+        {
+          "name": "Slam",
+          "text": "Melee Weapon Attack: +14 to hit, reach 5 ft., one target. Hit: 21 (4d6 + 7) bludgeoning damage. If the target is a creature, it must succeed on a DC 22 Strength saving throw or be knocked prone.",
+          "entries": [
+            "Melee Weapon Attack: +14 to hit, reach 5 ft., one target. Hit: 21 (4d6 + 7) bludgeoning damage. If the target is a creature, it must succeed on a DC 22 Strength saving throw or be knocked prone."
+          ]
+        },
+        {
+          "name": "Laser Blast",
+          "text": "Ranged Weapon Attack: +14 to hit, range 240 ft., one target. Hit: 17 (3d6 + 7) force damage.",
+          "entries": [
+            "Ranged Weapon Attack: +14 to hit, range 240 ft., one target. Hit: 17 (3d6 + 7) force damage."
+          ]
+        },
+        {
+          "name": "Atomic Ray",
+          "text": "The omega planetes shoots a fan of lasers in a 30-foot cone from one side of its body. It fires an additional set of lasers from another side of its body each time its hit points are reduced by 25% of its maximum hit points. Each creature in a cone must make a DC 22 Dexterity saving throw, taking 28 (8d6) force damage on a failed save, or half as much damage on a successful one.",
+          "entries": [
+            "The omega planetes shoots a fan of lasers in a 30-foot cone from one side of its body. It fires an additional set of lasers from another side of its body each time its hit points are reduced by 25% of its maximum hit points. Each creature in a cone must make a DC 22 Dexterity saving throw, taking 28 (8d6) force damage on a failed save, or half as much damage on a successful one."
+          ]
+        },
+        {
+          "name": "Ballistic Impact",
+          "text": "The omega planetes launches a bomb into the air at a point within 120 feet of it. Each creature in a 10-foot-radius sphere centered on that point must succeed on a DC 22 Dexterity saving throw or take 16 (3d10) fire damage and catch fire. Until a creature takes an action to douse the fire, the target takes 9 (2d8) fire damage at the start of each of its turns.",
+          "entries": [
+            "The omega planetes launches a bomb into the air at a point within 120 feet of it. Each creature in a 10-foot-radius sphere centered on that point must succeed on a DC 22 Dexterity saving throw or take 16 (3d10) fire damage and catch fire. Until a creature takes an action to douse the fire, the target takes 9 (2d8) fire damage at the start of each of its turns."
+          ]
+        },
+        {
+          "name": "Deadly Leap",
+          "text": "If the omega planetes jumps at least 10 feet as part of its movement, it can then use this action to land on its feet in a space that contains one or more other creatures. Each of those creatures must succeed on a DC 22 Strength or Dexterity saving throw (target's choice) or be knocked prone and take 22 (4d10 + 7) bludgeoning damage. On a successful save, the creature takes only half the damage, isn't knocked prone, and is pushed 5 feet out of the omega planetes's space into an unoccupied space of the creature's choice. If no unoccupied space is within range, the creature instead falls prone in the omega planetes's space.",
+          "entries": [
+            "If the omega planetes jumps at least 10 feet as part of its movement, it can then use this action to land on its feet in a space that contains one or more other creatures. Each of those creatures must succeed on a DC 22 Strength or Dexterity saving throw (target's choice) or be knocked prone and take 22 (4d10 + 7) bludgeoning damage. On a successful save, the creature takes only half the damage, isn't knocked prone, and is pushed 5 feet out of the omega planetes's space into an unoccupied space of the creature's choice. If no unoccupied space is within range, the creature instead falls prone in the omega planetes's space."
+          ]
+        },
+        {
+          "name": "Recharge Attack (Recharge 5-6)",
+          "text": "The omega planetes uses one of the following recharge attacks:",
+          "entries": [
+            "The omega planetes uses one of the following recharge attacks:"
+          ]
+        },
+        {
+          "name": "Giant Laser",
+          "text": "The omega planetes fires a giant laser in a 150-foot line that is 15 feet wide. Each creature in that area must make a DC 22 Dexterity saving throw, taking 99 (18d10) force damage on a failed save, or half as much damage on a successful one.",
+          "entries": [
+            "The omega planetes fires a giant laser in a 150-foot line that is 15 feet wide. Each creature in that area must make a DC 22 Dexterity saving throw, taking 99 (18d10) force damage on a failed save, or half as much damage on a successful one."
+          ]
+        },
+        {
+          "name": "Wave Cannon",
+          "text": "The omega planetes fires numerous lasers in one half of a 30-foot-radius circle. Each creature in that area must make a DC 22 Dexterity saving throw. On a failed save, the target takes 81 (18d8) force damage and is knocked prone. On a successful save, the target takes half as much damage and isn't knocked prone.",
+          "entries": [
+            "The omega planetes fires numerous lasers in one half of a 30-foot-radius circle. Each creature in that area must make a DC 22 Dexterity saving throw. On a failed save, the target takes 81 (18d8) force damage and is knocked prone. On a successful save, the target takes half as much damage and isn't knocked prone."
+          ]
+        },
+        {
+          "name": "Mustard Bomb",
+          "text": "The omega planetes targets one creature within 120 feet of it. Until the end of the creature's next turn, the area around it flashes red. At the end of its turn, fire covers the ground in a 20-foot radius around it for 1 minute. The creature can make a DC 22 Dexterity saving throw, moving 10 feet into an unoccupied space on a failed save or 25 feet on a successful one. A creature that starts its turn or enters the area for the first time on a turn takes 35 (10d6) fire damage and catches fire. Until a creature takes an action to douse the fire, the target takes 9 (2d8) fire damage at the start of each of its turns.",
+          "entries": [
+            "The omega planetes targets one creature within 120 feet of it. Until the end of the creature's next turn, the area around it flashes red. At the end of its turn, fire covers the ground in a 20-foot radius around it for 1 minute. The creature can make a DC 22 Dexterity saving throw, moving 10 feet into an unoccupied space on a failed save or 25 feet on a successful one.",
+            "A creature that starts its turn or enters the area for the first time on a turn takes 35 (10d6) fire damage and catches fire. Until a creature takes an action to douse the fire, the target takes 9 (2d8) fire damage at the start of each of its turns."
+          ]
+        }
+      ],
+      "legendaryActions": [
+        {
+          "name": "Flamethrower",
+          "text": "The omega planetes releases a gout of flame in a 5-foot radius around it. Each creature in that area must make a DC 22 Dexterity saving throw, taking 11 (2d10) fire damage on a failed save, or half as much damage on a successful one.",
+          "entries": [
+            "The omega planetes releases a gout of flame in a 5-foot radius around it. Each creature in that area must make a DC 22 Dexterity saving throw, taking 11 (2d10) fire damage on a failed save, or half as much damage on a successful one."
+          ]
+        },
+        {
+          "name": "Trample (Costs 2 Actions)",
+          "text": "The omega planetes moves up to its speed. During this move it can move through the spaces of other creatures without provoking opportunity attacks. Each creature the omega planetes moves through must succeed on a DC 22 Dexterity saving throw or take 18 (2d10 + 7) bludgeoning damage and be knocked prone.",
+          "entries": [
+            "The omega planetes moves up to its speed. During this move it can move through the spaces of other creatures without provoking opportunity attacks. Each creature the omega planetes moves through must succeed on a DC 22 Dexterity saving throw or take 18 (2d10 + 7) bludgeoning damage and be knocked prone."
+          ]
+        },
+        {
+          "name": "HP Penalty (Costs 2 Actions)",
+          "text": "The omega planetes shoots an orb at the target of its Mark of Emnity. That creature must make a DC 22 Constitution saving throw, taking 14 (4d6) necrotic damage on a failed save, or half as much damage on a successful one. The target's hit point maximum is reduced by an amount equal to the necrotic damage taken. The reduction lasts until the target finishes a long rest. The target dies if this effect reduces its hit point maximum to 0.",
+          "entries": [
+            "The omega planetes shoots an orb at the target of its Mark of Emnity. That creature must make a DC 22 Constitution saving throw, taking 14 (4d6) necrotic damage on a failed save, or half as much damage on a successful one. The target's hit point maximum is reduced by an amount equal to the necrotic damage taken. The reduction lasts until the target finishes a long rest. The target dies if this effect reduces its hit point maximum to 0."
+          ]
+        },
+        {
+          "name": "MRV Missile (Costs 3 Actions)",
+          "text": "The omega planetes fires a bomb at each creature within 120 feet of it. Each creature must succeed on a DC 22 Dexterity saving throw or take 21 (6d6) fire damage and catch fire. Until a creature takes an action to douse the fire, the target takes 9 (2d8) fire damage at the start of each of its turns.",
+          "entries": [
+            "The omega planetes fires a bomb at each creature within 120 feet of it. Each creature must succeed on a DC 22 Dexterity saving throw or take 21 (6d6) fire damage and catch fire. Until a creature takes an action to douse the fire, the target takes 9 (2d8) fire damage at the start of each of its turns."
+          ]
+        },
+        {
+          "name": "Omega Microbes",
+          "text": "The omega planetes summons 7 (2d6) omega microbes, each appearing in an unoccupied space within 30 feet of it.",
+          "entries": [
+            "The omega planetes summons 7 (2d6) omega microbes, each appearing in an unoccupied space within 30 feet of it."
+          ]
+        },
+        {
+          "name": "Expel Frost",
+          "text": "Each creature within 15 feet of the omega planetes must make a DC 22 Constitution saving throw. On a failed save, the creature takes 35 (10d6) cold damage and is afflicted with frostblight for 1 minute. On a successful save, the creature takes half as much damage and isn't afflicted with frostblight. A creature can repeat its saving throw at the end of each of its turns, ending the effect on a success.",
+          "entries": [
+            "Each creature within 15 feet of the omega planetes must make a DC 22 Constitution saving throw. On a failed save, the creature takes 35 (10d6) cold damage and is afflicted with frostblight for 1 minute. On a successful save, the creature takes half as much damage and isn't afflicted with frostblight. A creature can repeat its saving throw at the end of each of its turns, ending the effect on a success."
+          ]
+        }
+      ],
+      "mythicActions": [
+        {
+          "name": "Clone Nerscylla",
+          "text": "A clone nerscylla uses the tempered nerscylla with the following changes: It gains the effects of the blur spell. Its poisonous maw attack deals force damage instead of poison damage. Replace its Stinger with the following attack.",
+          "entries": [
+            "A clone nerscylla uses the tempered nerscylla with the following changes:",
+            {
+              "type": "list",
+              "items": [
+                "It gains the effects of the blur spell.",
+                "Its poisonous maw attack deals force damage instead of poison damage.",
+                "Replace its Stinger with the following attack."
+              ]
+            }
+          ]
+        },
+        {
+          "name": "Laser Beam (Recharge 5-6)",
+          "text": "The nerscylla fires a beam of magic energy in a 60-foot long line that is 5 feet wide or across a 30-foot cone. Each creature in that area must make a DC 17 Dexterity saving throw, taking 28 (8d6) force damage on a failed save, or half as much damage on a successful one.",
+          "entries": [
+            "The nerscylla fires a beam of magic energy in a 60-foot long line that is 5 feet wide or across a 30-foot cone. Each creature in that area must make a DC 17 Dexterity saving throw, taking 28 (8d6) force damage on a failed save, or half as much damage on a successful one."
+          ]
+        },
+        {
+          "name": "Lair Actions",
+          "text": "On initiative count 20 (losing initiative ties), the omega planetes takes a lair action to cause one of the following effects; the omega planetes can't use the same effect two rounds in a row:",
+          "entries": [
+            "On initiative count 20 (losing initiative ties), the omega planetes takes a lair action to cause one of the following effects; the omega planetes can't use the same effect two rounds in a row:"
+          ]
+        },
+        {
+          "name": "Rocket Punch",
+          "text": "The omega planetes launches rocket fists at each creature of its choice within 120 feet of it. The fists can be attacked and destroyed (AC 10; hp 15; immunity to poison and psychic damage). On the subsequent initiative 20, the fists hit its target, dealing 21 (6d6) bludgeoning damage.",
+          "entries": [
+            "The omega planetes launches rocket fists at each creature of its choice within 120 feet of it. The fists can be attacked and destroyed (AC 10; hp 15; immunity to poison and psychic damage). On the subsequent initiative 20, the fists hit its target, dealing 21 (6d6) bludgeoning damage."
+          ]
+        }
+      ]
+    },
+    {
+      "name": "Tempered Gogmazios",
+      "slug": "tempered-gogmazios",
+      "group": "Elder Dragons",
+      "cr": "28",
+      "pdfPage": 150,
+      "inGithubJson": false,
+      "source": "MHMM-Patreon-2.0",
+      "size": "Gargantuan",
+      "creatureType": "dragon (elder)",
+      "alignment": "unaligned",
+      "abilities": {
+        "str": 30,
+        "dex": 10,
+        "con": 30,
+        "int": 18,
+        "wis": 17,
+        "cha": 23
+      },
+      "ac": {
+        "ac": 24,
+        "from": [
+          "natural armor"
+        ]
+      },
+      "hp": {
+        "average": 533,
+        "formula": "26d20 + 260"
+      },
+      "speed": {
+        "walk": 60
+      },
+      "lootRolls": 4,
+      "loot": [
+        {
+          "carveChance": "1-4",
+          "captureChance": "—",
+          "name": "T.Heavy Drakesbone Oil",
+          "slots": [
+            "O"
+          ]
+        },
+        {
+          "carveChance": "5-8",
+          "captureChance": "—",
+          "name": "T.Gogmazios Shredders",
+          "slots": [
+            "A",
+            "W"
+          ]
+        },
+        {
+          "carveChance": "9-11",
+          "captureChance": "—",
+          "name": "T.Gogmazios Lacerator",
+          "slots": [
+            "A",
+            "W"
+          ]
+        },
+        {
+          "carveChance": "10-12",
+          "captureChance": "—",
+          "name": "T.Gogmazios Fortalice",
+          "slots": [
+            "A",
+            "W"
+          ]
+        },
+        {
+          "carveChance": "13-15",
+          "captureChance": "—",
+          "name": "T.Gogmazios Thorntail",
+          "slots": [
+            "A",
+            "W"
+          ]
+        },
+        {
+          "carveChance": "16-17",
+          "captureChance": "—",
+          "name": "T.Gogmazios Rampart",
+          "slots": [
+            "A",
+            "W"
+          ]
+        },
+        {
+          "carveChance": "18-19",
+          "captureChance": "—",
+          "name": "T.Gogmazios Fiberwing",
+          "slots": [
+            "W"
+          ]
+        },
+        {
+          "carveChance": "20",
+          "captureChance": "—",
+          "name": "Wartorn Dragongem",
+          "slots": [
+            "A",
+            "W"
+          ]
+        }
+      ],
+      "materials": [
+        {
+          "name": "T.Heavy Drakesbone Oil",
+          "carveChance": "1-4",
+          "captureChance": "—",
+          "slots": [
+            "O"
+          ],
+          "armorEffect": null,
+          "weaponEffect": null,
+          "otherEffect": "This dark, thick, flammable oil can coat one slashing or piercing weapon or up to 20 pieces of ammunition. Applying the oil takes 1 minute. For 1 hour, the coated item is magical (if not already) and it deals an extra 4d6 fire damage to any target it hits."
+        },
+        {
+          "name": "T.Gogmazios Shredders",
+          "carveChance": "5-8",
+          "captureChance": "—",
+          "slots": [
+            "A",
+            "W"
+          ],
+          "armorEffect": "Aquatic/Polar Mobility. You ignore difficult terrain created by ice or snow and you have a swimming speed equal to your walking speed while you wear this armor.",
+          "weaponEffect": "Peak Performance. When your hit points are full and you roll a 1 or 2 on a damage die for an attack you make with a melee weapon, you can reroll the die and must use the new roll, even if the new roll is a 1 or a 2.",
+          "otherEffect": null
+        },
+        {
+          "name": "T.Gogmazios Lacerator",
+          "carveChance": "9-11",
+          "captureChance": "—",
+          "slots": [
+            "A",
+            "W"
+          ],
+          "armorEffect": "Speed Eating. While you are attuned to this armor, you can use any consumable, such as a potion or food, as a bonus action; so long as you are the one consuming it.",
+          "weaponEffect": "While attuned to this weapon, you gain a +2 bonus to your spell attack rolls and spell save DC and your fire spells bypass a creature's resistance and immunities.",
+          "otherEffect": null
+        },
+        {
+          "name": "T.Gogmazios Fortalice",
+          "carveChance": "10-12",
+          "captureChance": "—",
+          "slots": [
+            "A",
+            "W"
+          ],
+          "armorEffect": "Spellcaster Only. While attuned to this armor, you know the hellish rebuke spell. If you have to prepare spells, you always have it prepared, and it doesn't count against the number of spells you can prepare each day. This armor has 7 runes. While wearing it, you can use an action to expend 1 or more of its runes to cast hellish rebuke using your spell save DC. For 1 rune, you cast the 1st-level version of the spell. You can increase the spell slot level by one for each additional rune you expend. This armor regains 1d6 + 1 expended runes daily at dawn. If you expend the armor's last rune, roll a d20. On a 1, the runes cannot recharge for a week.",
+          "weaponEffect": "Maximum Might. While your hit points are full and you are not suffering from any levels of exhaustion; you deal maximum weapon damage with your attacks.",
+          "otherEffect": null
+        },
+        {
+          "name": "T.Gogmazios Thorntail",
+          "carveChance": "13-15",
+          "captureChance": "—",
+          "slots": [
+            "A",
+            "W"
+          ],
+          "armorEffect": "Adrenaline+. The first time you drop below half of your hit point maximum in combat; you gain a rush of adrenaline. Until the end of your next turn, you have advantage on Dexterity and Strength saving throws and skill checks. Additionally on your next turn, your movement speed doubles and you can take one extra action.",
+          "weaponEffect": "Agitator. Your weapon attacks critical hit range is increased by 1 and your weapon deals an extra 1d6 weapon damage. (This material counts as both a critical eye material and a \"your weapon deals an extra damage material\")",
+          "otherEffect": null
+        },
+        {
+          "name": "T.Gogmazios Rampart",
+          "carveChance": "16-17",
+          "captureChance": "—",
+          "slots": [
+            "A",
+            "W"
+          ],
+          "armorEffect": "While attuned to this armor, you can use a bonus action to speak its command word, causing tar to seep from it for 1 minute. The tar coats the ground in each space you enter during the effect. You ignore difficult terrain created by this tar. When a creature enters a tar-coated space for the first time on a turn or starts its turn there, it must succeed on a DC 17 Strength (Athletics) check or be restrained (escape DC 19). A creature has advantage on this check if any part of its space is not in tar-coated spaces. Once you use this property, you can't use it again until you finish a long rest.",
+          "weaponEffect": "Chain Crit. Every consecutive hit on a creature increases your crit range by 1 until you score a critical hit, miss an attack, or hit a different creature.",
+          "otherEffect": null
+        },
+        {
+          "name": "T.Gogmazios Fiberwing",
+          "carveChance": "18-19",
+          "captureChance": "—",
+          "slots": [
+            "W"
+          ],
+          "armorEffect": null,
+          "weaponEffect": "This weapon has 3 runes that it regains daily at dawn. When you hit a creature with this weapon, you can expend a rune to have it make a DC 17 Dexterity saving throw. On a failed save, the target is tarred until it escapes (DC 17) or until it takes fire damage.",
+          "otherEffect": null
+        },
+        {
+          "name": "Wartorn Dragongem",
+          "carveChance": "20",
+          "captureChance": "—",
+          "slots": [
+            "A",
+            "W"
+          ],
+          "armorEffect": "While wearing this armor you are immune to damage from lava, unaffected by extreme heat, have resistance to acid and lightning damage, and immunity to cold damage.",
+          "weaponEffect": "Siege Breaker. When you hit a target that has resistance to nonmagical bludgeoning, piercing, and slashing damage, it loses that resistance until the start of your next turn. If you rolled a 20 for the attack roll, the target instead gains vulnerability to nonmagical bludgeoning, piercing, and slashing damage until the start of your next turn.",
+          "otherEffect": null
+        }
+      ],
+      "familySlug": "tempered-gogmazios.md",
+      "file": "monsters/elder-dragons/tempered-gogmazios.md",
+      "traits": [
+        {
+          "name": "Heated State",
+          "text": "When the Gogmazios takes 60 or more fire damage on a turn it enters a Heated State until the end of its next turn. While in this state, its Claw attack deals an extra 1d10 fire damage (included in the attack), the tar it places down ignites and explodes on initiative 20, and it takes an extra 10 necrotic damage whenever it takes necrotic damage.",
+          "entries": [
+            "When the Gogmazios takes 60 or more fire damage on a turn it enters a Heated State until the end of its next turn. While in this state, its Claw attack deals an extra 1d10 fire damage (included in the attack), the tar it places down ignites and explodes on initiative 20, and it takes an extra 10 necrotic damage whenever it takes necrotic damage."
+          ]
+        },
+        {
+          "name": "Hellfire",
+          "text": "Fire damage dealt by the gogmazios bypasses fire resistance and deals half damage to creatures that are immune to fire damage.",
+          "entries": [
+            "Fire damage dealt by the gogmazios bypasses fire resistance and deals half damage to creatures that are immune to fire damage."
+          ]
+        },
+        {
+          "name": "Highly Combustible",
+          "text": "When a tarred creature is subjected to fire damage, it takes an extra 11 (2d10) fire damage if the tarred condition was caused by the gogmazios. If the gogmazios is in its Heated State, the tar also explodes when it ignites. Each creature in a 5-foot radius of the tar must succeed on a DC 26 Dexterity saving throw or take 11 (2d10) fire damage and be pushed 5 feet away.",
+          "entries": [
+            "When a tarred creature is subjected to fire damage, it takes an extra 11 (2d10) fire damage if the tarred condition was caused by the gogmazios. If the gogmazios is in its Heated State, the tar also explodes when it ignites. Each creature in a 5-foot radius of the tar must succeed on a DC 26 Dexterity saving throw or take 11 (2d10) fire damage and be pushed 5 feet away."
+          ]
+        },
+        {
+          "name": "Legendary Resistance (3/Day)",
+          "text": "If the gogmazios fails a saving throw, it can choose to succeed instead.",
+          "entries": [
+            "If the gogmazios fails a saving throw, it can choose to succeed instead."
+          ]
+        },
+        {
+          "name": "Pitch (Heated State Only)",
+          "text": "At the start of each of its turns, the gogmazios secretes tar in 1d10 spaces within 10 feet of it and in two spaces for every 10 feet the gogmazios moves. Each creature that enters the area or starts its turn in that area must make a DC 26 Strength saving throw or be tarred.",
+          "entries": [
+            "At the start of each of its turns, the gogmazios secretes tar in 1d10 spaces within 10 feet of it and in two spaces for every 10 feet the gogmazios moves. Each creature that enters the area or starts its turn in that area must make a DC 26 Strength saving throw or be tarred."
+          ]
+        },
+        {
+          "name": "Super-Heated State (Mythic Trait; Recharges after a Short or Long Rest)",
+          "text": "When the gogmazios is reduced to 0 hit points, it immediately saves against all ongoing conditions and effects and instantly changes into its Super-Heated Form. Its initiative count doesn't change. While in Super-Heated Form, its speed becomes 60 ft., fly 120 ft., its Armor Class is 22, it loses damage resistances to nonmagical bludgeoning, piercing, and slashing, Pitch applies every turn (not only in Heated State), and it can use the mythic actions below.",
+          "entries": [
+            "When the gogmazios is reduced to 0 hit points, it immediately saves against all ongoing conditions and effects and instantly changes into its Super-Heated Form. Its initiative count doesn't change. While in Super-Heated Form, its speed becomes 60 ft., fly 120 ft., its Armor Class is 22, it loses damage resistances to nonmagical bludgeoning, piercing, and slashing, Pitch applies every turn (not only in Heated State), and it can use the mythic actions below."
+          ]
+        }
+      ],
+      "actions": [
+        {
+          "name": "Multiattack",
+          "text": "The gogmazios makes one Claw attack, one Tail attack, and one Winged Arm attack. It can't make a Claw or Winged Arm attack against the same target as its Tail attack. It can replace two attacks to use one of its Swipe Actions.",
+          "entries": [
+            "The gogmazios makes one Claw attack, one Tail attack, and one Winged Arm attack. It can't make a Claw or Winged Arm attack against the same target as its Tail attack. It can replace two attacks to use one of its Swipe Actions."
+          ]
+        },
+        {
+          "name": "Bite",
+          "text": "Melee Weapon Attack: +18 to hit, reach 10 ft., one target. Hit: 23 (3d8 + 10) piercing damage, and the target is tarred (escape DC 18). If the gogmazios is in its Heated State, the tar ignites on initiative 20.",
+          "entries": [
+            "Melee Weapon Attack: +18 to hit, reach 10 ft., one target. Hit: 23 (3d8 + 10) piercing damage, and the target is tarred (escape DC 18). If the gogmazios is in its Heated State, the tar ignites on initiative 20."
+          ]
+        },
+        {
+          "name": "Claw",
+          "text": "Melee Weapon Attack: +18 to hit, reach 10 ft., one target. Hit: 17 (2d6 + 10) slashing damage plus 5 (1d10) fire damage if the gogmazios is in its Heated State.",
+          "entries": [
+            "Melee Weapon Attack: +18 to hit, reach 10 ft., one target. Hit: 17 (2d6 + 10) slashing damage plus 5 (1d10) fire damage if the gogmazios is in its Heated State."
+          ]
+        },
+        {
+          "name": "Tail",
+          "text": "Melee Weapon Attack: +18 to hit, reach 20 ft., one target. Hit: 28 (4d8 + 10) bludgeoning damage, and the target is tarred (escape DC 18).",
+          "entries": [
+            "Melee Weapon Attack: +18 to hit, reach 20 ft., one target. Hit: 28 (4d8 + 10) bludgeoning damage, and the target is tarred (escape DC 18)."
+          ]
+        },
+        {
+          "name": "Winged Arm",
+          "text": "Melee Weapon Attack: +18 to hit, reach 15 ft., one target. Hit: 19 (2d8 + 10) bludgeoning damage. If the target is a creature, it must succeed on a DC 26 Strength saving throw or be knocked prone.",
+          "entries": [
+            "Melee Weapon Attack: +18 to hit, reach 15 ft., one target. Hit: 19 (2d8 + 10) bludgeoning damage. If the target is a creature, it must succeed on a DC 26 Strength saving throw or be knocked prone."
+          ]
+        },
+        {
+          "name": "Swipe Action",
+          "text": "The gogmazios uses one of the following Swipe actions:",
+          "entries": [
+            "The gogmazios uses one of the following Swipe actions:"
+          ]
+        },
+        {
+          "name": "Winged Arm Swipe",
+          "text": "The gogmazios swipes its winged arm across a 15-foot long line that is 30 feet wide. Each creature in that line must make a DC 26 Dexterity saving throw, taking 18 (4d8) bludgeoning damage on a failed save, or half as much damage on a successful one. If the gogmazios is in its Heated State, it ignites the tarred ground in the area.",
+          "entries": [
+            "The gogmazios swipes its winged arm across a 15-foot long line that is 30 feet wide. Each creature in that line must make a DC 26 Dexterity saving throw, taking 18 (4d8) bludgeoning damage on a failed save, or half as much damage on a successful one. If the gogmazios is in its Heated State, it ignites the tarred ground in the area."
+          ]
+        },
+        {
+          "name": "Tail Swipe",
+          "text": "The gogmazios swipes its tail in a 20-foot cone. The area is covered in tar, and each creature in that area must make a DC 26 Dexterity saving throw, taking 27 (6d8) bludgeoning damage on a failed save, or half as much damage on a successful one. If the gogmazios is in its Heated State, the tar ignites on initiative 20.",
+          "entries": [
+            "The gogmazios swipes its tail in a 20-foot cone. The area is covered in tar, and each creature in that area must make a DC 26 Dexterity saving throw, taking 27 (6d8) bludgeoning damage on a failed save, or half as much damage on a successful one. If the gogmazios is in its Heated State, the tar ignites on initiative 20."
+          ]
+        },
+        {
+          "name": "Breath Weapons (Recharge 5-6)",
+          "text": "The gogmazios uses one of the following breath weapons:",
+          "entries": [
+            "The gogmazios uses one of the following breath weapons:"
+          ]
+        },
+        {
+          "name": "Fire Breath",
+          "text": "The gogmazios exhales fire in a 150-foot line that is 10 feet wide. Each creature in that line must make a DC 26 Dexterity saving throw, taking 55 (10d10) fire damage on a failed save, or half as much damage on a successful one.",
+          "entries": [
+            "The gogmazios exhales fire in a 150-foot line that is 10 feet wide. Each creature in that line must make a DC 26 Dexterity saving throw, taking 55 (10d10) fire damage on a failed save, or half as much damage on a successful one."
+          ]
+        },
+        {
+          "name": "Oil Breath",
+          "text": "The gogmazios spews tar in a 120-foot cone. That area becomes tarred for one hour, or until the tar explodes. Each creature that enters the area for the first time on a turn or starts its turn in that area must make a DC 26 Strength saving throw or be tarred (escape DC 18). If the gogmazios is in its Heated State, it instead spews the tar in a 120-foot line that is 10 feet wide and the tar ignites on initiative 20.",
+          "entries": [
+            "The gogmazios spews tar in a 120-foot cone. That area becomes tarred for one hour, or until the tar explodes. Each creature that enters the area for the first time on a turn or starts its turn in that area must make a DC 26 Strength saving throw or be tarred (escape DC 18). If the gogmazios is in its Heated State, it instead spews the tar in a 120-foot line that is 10 feet wide and the tar ignites on initiative 20."
+          ]
+        }
+      ],
+      "legendaryActions": [
+        {
+          "name": "Lunging Attack",
+          "text": "The gogmazios moves up to 10 feet. It then makes a Bite attack.",
+          "entries": [
+            "The gogmazios moves up to 10 feet. It then makes a Bite attack."
+          ]
+        },
+        {
+          "name": "Ground Slam (Costs 2 Actions)",
+          "text": "The gogmazios rises up and slams its winged arms down on the ground beneath it. Each creature in a 20-foot square originating from the gogmazios must make a DC 26 Dexterity saving throw. On a failed save, the creature takes 32 (4d10 + 10) bludgeoning damage, is pushed up to 10 feet away and knocked prone. On a successful save, the creature takes half as much damage, isn't pushed away, or knocked prone.",
+          "entries": [
+            "The gogmazios rises up and slams its winged arms down on the ground beneath it. Each creature in a 20-foot square originating from the gogmazios must make a DC 26 Dexterity saving throw. On a failed save, the creature takes 32 (4d10 + 10) bludgeoning damage, is pushed up to 10 feet away and knocked prone. On a successful save, the creature takes half as much damage, isn't pushed away, or knocked prone."
+          ]
+        },
+        {
+          "name": "Trample (Costs 2 Actions)",
+          "text": "The gogmazios moves up to its speed. During this move it can move through the spaces of other creatures without provoking opportunity attacks. Each creature the gogmazios moves through must succeed on a DC 26 Dexterity saving throw or take 19 (2d8 + 10) bludgeoning damage and be knocked prone.",
+          "entries": [
+            "The gogmazios moves up to its speed. During this move it can move through the spaces of other creatures without provoking opportunity attacks. Each creature the gogmazios moves through must succeed on a DC 26 Dexterity saving throw or take 19 (2d8 + 10) bludgeoning damage and be knocked prone."
+          ]
+        }
+      ],
+      "mythicActions": [
+        {
+          "name": "Attack",
+          "text": "The gogmazios makes one Winged Arm attack or moves up to 10 feet and then makes one Bite attack.",
+          "entries": [
+            "The gogmazios makes one Winged Arm attack or moves up to 10 feet and then makes one Bite attack."
+          ]
+        },
+        {
+          "name": "Ground Slam (Costs 2 Actions)",
+          "text": "The gogmazios rises up and slams its winged arms down on the ground beneath it. Each creature in a 20-foot square originating from the gogmazios must make a DC 26 Dexterity saving throw. On a failed save, the creature takes 32 (4d10 + 10) bludgeoning damage plus 5 (1d10) fire damage, is pushed up to 10 feet away and knocked prone. On a successful save the creature takes half as much damage, isn't pushed away, or knocked prone.",
+          "entries": [
+            "The gogmazios rises up and slams its winged arms down on the ground beneath it. Each creature in a 20-foot square originating from the gogmazios must make a DC 26 Dexterity saving throw. On a failed save, the creature takes 32 (4d10 + 10) bludgeoning damage plus 5 (1d10) fire damage, is pushed up to 10 feet away and knocked prone. On a successful save the creature takes half as much damage, isn't pushed away, or knocked prone."
+          ]
+        },
+        {
+          "name": "Tar Fire Barrage (Costs 2 Actions)",
+          "text": "The gogmazios fires balls of molten tar at a point within 60 feet of it, covering the ground in a 30-foot radius in tar. On initiative 20 the tar ignites.",
+          "entries": [
+            "The gogmazios fires balls of molten tar at a point within 60 feet of it, covering the ground in a 30-foot radius in tar. On initiative 20 the tar ignites."
+          ]
+        },
+        {
+          "name": "Winged Arm Sweep (Costs 2 Actions)",
+          "text": "The gogmazios flies 10 feet into the air, then drags one of its wings along the ground in a 40-foot line that is 5 feet wide and 10 feet tall. It can land at the end of the line or remain in flight. Each creature in that line must make a DC 20 Dexterity saving throw taking 20 (3d6 + 10) bludgeoning damage plus 11 (2d10) fire damage on a failed save, or half as much damage on a successful one.",
+          "entries": [
+            "The gogmazios flies 10 feet into the air, then drags one of its wings along the ground in a 40-foot line that is 5 feet wide and 10 feet tall. It can land at the end of the line or remain in flight. Each creature in that line must make a DC 20 Dexterity saving throw taking 20 (3d6 + 10) bludgeoning damage plus 11 (2d10) fire damage on a failed save, or half as much damage on a successful one."
+          ]
+        },
+        {
+          "name": "Armageddon (Recharge 6)",
+          "text": "Gogmazios lands (if it is flying) before releasing a continuous gout of flame at the ground in a 90-foot radius around it until the start of its next turn. Each creature that starts its turn or enters the area for the first time on a turn takes 11 (3d10) fire damage and an extra 5 (1d10) fire damage for every 5 feet it travels. When a creature ends its turn in the flames, it takes 110 (20d10) fire damage. A creature wielding a shield can use its action to raise it, creating safety behind it, and reducing the damage it takes from ending its turn in the flames by 88 (16d10). Until the start of its next turn the gogmazios can only use its legendary action to increase the radius of this gout of flame by 10 feet. At the start of the gogmazios' next turn, each creature (except ones that raised a shield) still in the flames gains one level of exhaustion from extreme heat.",
+          "entries": [
+            "Gogmazios lands (if it is flying) before releasing a continuous gout of flame at the ground in a 90-foot radius around it until the start of its next turn. Each creature that starts its turn or enters the area for the first time on a turn takes 11 (3d10) fire damage and an extra 5 (1d10) fire damage for every 5 feet it travels. When a creature ends its turn in the flames, it takes 110 (20d10) fire damage.",
+            "A creature wielding a shield can use its action to raise it, creating safety behind it, and reducing the damage it takes from ending its turn in the flames by 88 (16d10). Until the start of its next turn the gogmazios can only use its legendary action to increase the radius of this gout of flame by 10 feet.",
+            "At the start of the gogmazios' next turn, each creature (except ones that raised a shield) still in the flames gains one level of exhaustion from extreme heat."
+          ]
+        }
+      ]
+    },
+    {
+      "name": "Giant Nitrotoad",
+      "slug": "giant-nitrotoad",
+      "group": "Endemic Life",
+      "cr": "1",
+      "pdfPage": 619,
+      "inGithubJson": false,
+      "source": "MHMM-Patreon-2.0",
+      "size": "Medium",
+      "creatureType": "beast",
+      "alignment": "unaligned",
+      "abilities": {
+        "str": 15,
+        "dex": 13,
+        "con": 13,
+        "int": 2,
+        "wis": 10,
+        "cha": 3
+      },
+      "ac": {
+        "ac": 11
+      },
+      "hp": {
+        "average": 38,
+        "formula": "7d8 + 7"
+      },
+      "speed": {
+        "walk": 20,
+        "climb": 20,
+        "swim": 40
+      },
+      "familySlug": "giant-nitrotoad.md",
+      "file": "monsters/endemic-life/giant-nitrotoad.md",
+      "traits": [
+        {
+          "name": "Amphibious",
+          "text": "The nitrotoad can breathe air and water.",
+          "entries": [
+            "The nitrotoad can breathe air and water."
+          ]
+        },
+        {
+          "name": "Death Burst",
+          "text": "The nitrotoad explodes when it drops to 0 hit points. Each creature within 10 feet of it must make a DC 11 Dexterity saving throw. On a failed save, the creature takes 10 (3d6) fire damage and is pushed 10 feet in a random direction away from the nitrotoad. On a successful save, it takes half as much damage and isn't pushed.",
+          "entries": [
+            "The nitrotoad explodes when it drops to 0 hit points. Each creature within 10 feet of it must make a DC 11 Dexterity saving throw. On a failed save, the creature takes 10 (3d6) fire damage and is pushed 10 feet in a random direction away from the nitrotoad. On a successful save, it takes half as much damage and isn't pushed."
+          ]
+        },
+        {
+          "name": "Standing Leap",
+          "text": "The nitrotoad's long jump is up to 20 feet and its high jump is up to 10 feet, with or without a running start.",
+          "entries": [
+            "The nitrotoad's long jump is up to 20 feet and its high jump is up to 10 feet, with or without a running start."
+          ]
+        }
+      ],
+      "actions": [
+        {
+          "name": "Bite",
+          "text": "Melee Weapon Attack: +4 to hit, Reach 5 ft., one target. Hit: 7 (1d10 + 2) piercing damage plus 5 (1d10) fire damage, and the target must succeed on a DC 11 Constitution saving throw or catch fire; until a creature takes an action to douse the fire, the target takes 3 (1d6) fire damage at the start of each of its turns.",
+          "entries": [
+            "Melee Weapon Attack: +4 to hit, Reach 5 ft., one target. Hit: 7 (1d10 + 2) piercing damage plus 5 (1d10) fire damage, and the target must succeed on a DC 11 Constitution saving throw or catch fire; until a creature takes an action to douse the fire, the target takes 3 (1d6) fire damage at the start of each of its turns."
+          ]
+        }
+      ]
+    },
+    {
+      "name": "Giant Paratoad",
+      "slug": "giant-paratoad",
+      "group": "Endemic Life",
+      "cr": "1",
+      "pdfPage": 619,
+      "inGithubJson": false,
+      "source": "MHMM-Patreon-2.0",
+      "size": "Large",
+      "creatureType": "beast",
+      "alignment": "unaligned",
+      "abilities": {
+        "str": 15,
+        "dex": 13,
+        "con": 13,
+        "int": 2,
+        "wis": 10,
+        "cha": 3
+      },
+      "ac": {
+        "ac": 11
+      },
+      "hp": {
+        "average": 39,
+        "formula": "6d10 + 6"
+      },
+      "speed": {
+        "walk": 20,
+        "climb": 20,
+        "swim": 40
+      },
+      "familySlug": "giant-paratoad.md",
+      "file": "monsters/endemic-life/giant-paratoad.md",
+      "traits": [
+        {
+          "name": "Amphibious",
+          "text": "The paratoad can breathe air and water.",
+          "entries": [
+            "The paratoad can breathe air and water."
+          ]
+        },
+        {
+          "name": "Death Burst",
+          "text": "The paratoad explodes when it drops to 0 hit points. Each creature within 10 feet of it must succeed on a DC 11 Constitution saving throw or be paralyzed for 1 minute. A creature can repeat the saving throw at the end of each of its turns, ending the paralysis on a success.",
+          "entries": [
+            "The paratoad explodes when it drops to 0 hit points. Each creature within 10 feet of it must succeed on a DC 11 Constitution saving throw or be paralyzed for 1 minute. A creature can repeat the saving throw at the end of each of its turns, ending the paralysis on a success."
+          ]
+        },
+        {
+          "name": "Standing Leap",
+          "text": "The paratoad's long jump is up to 20 feet and its high jump is up to 10 feet, with or without a running start.",
+          "entries": [
+            "The paratoad's long jump is up to 20 feet and its high jump is up to 10 feet, with or without a running start."
+          ]
+        }
+      ],
+      "actions": [
+        {
+          "name": "Bite",
+          "text": "Melee Weapon Attack: +4 to hit, Reach 5 ft., one target. Hit: 7 (1d10 + 2) piercing damage plus 5 (1d10) lightning damage, and the target is grappled (escape DC 12). Until this grapple ends, the target is afflicted with thunderblight, and the paratoad can't bite another target.",
+          "entries": [
+            "Melee Weapon Attack: +4 to hit, Reach 5 ft., one target. Hit: 7 (1d10 + 2) piercing damage plus 5 (1d10) lightning damage, and the target is grappled (escape DC 12). Until this grapple ends, the target is afflicted with thunderblight, and the paratoad can't bite another target."
+          ]
+        },
+        {
+          "name": "Swallow",
+          "text": "The paratoad makes one bite attack against a Medium or smaller target it is grappling. If the attack hits, the target is swallowed, and the grapple ends. The swallowed target is blinded, restrained and thunderblighted; it has total cover against attacks and other effects outside the paratoad; and it takes 10 (3d6) lightning damage at the start of each of the paratoad's turns. The paratoad can have only one target swallowed at a time. If the paratoad dies, a swallowed creature has disadvantage on its saving throw against the paratoad's Death Burst.",
+          "entries": [
+            "The paratoad makes one bite attack against a Medium or smaller target it is grappling. If the attack hits, the target is swallowed, and the grapple ends. The swallowed target is blinded, restrained and thunderblighted; it has total cover against attacks and other effects outside the paratoad; and it takes 10 (3d6) lightning damage at the start of each of the paratoad's turns. The paratoad can have only one target swallowed at a time.",
+            "If the paratoad dies, a swallowed creature has disadvantage on its saving throw against the paratoad's Death Burst."
+          ]
+        }
+      ]
+    },
+    {
+      "name": "Giant Sleeptoad",
+      "slug": "giant-sleeptoad",
+      "group": "Endemic Life",
+      "cr": "1",
+      "pdfPage": 620,
+      "inGithubJson": false,
+      "source": "MHMM-Patreon-2.0",
+      "size": "Large",
+      "creatureType": "beast",
+      "alignment": "unaligned",
+      "abilities": {
+        "str": 15,
+        "dex": 13,
+        "con": 13,
+        "int": 2,
+        "wis": 10,
+        "cha": 3
+      },
+      "ac": {
+        "ac": 11
+      },
+      "hp": {
+        "average": 39,
+        "formula": "6d10 + 6"
+      },
+      "speed": {
+        "walk": 20,
+        "climb": 20,
+        "swim": 40
+      },
+      "familySlug": "giant-sleeptoad.md",
+      "file": "monsters/endemic-life/giant-sleeptoad.md",
+      "traits": [
+        {
+          "name": "Amphibious",
+          "text": "The sleeptoad can breathe air and water.",
+          "entries": [
+            "The sleeptoad can breathe air and water."
+          ]
+        },
+        {
+          "name": "Death Burst",
+          "text": "The sleeptoad explodes when it drops to 0 hit points. Each creature within 10 feet of it must succeed on a DC 11 Constitution saving throw or fall unconscious for 1 minute, until the sleeper takes damage, or someone uses an action to shake or slap the sleeper awake.",
+          "entries": [
+            "The sleeptoad explodes when it drops to 0 hit points. Each creature within 10 feet of it must succeed on a DC 11 Constitution saving throw or fall unconscious for 1 minute, until the sleeper takes damage, or someone uses an action to shake or slap the sleeper awake."
+          ]
+        },
+        {
+          "name": "Standing Leap",
+          "text": "The sleeptoad's long jump is up to 10 feet and its high jump is up to 5 feet, with or without a running start.",
+          "entries": [
+            "The sleeptoad's long jump is up to 10 feet and its high jump is up to 5 feet, with or without a running start."
+          ]
+        }
+      ],
+      "actions": [
+        {
+          "name": "Bite",
+          "text": "Melee Weapon Attack: +4 to hit, Reach 5 ft., one target. Hit: 7 (1d10 + 2) piercing damage plus 5 (1d10) poison damage, and the target must succeed on a DC 11 Constitution saving throw or be incapacitated until the end of the sleeptoad's next turn.",
+          "entries": [
+            "Melee Weapon Attack: +4 to hit, Reach 5 ft., one target. Hit: 7 (1d10 + 2) piercing damage plus 5 (1d10) poison damage, and the target must succeed on a DC 11 Constitution saving throw or be incapacitated until the end of the sleeptoad's next turn."
           ]
         }
       ]

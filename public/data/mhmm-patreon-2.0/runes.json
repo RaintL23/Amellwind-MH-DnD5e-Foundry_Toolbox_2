@@ -2,7 +2,7 @@
   "source": "MHMM-Patreon-2.0",
   "staging": true,
   "wiredToApp": false,
-  "runeCount": 2435,
+  "runeCount": 2449,
   "runes": [
     {
       "name": "Monster Bone+",
@@ -16542,6 +16542,144 @@
       "file": "monsters/elder-dragons/safijiiva.md"
     },
     {
+      "name": "Omega Screw",
+      "monsterName": "Savage Omega Planetes",
+      "monsterSource": "MHMM-Patreon-2.0",
+      "monsterCr": "23",
+      "monsterCrs": [
+        "23"
+      ],
+      "tier": 4,
+      "carveChance": "1-6",
+      "captureChance": "—",
+      "rolls": 4,
+      "slots": [
+        "A",
+        "W"
+      ],
+      "otherSlots": null,
+      "armorEffect": "While attuned to this armor you can use a bonus action to make an Intelligence (Arcana) or Intelligence (History) check against the creature's carve DC. On a successful check, you learn one damage type or condition the creature has vulnerability, resistance, or immunity to. You can use this property a number of times equal to your proficiency bonus, regaining all expended uses when you finish a long rest.",
+      "weaponEffect": "Quick Sheath. While attuned to this weapon, you can always sheath it as a free action even if you have already drawn a weapon as part of your move action.",
+      "otherEffect": null,
+      "inGithubJson": false,
+      "file": "monsters/elder-dragons/savage-omega-planetes.md"
+    },
+    {
+      "name": "Omega Spring",
+      "monsterName": "Savage Omega Planetes",
+      "monsterSource": "MHMM-Patreon-2.0",
+      "monsterCr": "23",
+      "monsterCrs": [
+        "23"
+      ],
+      "tier": 4,
+      "carveChance": "7-10",
+      "captureChance": "—",
+      "rolls": 4,
+      "slots": [
+        "A",
+        "W"
+      ],
+      "otherSlots": null,
+      "armorEffect": "Divine Blessing+3. While wearing this armor, you have a pool of divine dice equal to your proficiency bonus, which are d10s. When you take damage that you aren't immune or resistant to, you can expend one or more divine dice to reduce the damage by the total rolled. You regain all expended dice when you finish a long rest.",
+      "weaponEffect": "Weakness Exploit+. When you have advantage on an attack roll with this weapon and you hit the target, you can have your weapon deal its maximum damage if the lower of the two d20 rolls would also hit the target (all extra damage dice must still be rolled). You can use this property a number of times equal to your Strength or Dexterity modifier (your choice), regaining all expended uses when you finish a short or long rest.",
+      "otherEffect": null,
+      "inGithubJson": false,
+      "file": "monsters/elder-dragons/savage-omega-planetes.md"
+    },
+    {
+      "name": "Omega Pedal",
+      "monsterName": "Savage Omega Planetes",
+      "monsterSource": "MHMM-Patreon-2.0",
+      "monsterCr": "23",
+      "monsterCrs": [
+        "23"
+      ],
+      "tier": 4,
+      "carveChance": "11-14",
+      "captureChance": "—",
+      "rolls": 4,
+      "slots": [
+        "A",
+        "W"
+      ],
+      "otherSlots": null,
+      "armorEffect": "Constitution+. While you are attuned to this armor, you can reroll a Constitution saving throw that you fail. If you do so, you must use the new roll. You can use this property twice, regaining all expended uses when you finish a long rest.",
+      "weaponEffect": "Partbreaker+3. You deal an extra 1d10 damage when you critically hit with this weapon.",
+      "otherEffect": null,
+      "inGithubJson": false,
+      "file": "monsters/elder-dragons/savage-omega-planetes.md"
+    },
+    {
+      "name": "Omega Lens",
+      "monsterName": "Savage Omega Planetes",
+      "monsterSource": "MHMM-Patreon-2.0",
+      "monsterCr": "23",
+      "monsterCrs": [
+        "23"
+      ],
+      "tier": 4,
+      "carveChance": "15-17",
+      "captureChance": "—",
+      "rolls": 4,
+      "slots": [
+        "A",
+        "W"
+      ],
+      "otherSlots": null,
+      "armorEffect": "You can't gain the exhaustion condition, be poisoned or knocked unconscious while you are wearing this armor.",
+      "weaponEffect": "Agitator. Your weapon attacks critical hit range is increased by 1 and your weapon deals an extra 1d6 weapon damage. (This material counts as both a critical eye material and a \"your weapon deals an extra damage material\")",
+      "otherEffect": null,
+      "inGithubJson": false,
+      "file": "monsters/elder-dragons/savage-omega-planetes.md"
+    },
+    {
+      "name": "Omega Axle",
+      "monsterName": "Savage Omega Planetes",
+      "monsterSource": "MHMM-Patreon-2.0",
+      "monsterCr": "23",
+      "monsterCrs": [
+        "23"
+      ],
+      "tier": 4,
+      "carveChance": "18-19",
+      "captureChance": "—",
+      "rolls": 4,
+      "slots": [
+        "A",
+        "W"
+      ],
+      "otherSlots": null,
+      "armorEffect": "Evade Window+. This armor has 5 runes, and it regains 1d5 expended runes daily at dawn. When you fail a Dexterity saving throw while wearing it, you can use your reaction to expend 1 of its runes to succeed on that saving throw instead.",
+      "weaponEffect": "Latent Power +2. When you are reduced to half of your maximum hit points for the first time in combat or at the start of your turn on the 10th round of combat, whichever comes first, you gain the effects of the haste spell for 1 minute. Once used, you must finish a short or long rest before you can use this property again.",
+      "otherEffect": null,
+      "inGithubJson": false,
+      "file": "monsters/elder-dragons/savage-omega-planetes.md"
+    },
+    {
+      "name": "Omega Nodule",
+      "monsterName": "Savage Omega Planetes",
+      "monsterSource": "MHMM-Patreon-2.0",
+      "monsterCr": "23",
+      "monsterCrs": [
+        "23"
+      ],
+      "tier": 4,
+      "carveChance": "20",
+      "captureChance": "—",
+      "rolls": 4,
+      "slots": [
+        "A",
+        "W"
+      ],
+      "otherSlots": null,
+      "armorEffect": "You are immune to force damage and have resistance to one other damage type of your choice (choose one when you place this material into your armor) while you wear this armor.",
+      "weaponEffect": "Chain Crit. Every consecutive hit on a creature increases your crit range by 1 until you score a critical hit, miss an attack, or hit a different creature.",
+      "otherEffect": null,
+      "inGithubJson": false,
+      "file": "monsters/elder-dragons/savage-omega-planetes.md"
+    },
+    {
       "name": "Elder Dragon Blood x2",
       "monsterName": "Shah Dalamadur",
       "monsterSource": "MHMM-Patreon-2.0",
@@ -18063,6 +18201,188 @@
       "otherEffect": null,
       "inGithubJson": true,
       "file": "monsters/elder-dragons/tempered-fatalis-mhw.md"
+    },
+    {
+      "name": "T.Heavy Drakesbone Oil",
+      "monsterName": "Tempered Gogmazios",
+      "monsterSource": "MHMM-Patreon-2.0",
+      "monsterCr": "28",
+      "monsterCrs": [
+        "28"
+      ],
+      "tier": 4,
+      "carveChance": "1-4",
+      "captureChance": "—",
+      "rolls": 4,
+      "slots": [],
+      "otherSlots": [
+        "O"
+      ],
+      "armorEffect": null,
+      "weaponEffect": null,
+      "otherEffect": "This dark, thick, flammable oil can coat one slashing or piercing weapon or up to 20 pieces of ammunition. Applying the oil takes 1 minute. For 1 hour, the coated item is magical (if not already) and it deals an extra 4d6 fire damage to any target it hits.",
+      "inGithubJson": false,
+      "file": "monsters/elder-dragons/tempered-gogmazios.md"
+    },
+    {
+      "name": "T.Gogmazios Shredders",
+      "monsterName": "Tempered Gogmazios",
+      "monsterSource": "MHMM-Patreon-2.0",
+      "monsterCr": "28",
+      "monsterCrs": [
+        "28"
+      ],
+      "tier": 4,
+      "carveChance": "5-8",
+      "captureChance": "—",
+      "rolls": 4,
+      "slots": [
+        "A",
+        "W"
+      ],
+      "otherSlots": null,
+      "armorEffect": "Aquatic/Polar Mobility. You ignore difficult terrain created by ice or snow and you have a swimming speed equal to your walking speed while you wear this armor.",
+      "weaponEffect": "Peak Performance. When your hit points are full and you roll a 1 or 2 on a damage die for an attack you make with a melee weapon, you can reroll the die and must use the new roll, even if the new roll is a 1 or a 2.",
+      "otherEffect": null,
+      "inGithubJson": false,
+      "file": "monsters/elder-dragons/tempered-gogmazios.md"
+    },
+    {
+      "name": "T.Gogmazios Lacerator",
+      "monsterName": "Tempered Gogmazios",
+      "monsterSource": "MHMM-Patreon-2.0",
+      "monsterCr": "28",
+      "monsterCrs": [
+        "28"
+      ],
+      "tier": 4,
+      "carveChance": "9-11",
+      "captureChance": "—",
+      "rolls": 4,
+      "slots": [
+        "A",
+        "W"
+      ],
+      "otherSlots": null,
+      "armorEffect": "Speed Eating. While you are attuned to this armor, you can use any consumable, such as a potion or food, as a bonus action; so long as you are the one consuming it.",
+      "weaponEffect": "While attuned to this weapon, you gain a +2 bonus to your spell attack rolls and spell save DC and your fire spells bypass a creature's resistance and immunities.",
+      "otherEffect": null,
+      "inGithubJson": false,
+      "file": "monsters/elder-dragons/tempered-gogmazios.md"
+    },
+    {
+      "name": "T.Gogmazios Fortalice",
+      "monsterName": "Tempered Gogmazios",
+      "monsterSource": "MHMM-Patreon-2.0",
+      "monsterCr": "28",
+      "monsterCrs": [
+        "28"
+      ],
+      "tier": 4,
+      "carveChance": "10-12",
+      "captureChance": "—",
+      "rolls": 4,
+      "slots": [
+        "A",
+        "W"
+      ],
+      "otherSlots": null,
+      "armorEffect": "Spellcaster Only. While attuned to this armor, you know the hellish rebuke spell. If you have to prepare spells, you always have it prepared, and it doesn't count against the number of spells you can prepare each day. This armor has 7 runes. While wearing it, you can use an action to expend 1 or more of its runes to cast hellish rebuke using your spell save DC. For 1 rune, you cast the 1st-level version of the spell. You can increase the spell slot level by one for each additional rune you expend. This armor regains 1d6 + 1 expended runes daily at dawn. If you expend the armor's last rune, roll a d20. On a 1, the runes cannot recharge for a week.",
+      "weaponEffect": "Maximum Might. While your hit points are full and you are not suffering from any levels of exhaustion; you deal maximum weapon damage with your attacks.",
+      "otherEffect": null,
+      "inGithubJson": false,
+      "file": "monsters/elder-dragons/tempered-gogmazios.md"
+    },
+    {
+      "name": "T.Gogmazios Thorntail",
+      "monsterName": "Tempered Gogmazios",
+      "monsterSource": "MHMM-Patreon-2.0",
+      "monsterCr": "28",
+      "monsterCrs": [
+        "28"
+      ],
+      "tier": 4,
+      "carveChance": "13-15",
+      "captureChance": "—",
+      "rolls": 4,
+      "slots": [
+        "A",
+        "W"
+      ],
+      "otherSlots": null,
+      "armorEffect": "Adrenaline+. The first time you drop below half of your hit point maximum in combat; you gain a rush of adrenaline. Until the end of your next turn, you have advantage on Dexterity and Strength saving throws and skill checks. Additionally on your next turn, your movement speed doubles and you can take one extra action.",
+      "weaponEffect": "Agitator. Your weapon attacks critical hit range is increased by 1 and your weapon deals an extra 1d6 weapon damage. (This material counts as both a critical eye material and a \"your weapon deals an extra damage material\")",
+      "otherEffect": null,
+      "inGithubJson": false,
+      "file": "monsters/elder-dragons/tempered-gogmazios.md"
+    },
+    {
+      "name": "T.Gogmazios Rampart",
+      "monsterName": "Tempered Gogmazios",
+      "monsterSource": "MHMM-Patreon-2.0",
+      "monsterCr": "28",
+      "monsterCrs": [
+        "28"
+      ],
+      "tier": 4,
+      "carveChance": "16-17",
+      "captureChance": "—",
+      "rolls": 4,
+      "slots": [
+        "A",
+        "W"
+      ],
+      "otherSlots": null,
+      "armorEffect": "While attuned to this armor, you can use a bonus action to speak its command word, causing tar to seep from it for 1 minute. The tar coats the ground in each space you enter during the effect. You ignore difficult terrain created by this tar. When a creature enters a tar-coated space for the first time on a turn or starts its turn there, it must succeed on a DC 17 Strength (Athletics) check or be restrained (escape DC 19). A creature has advantage on this check if any part of its space is not in tar-coated spaces. Once you use this property, you can't use it again until you finish a long rest.",
+      "weaponEffect": "Chain Crit. Every consecutive hit on a creature increases your crit range by 1 until you score a critical hit, miss an attack, or hit a different creature.",
+      "otherEffect": null,
+      "inGithubJson": false,
+      "file": "monsters/elder-dragons/tempered-gogmazios.md"
+    },
+    {
+      "name": "T.Gogmazios Fiberwing",
+      "monsterName": "Tempered Gogmazios",
+      "monsterSource": "MHMM-Patreon-2.0",
+      "monsterCr": "28",
+      "monsterCrs": [
+        "28"
+      ],
+      "tier": 4,
+      "carveChance": "18-19",
+      "captureChance": "—",
+      "rolls": 4,
+      "slots": [
+        "W"
+      ],
+      "otherSlots": null,
+      "armorEffect": null,
+      "weaponEffect": "This weapon has 3 runes that it regains daily at dawn. When you hit a creature with this weapon, you can expend a rune to have it make a DC 17 Dexterity saving throw. On a failed save, the target is tarred until it escapes (DC 17) or until it takes fire damage.",
+      "otherEffect": null,
+      "inGithubJson": false,
+      "file": "monsters/elder-dragons/tempered-gogmazios.md"
+    },
+    {
+      "name": "Wartorn Dragongem",
+      "monsterName": "Tempered Gogmazios",
+      "monsterSource": "MHMM-Patreon-2.0",
+      "monsterCr": "28",
+      "monsterCrs": [
+        "28"
+      ],
+      "tier": 4,
+      "carveChance": "20",
+      "captureChance": "—",
+      "rolls": 4,
+      "slots": [
+        "A",
+        "W"
+      ],
+      "otherSlots": null,
+      "armorEffect": "While wearing this armor you are immune to damage from lava, unaffected by extreme heat, have resistance to acid and lightning damage, and immunity to cold damage.",
+      "weaponEffect": "Siege Breaker. When you hit a target that has resistance to nonmagical bludgeoning, piercing, and slashing damage, it loses that resistance until the start of your next turn. If you rolled a 20 for the attack roll, the target instead gains vulnerability to nonmagical bludgeoning, piercing, and slashing damage until the start of your next turn.",
+      "otherEffect": null,
+      "inGithubJson": false,
+      "file": "monsters/elder-dragons/tempered-gogmazios.md"
     },
     {
       "name": "Elder Dragon Blood",
@@ -33335,8 +33655,8 @@
         "W"
       ],
       "otherSlots": null,
-      "armorEffect": null,
-      "weaponEffect": null,
+      "armorEffect": "While you wear this armor, you ignore difficult terrain created by ice or snow and you can tolerate temperatures as low as -50 degrees Fahrenheit without any additional protection. If you wear heavy clothes, you can tolerate temperatures as low as -100 degrees Fahrenheit.",
+      "weaponEffect": "Quick Sheath. While attuned to this weapon, you can always sheath it as a free action even if you have already drawn a weapon as part of your move action.",
       "otherEffect": null,
       "inGithubJson": true,
       "file": "monsters/flying-wyverns/frostfang-barioth.md"
@@ -33358,8 +33678,8 @@
         "W"
       ],
       "otherSlots": null,
-      "armorEffect": null,
-      "weaponEffect": null,
+      "armorEffect": "While you are wearing this armor you have advantage on Charisma (Intimidation) checks, but your demeanor is cold-hearted. Kind words come out as uncaring or hurtful, your generosity comes off as self-serving, etc.",
+      "weaponEffect": "Hitter. When a creature must succeed on a saving throw or be stunned by the effect of a weapon attack, increase the save DC by 2.",
       "otherEffect": null,
       "inGithubJson": true,
       "file": "monsters/flying-wyverns/frostfang-barioth.md"
@@ -33381,8 +33701,8 @@
         "W"
       ],
       "otherSlots": null,
-      "armorEffect": null,
-      "weaponEffect": null,
+      "armorEffect": "While wearing this armor, you can move up, down, and across vertical surfaces and upside down along ceilings, while leaving your hands free. You have a climbing speed equal to your walking speed. However, the armor doesn't allow you to move this way on a slippery surface, such as one covered by oil, but it does work on ice and snow.",
+      "weaponEffect": "Critical Draw+. When you take the Attack action for the first time in a combat encounter while wielding this weapon, the melee weapon attacks with that action score a critical hit on a roll of 15 or higher.",
       "otherEffect": null,
       "inGithubJson": true,
       "file": "monsters/flying-wyverns/frostfang-barioth.md"
@@ -33404,8 +33724,8 @@
         "W"
       ],
       "otherSlots": null,
-      "armorEffect": null,
-      "weaponEffect": null,
+      "armorEffect": "You have resistance to cold damage while you wear this armor.",
+      "weaponEffect": "Your weapon deals an extra 1d6 cold damage.",
       "otherEffect": null,
       "inGithubJson": true,
       "file": "monsters/flying-wyverns/frostfang-barioth.md"
@@ -33427,8 +33747,8 @@
         "W"
       ],
       "otherSlots": null,
-      "armorEffect": null,
-      "weaponEffect": null,
+      "armorEffect": "(Sorcerer, Warlock, and Wizard only) This armor has two runes that it regains daily at dawn. As an action you can expend one of these runes to coat your armor in magical ice, gaining 25 temporary hit points. If a creature hits you with a melee attack while you have these hit points, the creature takes 25 cold damage.",
+      "weaponEffect": "While you are attuned to this weapon, your cold spells bypasses a creature's resistance to cold damage and deals half damage to a creature that has immunity to cold damage.",
       "otherEffect": null,
       "inGithubJson": true,
       "file": "monsters/flying-wyverns/frostfang-barioth.md"
@@ -33450,14 +33770,14 @@
         "W"
       ],
       "otherSlots": null,
-      "armorEffect": null,
-      "weaponEffect": null,
+      "armorEffect": "You are immune to cold damage while you wear this armor.",
+      "weaponEffect": "Critical Eye+. Your weapon attacks critical hit range is increased by 2.",
       "otherEffect": null,
       "inGithubJson": true,
       "file": "monsters/flying-wyverns/frostfang-barioth.md"
     },
     {
-      "name": "Frostfang Material Bonus When a character has three frostfang materials socketed into their equipment, they gain the Frostfang Absolute Art bonus. Frostfang Absolute Art. (Hammer Only) Punishing Draw. During the first round of combat you can use the hammer's mighty weapon property without expending a use.",
+      "name": "Frostfang Material Bonus",
       "monsterName": "Frostfang Barioth",
       "monsterSource": "MHMM-Patreon-2.0",
       "monsterCr": "20",
@@ -33474,7 +33794,7 @@
       ],
       "armorEffect": null,
       "weaponEffect": null,
-      "otherEffect": null,
+      "otherEffect": "When a character has three frostfang materials socketed into their equipment, they gain the Frostfang Absolute Art bonus. Frostfang Absolute Art. (Hammer Only) Punishing Draw. During the first round of combat you can use the hammer's mighty weapon property without expending a use.",
       "inGithubJson": true,
       "file": "monsters/flying-wyverns/frostfang-barioth.md"
     },
@@ -36066,7 +36386,7 @@
       ],
       "otherSlots": null,
       "armorEffect": "While you are attuned to this armor, you can use a bonus action to speak its command word and exhale fire at a target within 30 feet of you. The target must make a DC 16 Dexterity saving throw, taking 4d6 fire damage on a failed save, or half as much damage on a successful one. You can use this property a number of times equal to half your proficiency bonus, regaining all expended uses when you finish a long rest.",
-      "weaponEffect": null,
+      "weaponEffect": "Your weapon deals an extra 1d6 fire damage.",
       "otherEffect": null,
       "inGithubJson": true,
       "file": "monsters/flying-wyverns/rathalos.md"
@@ -36087,7 +36407,7 @@
         "A"
       ],
       "otherSlots": null,
-      "armorEffect": null,
+      "armorEffect": "You have a +1 bonus to your AC while you wear this armor.",
       "weaponEffect": null,
       "otherEffect": null,
       "inGithubJson": true,
@@ -36109,7 +36429,7 @@
         "A"
       ],
       "otherSlots": null,
-      "armorEffect": null,
+      "armorEffect": "When you must succeed on a saving throw or be knocked prone, you do so with advantage.",
       "weaponEffect": null,
       "otherEffect": null,
       "inGithubJson": true,
@@ -36132,8 +36452,8 @@
         "W"
       ],
       "otherSlots": null,
-      "armorEffect": null,
-      "weaponEffect": null,
+      "armorEffect": "You suffer no harm from temperatures as warm as 120 degrees Fahrenheit while you wear this armor.",
+      "weaponEffect": "You can use a bonus action to speak this weapon's command word, causing flames to erupt from the weapon. These flames shed bright light in a 40-foot radius and dim light for an additional 40 feet.",
       "otherEffect": null,
       "inGithubJson": true,
       "file": "monsters/flying-wyverns/rathalos.md"
@@ -36157,9 +36477,9 @@
       "otherSlots": [
         "O"
       ],
-      "armorEffect": null,
-      "weaponEffect": null,
-      "otherEffect": null,
+      "armorEffect": "Archaeologist+. When you successfully gather a bone resource, you instead gather 1d4.",
+      "weaponEffect": "When you hit a creature with this weapon, it must make a DC 12 Wisdom saving throw or be frightened of you for 1 minute. The frightened creature can repeat the save at the end of each of its turns, ending the effect on a success. On a successful save, the target is immune to this effect for 24 hours.",
+      "otherEffect": "Very rare armor or weapon upgrade material.",
       "inGithubJson": true,
       "file": "monsters/flying-wyverns/rathalos.md"
     },
@@ -36179,7 +36499,7 @@
         "A"
       ],
       "otherSlots": null,
-      "armorEffect": null,
+      "armorEffect": "While you are attuned to this armor you can cast the fly spell. Once you use this property, you can't use it again until the next dawn.",
       "weaponEffect": null,
       "otherEffect": null,
       "inGithubJson": true,
@@ -36202,8 +36522,8 @@
         "W"
       ],
       "otherSlots": null,
-      "armorEffect": null,
-      "weaponEffect": null,
+      "armorEffect": "You have resistance to fire damage while you wear this armor.",
+      "weaponEffect": "Critical Eye. Your weapon attacks critical hit range is increased by 1.",
       "otherEffect": null,
       "inGithubJson": true,
       "file": "monsters/flying-wyverns/rathalos.md"
@@ -36225,8 +36545,8 @@
         "W"
       ],
       "otherSlots": null,
-      "armorEffect": null,
-      "weaponEffect": null,
+      "armorEffect": "You are immune to fire damage while you wear this armor.",
+      "weaponEffect": "Your weapon deals an extra 1d8 fire damage.",
       "otherEffect": null,
       "inGithubJson": true,
       "file": "monsters/flying-wyverns/rathalos.md"
@@ -51425,7 +51745,7 @@
         "A"
       ],
       "otherSlots": null,
-      "armorEffect": null,
+      "armorEffect": "You have a +1 bonus to Insight checks while you wear this armor.",
       "weaponEffect": null,
       "otherEffect": null,
       "inGithubJson": true,
@@ -51448,7 +51768,7 @@
       ],
       "otherSlots": null,
       "armorEffect": null,
-      "weaponEffect": null,
+      "weaponEffect": "When you cast a spell that deals cold damage, add half of your proficiency bonus to that damage.",
       "otherEffect": null,
       "inGithubJson": true,
       "file": "monsters/theropods/giadrome.md"
@@ -51471,7 +51791,7 @@
       ],
       "armorEffect": null,
       "weaponEffect": null,
-      "otherEffect": null,
+      "otherEffect": "A crafting material used to make sonic bombs.",
       "inGithubJson": true,
       "file": "monsters/theropods/giadrome.md"
     },
@@ -51492,8 +51812,8 @@
         "W"
       ],
       "otherSlots": null,
-      "armorEffect": null,
-      "weaponEffect": null,
+      "armorEffect": "You reduce cold damage you take by 3 while you wear this armor.",
+      "weaponEffect": "Icy wind and snowflakes bluster around this weapon, even in warm environments. While touching it, you can walk on the surface of the lightest snow, leaving no footprints.",
       "otherEffect": null,
       "inGithubJson": true,
       "file": "monsters/theropods/giadrome.md"
@@ -51515,8 +51835,8 @@
         "W"
       ],
       "otherSlots": null,
-      "armorEffect": null,
-      "weaponEffect": null,
+      "armorEffect": "The air around you is always unnaturally cold while you wear this armor. Your breath becomes visible, and frost continually forms on the surface of your hair, weapons, and armor. Additionally, you suffer no ill effect from being in extremely cold environments.",
+      "weaponEffect": "The first time you make a Carve check on a creature, you do so with advantage.",
       "otherEffect": null,
       "inGithubJson": true,
       "file": "monsters/theropods/giadrome.md"
@@ -51538,8 +51858,8 @@
         "W"
       ],
       "otherSlots": null,
-      "armorEffect": null,
-      "weaponEffect": null,
+      "armorEffect": "Detect. You gain a +1 bonus to your passive Perception while you wear this armor.",
+      "weaponEffect": "(Druid, Sorcerer, Warlock, or Wizard) While attuned to this weapon you know the frostbite cantrip.",
       "otherEffect": null,
       "inGithubJson": true,
       "file": "monsters/theropods/giadrome.md"

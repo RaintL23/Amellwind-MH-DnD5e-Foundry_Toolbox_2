@@ -161,9 +161,10 @@ export function getScaledBossHp(
 }
 
 /**
- * Heuristic: compares total quarry CR against party APL and hunter count.
- * A single quarry at CR ≈ APL is roughly a medium encounter per PC guidelines;
- * multiple targets sum CR for a rough deadly-hunt check.
+ * Amellwind hunt heuristic (not DMG adjusted XP).
+ * Medium when (total quarry CR ÷ hunters) ≈ APL — i.e. total CR ≈ APL × hunters.
+ * Multiple targets sum CR; boss HP scaling by party size is handled separately.
+ * Expect different ratings than the Encounter Calculator (RAW DMG XP thresholds).
  */
 export function getHuntCombatDifficulty(
   apl: number,

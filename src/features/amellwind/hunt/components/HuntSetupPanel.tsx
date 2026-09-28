@@ -426,6 +426,22 @@ export function HuntSetupPanel({ hunt }: HuntSetupPanelProps) {
                 </div>
               </div>
 
+              <Alert className="border-border bg-muted/10">
+                <AlertDescription className="text-[11px] text-muted-foreground leading-relaxed">
+                  This rating is an Amellwind hunt heuristic (total quarry CR ÷
+                  hunters vs APL), not DMG adjusted-XP thresholds. Boss HP is
+                  scaled by party size separately. The same fight can rate
+                  differently in the{" "}
+                  <Link
+                    to="/encounter-calculator"
+                    className="text-primary hover:underline"
+                  >
+                    Encounter Calculator
+                  </Link>
+                  , which uses RAW DMG XP budgets.
+                </AlertDescription>
+              </Alert>
+
               {!hunt.useHunterApl ? (
                 <div className="grid grid-cols-2 gap-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-6">
                   {hunt.hunterLevels.map((level, index) => (

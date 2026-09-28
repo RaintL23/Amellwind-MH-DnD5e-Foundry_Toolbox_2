@@ -2,10 +2,16 @@
 
 Flags from the dump organizer. `orphan-effect` means an armor/weapon/other effect name did not match a loot-table row. `missing-bio` is often expected for tempered/variant sheets that have no unique lore block in the PDF.
 
-Monsters with flags: **89** / 404
+Monsters with flags: **95** / 410
 
 | Monster | File | Flags |
 | --- | --- | --- |
+| Tempered Gogmazios | `monsters/elder-dragons/tempered-gogmazios.md` | missing-bio |
+| Savage Omega Planetes | `monsters/elder-dragons/savage-omega-planetes.md` | missing-bio |
+| Omega Microbe | `monsters/elder-dragons/omega-microbe.md` | missing-bio |
+| Giant Nitrotoad | `monsters/endemic-life/giant-nitrotoad.md` | missing-bio |
+| Giant Paratoad | `monsters/endemic-life/giant-paratoad.md` | missing-bio |
+| Giant Sleeptoad | `monsters/endemic-life/giant-sleeptoad.md` | missing-bio |
 | Tempered Gypceros | `monsters/bird-wyverns/tempered-gypceros.md` | missing-bio |
 | Malfestio | `monsters/bird-wyverns/malfestio.md` | orphan-effect |
 | Tempered Yian Kut-Ku | `monsters/bird-wyverns/tempered-yian-kut-ku.md` | missing-bio |

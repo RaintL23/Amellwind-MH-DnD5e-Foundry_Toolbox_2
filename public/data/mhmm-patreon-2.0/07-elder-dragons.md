@@ -7,7 +7,7 @@ ready for later 5etools / mapper ingestion.
 
 A very broad term, the only thing in common amongst all elder dragons is their power which seems to border the mystical as opposed to the wyverns which are all limited to natural laws. It is said that an elder dragon is powerful enough to single handedly bring about the destruction of an ecosystem. In ancient times, they would be mistaken for gods. Many elder dragons feature four legs and wings that are separate limbs, unlike wyverns with two legs and winged forelimbs. Although all are called dragons, the genus isn't limited to four-legged, winged creatures. Spanning to beasts such as Kirin and Yama Tsukami as well as the more traditional Fatalis. Aside from these are the 'second generation' breeds that all feature a similar build, the Teostra and Kushala Daora are members of this type with all featuring some form of barrier or aura to protect them.
 
-**Monsters:** 60
+**Monsters:** 63
 
 | Monster | CR | PDF page | GitHub | File |
 | --- | --- | ---: | --- | --- |
@@ -30,6 +30,7 @@ A very broad term, the only thing in common amongst all elder dragons is their p
 | [Tempered Fatalis (MHW)](monsters/elder-dragons/tempered-fatalis-mhw.md) | 30 | 150 | yes | `monsters/elder-dragons/tempered-fatalis-mhw.md` |
 | [Gaismagorm](monsters/elder-dragons/gaismagorm.md) | 28 | 152 | yes | `monsters/elder-dragons/gaismagorm.md` |
 | [Gogmazios](monsters/elder-dragons/gogmazios.md) | 19 | 154 | yes | `monsters/elder-dragons/gogmazios.md` |
+| [Tempered Gogmazios](monsters/elder-dragons/tempered-gogmazios.md) | 28 | 150 | **new** | `monsters/elder-dragons/tempered-gogmazios.md` |
 | [Jhen Mohran](monsters/elder-dragons/jhen-mohran.md) | 26 | 156 | yes | `monsters/elder-dragons/jhen-mohran.md` |
 | [Hallowed Jhen Mohran](monsters/elder-dragons/hallowed-jhen-mohran.md) | 30 | 160 | **new** | `monsters/elder-dragons/hallowed-jhen-mohran.md` |
 | [Kirin](monsters/elder-dragons/kirin.md) | 12 | 161 | yes | `monsters/elder-dragons/kirin.md` |
@@ -52,6 +53,8 @@ A very broad term, the only thing in common amongst all elder dragons is their p
 | [Nergigante](monsters/elder-dragons/nergigante.md) | 23 | 197 | yes | `monsters/elder-dragons/nergigante.md` |
 | [Ruiner Nergigante](monsters/elder-dragons/ruiner-nergigante.md) | 30 | 199 | yes | `monsters/elder-dragons/ruiner-nergigante.md` |
 | [Safi'jiiva](monsters/elder-dragons/safijiiva.md) | 29 | 201 | yes | `monsters/elder-dragons/safijiiva.md` |
+| [Savage Omega Planetes](monsters/elder-dragons/savage-omega-planetes.md) | 23 | 200 | **new** | `monsters/elder-dragons/savage-omega-planetes.md` |
+| [Omega Microbe](monsters/elder-dragons/omega-microbe.md) | 1 | 201 | **new** | `monsters/elder-dragons/omega-microbe.md` |
 | [Shara Ishvalda](monsters/elder-dragons/shara-ishvalda.md) | 25 | 203 | **new** | `monsters/elder-dragons/shara-ishvalda.md` |
 | [Teostra](monsters/elder-dragons/teostra.md) | 13 | 207 | yes | `monsters/elder-dragons/teostra.md` |
 | [Tempered Teostra](monsters/elder-dragons/tempered-teostra.md) | 20 | 210 | yes | `monsters/elder-dragons/tempered-teostra.md` |
