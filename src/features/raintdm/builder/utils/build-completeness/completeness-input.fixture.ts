@@ -43,6 +43,7 @@ export function createEmptyCompletenessInput(
     speciesLanguageChoices: [],
     speciesDefenseChoices: {},
     speciesAbilityChoices: [],
+    speciesTraitChoices: {},
     backgroundAsiMode: null,
     backgroundAsiPlus2: null,
     backgroundAsiPlus1: null,

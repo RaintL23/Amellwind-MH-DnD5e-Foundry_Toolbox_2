@@ -81,6 +81,11 @@ export interface BuilderChoiceSnapshot {
   optionalFeatureOriginFeatSkillChoices: Record<number, SkillKey[]>;
   optionalFeatureSelections: BuilderOptionalFeatureSelections;
   speciesSpellGroupChoice: string | null;
+  /**
+   * Permanent species trait picks keyed by lowercased trait name
+   * (e.g. `"giant ancestry"` → `"cloud-s-jaunt-cloud-giant"`).
+   */
+  speciesTraitChoices: Record<string, string>;
 
   // ── Ability score origin choices ──
   useTashaOrigin: boolean;
@@ -185,6 +190,7 @@ export function normalizeBuilderSnapshot(raw: unknown): BuilderChoiceSnapshot | 
       BuilderOptionalFeatureSelections[string]
     >(raw.optionalFeatureSelections),
     speciesSpellGroupChoice: nullableOr<string>(raw.speciesSpellGroupChoice),
+    speciesTraitChoices: recordOr<string>(raw.speciesTraitChoices),
 
     useTashaOrigin: raw.useTashaOrigin === true,
     tashaPlus2: nullableOr<AbilityKey>(raw.tashaPlus2),

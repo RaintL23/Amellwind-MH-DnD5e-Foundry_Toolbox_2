@@ -28,6 +28,7 @@ import {
   buildFeatAbilityIncreaseChoices,
   setFeatAbilityIncreaseChoiceAt,
 } from "@/features/raintdm/builder/utils/feat-ability-increase-choices.utils";
+import { parseFeatDamageTypeOptions } from "@/features/raintdm/builder/utils/feat-damage-type-choice.utils";
 import { getFeatSpellListOptions } from "@/features/raintdm/builder/utils/feat-spell-list.utils";
 import {
   resolveEffectiveOriginFeatChooseTarget,
@@ -46,6 +47,7 @@ import { useRpgbotRatingsLookup } from "@/features/raintdm/builder/hooks/useRpgb
 import type {
   AbilityKey,
   BuilderFeatSelection,
+  DamageType,
   DndFeat,
   Feat,
 } from "@/shared/types";
@@ -493,16 +495,25 @@ export function FeatLibraryPanel({
     selection: BuilderFeatSelection,
     feat: Feat | DndFeat | undefined,
   ): BuilderFeatSelection {
-    if (isAsiFeatSelection(selection) || !feat?.abilityIncreases.length) {
+    if (isAsiFeatSelection(selection) || !feat) {
       return selection;
     }
-    return {
-      ...selection,
-      abilityIncreaseChoices: buildFeatAbilityIncreaseChoices(
+    const next: BuilderFeatSelection = { ...selection };
+    if (feat.abilityIncreases.length > 0) {
+      next.abilityIncreaseChoices = buildFeatAbilityIncreaseChoices(
         feat.abilityIncreases,
         { previous: selection.abilityIncreaseChoices },
-      ),
-    };
+      );
+    }
+    const damageTypes = parseFeatDamageTypeOptions(feat);
+    if (damageTypes?.length) {
+      next.damageTypeChoice =
+        selection.damageTypeChoice &&
+        damageTypes.includes(selection.damageTypeChoice)
+          ? selection.damageTypeChoice
+          : null;
+    }
+    return next;
   }
 
   function findLoadedFeat(
@@ -659,6 +670,15 @@ export function FeatLibraryPanel({
     });
   }
 
+  function handleDamageTypeChoiceChange(damageType: DamageType | null) {
+    if (!selectedFeat) return;
+    if (selectedFeat.damageTypeChoice === damageType) return;
+    applyFeatSelectionUpdate({
+      ...selectedFeat,
+      damageTypeChoice: damageType,
+    });
+  }
+
   function handleAbilityIncreaseChoiceChange(
     index: number,
     ability: AbilityKey | null,
@@ -761,6 +781,10 @@ export function FeatLibraryPanel({
           spellListClassChoice={selectedFeat?.spellListClassChoice}
           onSpellListClassChoiceChange={
             canEditChoices ? handleSpellListClassChoiceChange : undefined
+          }
+          damageTypeChoice={selectedFeat?.damageTypeChoice}
+          onDamageTypeChoiceChange={
+            canEditChoices ? handleDamageTypeChoiceChange : undefined
           }
         />
       </div>

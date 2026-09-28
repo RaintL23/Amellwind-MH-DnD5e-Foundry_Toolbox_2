@@ -16,6 +16,10 @@ import {
 import { areFeatAbilityIncreaseChoicesComplete } from "../feat-ability-increase-choices.utils";
 import type { BuildCompletenessInput, BuildCompletenessIssue } from "../build-completeness.types";
 import { isAsiChoicesComplete } from "./helpers";
+import {
+  findSpeciesTraitChoiceGaps,
+  speciesTraitsForCreationChoices,
+} from "../species-trait-choice.utils";
 
 export function evaluateIdentityCompleteness(
   input: BuildCompletenessInput,
@@ -64,6 +68,23 @@ export function evaluateIdentityCompleteness(
       slot: "subclass",
       highlightKey: "subclass",
     });
+  }
+
+  if (input.species && input.speciesData) {
+    const gaps = findSpeciesTraitChoiceGaps(
+      speciesTraitsForCreationChoices(input.speciesData),
+      input.speciesTraitChoices ?? {},
+      input.level,
+    );
+    for (const trait of gaps) {
+      issues.push({
+        id: `identity-species-trait-${trait.name.trim().toLowerCase().replace(/[^a-z0-9]+/g, "-")}`,
+        section: "identity",
+        message: `Choose ${trait.name}`,
+        slot: "species",
+        highlightKey: "species",
+      });
+    }
   }
 
   return issues;
@@ -118,6 +139,14 @@ export function evaluateFeatsCompleteness(
             id: `feat-ability-${index}`,
             section: "feats",
             message: `Choose ability score increase for ${feat.name}`,
+            slot: toFeatSlot(index),
+            highlightKey: toFeatSlot(index),
+          });
+        } else if (feat.damageTypeChoice === null) {
+          issues.push({
+            id: `feat-damage-type-${index}`,
+            section: "feats",
+            message: `Choose damage type for ${feat.name}`,
             slot: toFeatSlot(index),
             highlightKey: toFeatSlot(index),
           });

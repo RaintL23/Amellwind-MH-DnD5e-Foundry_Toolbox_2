@@ -83,6 +83,7 @@ export function applyBuilderSnapshot(
     );
   }
   builder.setSpeciesSpellGroupChoice(snap.speciesSpellGroupChoice);
+  builder.setSpeciesTraitChoices(snap.speciesTraitChoices ?? {});
 
   // ── Proficiency choices ──
   for (const [index, choices] of Object.entries(snap.classSkillChoices)) {

@@ -127,6 +127,13 @@ export interface CharacterBuilderContextValue {
   /** Name of the chosen named-spell-group (e.g. "Abyssal" for Tiefling). Null = not chosen yet. */
   speciesSpellGroupChoice: string | null;
   setSpeciesSpellGroupChoice: (name: string | null) => void;
+  /**
+   * Permanent species trait options (Goliath Ancestry, Gnome Lineage, …),
+   * keyed by lowercased trait name → option id.
+   */
+  speciesTraitChoices: Record<string, string>;
+  setSpeciesTraitChoice: (traitName: string, optionId: string | null) => void;
+  setSpeciesTraitChoices: (choices: Record<string, string>) => void;
   setBackgroundOriginFeat: (selection: BuilderFeatSelection | null) => void;
   setOptionalFeatureOriginFeatAtIndex: (
     index: number,

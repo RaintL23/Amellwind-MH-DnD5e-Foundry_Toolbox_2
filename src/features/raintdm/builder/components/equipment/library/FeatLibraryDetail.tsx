@@ -12,6 +12,7 @@ import {
 import type {
   AbilityKey,
   BuilderFeatAbilityIncreaseChoice,
+  DamageType,
   DndFeat,
   Feat,
 } from "@/shared/types";
@@ -27,6 +28,10 @@ import {
   textMentionsProficiencyGrant,
 } from "@/features/raintdm/builder/utils/library-proficiency-highlight.utils";
 import { isChoosableAbilityIncrease } from "@/features/raintdm/builder/utils/feat-ability-increase-choices.utils";
+import {
+  featDamageTypeLabel,
+  parseFeatDamageTypeOptions,
+} from "@/features/raintdm/builder/utils/feat-damage-type-choice.utils";
 
 interface FeatLibraryDetailProps {
   feat: Feat | DndFeat;
@@ -42,6 +47,9 @@ interface FeatLibraryDetailProps {
   spellListClassOptions?: string[];
   spellListClassChoice?: string | null;
   onSpellListClassChoiceChange?: (className: string) => void;
+  damageTypeOptions?: DamageType[];
+  damageTypeChoice?: DamageType | null;
+  onDamageTypeChoiceChange?: (damageType: DamageType | null) => void;
   /** Rendered inside a library row: omit the icon + name heading. */
   inline?: boolean;
 }
@@ -57,6 +65,9 @@ export function FeatLibraryDetail({
   spellListClassOptions,
   spellListClassChoice,
   onSpellListClassChoiceChange,
+  damageTypeOptions,
+  damageTypeChoice,
+  onDamageTypeChoiceChange,
   inline = false,
 }: FeatLibraryDetailProps) {
   const categoryLabel =
@@ -97,6 +108,11 @@ export function FeatLibraryDetail({
     !!spellListClassOptions?.length &&
     spellListClassOptions.length > 1 &&
     !!onSpellListClassChoiceChange;
+
+  const resolvedDamageTypeOptions =
+    damageTypeOptions ?? parseFeatDamageTypeOptions(feat) ?? [];
+  const showDamageTypePicker =
+    resolvedDamageTypeOptions.length > 0 && !!onDamageTypeChoiceChange;
 
   return (
     <div className="space-y-3">
@@ -166,6 +182,34 @@ export function FeatLibraryDetail({
               {spellListClassOptions.map((className) => (
                 <option key={className} value={className}>
                   {className}
+                </option>
+              ))}
+            </Select>
+          </label>
+        </div>
+      )}
+
+      {showDamageTypePicker && (
+        <div className="space-y-2 rounded-md border border-border/60 bg-muted/20 p-2">
+          <p className="text-[10px] font-medium text-foreground">
+            Damage type
+          </p>
+          <label className="flex items-center gap-2 text-xs text-muted-foreground">
+            <span className="w-16 shrink-0 font-medium text-foreground">
+              Energy
+            </span>
+            <Select
+              value={damageTypeChoice ?? ""}
+              onChange={(e) => {
+                const value = e.target.value as DamageType | "";
+                onDamageTypeChoiceChange(value || null);
+              }}
+              className="h-7 flex-1 text-xs"
+            >
+              <option value="">Select…</option>
+              {resolvedDamageTypeOptions.map((type) => (
+                <option key={type} value={type}>
+                  {featDamageTypeLabel(type)}
                 </option>
               ))}
             </Select>

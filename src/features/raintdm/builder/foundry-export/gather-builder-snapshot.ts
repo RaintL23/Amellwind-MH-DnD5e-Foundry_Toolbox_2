@@ -37,6 +37,7 @@ export function gatherBuilderSnapshot(
       builder.optionalFeatureOriginFeatSkillChoices,
     optionalFeatureSelections: builder.optionalFeatureSelections ?? {},
     speciesSpellGroupChoice: builder.speciesSpellGroupChoice,
+    speciesTraitChoices: builder.speciesTraitChoices ?? {},
 
     useTashaOrigin: builder.useTashaOrigin,
     tashaPlus2: builder.tashaPlus2,

@@ -75,6 +75,7 @@ export interface RandomizerSetters {
   clearSpells: () => void;
   setBackstoryNotes: (value: string | ((current: string) => string)) => void;
   setSpeciesSpellGroupChoice: (name: string | null) => void;
+  setSpeciesTraitChoice: (traitName: string, optionId: string | null) => void;
   setOriginFeatSkillChoices: (choices: SkillKey[]) => void;
   setFeatSkillChoices: (slotIndex: number, choices: SkillKey[]) => void;
   setExpertiseChoices: (grantId: string, choices: SkillKey[]) => void;

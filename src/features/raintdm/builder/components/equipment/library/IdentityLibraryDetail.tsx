@@ -37,6 +37,10 @@ import {
   buildSkillGrantSummaryRows,
   entriesMentionProficiencyGrant,
 } from "@/features/raintdm/builder/utils/library-proficiency-highlight.utils";
+import {
+  resolveSpeciesTraitEntries,
+  speciesTraitChoiceKey,
+} from "@/features/raintdm/builder/utils/species-trait-choice.utils";
 
 interface IdentityLibraryDetailProps {
   species?: Species;
@@ -67,6 +71,13 @@ interface IdentityLibraryDetailProps {
   activeLegacyId?: string | null;
   /** Called when the user selects (or deselects) a legacy. */
   onLegacySelect?: (name: string | null) => void;
+  /** Permanent trait option picks (Goliath Ancestry, Gnome Lineage, …). */
+  speciesTraitChoices?: Record<string, string>;
+  /** Called when the user picks an option inside a creation-choice trait. */
+  onSpeciesTraitChoiceSelect?: (
+    traitName: string,
+    optionId: string | null,
+  ) => void;
   /** Cantrips always granted regardless of group choice. */
   universalCantrips?: string[];
   /** Rendered inside a library row: omit the titled accordion shell. */
@@ -124,6 +135,9 @@ function TraitList({
   traitNameClass,
   bodyClass,
   containerClass,
+  speciesTraitChoices,
+  onSpeciesTraitChoiceSelect,
+  filterUnselectedOptions = false,
 }: {
   traits: SpeciesTrait[];
   heading: string;
@@ -131,6 +145,13 @@ function TraitList({
   traitNameClass: string;
   bodyClass?: string;
   containerClass?: string;
+  speciesTraitChoices?: Record<string, string>;
+  onSpeciesTraitChoiceSelect?: (
+    traitName: string,
+    optionId: string | null,
+  ) => void;
+  /** When true, hide option text that was not chosen (selected character view). */
+  filterUnselectedOptions?: boolean;
 }) {
   if (!traits.length) return null;
 
@@ -147,8 +168,18 @@ function TraitList({
       </h3>
       <div className={cn("space-y-3", containerClass)}>
         {traits.map((trait) => {
+          const choice = trait.creationChoice;
+          const selectedId =
+            speciesTraitChoices?.[speciesTraitChoiceKey(trait.name)] ?? null;
+          const displayEntries = resolveSpeciesTraitEntries(
+            trait,
+            selectedId,
+            {
+              showAllWhenUnselected: !filterUnselectedOptions,
+            },
+          );
           const grantsProficiency = entriesMentionProficiencyGrant(
-            trait.entries,
+            displayEntries,
           );
           return (
             <ProficiencyHighlightFrame
@@ -173,7 +204,23 @@ function TraitList({
                   {trait.name}
                   {grantsProficiency && <ProficiencyGrantBadge />}
                 </h4>
-                {(trait.entries ?? []).map((paragraph, i) => (
+                {choice && onSpeciesTraitChoiceSelect && (
+                  <NamedVariantSwitcher
+                    label="Choose one"
+                    options={choice.options.map((option) => ({
+                      id: option.id,
+                      name: option.name,
+                    }))}
+                    activeId={selectedId}
+                    onSelect={(id) =>
+                      onSpeciesTraitChoiceSelect(trait.name, id)
+                    }
+                    accent="emerald"
+                    includeBaseOption={false}
+                    className="mb-2 mt-1"
+                  />
+                )}
+                {displayEntries.map((paragraph, i) => (
                   <p
                     key={`${trait.name}-entry-${i}`}
                     className={cn(
@@ -360,6 +407,9 @@ function SpeciesDetailBody({
   namedSpellGroups,
   universalCantrips,
   activeLegacyId,
+  speciesTraitChoices,
+  onSpeciesTraitChoiceSelect,
+  filterUnselectedOptions = false,
 }: {
   species: Species;
   subspeciesTraits?: SpeciesTrait[];
@@ -369,6 +419,12 @@ function SpeciesDetailBody({
   namedSpellGroups?: SpeciesNamedSpellGroup[];
   universalCantrips?: string[];
   activeLegacyId?: string | null;
+  speciesTraitChoices?: Record<string, string>;
+  onSpeciesTraitChoiceSelect?: (
+    traitName: string,
+    optionId: string | null,
+  ) => void;
+  filterUnselectedOptions?: boolean;
 }) {
   const resistances = species.resistances ?? [];
   const traitTags = species.traitTags ?? [];
@@ -456,6 +512,9 @@ function SpeciesDetailBody({
         heading="Traits"
         headingClass="text-emerald-400"
         traitNameClass="text-foreground"
+        speciesTraitChoices={speciesTraitChoices}
+        onSpeciesTraitChoiceSelect={onSpeciesTraitChoiceSelect}
+        filterUnselectedOptions={filterUnselectedOptions}
       />
 
       {(subspeciesFluff || subspeciesTraits.length > 0) && (
@@ -472,9 +531,17 @@ function SpeciesDetailBody({
           {subspeciesTraits.length > 0 && (
             <div className="space-y-3">
               {subspeciesTraits.map((trait) => {
-                const grantsProficiency = entriesMentionProficiencyGrant(
-                  trait.entries,
+                const choice = trait.creationChoice;
+                const selectedId =
+                  speciesTraitChoices?.[speciesTraitChoiceKey(trait.name)] ??
+                  null;
+                const displayEntries = resolveSpeciesTraitEntries(
+                  trait,
+                  selectedId,
+                  { showAllWhenUnselected: !filterUnselectedOptions },
                 );
+                const grantsProficiency =
+                  entriesMentionProficiencyGrant(displayEntries);
                 return (
                   <div
                     key={trait.name}
@@ -489,7 +556,23 @@ function SpeciesDetailBody({
                       {trait.name}
                       {grantsProficiency && <ProficiencyGrantBadge />}
                     </h4>
-                    {(trait.entries ?? []).map((paragraph, i) => (
+                    {choice && onSpeciesTraitChoiceSelect && (
+                      <NamedVariantSwitcher
+                        label="Choose one"
+                        options={choice.options.map((option) => ({
+                          id: option.id,
+                          name: option.name,
+                        }))}
+                        activeId={selectedId}
+                        onSelect={(id) =>
+                          onSpeciesTraitChoiceSelect(trait.name, id)
+                        }
+                        accent="sky"
+                        includeBaseOption={false}
+                        className="mb-2 mt-1"
+                      />
+                    )}
+                    {displayEntries.map((paragraph, i) => (
                       <p
                         key={`${trait.name}-entry-${i}`}
                         className="mb-1 text-xs leading-relaxed text-sky-100/70"
@@ -658,6 +741,8 @@ export function IdentityLibraryDetail({
   namedSpellGroupsLabel,
   activeLegacyId = null,
   onLegacySelect,
+  speciesTraitChoices,
+  onSpeciesTraitChoiceSelect,
   universalCantrips,
   inline = false,
 }: IdentityLibraryDetailProps) {
@@ -760,6 +845,9 @@ export function IdentityLibraryDetail({
           namedSpellGroups={namedSpellGroups}
           universalCantrips={universalCantrips}
           activeLegacyId={activeLegacyId}
+          speciesTraitChoices={speciesTraitChoices}
+          onSpeciesTraitChoiceSelect={onSpeciesTraitChoiceSelect}
+          filterUnselectedOptions={Boolean(onSpeciesTraitChoiceSelect)}
         />
       )}
       {background && (

@@ -87,6 +87,8 @@ export interface BuildCompletenessInput {
   speciesLanguageChoices: string[];
   speciesDefenseChoices: Record<number, DamageType[]>;
   speciesAbilityChoices: (AbilityKey | null)[];
+  /** Permanent species trait picks (Ancestry / Lineage / Legacy). */
+  speciesTraitChoices: Record<string, string>;
   backgroundAsiMode: BackgroundAsiMode | null;
   backgroundAsiPlus2: AbilityKey | null;
   backgroundAsiPlus1: AbilityKey | null;

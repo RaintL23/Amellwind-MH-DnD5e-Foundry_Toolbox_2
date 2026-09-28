@@ -128,6 +128,7 @@ export function BuildCompletenessProvider({
       speciesLanguageChoices: builder.speciesLanguageChoices,
       speciesDefenseChoices: builder.speciesDefenseChoices,
       speciesAbilityChoices: builder.speciesAbilityChoices,
+      speciesTraitChoices: builder.speciesTraitChoices ?? {},
       backgroundAsiMode: builder.backgroundAsiMode,
       backgroundAsiPlus2: builder.backgroundAsiPlus2,
       backgroundAsiPlus1: builder.backgroundAsiPlus1,

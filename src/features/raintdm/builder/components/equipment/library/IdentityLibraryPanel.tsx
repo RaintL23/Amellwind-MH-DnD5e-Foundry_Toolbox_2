@@ -109,6 +109,8 @@ export function IdentityLibraryPanel({
     setBackground,
     speciesSpellGroupChoice,
     setSpeciesSpellGroupChoice,
+    speciesTraitChoices,
+    setSpeciesTraitChoice,
   } = useCharacterBuilder();
 
   const isSpeciesSlot = selectedSlot === "species";
@@ -385,6 +387,13 @@ export function IdentityLibraryPanel({
     setSpeciesSpellGroupChoice(groupName);
   }
 
+  function handleSpeciesTraitChoiceSelect(
+    traitName: string,
+    optionId: string | null,
+  ) {
+    setSpeciesTraitChoice(traitName, optionId);
+  }
+
   function handleSubspeciesSelect(subraceId: string | null) {
     if (!selectedIdentity || !isSpeciesSlot) return;
     if (!subraceId) {
@@ -486,6 +495,8 @@ export function IdentityLibraryPanel({
           universalCantrips={dndBase?.universalCantrips}
           activeLegacyId={speciesSpellGroupChoice}
           onLegacySelect={legacyOptions ? handleLegacySelect : undefined}
+          speciesTraitChoices={speciesTraitChoices}
+          onSpeciesTraitChoiceSelect={handleSpeciesTraitChoiceSelect}
         />
         </div>
       );

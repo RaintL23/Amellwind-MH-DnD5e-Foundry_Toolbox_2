@@ -27,6 +27,20 @@ import {
 import { resolveClassAbilityPriority } from "@/features/raintdm/builder/utils/randomizer/class-ability-priority.utils";
 import { pickAllSkillChoices } from "@/features/raintdm/builder/utils/randomizer/skill-randomizer.utils";
 import { resolveOriginFeatSelectionForGrant } from "@/features/raintdm/builder/utils/randomizer/feat-randomizer.utils";
+import { collectSpeciesTraitsWithCreationChoice } from "@/features/raintdm/builder/utils/species-trait-choice.utils";
+import type { SpeciesTrait } from "@/shared/types";
+
+function assignRandomSpeciesTraitChoices(
+  traits: SpeciesTrait[] | null | undefined,
+  setSpeciesTraitChoice: (traitName: string, optionId: string | null) => void,
+): void {
+  for (const trait of collectSpeciesTraitsWithCreationChoice(traits)) {
+    const options = trait.creationChoice?.options ?? [];
+    if (options.length === 0) continue;
+    const picked = options[Math.floor(Math.random() * options.length)];
+    if (picked) setSpeciesTraitChoice(trait.name, picked.id);
+  }
+}
 import {
   collectResolvedNamedItems,
   pickNamedChoicesFromGrants,
@@ -274,6 +288,10 @@ export async function randomizeSpeciesAndBackgroundPhase(
         setters.setSpeciesOriginFeat(resolvedSpeciesOriginFeat);
         speciesOriginFeatSelection = resolvedSpeciesOriginFeat;
       }
+      assignRandomSpeciesTraitChoices(
+        pickedSpecies.traits,
+        setters.setSpeciesTraitChoice,
+      );
     }
 
     const pickedBackground = pickAmellwindBackground(amellwindBackgrounds);
@@ -386,6 +404,10 @@ export async function randomizeSpeciesAndBackgroundPhase(
             setters.setSpeciesSpellGroupChoice(chosenGroup.name);
           }
         }
+        assignRandomSpeciesTraitChoices(
+          speciesDetail.traits,
+          setters.setSpeciesTraitChoice,
+        );
         randomizedSpeciesDetail = speciesDetail;
       }
     }
