@@ -87,6 +87,9 @@ Fuente de verdad: `evaluateBuildCompleteness` (`builder/utils/build-completeness
 #### Resolución de especie y dotes
 
 - **`useResolvedSpecies` / `resolveSpeciesParts`** — resuelven la especie seleccionada contra los catálogos de species MH y razas D&D (con subraza opcional), con precedencia `mhSpecies ?? dndRace`, y exponen nombre de display y traits fusionados.
+- **Species trait creation choices** — traits con lista “elige uno” permanente (p. ej. Goliath **Giant Ancestry**, Gnome **Gnomish Lineage**, Kobold **Legacy**) se mapean a `SpeciesTrait.creationChoice`. El Builder guarda la opción en `snapshot.speciesTraitChoices` (clave = nombre del trait en minúsculas). Completeness exige la elección; Character Sheet / PDF / Foundry ocultan el texto de las opciones no elegidas. Menús por uso (Hobgoblin Fey Gift, Dhampir bite) no se modelan aquí.
+- **Class / subclass feature-choice** — opciones hermanas en la progresión (p. ej. Cleric **Divine Order** → Protector/Thaumaturge) se ocultan en Sheet/PDF si no fueron elegidas; el padre de catálogos opcionales (Fighting Style) se omite cuando ya hay pick.
+- **Feat damage type** — feats como **Elemental Adept** guardan `damageTypeChoice` en `BuilderFeatSelection`; completeness y Sheet/PDF reflejan el tipo elegido.
 - **`useActiveResolvedFeats`** — resuelve las dotes activas no-ASI (origin feats de especie/trasfondo + slots elegidos) a objetos `Feat` completos; fuente única para los hooks derivados de HP/velocidad.
 - **`computeEffectiveAbilityScores` / `useEffectiveAbilityScores`** — scores finales (base + Tasha/species/background ASI + feat ASI + ability increases de dotes con elección, p. ej. Piercer STR/DEX). Fuente de verdad para modificadores de AC, HP, iniciativa, skills/saves, combate/DPT, spellcasting y exports (PDF / Foundry). `character.abilities` sigue siendo solo la generación base editable.
 

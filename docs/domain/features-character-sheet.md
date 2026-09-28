@@ -62,7 +62,7 @@ Curated map `CONDITION_EFFECTS` + `deriveActionLocks` greys out Action / Bonus /
 
 **Actions** tab: **Quick attacks** strip (equipped / compiled weapons with Attack / Dmg / Crit / Ver when versatile). Then **Card + Accordion** per economy bucket. Magic Action lists **attuned** items only. Light off-hand attacks omit the ability mod from damage. Cast uses shared `castPlaySpell` (prompt/roll first; cancel Adv/Dis does not spend slots).
 
-**Features** tab: all character features grouped by source; sticky deferred search; Notes at the bottom.
+**Features** tab: all character features grouped by source; sticky deferred search; Notes at the bottom. Species traits with a permanent Builder pick (e.g. Goliath Giant Ancestry) compile with only the chosen option text. Unselected class/subclass feature-choice siblings (e.g. Cleric Thaumaturge when Protector was chosen) are omitted; Elemental Adept shows the chosen damage type.
 
 **Spells**: slot pips (`SET_SLOTS_SPENT` / `SET_PACT_SPENT` atomic). Cast checks prepared; ritual spells offer “Cast with slot” / “As ritual (no slot)”. Slot spend happens only after a successful cast resolution. Cast rolls heal/damage dice parsed from the spell text (`resolveSpellEffectRoll`: spellcasting mod, upcast dice, cantrip level bands); utility spells without cast-time dice still log a placeholder entry.
 
