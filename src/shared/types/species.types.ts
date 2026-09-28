@@ -51,8 +51,31 @@ export interface SpeciesTable {
   rows: string[][];
 }
 
+/** One permanent option under a species trait (e.g. Goliath Giant Ancestry). */
+export interface SpeciesTraitChoiceOption {
+  id: string;
+  name: string;
+  entries: string[];
+}
+
+/**
+ * Character-creation (or level-gated) pick inside a species trait.
+ * Situational per-use menus (Hobgoblin Fey Gift, Dhampir bite) are not modeled here.
+ */
+export interface SpeciesTraitCreationChoice {
+  pickCount: number;
+  /** When set, the pick is required only once the character reaches this level. */
+  minLevel?: number;
+  options: SpeciesTraitChoiceOption[];
+}
+
 export interface SpeciesTrait extends Entry {
   tables?: SpeciesTable[];
+  /**
+   * When present, `entries` holds only the trait intro; option bodies live in
+   * `creationChoice.options` and must be selected in the Builder.
+   */
+  creationChoice?: SpeciesTraitCreationChoice;
 }
 
 export interface Species {

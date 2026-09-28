@@ -6,6 +6,8 @@ import type {
   DamageType,
   SpeciesTable,
   SpeciesTrait,
+  SpeciesTraitChoiceOption,
+  SpeciesTraitCreationChoice,
 } from "@/shared/types";
 import { ABILITY_LABELS } from "@/shared/types";
 import { ABILITY_KEYS } from "@/shared/constants/dnd";
@@ -192,6 +194,140 @@ export function collectTraitContent(entries: unknown[]): {
   return { texts, tables };
 }
 
+/** Trait names that are always permanent character picks when they have a choose-list. */
+const CREATION_TRAIT_NAME_RE =
+  /\b(ancestry|lineage|legacy|shifting|celestial revelation|animal enhancement)\b/i;
+
+function slugTraitChoiceId(name: string): string {
+  return name
+    .toLowerCase()
+    .replace(/[^a-z0-9]+/g, "-")
+    .replace(/^-|-$/g, "");
+}
+
+function extractNamedListOptions(
+  entries: unknown[],
+): SpeciesTraitChoiceOption[] | null {
+  for (const entry of entries) {
+    if (typeof entry !== "object" || entry === null) continue;
+    const e = entry as Raw;
+    if (e.type === "list" && Array.isArray(e.items)) {
+      const options: SpeciesTraitChoiceOption[] = [];
+      for (const item of e.items as unknown[]) {
+        if (typeof item !== "object" || item === null) continue;
+        const listItem = item as Raw;
+        const name =
+          typeof listItem.name === "string"
+            ? parseFiveToolsMarkup(listItem.name).trim()
+            : "";
+        if (!name) continue;
+        const bodyEntries: unknown[] = Array.isArray(listItem.entries)
+          ? (listItem.entries as unknown[])
+          : typeof listItem.entry === "string"
+            ? [listItem.entry]
+            : [];
+        const nested = collectTraitContent(bodyEntries);
+        options.push({
+          id: slugTraitChoiceId(name),
+          name,
+          entries: nested.texts,
+        });
+      }
+      if (options.length >= 2) return options;
+    }
+    if (Array.isArray(e.entries)) {
+      const nested = extractNamedListOptions(e.entries as unknown[]);
+      if (nested) return nested;
+    }
+  }
+  return null;
+}
+
+function introEntriesWithoutChoiceList(entries: unknown[]): {
+  texts: string[];
+  tables: SpeciesTable[];
+} {
+  const texts: string[] = [];
+  const tables: SpeciesTable[] = [];
+  for (const entry of entries) {
+    if (typeof entry === "string") {
+      texts.push(parseFiveToolsMarkup(entry));
+      continue;
+    }
+    if (typeof entry !== "object" || entry === null) continue;
+    const e = entry as Raw;
+    if (e.type === "list") continue;
+    if (e.type === "table") {
+      tables.push(mapSpeciesRaceTable(e));
+      continue;
+    }
+    if (Array.isArray(e.entries)) {
+      const nested = introEntriesWithoutChoiceList(e.entries as unknown[]);
+      texts.push(...nested.texts);
+      tables.push(...nested.tables);
+    }
+  }
+  return { texts, tables };
+}
+
+function parseMinLevelFromIntro(introText: string): number | undefined {
+  const match = introText.match(
+    /when you reach (\d+)(?:st|nd|rd|th) level/i,
+  );
+  if (!match) return undefined;
+  const level = Number(match[1]);
+  return Number.isFinite(level) && level > 1 ? level : undefined;
+}
+
+/**
+ * Permanent Builder picks (Goliath Ancestry, Gnome Lineage, Kobold Legacy, …).
+ * Excludes per-use menus such as Hobgoblin Fey Gift / Dhampir bite.
+ */
+export function isSpeciesTraitCreationChoice(
+  traitName: string,
+  introText: string,
+): boolean {
+  if (/each time you/i.test(introText)) return false;
+  if (
+    /of your choice/i.test(introText) &&
+    /when you (?:attack|hit|use|take)/i.test(introText) &&
+    !CREATION_TRAIT_NAME_RE.test(traitName)
+  ) {
+    return false;
+  }
+  if (CREATION_TRAIT_NAME_RE.test(traitName)) return true;
+  if (/choose when you select this race/i.test(introText)) return true;
+  if (
+    /choose one of the following/i.test(introText) &&
+    /(?:the chosen|whichever one you choose|thereafter)/i.test(introText)
+  ) {
+    return true;
+  }
+  return false;
+}
+
+function tryMapCreationChoice(
+  traitName: string,
+  rawEntries: unknown[],
+): {
+  intro: { texts: string[]; tables: SpeciesTable[] };
+  creationChoice: SpeciesTraitCreationChoice;
+} | null {
+  const options = extractNamedListOptions(rawEntries);
+  if (!options) return null;
+  const intro = introEntriesWithoutChoiceList(rawEntries);
+  const introText = intro.texts.join(" ");
+  if (!isSpeciesTraitCreationChoice(traitName, introText)) return null;
+  return {
+    intro,
+    creationChoice: {
+      pickCount: 1,
+      minLevel: parseMinLevelFromIntro(introText),
+      options,
+    },
+  };
+}
+
 export function mapTraits(entries: unknown[]): SpeciesTrait[] {
   if (!Array.isArray(entries)) return [];
   const traits: SpeciesTrait[] = [];
@@ -201,9 +337,20 @@ export function mapTraits(entries: unknown[]): SpeciesTrait[] {
     const e = entry as Raw;
     const name = String(e.name ?? "").trim();
     if (!name) continue;
-    const { texts, tables } = collectTraitContent(
-      Array.isArray(e.entries) ? (e.entries as unknown[]) : [],
-    );
+    const rawEntries = Array.isArray(e.entries) ? (e.entries as unknown[]) : [];
+    const creation = tryMapCreationChoice(name, rawEntries);
+    if (creation) {
+      traits.push({
+        name,
+        entries: creation.intro.texts,
+        tables: creation.intro.tables.length
+          ? creation.intro.tables
+          : undefined,
+        creationChoice: creation.creationChoice,
+      });
+      continue;
+    }
+    const { texts, tables } = collectTraitContent(rawEntries);
     traits.push({
       name,
       entries: texts,

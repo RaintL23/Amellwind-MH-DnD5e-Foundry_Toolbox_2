@@ -1,4 +1,4 @@
-import { AbilityScores, AbilityKey } from "./actor.types";
+import { AbilityScores, AbilityKey, type DamageType } from "./actor.types";
 import { Weapon } from "./weapon.types";
 import { Rune } from "./rune.types";
 
@@ -66,6 +66,8 @@ export interface BuilderFeatSelection {
   abilityIncreaseChoices?: BuilderFeatAbilityIncreaseChoice[];
   /** Chosen class spell list for feats like Magic Initiate (Cleric, Druid, Wizard, …). */
   spellListClassChoice?: string | null;
+  /** Chosen damage type for feats like Elemental Adept. */
+  damageTypeChoice?: DamageType | null;
 }
 
 export interface CharacterSelectionRef {
