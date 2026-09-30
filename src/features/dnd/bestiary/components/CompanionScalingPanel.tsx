@@ -88,7 +88,7 @@ export function CompanionScalingPanel({
             type="number"
             min={1}
             max={20}
-            className="h-7 w-14 px-2 text-xs tabular-nums"
+            className="h-8 w-14 px-2 text-xs tabular-nums sm:h-7"
             value={value.ownerLevel}
             onChange={(event) => {
               const n = Number(event.target.value);
@@ -110,7 +110,7 @@ export function CompanionScalingPanel({
             type="number"
             min={1}
             max={30}
-            className="h-7 w-14 px-2 text-xs tabular-nums"
+            className="h-8 w-14 px-2 text-xs tabular-nums sm:h-7"
             value={value.abilityScore ?? DEFAULT_COMPANION_ABILITY_SCORE}
             onChange={(event) => {
               onChange({

@@ -1,5 +1,5 @@
 import { ListAreaLoading } from "@/shared/components/ListAreaLoading";
-import { useCallback, useEffect, useMemo, useState } from "react";
+import { useCallback, useDeferredValue, useEffect, useMemo } from "react";
 import { useNavigate } from "react-router-dom";
 import { Swords } from "lucide-react";
 import type { BestiaryCreature } from "@/shared/types/bestiary-creature.types";
@@ -13,15 +13,12 @@ import {
 } from "@/shared/components/list-filters";
 import {
   buildSourcesFilterSection,
-  entityMatchesSourceFilter,
+  createSourceFilterMatcher,
 } from "@/shared/utils/compendium-source-filter.utils";
 import { defaultOfficialSourceCodes } from "@/shared/services/source-catalog.service";
-import {
-  getAllBestiaryCreatures,
-  getBestiarySourceCatalog,
-  getListBestiaryCreatures,
-  preloadBestiarySources,
-} from "../services/bestiary.service";
+import { cn } from "@/shared/utils/cn";
+import { useBestiaryCatalog } from "../hooks/useBestiaryCatalog";
+import { filterBestiaryCreatures } from "../utils/bestiary-filter.utils";
 import { CR_FILTER_OPTIONS, SIZE_FILTER_OPTIONS } from "./bestiary-columns";
 import { BestiaryDataTable } from "./BestiaryDataTable";
 
@@ -30,13 +27,16 @@ const SIZE_OPTIONS = SIZE_FILTER_OPTIONS.filter((o) => o.value !== "");
 
 export function BestiaryList() {
   const navigate = useNavigate();
-  const [creatures, setCreatures] = useState<BestiaryCreature[]>([]);
-  const [listCreatures, setListCreatures] = useState<BestiaryCreature[]>([]);
-  const [filterSourceCodes, setFilterSourceCodes] = useState<string[]>([]);
-  const [loadedSources, setLoadedSources] = useState<string[]>([]);
-  const [loading, setLoading] = useState(true);
   const bookNames = useBookSourceNames();
   const catalog = useSourceCatalog();
+  const {
+    creatures,
+    listCreatures,
+    filterSourceCodes,
+    loading,
+    progress,
+    preloadMissingSources,
+  } = useBestiaryCatalog();
 
   const { q, getAll, patchFilters, ensureMultiIfEmpty } = useListSessionFilters({
     listId: "bestiary",
@@ -49,22 +49,6 @@ export function BestiaryList() {
   const environments = getAll("env");
   const sourceFilter = getAll("src");
 
-  const refreshCreatures = useCallback(async () => {
-    const [all, list, sourceCatalog] = await Promise.all([
-      getAllBestiaryCreatures(),
-      getListBestiaryCreatures(),
-      getBestiarySourceCatalog(),
-    ]);
-    setCreatures(all);
-    setListCreatures(list);
-    setFilterSourceCodes(sourceCatalog.available);
-    setLoadedSources(sourceCatalog.loaded);
-  }, []);
-
-  useEffect(() => {
-    refreshCreatures().finally(() => setLoading(false));
-  }, [refreshCreatures]);
-
   useEffect(() => {
     if (sourceFilter.length > 0 || catalog.size === 0 || filterSourceCodes.length === 0) {
       return;
@@ -76,15 +60,11 @@ export function BestiaryList() {
 
   useEffect(() => {
     if (sourceFilter.length === 0) return;
-    const missing = sourceFilter.filter((s) => !loadedSources.includes(s));
-    if (missing.length === 0) return;
-    void preloadBestiarySources(missing).then(() => {
-      void refreshCreatures();
-    });
-  }, [sourceFilter, loadedSources, refreshCreatures]);
+    preloadMissingSources(sourceFilter);
+  }, [sourceFilter, preloadMissingSources]);
 
   const commitSearch = useCallback(
-    (q: string) => patchFilters({ q }),
+    (next: string) => patchFilters({ q: next }),
     [patchFilters],
   );
   const { searchDraft, setSearchDraft, appliedSearch, isSearchPending } =
@@ -144,54 +124,55 @@ export function BestiaryList() {
     [typeOptions, environmentOptions, sourceSection],
   );
 
-  const filtered = useMemo(() => {
-    let result = listCreatures;
+  const sourceMatcher = useMemo(() => {
+    if (sourceFilter.length === 0) return null;
+    return createSourceFilterMatcher(sourceFilter, catalog, bookNames);
+  }, [sourceFilter, catalog, bookNames]);
 
-    if (appliedSearch.trim()) {
-      const q = appliedSearch.toLowerCase();
-      result = result.filter(
-        (c) =>
-          (c.searchText?.includes(q) ?? false) ||
-          c.name.toLowerCase().includes(q) ||
-          c.cr.toLowerCase().includes(q) ||
-          c.size.toLowerCase().includes(q) ||
-          c.type.type.toLowerCase().includes(q) ||
-          (c.variantSources?.some((s) => s.toLowerCase().includes(q)) ?? false),
-      );
-    }
+  const filterInput = useMemo(
+    () => ({
+      search: appliedSearch,
+      crs,
+      sizes,
+      types,
+      environments,
+      sourceMatcher,
+    }),
+    [appliedSearch, crs, sizes, types, environments, sourceMatcher],
+  );
+  const deferredFilterInput = useDeferredValue(filterInput);
+  const deferredList = useDeferredValue(listCreatures);
+  const isFilterDeferred =
+    deferredFilterInput !== filterInput || deferredList !== listCreatures;
 
-    if (crs.length > 0) {
-      result = result.filter((c) => crs.includes(c.cr));
-    }
-    if (sizes.length > 0) {
-      result = result.filter((c) => sizes.includes(c.size));
-    }
-    if (types.length > 0) {
-      result = result.filter((c) => types.includes(c.type.type));
-    }
-    if (environments.length > 0) {
-      result = result.filter((c) =>
-        (c.environment ?? []).some((e) => environments.includes(e)),
-      );
-    }
-    if (sourceFilter.length > 0) {
-      result = result.filter((c) =>
-        entityMatchesSourceFilter(c, sourceFilter, catalog, bookNames),
-      );
-    }
+  const filtered = useMemo(
+    () =>
+      filterBestiaryCreatures(
+        deferredList,
+        {
+          search: deferredFilterInput.search,
+          crs: deferredFilterInput.crs,
+          sizes: deferredFilterInput.sizes,
+          types: deferredFilterInput.types,
+          environments: deferredFilterInput.environments,
+        },
+        deferredFilterInput.sourceMatcher,
+      ),
+    [deferredList, deferredFilterInput],
+  );
 
-    return result;
-  }, [
-    listCreatures,
-    appliedSearch,
-    crs,
-    sizes,
-    types,
-    environments,
-    sourceFilter,
-    catalog,
-    bookNames,
-  ]);
+  const filterResetKey = useMemo(
+    () =>
+      JSON.stringify({
+        q: appliedSearch,
+        crs,
+        sizes,
+        types,
+        environments,
+        src: sourceFilter,
+      }),
+    [appliedSearch, crs, sizes, types, environments, sourceFilter],
+  );
 
   const handleSelect = useCallback(
     (row: BestiaryCreature) => {
@@ -210,11 +191,13 @@ export function BestiaryList() {
     });
   }
 
+  const showUpdating = isSearchPending || isFilterDeferred;
+
   return (
     <div className="flex flex-col h-full min-h-0">
-      <div className="shrink-0 border-b border-border px-4 py-4 md:px-6 md:py-5">
+      <div className="shrink-0 border-b border-border px-4 py-3 md:px-6 md:py-5">
         <div className="flex items-center gap-3 mb-1">
-          <Swords className="h-6 w-6 text-amber-400" />
+          <Swords className="h-6 w-6 text-amber-400 shrink-0" />
           <h1 className="text-xl font-bold text-foreground">Bestiary (D&amp;D 5e)</h1>
           {!loading && (
             <span className="ml-2 rounded-full bg-muted px-2.5 py-0.5 text-xs text-muted-foreground">
@@ -224,13 +207,18 @@ export function BestiaryList() {
               )}
             </span>
           )}
+          {progress && (
+            <span className="rounded-full border border-amber-800/40 bg-amber-950/30 px-2.5 py-0.5 text-xs text-amber-400">
+              Loading sources {progress.loaded}/{progress.total}
+            </span>
+          )}
         </div>
-        <p className="text-sm text-muted-foreground">
+        <p className="hidden text-sm text-muted-foreground sm:block">
           One row per creature name; open to compare sources and view stat blocks.
         </p>
       </div>
 
-      <div className="shrink-0 border-b border-border bg-card/50 px-4 py-3 md:px-6">
+      <div className="sticky top-0 z-10 shrink-0 border-b border-border bg-card/95 px-4 py-3 backdrop-blur-sm md:px-6">
         <ListSearchWithFilters
           searchValue={searchDraft}
           onSearchChange={setSearchDraft}
@@ -248,10 +236,15 @@ export function BestiaryList() {
           dialogTitle="Bestiary Filters"
           dialogDescription="Filter by CR, size, type, environment, and sourcebook. Changes apply when you save."
         />
+        {showUpdating && !loading && (
+          <p className="mt-2 text-[11px] text-muted-foreground" aria-live="polite">
+            Updating…
+          </p>
+        )}
       </div>
 
       <div className="flex-1 overflow-y-auto px-4 py-4 md:px-6 md:py-6">
-        {loading || isSearchPending ? (
+        {loading ? (
           <ListAreaLoading />
         ) : listCreatures.length === 0 ? (
           <div className="flex flex-col items-center justify-center h-48 text-muted-foreground gap-2">
@@ -259,7 +252,18 @@ export function BestiaryList() {
             <p className="text-sm">No creatures loaded.</p>
           </div>
         ) : (
-          <BestiaryDataTable creatures={filtered} onRowClick={handleSelect} />
+          <div
+            className={cn(
+              "transition-opacity duration-150",
+              showUpdating && "opacity-60",
+            )}
+          >
+            <BestiaryDataTable
+              creatures={filtered}
+              onRowClick={handleSelect}
+              filterResetKey={filterResetKey}
+            />
+          </div>
         )}
       </div>
     </div>

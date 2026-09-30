@@ -1,4 +1,4 @@
-import { useMemo, useState } from "react";
+import { useMemo, useState, type ReactNode } from "react";
 import type { BestiaryCreature, SpellcastingBlock } from "@/shared/types/bestiary-creature.types";
 import type { Entry, SkillKey } from "@/shared/types";
 import { SpellcastingBlockView } from "@/components/statblock/SpellcastingBlockView";
@@ -108,6 +108,40 @@ function formatHitPoints(creature: BestiaryCreature): string {
   return "—";
 }
 
+function StatLine({
+  label,
+  children,
+}: {
+  label: string;
+  children: ReactNode;
+}) {
+  return (
+    <p className="text-sm">
+      <strong className="text-amber-400">{label}</strong>{" "}
+      <span className="break-words text-foreground">{children}</span>
+    </p>
+  );
+}
+
+function StatTile({
+  label,
+  children,
+}: {
+  label: string;
+  children: ReactNode;
+}) {
+  return (
+    <div className="rounded-md border border-amber-800/30 bg-amber-950/10 px-2 py-2 text-center">
+      <p className="text-[10px] font-bold uppercase tracking-wide text-amber-400">
+        {label}
+      </p>
+      <p className="mt-0.5 break-words text-sm font-medium text-foreground">
+        {children}
+      </p>
+    </div>
+  );
+}
+
 function EntryBlock({
   entries,
   spellcasting = [],
@@ -123,15 +157,17 @@ function EntryBlock({
           (s) => s.name === entry.name || s.displayAs === entry.name.toLowerCase(),
         );
         return (
-          <div key={i}>
-            <p className="text-sm">
+          <div key={i} className="break-words">
+            <div className="text-sm">
               <strong className="text-foreground">{entry.name}.</strong>{" "}
-            </p>
-            <div className="mt-1 pl-0">
               {embeddedSpell ? (
-                <SpellcastingBlockView block={embeddedSpell} />
+                <div className="mt-1">
+                  <SpellcastingBlockView block={embeddedSpell} />
+                </div>
               ) : (
-                <StatBlockContentView content={getEntryContent(entry)} />
+                <span className="inline">
+                  <StatBlockContentView content={getEntryContent(entry)} />
+                </span>
               )}
             </div>
           </div>
@@ -176,7 +212,7 @@ export function BestiaryStatBlock({ creature: rawCreature }: BestiaryStatBlockPr
   const spellcastingParts = partitionSpellcasting(creature.spellcasting);
 
   return (
-    <div className="font-sans text-sm space-y-3">
+    <div className="space-y-3 font-sans text-sm">
       {detection.isScaled && (
         <CompanionScalingPanel
           detection={detection}
@@ -185,7 +221,7 @@ export function BestiaryStatBlock({ creature: rawCreature }: BestiaryStatBlockPr
         />
       )}
 
-      <p className="text-muted-foreground italic mb-3">
+      <p className="mb-3 break-words italic text-muted-foreground">
         {creature.size} {creature.type.type}
         {creature.type.tags && creature.type.tags.length > 0
           ? ` (${creature.type.tags.join(", ")})`
@@ -196,29 +232,27 @@ export function BestiaryStatBlock({ creature: rawCreature }: BestiaryStatBlockPr
 
       <Separator className="bg-amber-800/30" />
 
-      <div className="mt-3 space-y-1">
-        <p>
-          <strong className="text-amber-400">Armor Class</strong>{" "}
-          <span className="text-foreground">{formatArmorClass(creature)}</span>
-        </p>
-        <p>
-          <strong className="text-amber-400">Hit Points</strong>{" "}
-          <span className="text-foreground">{formatHitPoints(creature)}</span>
-        </p>
-        <p>
-          <strong className="text-amber-400">Speed</strong>{" "}
-          <span className="text-foreground">{formatSpeed(creature.speed)}</span>
-        </p>
+      <div className="mt-3 grid grid-cols-3 gap-2">
+        <StatTile label="AC">{formatArmorClass(creature)}</StatTile>
+        <StatTile label="HP">{formatHitPoints(creature)}</StatTile>
+        <StatTile label="Speed">
+          <span className="whitespace-normal leading-snug">
+            {formatSpeed(creature.speed)}
+          </span>
+        </StatTile>
       </div>
 
-      <Separator className="bg-amber-800/30 mt-3" />
+      <Separator className="mt-3 bg-amber-800/30" />
 
-      <div className="grid grid-cols-6 gap-2 mt-3 text-center">
+      <div className="mt-3 grid grid-cols-3 gap-2 text-center min-[420px]:grid-cols-6">
         {ABILITY_LABELS.map(([key, label]) => {
           const value = creature.abilities[key];
           const mod = getAbilityModifier(value);
           return (
-            <div key={key} className="flex flex-col items-center">
+            <div
+              key={key}
+              className="flex flex-col items-center rounded-md border border-border/60 bg-muted/20 px-1 py-1.5"
+            >
               <span className="text-xs font-bold text-amber-400">{label}</span>
               <span className="text-base font-semibold text-foreground">{value}</span>
               <span className="text-xs text-muted-foreground">{formatModifier(mod)}</span>
@@ -227,95 +261,63 @@ export function BestiaryStatBlock({ creature: rawCreature }: BestiaryStatBlockPr
         })}
       </div>
 
-      <Separator className="bg-amber-800/30 mt-3" />
+      <Separator className="mt-3 bg-amber-800/30" />
 
-      <div className="mt-3 space-y-1">
+      <div className="mt-3 space-y-1.5">
         {Object.keys(creature.savingThrows).length > 0 && (
-          <p>
-            <strong className="text-amber-400">Saving Throws</strong>{" "}
-            <span className="text-foreground">
-              {Object.entries(creature.savingThrows)
-                .map(([k, v]) => `${k.toUpperCase()} ${v}`)
-                .join(", ")}
-            </span>
-          </p>
+          <StatLine label="Saving Throws">
+            {Object.entries(creature.savingThrows)
+              .map(([k, v]) => `${k.toUpperCase()} ${v}`)
+              .join(", ")}
+          </StatLine>
         )}
         {Object.keys(creature.skills).length > 0 && (
-          <p>
-            <strong className="text-amber-400">Skills</strong>{" "}
-            <span className="text-foreground">
-              {Object.entries(creature.skills)
-                .map(([k, v]) =>
-                  `${SKILL_LABELS[k as SkillKey] ?? k} ${v ? formatModifier(Number(v)) : ""}`,
-                )
-                .join(", ")}
-            </span>
-          </p>
+          <StatLine label="Skills">
+            {Object.entries(creature.skills)
+              .map(([k, v]) =>
+                `${SKILL_LABELS[k as SkillKey] ?? k} ${v ? formatModifier(Number(v)) : ""}`,
+              )
+              .join(", ")}
+          </StatLine>
         )}
         {creature.damageVulnerabilities.length > 0 && (
-          <p>
-            <strong className="text-amber-400">Damage Vulnerabilities</strong>{" "}
-            <span className="text-foreground">
-              {formatDamage(creature.damageVulnerabilities)}
-            </span>
-          </p>
+          <StatLine label="Damage Vulnerabilities">
+            {formatDamage(creature.damageVulnerabilities)}
+          </StatLine>
         )}
         {creature.damageResistances.length > 0 && (
-          <p>
-            <strong className="text-amber-400">Damage Resistances</strong>{" "}
-            <span className="text-foreground">
-              {formatDamage(creature.damageResistances)}
-            </span>
-          </p>
+          <StatLine label="Damage Resistances">
+            {formatDamage(creature.damageResistances)}
+          </StatLine>
         )}
         {creature.damageImmunities.length > 0 && (
-          <p>
-            <strong className="text-amber-400">Damage Immunities</strong>{" "}
-            <span className="text-foreground">
-              {formatDamage(creature.damageImmunities)}
-            </span>
-          </p>
+          <StatLine label="Damage Immunities">
+            {formatDamage(creature.damageImmunities)}
+          </StatLine>
         )}
         {creature.conditionImmunities.length > 0 && (
-          <p>
-            <strong className="text-amber-400">Condition Immunities</strong>{" "}
-            <span className="text-foreground">
-              {creature.conditionImmunities.join(", ")}
-            </span>
-          </p>
+          <StatLine label="Condition Immunities">
+            {creature.conditionImmunities.join(", ")}
+          </StatLine>
         )}
-        <p>
-          <strong className="text-amber-400">Senses</strong>{" "}
-          <span className="text-foreground">
-            {formatSenses(creature.senses)}, passive Perception {creature.passivePerception}
-          </span>
-        </p>
-        <p>
-          <strong className="text-amber-400">Languages</strong>{" "}
-          <span className="text-foreground">
-            {creature.languages.length > 0 ? creature.languages.join(", ") : "—"}
-          </span>
-        </p>
-        <p>
-          <strong className="text-amber-400">Challenge</strong>{" "}
-          <span className="text-foreground">
-            {creature.crDisplay} (Proficiency Bonus +{creature.proficiencyBonus}
-            {creature.pbNote ? `; ${creature.pbNote}` : ""})
-          </span>
-        </p>
+        <StatLine label="Senses">
+          {formatSenses(creature.senses)}, passive Perception{" "}
+          {creature.passivePerception}
+        </StatLine>
+        <StatLine label="Languages">
+          {creature.languages.length > 0 ? creature.languages.join(", ") : "—"}
+        </StatLine>
+        <StatLine label="Challenge">
+          {creature.crDisplay} (Proficiency Bonus +{creature.proficiencyBonus}
+          {creature.pbNote ? `; ${creature.pbNote}` : ""})
+        </StatLine>
         {creature.group && creature.group.length > 0 && (
-          <p>
-            <strong className="text-amber-400">Group</strong>{" "}
-            <span className="text-foreground">{creature.group.join(", ")}</span>
-          </p>
+          <StatLine label="Group">{creature.group.join(", ")}</StatLine>
         )}
         {creature.environment && creature.environment.length > 0 && (
-          <p>
-            <strong className="text-amber-400">Environment</strong>{" "}
-            <span className="text-foreground capitalize">
-              {creature.environment.join(", ")}
-            </span>
-          </p>
+          <StatLine label="Environment">
+            <span className="capitalize">{creature.environment.join(", ")}</span>
+          </StatLine>
         )}
       </div>
 
@@ -350,7 +352,7 @@ export function BestiaryStatBlock({ creature: rawCreature }: BestiaryStatBlockPr
                 ),
             )
             .map((block, i) => (
-              <div key={i} className="mt-3">
+              <div key={i} className="mt-3 break-words">
                 <p className="text-sm font-semibold text-foreground">{block.name}.</p>
                 <SpellcastingBlockView block={block} />
               </div>

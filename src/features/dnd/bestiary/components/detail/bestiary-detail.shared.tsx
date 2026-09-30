@@ -12,13 +12,13 @@ export function MetaRow({
   differs?: boolean;
 }) {
   return (
-    <div className="flex gap-2">
-      <span className="text-xs font-semibold text-muted-foreground uppercase tracking-wide w-28 shrink-0">
+    <div className="flex flex-col gap-0.5 sm:flex-row sm:gap-2">
+      <span className="text-xs font-semibold uppercase tracking-wide text-muted-foreground sm:w-28 sm:shrink-0">
         {label}
       </span>
       <span
         className={cn(
-          "text-sm",
+          "text-sm break-words",
           differs ? "text-amber-300 font-medium" : "text-foreground",
         )}
       >

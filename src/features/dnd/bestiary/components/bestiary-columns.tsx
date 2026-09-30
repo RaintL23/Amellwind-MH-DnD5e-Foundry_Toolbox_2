@@ -1,32 +1,8 @@
-import { ColumnDef, FilterFn } from "@tanstack/react-table";
+import { ColumnDef } from "@tanstack/react-table";
 import type { BestiaryCreature } from "@/shared/types/bestiary-creature.types";
 import { DataTableColumnHeader } from "@/components/data-table/data-table-column-header";
+import { parseCR } from "@/shared/utils/cr.utils";
 import { cn } from "@/shared/utils/cn";
-
-export const bestiaryGlobalFilter: FilterFn<BestiaryCreature> = (
-  row,
-  _columnId,
-  filterValue,
-) => {
-  const q = String(filterValue ?? "")
-    .trim()
-    .toLowerCase();
-  if (!q) return true;
-  const c = row.original;
-  if (c.searchText?.includes(q)) return true;
-  return (
-    c.name.toLowerCase().includes(q) ||
-    c.cr.toLowerCase().includes(q) ||
-    c.size.toLowerCase().includes(q) ||
-    c.type.type.toLowerCase().includes(q) ||
-    (c.variantSources?.some((s) => s.toLowerCase().includes(q)) ?? false)
-  );
-};
-
-const environmentFilter: FilterFn<BestiaryCreature> = (row, _columnId, filterValue) => {
-  if (!filterValue) return true;
-  return (row.original.environment ?? []).includes(String(filterValue));
-};
 
 function CrBadge({ cr }: { cr: string }) {
   return (
@@ -50,27 +26,16 @@ export const bestiaryColumns: ColumnDef<BestiaryCreature>[] = [
     cell: ({ row }) => (
       <span className="font-medium text-foreground">{row.original.name}</span>
     ),
+    sortingFn: "text",
   },
   {
-    accessorKey: "cr",
+    id: "cr",
+    accessorFn: (row) => parseCR(row.cr),
     header: ({ column }) => (
       <DataTableColumnHeader column={column} title="CR" />
     ),
     cell: ({ row }) => <CrBadge cr={row.original.crDisplay || row.original.cr} />,
-    filterFn: (row, _id, value) => {
-      if (!value) return true;
-      return row.original.cr === String(value);
-    },
-    sortingFn: (a, b) => {
-      const parse = (cr: string) => {
-        if (cr.includes("/")) {
-          const [n, d] = cr.split("/").map(Number);
-          return n / d;
-        }
-        return Number(cr) || 0;
-      };
-      return parse(a.original.cr) - parse(b.original.cr);
-    },
+    sortingFn: "basic",
   },
   {
     accessorKey: "size",
@@ -83,10 +48,6 @@ export const bestiaryColumns: ColumnDef<BestiaryCreature>[] = [
         {row.getValue("size")}
       </span>
     ),
-    filterFn: (row, _id, value) => {
-      if (!value) return true;
-      return row.original.size === String(value);
-    },
   },
   {
     id: "creatureType",
@@ -102,17 +63,6 @@ export const bestiaryColumns: ColumnDef<BestiaryCreature>[] = [
           : ""}
       </span>
     ),
-    filterFn: (row, _id, value) => {
-      if (!value) return true;
-      return row.original.type.type === String(value);
-    },
-  },
-  {
-    accessorKey: "environment",
-    header: () => null,
-    cell: () => null,
-    enableSorting: false,
-    filterFn: environmentFilter,
   },
   {
     accessorKey: "source",
@@ -135,11 +85,6 @@ export const bestiaryColumns: ColumnDef<BestiaryCreature>[] = [
           {label}
         </span>
       );
-    },
-    filterFn: (row, _id, value) => {
-      if (!value) return true;
-      const sources = row.original.variantSources ?? [row.original.source];
-      return sources.includes(String(value));
     },
   },
 ];

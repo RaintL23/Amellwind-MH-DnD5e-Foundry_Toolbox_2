@@ -17,6 +17,8 @@ const loadedSources = new Set<string>();
 let indexPromise: Promise<BestiaryIndex> | null = null;
 const poolByKey = new Map<string, RawMonster>();
 let monsterPool: RawMonster[] = [];
+/** True when pool has unresolved `_copy` stubs (or new merges since last resolve). */
+let poolNeedsResolve = false;
 
 function bestiaryLocalPath(fileName: string): string {
   return `bestiary/${fileName}`;
@@ -68,12 +70,23 @@ function mergeIntoPool(incoming: RawMonster[]): void {
     poolByKey.set(creatureEntityKey(m.name, m.source), m);
   }
   monsterPool = Array.from(poolByKey.values());
+  poolNeedsResolve = true;
 }
 
 function resolvePool(): void {
-  monsterPool = resolveByNameSource(monsterPool);
+  if (!poolNeedsResolve) return;
+  monsterPool = resolveByNameSource(monsterPool, { cloneAll: false });
+  poolByKey.clear();
+  for (const m of monsterPool) {
+    poolByKey.set(creatureEntityKey(m.name, m.source), m);
+  }
+  poolNeedsResolve = false;
 }
 
+/**
+ * Fetch a bestiary file (and its `_meta.dependencies`) and merge into the pool
+ * without resolving `_copy`. Call `resolvePool()` once after a batch of loads.
+ */
 async function loadFile(fileName: string): Promise<void> {
   if (loadedFileNames.has(fileName)) return;
 
@@ -88,12 +101,12 @@ async function loadFile(fileName: string): Promise<void> {
 
   const monsters = applyOtherSources(raw.monster ?? [], raw._meta);
   mergeIntoPool(monsters);
-  resolvePool();
   loadedFileNames.add(fileName);
 }
 
 export async function loadBestiarySource(source: string): Promise<RawMonster[]> {
   if (loadedSources.has(source)) {
+    resolvePool();
     return monsterPool.filter((m) => m.source === source);
   }
 
@@ -104,6 +117,7 @@ export async function loadBestiarySource(source: string): Promise<RawMonster[]> 
   try {
     await loadFile(fileName);
     loadedSources.add(source);
+    resolvePool();
   } catch (err) {
     console.warn(`Failed to load bestiary source ${source}:`, err);
     return [];
@@ -113,12 +127,32 @@ export async function loadBestiarySource(source: string): Promise<RawMonster[]> 
 }
 
 export async function loadBestiarySources(sources: string[]): Promise<RawMonster[]> {
-  await Promise.all(sources.map((s) => loadBestiarySource(s)));
+  const toLoad = sources.filter((s) => !loadedSources.has(s));
+  if (toLoad.length > 0) {
+    const index = await getBestiaryIndex();
+    await Promise.all(
+      toLoad.map(async (source) => {
+        const fileName = index[source];
+        if (!fileName) return;
+        try {
+          await loadFile(fileName);
+          loadedSources.add(source);
+        } catch (err) {
+          console.warn(`Failed to load bestiary source ${source}:`, err);
+        }
+      }),
+    );
+    resolvePool();
+  } else {
+    resolvePool();
+  }
+
   const sourceSet = new Set(sources);
   return monsterPool.filter((m) => sourceSet.has(m.source));
 }
 
 export function getAllRawMonsters(): RawMonster[] {
+  resolvePool();
   return [...monsterPool];
 }
 
@@ -127,6 +161,7 @@ export function clearBestiaryBuilderCache(): void {
   loadedSources.clear();
   poolByKey.clear();
   monsterPool = [];
+  poolNeedsResolve = false;
   indexPromise = null;
 }
 
