@@ -1,5 +1,4 @@
-import { ListAreaLoading } from "@/shared/components/ListAreaLoading";
-import { useCallback, useMemo } from "react";
+import { useCallback, useDeferredValue, useMemo } from "react";
 import { Spell } from "@/shared/types";
 import {
   ensureSpellUaSourcesLoaded,
@@ -13,8 +12,10 @@ import {
   ListSearchWithFilters,
   type ListFilterValues,
 } from "@/shared/components/list-filters";
-import { entityMatchesSourceFilter } from "@/shared/utils/compendium-source-filter.utils";
-import { SPELL_LIST_FILTER_CLASSES } from "../utils/spell-class.constants";
+import {
+  DeferredListResults,
+  StickyListSearchBar,
+} from "@/shared/components/DeferredListResults";
 import {
   buildSpellFacetFilterSections,
   collectSpellPresentFacets,
@@ -22,6 +23,7 @@ import {
   spellMatchesFacetFilters,
   type SpellListMultiKey,
 } from "../utils/spell-list-filters";
+import { SPELL_LIST_FILTER_CLASSES } from "../utils/spell-class.constants";
 import { SpellDetailDialog } from "./SpellDetailDialog";
 import { SpellDataTable } from "./SpellDataTable";
 import { Sparkles } from "lucide-react";
@@ -36,12 +38,11 @@ export function SpellList() {
     getAll,
     patchFilters,
     sourceSection,
+    sourceMatcher,
     searchDraft,
     setSearchDraft,
     appliedSearch,
     isSearchPending,
-    bookNames,
-    catalog,
     dialog,
   } = useCompendiumListPage<Spell>({
     session: {
@@ -101,11 +102,20 @@ export function SpellList() {
     return values;
   }, [multi]);
 
-  const filtered = useMemo(() => {
-    let result = listSpells;
+  const filterInput = useMemo(
+    () => ({ appliedSearch, filterValues, sourceMatcher }),
+    [appliedSearch, filterValues, sourceMatcher],
+  );
+  const deferredInput = useDeferredValue(filterInput);
+  const deferredList = useDeferredValue(listSpells);
+  const isFilterDeferred =
+    deferredInput !== filterInput || deferredList !== listSpells;
 
-    if (appliedSearch.trim()) {
-      const query = appliedSearch.toLowerCase();
+  const filtered = useMemo(() => {
+    let result = deferredList;
+
+    if (deferredInput.appliedSearch.trim()) {
+      const query = deferredInput.appliedSearch.toLowerCase();
       result = result.filter(
         (s) =>
           s.name.toLowerCase().includes(query) ||
@@ -115,15 +125,17 @@ export function SpellList() {
       );
     }
 
+    const matcher = deferredInput.sourceMatcher;
     result = result.filter((s) =>
-      spellMatchesFacetFilters(s, filterValues, {
-        sourceMatcher: (spell, selected) =>
-          entityMatchesSourceFilter(spell, selected, catalog, bookNames),
+      spellMatchesFacetFilters(s, deferredInput.filterValues, {
+        sourceMatcher: matcher
+          ? (spell, _selected) => matcher(spell)
+          : undefined,
       }),
     );
 
     return result;
-  }, [listSpells, appliedSearch, filterValues, catalog, bookNames]);
+  }, [deferredList, deferredInput]);
 
   const handleSelect = useCallback(
     (spell: Spell) => {
@@ -140,11 +152,13 @@ export function SpellList() {
     patchFilters(patch);
   }
 
+  const showUpdating = isSearchPending || isFilterDeferred;
+
   return (
-    <div className="flex flex-col h-full min-h-0">
-      <div className="shrink-0 border-b border-border px-4 py-4 md:px-6 md:py-5">
-        <div className="flex items-center gap-3 mb-1">
-          <Sparkles className="h-6 w-6 text-violet-400" />
+    <div className="flex h-full min-h-0 flex-col">
+      <div className="shrink-0 border-b border-border px-4 py-3 md:px-6 md:py-5">
+        <div className="mb-1 flex items-center gap-3">
+          <Sparkles className="h-6 w-6 shrink-0 text-violet-400" />
           <h1 className="text-xl font-bold text-foreground">Spells (D&amp;D 5e)</h1>
           {!loading && (
             <span className="ml-2 rounded-full bg-muted px-2.5 py-0.5 text-xs text-muted-foreground">
@@ -155,12 +169,12 @@ export function SpellList() {
             </span>
           )}
         </div>
-        <p className="text-sm text-muted-foreground">
+        <p className="hidden text-sm text-muted-foreground sm:block">
           One row per spell name; open a spell to compare sources (PHB, XPHB, etc.).
         </p>
       </div>
 
-      <div className="shrink-0 border-b border-border bg-card/50 px-4 py-3 md:px-6">
+      <StickyListSearchBar updating={showUpdating && !loading}>
         <ListSearchWithFilters
           searchValue={searchDraft}
           onSearchChange={setSearchDraft}
@@ -172,19 +186,22 @@ export function SpellList() {
           dialogTitle="Spell Filters"
           dialogDescription="Filter like 5etools: level, class, school, components, damage, saves, cast time, and more. Changes apply when you save."
         />
-      </div>
+      </StickyListSearchBar>
 
       <div className="flex-1 overflow-y-auto px-4 py-4 md:px-6 md:py-6">
-        {loading || isSearchPending ? (
-          <ListAreaLoading />
-        ) : listSpells.length === 0 ? (
-          <div className="flex flex-col items-center justify-center h-48 text-muted-foreground gap-2">
-            <Sparkles className="h-10 w-10 opacity-20" />
-            <p className="text-sm">No spells loaded.</p>
-          </div>
-        ) : (
+        <DeferredListResults
+          loading={loading}
+          updating={showUpdating}
+          isEmpty={listSpells.length === 0}
+          empty={
+            <div className="flex h-48 flex-col items-center justify-center gap-2 text-muted-foreground">
+              <Sparkles className="h-10 w-10 opacity-20" />
+              <p className="text-sm">No spells loaded.</p>
+            </div>
+          }
+        >
           <SpellDataTable spells={filtered} onRowClick={handleSelect} />
-        )}
+        </DeferredListResults>
       </div>
 
       {dialog?.dialogOpen && dialog.selected && (

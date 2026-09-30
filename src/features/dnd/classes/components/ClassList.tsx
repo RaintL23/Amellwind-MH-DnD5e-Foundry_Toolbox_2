@@ -1,4 +1,4 @@
-import { useCallback, useEffect, useMemo } from "react";
+import { useCallback, useDeferredValue, useEffect, useMemo } from "react";
 import { useNavigate } from "react-router-dom";
 import { Class } from "@/shared/types";
 import { useClassList } from "../hooks/useClassList";
@@ -8,7 +8,6 @@ import {
 } from "../services/class.service";
 import { ClassDataTable } from "./ClassDataTable";
 import { ClassListHeader } from "./ClassListHeader";
-import { ClassListLoading } from "./ClassListLoading";
 import { ClassListEmpty } from "./ClassListEmpty";
 import { useBookSourceNames } from "@/shared/hooks/useBookSourceNames";
 import { useSourceCatalog } from "@/shared/hooks/useSourceCatalog";
@@ -19,8 +18,12 @@ import {
   type ListFilterValues,
 } from "@/shared/components/list-filters";
 import {
+  DeferredListResults,
+  StickyListSearchBar,
+} from "@/shared/components/DeferredListResults";
+import {
   buildSourcesFilterSection,
-  entityMatchesSourceFilter,
+  createSourceFilterMatcher,
 } from "@/shared/utils/compendium-source-filter.utils";
 import { defaultOfficialSourceCodes } from "@/shared/services/source-catalog.service";
 import { CASTER_OPTIONS } from "./table/class-table.constants";
@@ -61,7 +64,7 @@ export function ClassList() {
   }, [sourceFilter, refresh]);
 
   const commitSearch = useCallback(
-    (q: string) => patchFilters({ q }),
+    (next: string) => patchFilters({ q: next }),
     [patchFilters],
   );
   const { searchDraft, setSearchDraft, appliedSearch, isSearchPending } =
@@ -85,11 +88,27 @@ export function ClassList() {
     [sourceSection],
   );
 
-  const filtered = useMemo(() => {
-    let result = listClasses;
+  const sourceMatcher = useMemo(() => {
+    if (sourceFilter.length === 0) return null;
+    return createSourceFilterMatcher(sourceFilter, catalog, bookNames);
+  }, [sourceFilter, catalog, bookNames]);
 
-    if (appliedSearch.trim()) {
-      const q = appliedSearch.toLowerCase();
+  const filterInput = useMemo(
+    () => ({ appliedSearch, casters, sourceMatcher }),
+    [appliedSearch, casters, sourceMatcher],
+  );
+  const deferredInput = useDeferredValue(filterInput);
+  const deferredList = useDeferredValue(listClasses);
+  const isFilterDeferred =
+    deferredInput !== filterInput || deferredList !== listClasses;
+
+  const filtered = useMemo(() => {
+    let result = deferredList;
+    const { appliedSearch: search, casters: casterVals, sourceMatcher: matcher } =
+      deferredInput;
+
+    if (search.trim()) {
+      const q = search.toLowerCase();
       result = result.filter(
         (cls) =>
           (cls.searchText?.includes(q) ?? false) ||
@@ -102,21 +121,20 @@ export function ClassList() {
       );
     }
 
-    if (casters.length > 0) {
+    if (casterVals.length > 0) {
+      const casterSet = new Set(casterVals);
       result = result.filter((cls) => {
         const progression = cls.casterProgression ?? "none";
-        return casters.includes(progression);
+        return casterSet.has(progression);
       });
     }
 
-    if (sourceFilter.length > 0) {
-      result = result.filter((cls) =>
-        entityMatchesSourceFilter(cls, sourceFilter, catalog, bookNames),
-      );
+    if (matcher) {
+      result = result.filter((cls) => matcher(cls));
     }
 
     return result;
-  }, [listClasses, appliedSearch, casters, sourceFilter, catalog, bookNames]);
+  }, [deferredList, deferredInput]);
 
   const handleSelect = useCallback(
     async (row: Class) => {
@@ -135,8 +153,10 @@ export function ClassList() {
     });
   }
 
+  const showUpdating = isSearchPending || isFilterDeferred;
+
   return (
-    <div className="flex flex-col h-full min-h-0">
+    <div className="flex h-full min-h-0 flex-col">
       <ClassListHeader
         loading={loading}
         filteredCount={filtered.length}
@@ -144,7 +164,7 @@ export function ClassList() {
         totalCount={classes.length}
       />
 
-      <div className="shrink-0 border-b border-border bg-card/50 px-4 py-3 md:px-6">
+      <StickyListSearchBar updating={showUpdating && !loading}>
         <ListSearchWithFilters
           searchValue={searchDraft}
           onSearchChange={setSearchDraft}
@@ -159,16 +179,17 @@ export function ClassList() {
           dialogTitle="Class Filters"
           dialogDescription="Filter by spellcasting progression and sourcebook. Changes apply when you save."
         />
-      </div>
+      </StickyListSearchBar>
 
       <div className="flex-1 overflow-y-auto px-4 py-4 md:px-6 md:py-6">
-        {loading || isSearchPending ? (
-          <ClassListLoading />
-        ) : listClasses.length === 0 ? (
-          <ClassListEmpty />
-        ) : (
+        <DeferredListResults
+          loading={loading}
+          updating={showUpdating}
+          isEmpty={listClasses.length === 0}
+          empty={<ClassListEmpty />}
+        >
           <ClassDataTable classes={filtered} onRowClick={handleSelect} />
-        )}
+        </DeferredListResults>
       </div>
     </div>
   );

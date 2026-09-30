@@ -1,5 +1,4 @@
-import { ListAreaLoading } from "@/shared/components/ListAreaLoading";
-import { useCallback, useEffect, useMemo, useState } from "react";
+import { useCallback, useDeferredValue, useEffect, useMemo, useState } from "react";
 import { DndItem } from "@/shared/types";
 import { Package } from "lucide-react";
 import {
@@ -19,8 +18,12 @@ import {
   type ListFilterValues,
 } from "@/shared/components/list-filters";
 import {
+  DeferredListResults,
+  StickyListSearchBar,
+} from "@/shared/components/DeferredListResults";
+import {
   buildSourcesFilterSection,
-  entityMatchesSourceFilter,
+  createSourceFilterMatcher,
 } from "@/shared/utils/compendium-source-filter.utils";
 import { defaultOfficialSourceCodes } from "@/shared/services/source-catalog.service";
 import { DndItemDataTable } from "./DndItemDataTable";
@@ -179,11 +182,47 @@ export function DndItemList() {
     [rarityOptions, typeOptions, sourceSection],
   );
 
-  const filtered = useMemo(() => {
-    let result = listItems;
+  const filterInput = useMemo(
+    () => ({
+      appliedSearch,
+      mundaneMagic,
+      rarities,
+      types,
+      attunement,
+      sourceMatcher:
+        sourceFilter.length > 0
+          ? createSourceFilterMatcher(sourceFilter, catalog, bookNames)
+          : null,
+    }),
+    [
+      appliedSearch,
+      mundaneMagic,
+      rarities,
+      types,
+      attunement,
+      sourceFilter,
+      catalog,
+      bookNames,
+    ],
+  );
+  const deferredInput = useDeferredValue(filterInput);
+  const deferredList = useDeferredValue(listItems);
+  const isFilterDeferred =
+    deferredInput !== filterInput || deferredList !== listItems;
 
-    if (appliedSearch.trim()) {
-      const q = appliedSearch.toLowerCase();
+  const filtered = useMemo(() => {
+    let result = deferredList;
+    const {
+      appliedSearch: search,
+      mundaneMagic: magic,
+      rarities: rarityVals,
+      types: typeVals,
+      attunement: attune,
+      sourceMatcher: matcher,
+    } = deferredInput;
+
+    if (search.trim()) {
+      const q = search.toLowerCase();
       result = result.filter(
         (item) =>
           item.searchText.includes(q) ||
@@ -194,44 +233,34 @@ export function DndItemList() {
       );
     }
 
-    if (mundaneMagic === "mundane") {
+    if (magic === "mundane") {
       result = result.filter((i) => i.isMundane);
-    } else if (mundaneMagic === "magic") {
+    } else if (magic === "magic") {
       result = result.filter((i) => i.isMagic);
     }
 
-    if (rarities.length > 0) {
-      result = result.filter((i) => rarities.includes(i.rarity));
+    if (rarityVals.length > 0) {
+      const raritySet = new Set(rarityVals);
+      result = result.filter((i) => raritySet.has(i.rarity));
     }
 
-    if (types.length > 0) {
-      result = result.filter((i) => types.includes(i.typeLabel));
+    if (typeVals.length > 0) {
+      const typeSet = new Set(typeVals);
+      result = result.filter((i) => typeSet.has(i.typeLabel));
     }
 
-    if (attunement === "yes") {
+    if (attune === "yes") {
       result = result.filter((i) => i.attunement != null);
-    } else if (attunement === "no") {
+    } else if (attune === "no") {
       result = result.filter((i) => i.attunement == null);
     }
 
-    if (sourceFilter.length > 0) {
-      result = result.filter((i) =>
-        entityMatchesSourceFilter(i, sourceFilter, catalog, bookNames),
-      );
+    if (matcher) {
+      result = result.filter((i) => matcher(i));
     }
 
     return result;
-  }, [
-    listItems,
-    appliedSearch,
-    mundaneMagic,
-    rarities,
-    types,
-    attunement,
-    sourceFilter,
-    catalog,
-    bookNames,
-  ]);
+  }, [deferredList, deferredInput]);
 
   const generatedVariantCount = useMemo(
     () => items.filter((i) => i.isSpecificVariant).length,
@@ -295,11 +324,13 @@ export function DndItemList() {
     });
   }
 
+  const showUpdating = isSearchPending || isFilterDeferred;
+
   return (
-    <div className="flex flex-col h-full min-h-0">
-      <div className="shrink-0 border-b border-border px-4 py-4 md:px-6 md:py-5">
-        <div className="flex items-center gap-3 mb-1">
-          <Package className="h-6 w-6 text-amber-400" />
+    <div className="flex h-full min-h-0 flex-col">
+      <div className="shrink-0 border-b border-border px-4 py-3 md:px-6 md:py-5">
+        <div className="mb-1 flex items-center gap-3">
+          <Package className="h-6 w-6 shrink-0 text-amber-400" />
           <h1 className="text-xl font-bold text-foreground">Items (D&amp;D 5e)</h1>
           {!loading && !error && (
             <span className="ml-2 rounded-full bg-muted px-2.5 py-0.5 text-xs text-muted-foreground">
@@ -319,13 +350,13 @@ export function DndItemList() {
             </span>
           )}
         </div>
-        <p className="text-sm text-muted-foreground">
+        <p className="hidden text-sm text-muted-foreground sm:block">
           One row per item name; open an item to compare sources (PHB, DMG, XPHB,
           etc.).
         </p>
       </div>
 
-      <div className="shrink-0 border-b border-border bg-card/50 px-4 py-3 md:px-6">
+      <StickyListSearchBar updating={showUpdating && !loading}>
         <ListSearchWithFilters
           searchValue={searchDraft}
           onSearchChange={setSearchDraft}
@@ -343,23 +374,28 @@ export function DndItemList() {
           dialogTitle="Item Filters"
           dialogDescription="Filter by mundane/magic, rarity, type, attunement, and sourcebook. Changes apply when you save."
         />
-      </div>
+      </StickyListSearchBar>
 
       <div className="flex-1 overflow-y-auto px-4 py-4 md:px-6 md:py-6">
-        {loading || isSearchPending ? (
-          <ListAreaLoading />
-        ) : error ? (
-          <div className="flex flex-col items-center justify-center h-48 text-muted-foreground gap-2">
+        {error ? (
+          <div className="flex h-48 flex-col items-center justify-center gap-2 text-muted-foreground">
             <Package className="h-10 w-10 opacity-20" />
             <p className="text-sm text-destructive">{error}</p>
           </div>
-        ) : listItems.length === 0 ? (
-          <div className="flex flex-col items-center justify-center h-48 text-muted-foreground gap-2">
-            <Package className="h-10 w-10 opacity-20" />
-            <p className="text-sm">No items loaded.</p>
-          </div>
         ) : (
-          <DndItemDataTable items={filtered} onRowClick={handleSelect} />
+          <DeferredListResults
+            loading={loading}
+            updating={showUpdating}
+            isEmpty={listItems.length === 0}
+            empty={
+              <div className="flex h-48 flex-col items-center justify-center gap-2 text-muted-foreground">
+                <Package className="h-10 w-10 opacity-20" />
+                <p className="text-sm">No items loaded.</p>
+              </div>
+            }
+          >
+            <DndItemDataTable items={filtered} onRowClick={handleSelect} />
+          </DeferredListResults>
         )}
       </div>
 

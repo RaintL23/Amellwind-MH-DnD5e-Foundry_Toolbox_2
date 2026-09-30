@@ -280,12 +280,22 @@ export function MonsterList() {
         dialogTitle="Monster Filters"
         dialogDescription="Filter by CR, tier, type (including MH subtypes), and environment. Changes apply when you save."
       />
+      {isSearchPending && !loading && (
+        <p className="mb-2 text-[11px] text-muted-foreground" aria-live="polite">
+          Updating…
+        </p>
+      )}
 
-      {loading || isSearchPending ? (
+      {loading ? (
         <ListAreaLoading />
       ) : (
-        <>
-          <div className="flex min-h-0 flex-1 flex-col overflow-hidden">
+        <div
+          className={
+            isSearchPending
+              ? "flex min-h-0 flex-1 flex-col overflow-hidden opacity-60 transition-opacity duration-150"
+              : "flex min-h-0 flex-1 flex-col overflow-hidden transition-opacity duration-150"
+          }
+        >
             {/* Mobile card list */}
             <div className="min-h-0 flex-1 space-y-2 overflow-y-auto md:hidden">
               {paginated.map((monster) => {
@@ -413,7 +423,6 @@ export function MonsterList() {
                 </tbody>
               </table>
             </div>
-          </div>
 
           <div className="relative z-10 shrink-0 border-t border-border bg-background pt-3">
             <Pagination
@@ -425,7 +434,7 @@ export function MonsterList() {
               onPageSizeChange={handlePageSizeChange}
             />
           </div>
-        </>
+        </div>
       )}
     </div>
   );

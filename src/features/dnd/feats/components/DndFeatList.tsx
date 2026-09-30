@@ -1,5 +1,4 @@
-import { ListAreaLoading } from "@/shared/components/ListAreaLoading";
-import { useEffect, useMemo, useState, useCallback } from "react";
+import { useEffect, useMemo, useState, useCallback, useDeferredValue } from "react";
 import type { DndFeat } from "@/shared/types";
 import {
   ensureDndFeatUaSourcesLoaded,
@@ -11,7 +10,10 @@ import {
 import { useCompendiumListPage } from "@/shared/hooks/useCompendiumListPage";
 import { ListSearchWithFilters } from "@/shared/components/list-filters";
 import type { ListFilterValues } from "@/shared/components/list-filters";
-import { entityMatchesSourceFilter } from "@/shared/utils/compendium-source-filter.utils";
+import {
+  DeferredListResults,
+  StickyListSearchBar,
+} from "@/shared/components/DeferredListResults";
 import {
   buildDndFeatFilterSections,
   collectDndFeatPresentFacets,
@@ -35,12 +37,11 @@ export function DndFeatList() {
     getAll,
     patchFilters,
     sourceSection,
+    sourceMatcher,
     searchDraft,
     setSearchDraft,
     appliedSearch,
     isSearchPending,
-    bookNames,
-    catalog,
     dialog,
   } = useCompendiumListPage<DndFeat>({
     session: {
@@ -90,11 +91,20 @@ export function DndFeatList() {
     return values;
   }, [multi, repeat]);
 
-  const filtered = useMemo(() => {
-    let result = listFeats;
+  const filterInput = useMemo(
+    () => ({ appliedSearch, filterValues, sourceMatcher }),
+    [appliedSearch, filterValues, sourceMatcher],
+  );
+  const deferredInput = useDeferredValue(filterInput);
+  const deferredList = useDeferredValue(listFeats);
+  const isFilterDeferred =
+    deferredInput !== filterInput || deferredList !== listFeats;
 
-    if (appliedSearch.trim()) {
-      const q = appliedSearch.toLowerCase();
+  const filtered = useMemo(() => {
+    let result = deferredList;
+
+    if (deferredInput.appliedSearch.trim()) {
+      const q = deferredInput.appliedSearch.toLowerCase();
       result = result.filter(
         (f) =>
           f.name.toLowerCase().includes(q) ||
@@ -107,15 +117,17 @@ export function DndFeatList() {
       );
     }
 
+    const matcher = deferredInput.sourceMatcher;
     result = result.filter((f) =>
-      dndFeatMatchesFacetFilters(f, filterValues, {
-        sourceMatcher: (feat, selected) =>
-          entityMatchesSourceFilter(feat, selected, catalog, bookNames),
+      dndFeatMatchesFacetFilters(f, deferredInput.filterValues, {
+        sourceMatcher: matcher
+          ? (feat, _selected) => matcher(feat)
+          : undefined,
       }),
     );
 
     return [...result].sort((a, b) => a.name.localeCompare(b.name));
-  }, [listFeats, appliedSearch, filterValues, catalog, bookNames]);
+  }, [deferredList, deferredInput]);
 
   useEffect(() => {
     setPage(1);
@@ -152,11 +164,13 @@ export function DndFeatList() {
     patchFilters(patch);
   }
 
+  const showUpdating = isSearchPending || isFilterDeferred;
+
   return (
-    <div className="flex flex-col h-full min-h-0">
-      <div className="shrink-0 border-b border-border px-4 py-4 md:px-6 md:py-5">
-        <div className="flex items-center gap-3 mb-1">
-          <Award className="h-6 w-6 text-amber-400" />
+    <div className="flex h-full min-h-0 flex-col">
+      <div className="shrink-0 border-b border-border px-4 py-3 md:px-6 md:py-5">
+        <div className="mb-1 flex items-center gap-3">
+          <Award className="h-6 w-6 shrink-0 text-amber-400" />
           <h1 className="text-xl font-bold text-foreground">Feats (D&amp;D 5e)</h1>
           {!loading && (
             <span className="ml-2 rounded-full bg-muted px-2.5 py-0.5 text-xs text-muted-foreground">
@@ -167,13 +181,13 @@ export function DndFeatList() {
             </span>
           )}
         </div>
-        <p className="text-sm text-muted-foreground">
+        <p className="hidden text-sm text-muted-foreground sm:block">
           Official feats from D&amp;D 5e sourcebooks, including Origin Feats from
           the 2024 rules.
         </p>
       </div>
 
-      <div className="shrink-0 border-b border-border bg-card/50 px-4 py-3 md:px-6">
+      <StickyListSearchBar updating={showUpdating && !loading}>
         <ListSearchWithFilters
           searchValue={searchDraft}
           onSearchChange={setSearchDraft}
@@ -185,26 +199,30 @@ export function DndFeatList() {
           dialogTitle="Feat Filters"
           dialogDescription="Filter by kind, category, ability increases, prerequisites, prerequisite level, and sourcebook. Changes apply when you save."
         />
-      </div>
+      </StickyListSearchBar>
 
       <div className="flex-1 overflow-y-auto px-4 py-4 md:px-6 md:py-6">
-        {loading || isSearchPending ? (
-          <ListAreaLoading variant="cards" />
-        ) : filtered.length === 0 ? (
-          <div className="flex flex-col items-center justify-center h-48 text-muted-foreground gap-2">
-            <Award className="h-10 w-10 opacity-20" />
-            <p className="text-sm">No feats found with those filters.</p>
-          </div>
-        ) : (
-          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
+        <DeferredListResults
+          loading={loading}
+          updating={showUpdating}
+          loadingVariant="cards"
+          isEmpty={filtered.length === 0 && !showUpdating}
+          empty={
+            <div className="flex h-48 flex-col items-center justify-center gap-2 text-muted-foreground">
+              <Award className="h-10 w-10 opacity-20" />
+              <p className="text-sm">No feats found with those filters.</p>
+            </div>
+          }
+        >
+          <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-3">
             {paginated.map((item) => (
               <DndFeatCard key={item.id} feat={item} onSelect={handleSelect} />
             ))}
           </div>
-        )}
+        </DeferredListResults>
       </div>
 
-      {!loading && !isSearchPending && filtered.length > 0 && (
+      {!loading && filtered.length > 0 && (
         <div className="shrink-0 border-t border-border px-4 py-3 md:px-6">
           <Pagination
             page={safePage}

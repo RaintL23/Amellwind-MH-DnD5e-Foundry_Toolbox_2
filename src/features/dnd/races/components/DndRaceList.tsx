@@ -1,5 +1,4 @@
-import { ListAreaLoading } from "@/shared/components/ListAreaLoading";
-import { useCallback, useMemo } from "react";
+import { useCallback, useDeferredValue, useMemo } from "react";
 import type { DndRace } from "@/shared/types";
 import { DND_RACE_KIND_LABELS } from "@/shared/types";
 import { Users } from "lucide-react";
@@ -15,6 +14,10 @@ import {
   ListSearchWithFilters,
   type ListFilterValues,
 } from "@/shared/components/list-filters";
+import {
+  DeferredListResults,
+  StickyListSearchBar,
+} from "@/shared/components/DeferredListResults";
 import { SIZE_FILTER_OPTIONS } from "@/features/dnd/bestiary/components/bestiary-columns";
 import { DndRaceDataTable } from "./DndRaceDataTable";
 import { DndRaceDetailDialog } from "@/features/dnd/races/components/DndRaceDetailDialog";
@@ -34,7 +37,7 @@ export function DndRaceList() {
     patchFilters,
     sourceFilter,
     sourceSection,
-    matchesSourceFilter,
+    sourceMatcher,
     searchDraft,
     setSearchDraft,
     appliedSearch,
@@ -83,11 +86,22 @@ export function DndRaceList() {
     [sourceSection],
   );
 
-  const filtered = useMemo(() => {
-    let result = listRaces;
+  const filterInput = useMemo(
+    () => ({ appliedSearch, kinds, sizes, sourceMatcher }),
+    [appliedSearch, kinds, sizes, sourceMatcher],
+  );
+  const deferredInput = useDeferredValue(filterInput);
+  const deferredList = useDeferredValue(listRaces);
+  const isFilterDeferred =
+    deferredInput !== filterInput || deferredList !== listRaces;
 
-    if (appliedSearch.trim()) {
-      const q = appliedSearch.toLowerCase();
+  const filtered = useMemo(() => {
+    let result = deferredList;
+    const { appliedSearch: search, kinds: kindVals, sizes: sizeVals, sourceMatcher: matcher } =
+      deferredInput;
+
+    if (search.trim()) {
+      const q = search.toLowerCase();
       result = result.filter(
         (race) =>
           (race.searchText?.includes(q) ?? false) ||
@@ -98,22 +112,24 @@ export function DndRaceList() {
       );
     }
 
-    if (kinds.length > 0) {
-      result = result.filter((race) => kinds.includes(race.kind));
+    if (kindVals.length > 0) {
+      const kindSet = new Set(kindVals);
+      result = result.filter((race) => kindSet.has(race.kind));
     }
 
-    if (sizes.length > 0) {
+    if (sizeVals.length > 0) {
+      const sizeSet = new Set(sizeVals);
       result = result.filter((race) =>
-        race.sizes.some((s) => sizes.includes(s)),
+        race.sizes.some((s) => sizeSet.has(s)),
       );
     }
 
-    if (sourceFilter.length > 0) {
-      result = result.filter((race) => matchesSourceFilter(race, sourceFilter));
+    if (matcher) {
+      result = result.filter((race) => matcher(race));
     }
 
     return result;
-  }, [listRaces, appliedSearch, kinds, sizes, sourceFilter, matchesSourceFilter]);
+  }, [deferredList, deferredInput]);
 
   const handleSelect = useCallback(
     (race: DndRace) => dialog?.openItem(race),
@@ -128,11 +144,13 @@ export function DndRaceList() {
     });
   }
 
+  const showUpdating = isSearchPending || isFilterDeferred;
+
   return (
-    <div className="flex flex-col h-full min-h-0">
-      <div className="shrink-0 border-b border-border px-4 py-4 md:px-6 md:py-5">
-        <div className="flex items-center gap-3 mb-1">
-          <Users className="h-6 w-6 text-emerald-400" />
+    <div className="flex h-full min-h-0 flex-col">
+      <div className="shrink-0 border-b border-border px-4 py-3 md:px-6 md:py-5">
+        <div className="mb-1 flex items-center gap-3">
+          <Users className="h-6 w-6 shrink-0 text-emerald-400" />
           <h1 className="text-xl font-bold text-foreground">
             Races (D&amp;D 5e)
           </h1>
@@ -145,12 +163,12 @@ export function DndRaceList() {
             </span>
           )}
         </div>
-        <p className="text-sm text-muted-foreground">
+        <p className="hidden text-sm text-muted-foreground sm:block">
           Official species, subraces, and lineages from D&amp;D 5e sourcebooks.
         </p>
       </div>
 
-      <div className="shrink-0 border-b border-border bg-card/50 px-4 py-3 md:px-6">
+      <StickyListSearchBar updating={showUpdating && !loading}>
         <ListSearchWithFilters
           searchValue={searchDraft}
           onSearchChange={setSearchDraft}
@@ -166,19 +184,22 @@ export function DndRaceList() {
           dialogTitle="Race Filters"
           dialogDescription="Filter by kind, size, and sourcebook. Changes apply when you save."
         />
-      </div>
+      </StickyListSearchBar>
 
       <div className="flex-1 overflow-y-auto px-4 py-4 md:px-6 md:py-6">
-        {loading || isSearchPending ? (
-          <ListAreaLoading />
-        ) : listRaces.length === 0 ? (
-          <div className="flex flex-col items-center justify-center h-48 text-muted-foreground gap-2">
-            <Users className="h-10 w-10 opacity-20" />
-            <p className="text-sm">No races loaded.</p>
-          </div>
-        ) : (
+        <DeferredListResults
+          loading={loading}
+          updating={showUpdating}
+          isEmpty={listRaces.length === 0}
+          empty={
+            <div className="flex h-48 flex-col items-center justify-center gap-2 text-muted-foreground">
+              <Users className="h-10 w-10 opacity-20" />
+              <p className="text-sm">No races loaded.</p>
+            </div>
+          }
+        >
           <DndRaceDataTable races={filtered} onRowClick={handleSelect} />
-        )}
+        </DeferredListResults>
       </div>
 
       {dialog?.dialogOpen && dialog.selected && (

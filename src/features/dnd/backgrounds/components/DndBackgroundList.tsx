@@ -1,5 +1,4 @@
-import { ListAreaLoading } from "@/shared/components/ListAreaLoading";
-import { useCallback, useMemo } from "react";
+import { useCallback, useDeferredValue, useMemo } from "react";
 import type { DndBackground } from "@/shared/types";
 import { DND_BACKGROUND_EDITION_LABELS } from "@/shared/types";
 import { ScrollText } from "lucide-react";
@@ -14,8 +13,10 @@ import {
   type ListFilterValues,
 } from "@/shared/components/list-filters";
 import {
-  collectEntitySources,
-} from "@/shared/services/source-catalog.service";
+  DeferredListResults,
+  StickyListSearchBar,
+} from "@/shared/components/DeferredListResults";
+import { collectEntitySources } from "@/shared/services/source-catalog.service";
 import { DndBackgroundDataTable } from "./DndBackgroundDataTable";
 import { DndBackgroundDetailDialog } from "./DndBackgroundDetailDialog";
 
@@ -32,7 +33,7 @@ export function DndBackgroundList() {
     patchFilters,
     sourceFilter,
     sourceSection,
-    matchesSourceFilter,
+    sourceMatcher,
     searchDraft,
     setSearchDraft,
     appliedSearch,
@@ -76,11 +77,22 @@ export function DndBackgroundList() {
     [sourceSection],
   );
 
-  const filtered = useMemo(() => {
-    let result = listBackgrounds;
+  const filterInput = useMemo(
+    () => ({ appliedSearch, editions, sourceMatcher }),
+    [appliedSearch, editions, sourceMatcher],
+  );
+  const deferredInput = useDeferredValue(filterInput);
+  const deferredList = useDeferredValue(listBackgrounds);
+  const isFilterDeferred =
+    deferredInput !== filterInput || deferredList !== listBackgrounds;
 
-    if (appliedSearch.trim()) {
-      const q = appliedSearch.toLowerCase();
+  const filtered = useMemo(() => {
+    let result = deferredList;
+    const { appliedSearch: search, editions: editionVals, sourceMatcher: matcher } =
+      deferredInput;
+
+    if (search.trim()) {
+      const q = search.toLowerCase();
       result = result.filter(
         (bg) =>
           (bg.searchText?.includes(q) ?? false) ||
@@ -91,18 +103,19 @@ export function DndBackgroundList() {
       );
     }
 
-    if (editions.length > 0) {
+    if (editionVals.length > 0) {
+      const editionSet = new Set(editionVals);
       result = result.filter(
-        (bg) => bg.edition != null && editions.includes(bg.edition),
+        (bg) => bg.edition != null && editionSet.has(bg.edition),
       );
     }
 
-    if (sourceFilter.length > 0) {
-      result = result.filter((bg) => matchesSourceFilter(bg, sourceFilter));
+    if (matcher) {
+      result = result.filter((bg) => matcher(bg));
     }
 
     return result;
-  }, [listBackgrounds, appliedSearch, editions, sourceFilter, matchesSourceFilter]);
+  }, [deferredList, deferredInput]);
 
   const handleSelect = useCallback(
     (background: DndBackground) => dialog?.openItem(background),
@@ -116,11 +129,13 @@ export function DndBackgroundList() {
     });
   }
 
+  const showUpdating = isSearchPending || isFilterDeferred;
+
   return (
-    <div className="flex flex-col h-full min-h-0">
-      <div className="shrink-0 border-b border-border px-4 py-4 md:px-6 md:py-5">
-        <div className="flex items-center gap-3 mb-1">
-          <ScrollText className="h-6 w-6 text-amber-400" />
+    <div className="flex h-full min-h-0 flex-col">
+      <div className="shrink-0 border-b border-border px-4 py-3 md:px-6 md:py-5">
+        <div className="mb-1 flex items-center gap-3">
+          <ScrollText className="h-6 w-6 shrink-0 text-amber-400" />
           <h1 className="text-xl font-bold text-foreground">
             Backgrounds (D&amp;D 5e)
           </h1>
@@ -136,12 +151,12 @@ export function DndBackgroundList() {
             </span>
           )}
         </div>
-        <p className="text-sm text-muted-foreground">
+        <p className="hidden text-sm text-muted-foreground sm:block">
           Official character backgrounds from D&amp;D 5e sourcebooks.
         </p>
       </div>
 
-      <div className="shrink-0 border-b border-border bg-card/50 px-4 py-3 md:px-6">
+      <StickyListSearchBar updating={showUpdating && !loading}>
         <ListSearchWithFilters
           searchValue={searchDraft}
           onSearchChange={setSearchDraft}
@@ -156,22 +171,25 @@ export function DndBackgroundList() {
           dialogTitle="Background Filters"
           dialogDescription="Filter by edition and sourcebook. Changes apply when you save."
         />
-      </div>
+      </StickyListSearchBar>
 
       <div className="flex-1 overflow-y-auto px-4 py-4 md:px-6 md:py-6">
-        {loading || isSearchPending ? (
-          <ListAreaLoading />
-        ) : listBackgrounds.length === 0 ? (
-          <div className="flex flex-col items-center justify-center h-48 text-muted-foreground gap-2">
-            <ScrollText className="h-10 w-10 opacity-20" />
-            <p className="text-sm">No backgrounds loaded.</p>
-          </div>
-        ) : (
+        <DeferredListResults
+          loading={loading}
+          updating={showUpdating}
+          isEmpty={listBackgrounds.length === 0}
+          empty={
+            <div className="flex h-48 flex-col items-center justify-center gap-2 text-muted-foreground">
+              <ScrollText className="h-10 w-10 opacity-20" />
+              <p className="text-sm">No backgrounds loaded.</p>
+            </div>
+          }
+        >
           <DndBackgroundDataTable
             backgrounds={filtered}
             onRowClick={handleSelect}
           />
-        )}
+        </DeferredListResults>
       </div>
 
       {dialog?.dialogOpen && dialog.selected && (
