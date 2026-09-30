@@ -16,7 +16,7 @@ It started at my table: I play with friends who care more about D&D than Monster
 
 | Section              | Route               | Description                                                                   |
 | -------------------- | ------------------- | ----------------------------------------------------------------------------- |
-| **Damage Calculator**| `/damage-calculator`| Expected damage-per-turn calculator for comparing weapon builds (persisted) |
+| **Damage & Healing Calculator**| `/damage-calculator`| Expected damage or healing per turn for comparing builds (persisted) |
 | **Creation Guide**   | `/character-guide`  | Character creation guide from the manual (species, roles, skills, etc.)      |
 | **Monstie Sidekick** | `/monstie-sidekick` | Rules and creator for Monstie sidekicks                                         |
 | **Guardian Template** | `/guardian-template` | Rules to apply the MHMM Guardian monster template                               |
@@ -45,7 +45,7 @@ RaintDM variants on Amellwind’s 2014 Monster Hunter homebrew — house-rule tw
 | Section         | Route           | Description                                                                 |
 | --------------- | --------------- | --------------------------------------------------------------------------- |
 | **Builder**      | `/builder`      | Character Builder — stats, equipment, runes, DPR, and **Foundry VTT export/import** _(ALPHA)_. Aggregates Amellwind, 5e, and RaintDM catalogs. |
-| **Damage Calculator** | `/damage-calculator` | Expected damage-per-turn calculator for comparing weapon builds (also under Amellwind Homebrew) |
+| **Damage & Healing Calculator** | `/damage-calculator` | Expected damage or healing per turn for comparing builds (also under Amellwind Homebrew) |
 | **Weapon Forge** | `/weapon-forge` | Curated RaintDM hunter weapons plus custom weapons you create and export |
 | **Items Forge**  | `/item-forge`   | Curated RaintDM items and Combo List recipes (Dual Repeaters magazines, hunter traps) |
 

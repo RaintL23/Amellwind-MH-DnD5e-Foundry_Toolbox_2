@@ -2,10 +2,12 @@ import { useCallback, useEffect, useMemo, useState } from "react";
 import type {
   AttackDamageConfig,
   AttackResolution,
+  CalculatorMode,
   DamageCalculatorState,
   DiceGroup,
   FlatBonus,
   RollMode,
+  SaveSuccessEffect,
   WeaponSetup,
 } from "../types/damage-calculator.types";
 import type { DamageType } from "@/shared/types";
@@ -15,6 +17,7 @@ import {
   createDefaultFlatBonus,
   createDefaultWeapon,
   newId,
+  resolveSaveSuccessEffect,
 } from "../utils/damage-math.utils";
 
 const STORAGE_KEY = "damage-calculator-state";
@@ -22,9 +25,12 @@ const STORAGE_KEY = "damage-calculator-state";
 type LegacyAttack = AttackDamageConfig & {
   flatBonus?: number;
   targetSaveBonus?: number;
+  halfDamageOnSave?: boolean;
+  saveSuccessEffect?: SaveSuccessEffect;
 };
 
 type LegacyWeaponSetup = WeaponSetup & {
+  mode?: CalculatorMode;
   rollMode?: RollMode;
   resolution?: AttackResolution;
   saveDC?: number;
@@ -61,20 +67,30 @@ function normalizeWeapon(weapon: LegacyWeaponSetup): WeaponSetup {
 
   return {
     ...rest,
+    mode: weapon.mode ?? "damage",
     targetSaveBonus: legacyTargetSaveBonus,
     damageResistances: weapon.damageResistances ?? [],
     damageImmunities: weapon.damageImmunities ?? [],
     attacks: weapon.attacks.map((attack) => {
       const legacyAttack = attack as LegacyAttack;
-      const { flatBonus: _flatBonus, targetSaveBonus: _attackSaveBonus, ...attackRest } =
-        legacyAttack;
+      const {
+        flatBonus: _flatBonus,
+        targetSaveBonus: _attackSaveBonus,
+        halfDamageOnSave: _attackHalf,
+        ...attackRest
+      } = legacyAttack;
+      const halfDamageOnSave =
+        attack.halfDamageOnSave ?? legacyHalfDamageOnSave;
       return {
         ...attackRest,
         flatBonuses: normalizeFlatBonuses(legacyAttack),
         rollMode: attack.rollMode ?? legacyRollMode,
         resolution: attack.resolution ?? legacyResolution,
         saveDC: attack.saveDC ?? legacySaveDC,
-        halfDamageOnSave: attack.halfDamageOnSave ?? legacyHalfDamageOnSave,
+        saveSuccessEffect: resolveSaveSuccessEffect({
+          saveSuccessEffect: attack.saveSuccessEffect,
+          halfDamageOnSave,
+        }),
       };
     }),
   };
@@ -144,7 +160,7 @@ export function useDamageCalculator() {
 
   const addWeapon = useCallback(() => {
     setState((prev) => {
-      const weapon = createDefaultWeapon(`Weapon ${prev.weapons.length + 1}`);
+      const weapon = createDefaultWeapon(`Build ${prev.weapons.length + 1}`);
       return {
         weapons: [...prev.weapons, weapon],
         selectedWeaponId: weapon.id,
@@ -214,7 +230,15 @@ export function useDamageCalculator() {
       weapons: prev.weapons.map((w) => {
         if (w.id !== weaponId) return w;
         const index = w.attacks.length;
-        return { ...w, attacks: [...w.attacks, createDefaultAttack(index)] };
+        const attack = createDefaultAttack(index);
+        const prefix = (w.mode ?? "damage") === "healing" ? "Effect" : "Attack";
+        return {
+          ...w,
+          attacks: [
+            ...w.attacks,
+            { ...attack, label: `${prefix} ${index + 1}` },
+          ],
+        };
       }),
     }));
   }, []);
@@ -228,10 +252,16 @@ export function useDamageCalculator() {
         const attacks = w.attacks.filter((a) => a.id !== attackId);
         return {
           ...w,
-          attacks: attacks.map((a, i) => ({
-            ...a,
-            label: a.label.startsWith("Attack ") ? `Attack ${i + 1}` : a.label,
-          })),
+          attacks: attacks.map((a, i) => {
+            const autoLabel =
+              a.label.startsWith("Attack ") || a.label.startsWith("Effect ");
+            const prefix =
+              (w.mode ?? "damage") === "healing" ? "Effect" : "Attack";
+            return {
+              ...a,
+              label: autoLabel ? `${prefix} ${i + 1}` : a.label,
+            };
+          }),
         };
       }),
     }));

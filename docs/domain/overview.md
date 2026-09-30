@@ -57,7 +57,7 @@ Estado de cobertura del manual / features de la app:
 - [x] **Recursos de entorno** — Tablas estáticas por categoría.
 - [x] **Entornos / biomas** — Datos estáticos con DCs, clima, encuentros y tablas de recursos.
 - [x] **Material Effects / Conditions / Diseases** — Listados de referencia derivados del homebrew.
-- [x] **Damage Calculator** — Calculadora de daño por turno persistida en `localStorage`.
+- [x] **Damage & Healing Calculator** — Calculadora de daño/healing por turno persistida en `localStorage`.
 
 ### Amellwind (RaintDM) — implementado
 

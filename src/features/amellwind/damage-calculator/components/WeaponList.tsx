@@ -2,6 +2,7 @@ import { Copy, Plus, Trash2 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { cn } from "@/shared/utils/cn";
+import { getCalculatorLabels } from "../utils/calculator-labels";
 import type { WeaponDamageResult, WeaponSetup } from "../types/damage-calculator.types";
 
 interface WeaponListProps {
@@ -25,11 +26,14 @@ export function WeaponList({
   onDuplicate,
   onRename,
 }: WeaponListProps) {
+  const selected = weapons.find((w) => w.id === selectedId) ?? weapons[0];
+  const listLabels = getCalculatorLabels(selected?.mode ?? "damage");
+
   return (
     <div className="rounded-lg border border-border/60 bg-card">
       <div className="flex items-center justify-between border-b border-border/60 px-3 py-2.5">
         <h2 className="text-[11px] font-medium uppercase tracking-wider text-muted-foreground">
-          Weapons
+          {listLabels.buildsTitle}
         </h2>
         <Button type="button" size="sm" variant="outline" className="h-7 gap-1" onClick={onAdd}>
           <Plus className="h-3.5 w-3.5" />
@@ -41,6 +45,16 @@ export function WeaponList({
         {weapons.map((weapon) => {
           const result = results.find((r) => r.weaponId === weapon.id);
           const isSelected = weapon.id === selectedId;
+          const mode = weapon.mode ?? "damage";
+          const labels = getCalculatorLabels(mode);
+          const effectWord =
+            mode === "healing"
+              ? weapon.attacks.length === 1
+                ? "effect"
+                : "effects"
+              : weapon.attacks.length === 1
+                ? "attack"
+                : "attacks";
 
           return (
             <div
@@ -61,13 +75,24 @@ export function WeaponList({
                   <span className="truncate text-sm font-medium text-foreground">
                     {weapon.name}
                   </span>
-                  <span className="shrink-0 text-sm font-medium tabular-nums text-emerald-400">
+                  <span
+                    className={cn(
+                      "shrink-0 text-sm font-medium tabular-nums",
+                      mode === "healing" ? "text-sky-300" : "text-emerald-400",
+                    )}
+                  >
                     {result?.totalExpectedPerTurn.toFixed(1) ?? "—"}
                   </span>
                 </div>
                 <p className="mt-0.5 text-[10px] text-muted-foreground">
-                  {weapon.attacks.length} attack{weapon.attacks.length !== 1 ? "s" : ""}
-                  {" · "}+{weapon.attackBonus} vs AC {weapon.targetAC}
+                  {labels.unitCapitalized}
+                  {" · "}
+                  {weapon.attacks.length} {effectWord}
+                  {weapon.attacks.some((a) => (a.resolution ?? "attack-roll") === "attack-roll") && (
+                    <>
+                      {" · "}+{weapon.attackBonus} vs AC {weapon.targetAC}
+                    </>
+                  )}
                 </p>
               </button>
 
@@ -77,14 +102,14 @@ export function WeaponList({
                     value={weapon.name}
                     onChange={(e) => onRename(weapon.id, e.target.value)}
                     className="h-7 text-xs"
-                    aria-label="Weapon name"
+                    aria-label="Build name"
                   />
                   <Button
                     type="button"
                     variant="ghost"
                     size="icon"
                     className="h-7 w-7 shrink-0"
-                    title="Duplicate weapon"
+                    title="Duplicate build"
                     onClick={() => onDuplicate(weapon.id)}
                   >
                     <Copy className="h-3.5 w-3.5" />
@@ -95,7 +120,7 @@ export function WeaponList({
                       variant="ghost"
                       size="icon"
                       className="h-7 w-7 shrink-0 text-muted-foreground hover:text-destructive"
-                      title="Remove weapon"
+                      title="Remove build"
                       onClick={() => onRemove(weapon.id)}
                     >
                       <Trash2 className="h-3.5 w-3.5" />
@@ -111,34 +136,58 @@ export function WeaponList({
       {weapons.length > 1 && (
         <div className="border-t border-border/60 px-3 py-2.5">
           <p className="mb-2 text-[10px] uppercase tracking-wide text-muted-foreground">
-            Compare expected DPR
+            Compare expected output
           </p>
           <div className="space-y-1">
             {[...results]
               .sort((a, b) => b.totalExpectedPerTurn - a.totalExpectedPerTurn)
-              .map((r) => (
-                <div
-                  key={r.weaponId}
-                  className="flex items-center justify-between text-xs"
-                >
-                  <span className="truncate text-muted-foreground">
-                    {r.weaponName} -{" "}
-                    {(() => {
-                      const weapon = weapons.find((w) => w.id === r.weaponId);
-                      if (!weapon) return `${r.attacks.length} attack${r.attacks.length !== 1 ? "s" : ""}`;
-                      const attackCount = weapon.attacks.filter((a) => a.resolution === "attack-roll").length;
-                      const saveCount = weapon.attacks.filter((a) => a.resolution === "save").length;
-                      const parts: string[] = [];
-                      if (attackCount > 0) parts.push(`${attackCount} attack${attackCount !== 1 ? "s" : ""}`);
-                      if (saveCount > 0) parts.push(`${saveCount} save${saveCount !== 1 ? "s" : ""}`);
-                      return parts.join(" and ");
-                    })()}
-                  </span>
-                  <span className="shrink-0 font-medium tabular-nums text-foreground">
-                    {r.totalExpectedPerTurn.toFixed(1)}
-                  </span>
-                </div>
-              ))}
+              .map((r) => {
+                const weapon = weapons.find((w) => w.id === r.weaponId);
+                const mode = weapon?.mode ?? r.mode ?? "damage";
+                return (
+                  <div
+                    key={r.weaponId}
+                    className="flex items-center justify-between text-xs"
+                  >
+                    <span className="truncate text-muted-foreground">
+                      {r.weaponName} -{" "}
+                      {mode === "healing" ? "Healing" : "Damage"}
+                      {" · "}
+                      {(() => {
+                        if (!weapon) {
+                          return `${r.attacks.length} effect${r.attacks.length !== 1 ? "s" : ""}`;
+                        }
+                        const attackCount = weapon.attacks.filter(
+                          (a) => a.resolution === "attack-roll",
+                        ).length;
+                        const saveCount = weapon.attacks.filter(
+                          (a) => a.resolution === "save",
+                        ).length;
+                        const parts: string[] = [];
+                        if (attackCount > 0) {
+                          parts.push(
+                            `${attackCount} attack${attackCount !== 1 ? "s" : ""}`,
+                          );
+                        }
+                        if (saveCount > 0) {
+                          parts.push(
+                            `${saveCount} save${saveCount !== 1 ? "s" : ""}`,
+                          );
+                        }
+                        return parts.join(" and ") || "0 effects";
+                      })()}
+                    </span>
+                    <span
+                      className={cn(
+                        "shrink-0 font-medium tabular-nums",
+                        mode === "healing" ? "text-sky-300" : "text-foreground",
+                      )}
+                    >
+                      {r.totalExpectedPerTurn.toFixed(1)}
+                    </span>
+                  </div>
+                );
+              })}
           </div>
         </div>
       )}

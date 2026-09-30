@@ -2,9 +2,11 @@ import type { DamageType } from "@/shared/types";
 import type {
   AttackDamageConfig,
   AttackDamageResult,
+  CalculatorMode,
   DiceGroup,
   FlatBonus,
   RollMode,
+  SaveSuccessEffect,
   WeaponDamageResult,
   WeaponSetup,
 } from "../types/damage-calculator.types";
@@ -128,8 +130,11 @@ function selectedD20(rolls: number[], mode: RollMode): number {
   return rolls[0];
 }
 
+/** 5e attack roll: nat 1 always misses, nat 20 always hits. */
 function isAttackHit(d20: number, attackBonus: number, targetAC: number): boolean {
-  return d20 === 20 || d20 + attackBonus >= targetAC;
+  if (d20 === 1) return false;
+  if (d20 === 20) return true;
+  return d20 + attackBonus >= targetAC;
 }
 
 /** Probability of meeting or exceeding AC on a d20 attack roll (5e rules). */
@@ -163,16 +168,39 @@ export function calcCritChance(
   return crits / outcomes.length;
 }
 
-/** Probability the target succeeds on a saving throw. */
+/**
+ * Probability the target succeeds on a saving throw (5e).
+ * Nat 20 / nat 1 are not automatic success / failure on saves.
+ */
 export function calcSaveSuccessChance(
   saveDC: number,
   saveBonus: number,
+  mode: RollMode = "normal",
 ): number {
+  const outcomes = d20Outcomes(mode);
   let successes = 0;
-  for (let d = 1; d <= 20; d++) {
-    if (d === 20 || d + saveBonus >= saveDC) successes++;
+  for (const rolls of outcomes) {
+    const d20 = selectedD20(rolls, mode);
+    if (d20 + saveBonus >= saveDC) successes++;
   }
-  return successes / 20;
+  return successes / outcomes.length;
+}
+
+export function resolveSaveSuccessEffect(
+  attack: Pick<AttackDamageConfig, "saveSuccessEffect" | "halfDamageOnSave">,
+): SaveSuccessEffect {
+  if (attack.saveSuccessEffect) return attack.saveSuccessEffect;
+  if (attack.halfDamageOnSave === false) return "none";
+  return "half";
+}
+
+export function amountOnSaveSuccess(
+  fullAmount: number,
+  effect: SaveSuccessEffect,
+): number {
+  if (effect === "full") return fullAmount;
+  if (effect === "half") return fullAmount / 2;
+  return 0;
 }
 
 /** P(at least one attack-roll attack hits during the turn). */
@@ -221,10 +249,14 @@ function calcAttackAverages(
   brutalCritExtraDice: number,
   resistances: DamageType[],
   immunities: DamageType[],
-): { averageHit: number; averageCrit: number; averageWithCrit: number } {
+  useCritDoubling: boolean,
+): { averageHit: number; averageCrit: number } {
   const diceAvg = weightedDiceAverage(groups, resistances, immunities);
   const flatAvg = weightedFlatBonus(flatBonuses, resistances, immunities);
   const averageHit = diceAvg + flatAvg;
+  if (!useCritDoubling) {
+    return { averageHit, averageCrit: averageHit };
+  }
   const brutalBonus = calcBrutalCritBonus(
     groups,
     brutalCritExtraDice,
@@ -232,23 +264,28 @@ function calcAttackAverages(
     immunities,
   );
   const averageCrit = diceAvg * 2 + brutalBonus + flatAvg;
-  return { averageHit, averageCrit, averageWithCrit: averageHit };
+  return { averageHit, averageCrit };
 }
 
 export function calcWeaponDamage(weapon: WeaponSetup): WeaponDamageResult {
   const firstAttack = weapon.attacks[0];
-  const resistances = weapon.damageResistances ?? [];
-  const immunities = weapon.damageImmunities ?? [];
+  const mode: CalculatorMode = weapon.mode ?? "damage";
+  const isHealing = mode === "healing";
+  const resistances = isHealing ? [] : (weapon.damageResistances ?? []);
+  const immunities = isHealing ? [] : (weapon.damageImmunities ?? []);
+  const useCritDoubling = !isHealing;
 
   const attacks: AttackDamageResult[] = weapon.attacks.map((attack, index) => {
     const { groups, flatBonuses } = resolveAttackDamage(attack, firstAttack);
-    const brutalExtra = weapon.useBrutalCrit ? weapon.brutalCritExtraDice : 0;
+    const brutalExtra =
+      useCritDoubling && weapon.useBrutalCrit ? weapon.brutalCritExtraDice : 0;
     const { averageHit, averageCrit } = calcAttackAverages(
       groups,
       flatBonuses,
       brutalExtra,
       resistances,
       immunities,
+      useCritDoubling,
     );
 
     const resolution = attack.resolution ?? "attack-roll";
@@ -258,7 +295,7 @@ export function calcWeaponDamage(weapon: WeaponSetup): WeaponDamageResult {
         ? calcHitChance(weapon.attackBonus, weapon.targetAC, rollMode)
         : 0;
     const critChance =
-      resolution === "attack-roll"
+      resolution === "attack-roll" && useCritDoubling
         ? calcCritChance(
             weapon.critRange,
             weapon.attackBonus,
@@ -268,21 +305,30 @@ export function calcWeaponDamage(weapon: WeaponSetup): WeaponDamageResult {
         : 0;
     const saveSuccessChance =
       resolution === "save"
-        ? calcSaveSuccessChance(attack.saveDC, weapon.targetSaveBonus)
+        ? calcSaveSuccessChance(
+            attack.saveDC,
+            weapon.targetSaveBonus,
+            rollMode,
+          )
         : 0;
-    const saveFailChance = 1 - saveSuccessChance;
+    const saveFailChance = resolution === "save" ? 1 - saveSuccessChance : 0;
+    const saveEffect = resolveSaveSuccessEffect(attack);
+    const averageOnSaveFail = averageHit;
+    const averageOnSaveSuccess = amountOnSaveSuccess(averageHit, saveEffect);
 
-    const normalHitChance = hitChance - critChance;
+    const normalHitChance = Math.max(0, hitChance - critChance);
     const averageWithCrit =
       resolution === "attack-roll"
-        ? normalHitChance * averageHit + critChance * averageCrit
+        ? useCritDoubling
+          ? normalHitChance * averageHit + critChance * averageCrit
+          : hitChance * averageHit
         : averageHit;
 
     let expectedDamage: number;
     if (resolution === "save") {
-      const onFail = averageHit;
-      const onSuccess = attack.halfDamageOnSave ? averageHit / 2 : 0;
-      expectedDamage = saveFailChance * onFail + saveSuccessChance * onSuccess;
+      expectedDamage =
+        saveFailChance * averageOnSaveFail +
+        saveSuccessChance * averageOnSaveSuccess;
     } else {
       expectedDamage = averageWithCrit;
     }
@@ -297,6 +343,9 @@ export function calcWeaponDamage(weapon: WeaponSetup): WeaponDamageResult {
       hitChance,
       critChance,
       saveFailChance,
+      saveSuccessChance,
+      averageOnSaveFail,
+      averageOnSaveSuccess,
     };
   });
 
@@ -314,6 +363,7 @@ export function calcWeaponDamage(weapon: WeaponSetup): WeaponDamageResult {
   return {
     weaponId: weapon.id,
     weaponName: weapon.name,
+    mode,
     attacks,
     totalExpectedPerTurn,
     totalAveragePerTurn,
@@ -344,14 +394,15 @@ export function createDefaultAttack(index: number): AttackDamageConfig {
     rollMode: "normal",
     resolution: "attack-roll",
     saveDC: 13,
-    halfDamageOnSave: true,
+    saveSuccessEffect: "half",
   };
 }
 
-export function createDefaultWeapon(name = "Weapon 1"): WeaponSetup {
+export function createDefaultWeapon(name = "Build 1"): WeaponSetup {
   return {
     id: newId(),
     name,
+    mode: "damage",
     attackBonus: 5,
     critRange: 20,
     useBrutalCrit: false,

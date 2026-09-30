@@ -2,17 +2,18 @@
 
 > Split from legacy `instrucctions.md`. Prefer this file over reading the whole domain corpus.
 
-### Damage Calculator
+### Damage & Healing Calculator
 
 **Ruta**: `/damage-calculator`
 **Estado**: persistido en `localStorage` (`"damage-calculator-state"`).
 
-Calculadora independiente del builder para estimar el **daño esperado por turno** comparando varias builds de armas (ataques extra, dados de bonificación, críticos y efectos con tirada de salvación).
+Calculadora independiente del builder para estimar el **daño o healing esperado por turno** comparando varias builds (ataques extra, dados de bonificación, críticos y efectos con tirada de salvación).
 
-- **Componentes**: `DamageCalculatorPage` con paneles `WeaponList`, `AttacksPanel`, `WeaponSettingsPanel`, `DiceEditor`.
-- **Hook**: `useDamageCalculator` (CRUD de armas/ataques/grupos de dados/bonos planos + normalización de estado legacy).
-- **Matemática** (`utils/damage-math.utils.ts`): `calcWeaponDamage`, `calcHitChance`, `calcCritChance`, `calcSaveSuccessChance`, `calcTurnHitChance`, medias de dados y `ALL_DAMAGE_TYPES`.
-- **Tipos** (`types/damage-calculator.types.ts`): `WeaponSetup`, `AttackDamageConfig`, `DiceGroup`, `FlatBonus`, `RollMode`, `AttackResolution`, `DamageCalculatorState`.
+- **Modo por build** (`WeaponSetup.mode`): `damage` | `healing`. En healing: labels de curación, sin resistencias/inmunidades ni doblar dados por crítico.
+- **Componentes**: `DamageCalculatorPage` con paneles `WeaponList`, `AttacksPanel`, `WeaponSettingsPanel`, `DiceEditor`; labels vía `utils/calculator-labels.ts`.
+- **Hook**: `useDamageCalculator` (CRUD de builds/ataques/grupos de dados/bonos planos + normalización de estado legacy, incl. `halfDamageOnSave` → `saveSuccessEffect`).
+- **Matemática** (`utils/damage-math.utils.ts`): `calcWeaponDamage`, `calcHitChance` (nat 1 miss / nat 20 hit), `calcCritChance`, `calcSaveSuccessChance` (con adv/disadv; sin auto éxito en nat 20), `resolveSaveSuccessEffect` (`half` | `none` | `full`), `calcTurnHitChance`.
+- **Tipos**: `WeaponSetup`, `AttackDamageConfig`, `CalculatorMode`, `SaveSuccessEffect`, `DiceGroup`, `FlatBonus`, `RollMode`, `AttackResolution`, `DamageCalculatorState`.
 
 ---
 

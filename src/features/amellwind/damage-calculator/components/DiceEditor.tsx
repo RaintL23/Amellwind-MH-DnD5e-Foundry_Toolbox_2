@@ -8,12 +8,18 @@ import {
   ALL_DAMAGE_TYPES,
   COMMON_DICE_SIDES,
 } from "../utils/damage-math.utils";
-import type { DiceGroup, FlatBonus } from "../types/damage-calculator.types";
+import { getCalculatorLabels } from "../utils/calculator-labels";
+import type {
+  CalculatorMode,
+  DiceGroup,
+  FlatBonus,
+} from "../types/damage-calculator.types";
 
 interface DiceEditorProps {
   groups: DiceGroup[];
   flatBonuses: FlatBonus[];
   disabled?: boolean;
+  mode?: CalculatorMode;
   onFlatBonusChange: (bonusId: string, patch: Partial<FlatBonus>) => void;
   onAddFlatBonus: () => void;
   onRemoveFlatBonus: (bonusId: string) => void;
@@ -26,6 +32,7 @@ export function DiceEditor({
   groups,
   flatBonuses,
   disabled = false,
+  mode = "damage",
   onFlatBonusChange,
   onAddFlatBonus,
   onRemoveFlatBonus,
@@ -33,12 +40,14 @@ export function DiceEditor({
   onAddDice,
   onRemoveDice,
 }: DiceEditorProps) {
+  const labels = getCalculatorLabels(mode);
+
   return (
     <div className="space-y-2">
       {!disabled && (
         <div className="flex items-center gap-1.5 pt-1">
           <span className="text-[10px] uppercase tracking-wide text-muted-foreground">
-            Add damage dice
+            {labels.addDice}
           </span>
           <Button
             type="button"
@@ -80,13 +89,16 @@ export function DiceEditor({
               </Button>
             ))}
           </div>
-          <DamageTypeSelect
-            value={group.damageType}
-            disabled={disabled}
-            onChange={(damageType) =>
-              onDiceChange(group.id, { damageType: damageType || undefined })
-            }
-          />
+          {mode === "damage" && (
+            <DamageTypeSelect
+              value={group.damageType}
+              disabled={disabled}
+              typeLabel={labels.typeOptional}
+              onChange={(damageType) =>
+                onDiceChange(group.id, { damageType: damageType || undefined })
+              }
+            />
+          )}
           <Input
             value={group.comment ?? ""}
             disabled={disabled}
@@ -112,8 +124,8 @@ export function DiceEditor({
       ))}
 
       <div className="space-y-2">
-        <span className="text-xs text-muted-foreground">
-          BONUS DAMAGE (FLAT)
+        <span className="text-xs uppercase tracking-wide text-muted-foreground">
+          {labels.bonusFlat}
         </span>
         {!disabled && (
           <Button
@@ -136,18 +148,21 @@ export function DiceEditor({
               value={bonus.value}
               min={-20}
               disabled={disabled}
-              ariaLabel="Flat damage bonus"
+              ariaLabel={labels.flatBonusAria}
               onChange={(value) => onFlatBonusChange(bonus.id, { value })}
             />
-            <DamageTypeSelect
-              value={bonus.damageType}
-              disabled={disabled}
-              onChange={(damageType) =>
-                onFlatBonusChange(bonus.id, {
-                  damageType: damageType || undefined,
-                })
-              }
-            />
+            {mode === "damage" && (
+              <DamageTypeSelect
+                value={bonus.damageType}
+                disabled={disabled}
+                typeLabel={labels.typeOptional}
+                onChange={(damageType) =>
+                  onFlatBonusChange(bonus.id, {
+                    damageType: damageType || undefined,
+                  })
+                }
+              />
+            )}
             <Input
               value={bonus.comment ?? ""}
               disabled={disabled}
@@ -179,10 +194,12 @@ export function DiceEditor({
 function DamageTypeSelect({
   value,
   disabled,
+  typeLabel,
   onChange,
 }: {
   value?: DamageType;
   disabled?: boolean;
+  typeLabel: string;
   onChange: (type: DamageType | "") => void;
 }) {
   return (
@@ -193,7 +210,7 @@ function DamageTypeSelect({
       className="h-7 rounded-md border border-input bg-background px-2 text-xs text-foreground disabled:opacity-50"
       aria-label="Damage type"
     >
-      <option value="">Type (optional)</option>
+      <option value="">{typeLabel}</option>
       {ALL_DAMAGE_TYPES.map((type) => (
         <option key={type} value={type}>
           {formatDamageTypeLabel(type)}

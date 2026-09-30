@@ -1,5 +1,6 @@
-import { Crosshair } from "lucide-react";
+import { Crosshair, HeartPulse } from "lucide-react";
 import { useDamageCalculator } from "../hooks/useDamageCalculator";
+import { getCalculatorLabels } from "../utils/calculator-labels";
 import { AttacksPanel } from "./AttacksPanel";
 import { WeaponList } from "./WeaponList";
 import { WeaponSettingsPanel } from "./WeaponSettingsPanel";
@@ -29,18 +30,23 @@ export function DamageCalculatorPage() {
   if (!selectedWeapon || !selectedResult) return null;
 
   const weaponId = selectedWeapon.id;
+  const mode = selectedWeapon.mode ?? "damage";
+  const labels = getCalculatorLabels(mode);
+  const TitleIcon = mode === "healing" ? HeartPulse : Crosshair;
 
   return (
     <div className="flex h-full min-h-0 flex-col">
       <div className="shrink-0 border-b border-border px-6 py-5">
         <div className="mb-1 flex items-center gap-3">
-          <Crosshair className="h-6 w-6 text-primary" />
-          <h1 className="text-xl font-bold text-foreground">Damage Calculator</h1>
+          <TitleIcon className="h-6 w-6 text-primary" />
+          <h1 className="text-xl font-bold text-foreground">
+            Damage & Healing Calculator
+          </h1>
         </div>
         <p className="max-w-3xl text-sm text-muted-foreground">
-          Estimate average and expected damage for weapon attacks against a target.
-          Configure multiple weapons to compare builds, extra attack damage dice,
-          critical hits, and saving throw effects.
+          Estimate average and expected {labels.unit} per turn across builds.
+          Compare attack rolls, critical hits, healing effects, and saving throw
+          outcomes.
         </p>
       </div>
 

@@ -15,6 +15,11 @@ export interface FlatBonus {
   comment?: string;
 }
 
+/** What the target takes when they succeed on the saving throw. */
+export type SaveSuccessEffect = "half" | "none" | "full";
+
+export type CalculatorMode = "damage" | "healing";
+
 export interface AttackDamageConfig {
   id: string;
   label: string;
@@ -25,7 +30,9 @@ export interface AttackDamageConfig {
   rollMode: RollMode;
   resolution: AttackResolution;
   saveDC: number;
-  halfDamageOnSave: boolean;
+  /** @deprecated Prefer saveSuccessEffect. Kept for localStorage migration. */
+  halfDamageOnSave?: boolean;
+  saveSuccessEffect: SaveSuccessEffect;
 }
 
 export type AttackResolution = "attack-roll" | "save";
@@ -35,6 +42,8 @@ export type RollMode = "normal" | "advantage" | "disadvantage";
 export interface WeaponSetup {
   id: string;
   name: string;
+  /** Damage builds vs healing builds (labels + crit/resistance math). */
+  mode: CalculatorMode;
   attackBonus: number;
   /** Lowest d20 face that counts as a critical hit (20 = only nat 20). */
   critRange: number;
@@ -58,11 +67,15 @@ export interface AttackDamageResult {
   hitChance: number;
   critChance: number;
   saveFailChance: number;
+  saveSuccessChance: number;
+  averageOnSaveFail: number;
+  averageOnSaveSuccess: number;
 }
 
 export interface WeaponDamageResult {
   weaponId: string;
   weaponName: string;
+  mode: CalculatorMode;
   attacks: AttackDamageResult[];
   totalExpectedPerTurn: number;
   totalAveragePerTurn: number;

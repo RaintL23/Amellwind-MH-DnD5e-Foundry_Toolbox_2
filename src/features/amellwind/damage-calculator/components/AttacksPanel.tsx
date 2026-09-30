@@ -2,11 +2,17 @@ import { Info, Plus, Trash2 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { NumberStepper } from "@/shared/components/NumberStepper";
 import { DiceEditor } from "./DiceEditor";
-import { calcSaveSuccessChance, formatPercent } from "../utils/damage-math.utils";
+import { getCalculatorLabels } from "../utils/calculator-labels";
+import {
+  calcSaveSuccessChance,
+  formatPercent,
+  resolveSaveSuccessEffect,
+} from "../utils/damage-math.utils";
 import type {
   AttackDamageConfig,
   AttackDamageResult,
   FlatBonus,
+  SaveSuccessEffect,
   WeaponSetup,
 } from "../types/damage-calculator.types";
 
@@ -46,12 +52,15 @@ export function AttacksPanel({
   onRemoveFlatBonus,
 }: AttacksPanelProps) {
   const firstAttack = weapon.attacks[0];
+  const mode = weapon.mode ?? "damage";
+  const labels = getCalculatorLabels(mode);
+  const showCritStats = mode === "damage";
 
   return (
     <div className="rounded-lg border border-border/60 bg-card">
       <div className="flex items-center justify-between border-b border-border/60 px-3.5 py-2.5">
         <h2 className="text-[11px] font-medium uppercase tracking-wider text-muted-foreground">
-          Attacks per turn
+          {labels.attacksPerTurn}
         </h2>
         <Button
           type="button"
@@ -61,7 +70,7 @@ export function AttacksPanel({
           onClick={onAddAttack}
         >
           <Plus className="h-3.5 w-3.5" />
-          Attack
+          {labels.addAttack}
         </Button>
       </div>
 
@@ -77,9 +86,12 @@ export function AttacksPanel({
             ? firstAttack.flatBonuses
             : attack.flatBonuses;
           const resolution = attack.resolution ?? "attack-roll";
+          const rollMode = attack.rollMode ?? "normal";
+          const saveSuccessEffect = resolveSaveSuccessEffect(attack);
           const saveSuccessChance = calcSaveSuccessChance(
             attack.saveDC,
             weapon.targetSaveBonus,
+            rollMode,
           );
 
           return (
@@ -114,7 +126,7 @@ export function AttacksPanel({
                     }
                     className="rounded border-border"
                   />
-                  Same damage as first attack
+                  {labels.sameAsFirst}
                 </label>
               )}
 
@@ -122,6 +134,7 @@ export function AttacksPanel({
                 groups={effectiveGroups}
                 flatBonuses={effectiveFlatBonuses}
                 disabled={usesFirst}
+                mode={mode}
                 onFlatBonusChange={(bonusId, patch) =>
                   onUpdateFlatBonus(attack.id, bonusId, patch)
                 }
@@ -161,32 +174,36 @@ export function AttacksPanel({
                   </div>
                 </div>
 
-                {resolution === "attack-roll" && (
-                  <div>
-                    <p className="mb-1.5 text-[10px] uppercase tracking-wide text-muted-foreground">
-                      Roll mode
-                    </p>
-                    <div className="flex gap-1.5">
-                      {(
-                        [
-                          ["normal", "Normal"],
-                          ["advantage", "Advantage"],
-                          ["disadvantage", "Disadvantage"],
-                        ] as const
-                      ).map(([mode, label]) => (
-                        <RollModeButton
-                          key={mode}
-                          active={(attack.rollMode ?? "normal") === mode}
-                          onClick={() =>
-                            onUpdateAttack(attack.id, { rollMode: mode })
-                          }
-                        >
-                          {label}
-                        </RollModeButton>
-                      ))}
-                    </div>
+                <div>
+                  <p className="mb-1.5 text-[10px] uppercase tracking-wide text-muted-foreground">
+                    {resolution === "save" ? "Save roll mode" : "Roll mode"}
+                  </p>
+                  <div className="flex gap-1.5">
+                    {(
+                      [
+                        ["normal", "Normal"],
+                        ["advantage", "Advantage"],
+                        ["disadvantage", "Disadvantage"],
+                      ] as const
+                    ).map(([modeOption, label]) => (
+                      <RollModeButton
+                        key={modeOption}
+                        active={rollMode === modeOption}
+                        onClick={() =>
+                          onUpdateAttack(attack.id, { rollMode: modeOption })
+                        }
+                      >
+                        {label}
+                      </RollModeButton>
+                    ))}
                   </div>
-                )}
+                  {resolution === "save" && (
+                    <p className="mt-1.5 text-[10px] text-muted-foreground">
+                      Applies to the target&apos;s saving throw (e.g. Magic
+                      Resistance = advantage).
+                    </p>
+                  )}
+                </div>
 
                 {resolution === "save" && (
                   <div>
@@ -205,20 +222,39 @@ export function AttacksPanel({
                           }
                         />
                       </SettingRow>
-                      <label className="flex items-center gap-2 text-xs text-muted-foreground">
-                        <input
-                          type="checkbox"
-                          checked={attack.halfDamageOnSave}
-                          onChange={(e) =>
-                            onUpdateAttack(attack.id, {
-                              halfDamageOnSave: e.target.checked,
-                            })
-                          }
-                          className="rounded border-border"
-                        />
-                        Half damage on successful save
-                      </label>
-                      <div className="rounded-md bg-muted/40 px-2 py-1.5 text-xs">
+
+                      <div>
+                        <p className="mb-1.5 text-[10px] uppercase tracking-wide text-muted-foreground">
+                          {labels.saveSuccessEffect}
+                        </p>
+                        <div className="flex gap-1.5">
+                          {(
+                            [
+                              ["half", "Half"],
+                              ["none", "None"],
+                              ["full", "Full"],
+                            ] as const
+                          ).map(([effect, label]) => (
+                            <RollModeButton
+                              key={effect}
+                              active={saveSuccessEffect === effect}
+                              onClick={() =>
+                                onUpdateAttack(attack.id, {
+                                  saveSuccessEffect: effect,
+                                  halfDamageOnSave: effect === "half",
+                                })
+                              }
+                            >
+                              {label}
+                            </RollModeButton>
+                          ))}
+                        </div>
+                        <p className="mt-1.5 text-[10px] text-muted-foreground">
+                          {saveSuccessEffectHint(saveSuccessEffect, labels)}
+                        </p>
+                      </div>
+
+                      <div className="space-y-1 rounded-md bg-muted/40 px-2 py-1.5 text-xs">
                         <div className="flex justify-between">
                           <span className="text-muted-foreground">
                             Target succeeds
@@ -227,17 +263,26 @@ export function AttacksPanel({
                             {formatPercent(saveSuccessChance)}
                           </span>
                         </div>
+                        <div className="flex justify-between">
+                          <span className="text-muted-foreground">
+                            Target fails
+                          </span>
+                          <span className="font-medium tabular-nums">
+                            {formatPercent(1 - saveSuccessChance)}
+                          </span>
+                        </div>
                       </div>
                     </div>
                   </div>
                 )}
-
               </div>
 
               {result && (
                 <AttackResultPanel
                   result={result}
                   resolution={resolution}
+                  showCritStats={showCritStats}
+                  labels={labels}
                 />
               )}
             </div>
@@ -248,39 +293,54 @@ export function AttacksPanel({
   );
 }
 
+function saveSuccessEffectHint(
+  effect: SaveSuccessEffect,
+  labels: ReturnType<typeof getCalculatorLabels>,
+): string {
+  if (effect === "half") return labels.halfOnSave;
+  if (effect === "none") return labels.noneOnSave;
+  return labels.fullOnSave;
+}
+
 function AttackResultPanel({
   result,
   resolution,
+  showCritStats,
+  labels,
 }: {
   result: AttackDamageResult;
   resolution: "attack-roll" | "save";
+  showCritStats: boolean;
+  labels: ReturnType<typeof getCalculatorLabels>;
 }) {
-  const descriptions = getStatDescriptions(resolution);
-
   return (
     <div className="mt-3 grid gap-1.5 rounded-md bg-muted/30 px-2.5 py-2 text-xs">
       <Row
         label="Expression"
         value={result.diceExpression}
-        description={descriptions.expression}
+        description={labels.expressionHint}
       />
       <Row
-        label="Avg. on hit"
+        label={labels.avgOnHit}
         value={result.averageHit.toFixed(1)}
-        description={descriptions.averageHit}
+        description={labels.averageHitHint}
         highlight
       />
-      {resolution === "attack-roll" && (
+      {resolution === "attack-roll" && showCritStats && (
         <Row
-          label="Avg. on crit"
+          label={labels.avgOnCrit}
           value={result.averageCrit.toFixed(1)}
-          description={descriptions.averageCrit}
+          description={labels.averageCritHint}
         />
       )}
       <Row
-        label="Expected"
+        label={labels.expected}
         value={result.expectedDamage.toFixed(1)}
-        description={descriptions.expected}
+        description={
+          resolution === "attack-roll"
+            ? labels.expectedAttackHint
+            : labels.expectedSaveHint
+        }
         highlight
       />
       {resolution === "attack-roll" ? (
@@ -288,44 +348,42 @@ function AttackResultPanel({
           <Row
             label="Hit chance"
             value={formatPercent(result.hitChance)}
-            description={descriptions.hitChance}
+            description="Chance the attack hits the target (includes critical hits)."
           />
-          <Row
-            label="Crit chance"
-            value={formatPercent(result.critChance)}
-            description={descriptions.critChance}
-          />
+          {showCritStats && (
+            <Row
+              label="Crit chance"
+              value={formatPercent(result.critChance)}
+              description="Chance of a critical hit, based on the configured crit range."
+            />
+          )}
         </>
       ) : (
-        <Row
-          label="Target fails save"
-          value={formatPercent(result.saveFailChance)}
-          description={descriptions.saveFailChance}
-        />
+        <>
+          <Row
+            label="Target fails save"
+            value={formatPercent(result.saveFailChance)}
+            description="Chance the target fails the save against the effect's DC."
+          />
+          <Row
+            label="Target succeeds"
+            value={formatPercent(result.saveSuccessChance)}
+            description="Chance the target succeeds on the save (5e: no auto success on nat 20)."
+          />
+          <Row
+            label={labels.onSaveFail}
+            value={result.averageOnSaveFail.toFixed(1)}
+            description={`Full ${labels.unit} when the target fails the save.`}
+          />
+          <Row
+            label={labels.onSaveSuccess}
+            value={result.averageOnSaveSuccess.toFixed(1)}
+            description={`${labels.unitCapitalized} applied when the target succeeds, based on the save outcome setting.`}
+          />
+        </>
       )}
     </div>
   );
-}
-
-function getStatDescriptions(resolution: "attack-roll" | "save") {
-  return {
-    expression:
-      "Dice formula and flat bonuses for the attack, including damage type and bracket comments.",
-    averageHit:
-      "Average damage on a normal hit (no crit). Does not include miss chance.",
-    averageCrit:
-      "Average critical damage: doubled dice, flat bonuses, and Brutal Critical dice if applicable.",
-    expected:
-      resolution === "attack-roll"
-        ? "Average damage per attack attempt, weighting misses (0), hits, and crits."
-        : "Average damage per effect use, weighting whether the target fails or makes the save.",
-    hitChance:
-      "Chance the attack hits the target (includes critical hits).",
-    critChance:
-      "Chance of a critical hit, based on the configured crit range.",
-    saveFailChance:
-      "Chance the target fails the save against the attack's DC.",
-  };
 }
 
 function SettingRow({

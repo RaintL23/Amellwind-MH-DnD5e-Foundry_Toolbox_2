@@ -73,6 +73,13 @@ export const NAV_SECTIONS: NavSectionDef[] = [
             description:
               "GM initiative order, HP, and death saves for the table.",
           },
+          {
+            to: "/damage-calculator",
+            label: "Damage & Healing Calculator",
+            icon: Calculator,
+            description:
+              "Compare builds by expected damage or healing per turn.",
+          },
         ],
       },
       {
@@ -93,12 +100,6 @@ export const NAV_SECTIONS: NavSectionDef[] = [
             description:
               "In-session play sheet: HP, actions, spells, rests, inventory, and conditions.",
             badge: "ALPHA",
-          },
-          {
-            to: "/damage-calculator",
-            label: "Damage Calculator",
-            icon: Calculator,
-            description: "Compare weapon builds by calculating expected DPT.",
           },
         ],
       },
