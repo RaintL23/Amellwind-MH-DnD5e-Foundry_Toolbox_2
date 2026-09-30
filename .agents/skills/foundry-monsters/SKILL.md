@@ -2,9 +2,9 @@
 name: foundry-monsters
 description: >-
   Work on Amellwind Foundry hunt-boss actors and module automation (Alatreon,
-  Dire Miralis, conditions). Use when editing monster build scripts, module
-  JS (alatreon.js, dire-miralis.js), amellwind-conditions, or
-  foundry-jsons-example/monsters — never for SPA Character Builder export.
+  Dire Miralis, Jin Dahaad, conditions). Use when editing monster build scripts,
+  module JS (alatreon.js, dire-miralis.js, jin-dahaad.js), amellwind-conditions,
+  or foundry-jsons-example/monsters — never for SPA Character Builder export.
 ---
 
 # Foundry hunt bosses / module monsters
@@ -29,10 +29,14 @@ description: >-
 | Module scripts | `public/data/foundry-module/Amellwind-MH-RaintDM-module/scripts/` |
 | Alatreon automation | `.../scripts/alatreon.js` |
 | Dire Miralis automation | `.../scripts/dire-miralis.js` |
+| Jin Dahaad automation | `.../scripts/jin-dahaad.js` |
 | Conditions HUD / AE | `.../scripts/amellwind-conditions.js` |
 | Alatreon engine | `public/data/scripts/monsters/alatreon-engine.js` |
+| Dire Miralis engine | `public/data/scripts/monsters/dire-miralis-engine.js` |
+| Jin Dahaad engine | `public/data/scripts/monsters/jin-dahaad-engine.js` |
 | Build Tempered Alatreon | `public/data/foundry-jsons-example/monsters/build-tempered-alatreon-mhw-actor.mjs` |
 | Build Dire Miralis | `public/data/foundry-jsons-example/monsters/build-dire-miralis-actor.mjs` |
+| Build Jin Dahaad | `public/data/foundry-jsons-example/monsters/build-jin-dahaad-actor.mjs` |
 | Example actors (Grep only) | `public/data/foundry-jsons-example/monsters/*.json` |
 
 ## Rebuild after edits
@@ -40,6 +44,7 @@ description: >-
 ```bash
 node public/data/foundry-jsons-example/monsters/build-dire-miralis-actor.mjs
 node public/data/foundry-jsons-example/monsters/build-tempered-alatreon-mhw-actor.mjs
+node public/data/foundry-jsons-example/monsters/build-jin-dahaad-actor.mjs
 pnpm build:foundry-module
 ```
 

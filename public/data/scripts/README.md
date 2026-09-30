@@ -12,7 +12,7 @@ engines used by Amellwind / RaintDM content. Folder names mirror
 | `resource-node/` | Resource Node configure + sync macro/engine |
 | `items-forge/` | Hunter traps Item Macro + canvas engine; Carving Knife Item Macro |
 | `conditions/` | Amellwind conditions & diseases registry + HUD/Active Effect engine |
-| `monsters/` | Dire Miralis + Tempered Alatreon (MHW) combat automation engines |
+| `monsters/` | Dire Miralis + Tempered Alatreon (MHW) + Jin Dahaad combat automation engines |
 | `combo-crafting/` | Combo Crafting Item Macro (recipes injected at build time) |
 | `runes/` | Shared unified rune Item Macro controller + Partbreaker+1 fragment |
 

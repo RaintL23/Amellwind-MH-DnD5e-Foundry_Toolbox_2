@@ -1,7 +1,7 @@
 {
   "version": 1,
-  "generatedAt": "2026-08-14T14:38:34.060Z",
-  "count": 248,
+  "generatedAt": "2026-09-30T00:38:03.048Z",
+  "count": 251,
   "tokens": {
     "acidic-glavenus": {
       "path": "/mh-tokens/acidic-glavenus.webp",
@@ -465,6 +465,20 @@
         "Fatalis"
       ]
     },
+    "felyne-cook-token": {
+      "path": "/mh-tokens/felyne-cook-token.webp",
+      "source": "felyne-cook-token.webp",
+      "names": [
+        "Felyne Cook Token"
+      ]
+    },
+    "felyne-cook": {
+      "path": "/mh-tokens/felyne-cook.webp",
+      "source": "felyne-cook.webp",
+      "names": [
+        "Felyne Cook"
+      ]
+    },
     "felyne": {
       "path": "/mh-tokens/felyne.webp",
       "source": "felyne.webp",
@@ -820,6 +834,13 @@
       "source": "jhen-mohran.webp",
       "names": [
         "Jhen Mohran"
+      ]
+    },
+    "jin-dahaad": {
+      "path": "/mh-tokens/jin-dahaad.webp",
+      "source": "jin-dahaad.webp",
+      "names": [
+        "Jin Dahaad"
       ]
     },
     "jyuratodus": {
@@ -1834,6 +1855,10 @@
     "ebonyodogaron": "ebony-odogaron",
     "epioth": "epioth",
     "fatalis": "fatalis",
+    "felyne cook token": "felyne-cook-token",
+    "felynecooktoken": "felyne-cook-token",
+    "felyne cook": "felyne-cook",
+    "felynecook": "felyne-cook",
     "felyne": "felyne",
     "forest gekko": "forest-gekko",
     "forestgekko": "forest-gekko",
@@ -1910,6 +1935,8 @@
     "jagras": "jagras",
     "jhen mohran": "jhen-mohran",
     "jhenmohran": "jhen-mohran",
+    "jin dahaad": "jin-dahaad",
+    "jindahaad": "jin-dahaad",
     "jyuratodus": "jyuratodus",
     "kecha wacha": "kecha-wacha",
     "kechawacha": "kecha-wacha",

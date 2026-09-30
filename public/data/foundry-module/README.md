@@ -68,7 +68,7 @@ Amellwind MH (RaintDM)/
 | Resource Node            | Resource Nodes    | Item  | `resource-node/`                      | Resource Node feature (drop on map gather actors) |
 | Resource Node Sync       | Resource Nodes    | Macro | `resource-node/`                      | Resource Node Sync (token interaction hooks) |
 | Resource Node Actors     | Resource Nodes    | Actor | `resource-node/actors/`               | Prebuilt gather nodes (Environment × Tier × Category) |
-| Monsters                 | Monsters          | Actor | `monsters/`                           | Hunt bosses (Dire Miralis) |
+| Monsters                 | Monsters          | Actor | `monsters/`                           | Hunt bosses (Dire Miralis, Alatreon, Jin Dahaad) |
 
 Item icons that referenced `mh-icons/...` are bundled under
 `Amellwind-MH-RaintDM-module/assets/mh-icons/` and their paths are rewritten to
@@ -193,11 +193,12 @@ node public/data/foundry-jsons-example/resource-node/build-resource-node-actors.
 node public/data/foundry-jsons-example/items-forge/build-items-forge.mjs
 ```
 
-   If you changed Dire Miralis / Tempered Alatreon (or added another hunt monster actor):
+   If you changed Dire Miralis / Tempered Alatreon / Jin Dahaad (or added another hunt monster actor):
 
 ```bash
 node public/data/foundry-jsons-example/monsters/build-dire-miralis-actor.mjs
 node public/data/foundry-jsons-example/monsters/build-tempered-alatreon-mhw-actor.mjs
+node public/data/foundry-jsons-example/monsters/build-jin-dahaad-actor.mjs
 ```
 
    If you changed Amellwind conditions / diseases automation:
@@ -537,6 +538,42 @@ with furnace light and blindsight 120 ft.
 **Use from the sheet:** Multiattack, Claw, Crush, Tail Sweep, Greater Fireball
 (Recharge 5–6), Lumbering Advance, legendary actions, optional lair actions.
 
+### Jin Dahaad (CR 16 Hunt Boss)
+
+Gargantuan ice-cliff leviathan. Drag from
+**Amellwind MH (RaintDM) → Monsters → Monsters**. Token is 4×4 (Gargantuan).
+
+**Automated (module script + Midi QOL):**
+
+- **Hunters Quantity** (1–6): Amellwind solo-boss HP (3 max / 4 +50% / 5 ×2 / 6 ×2.5).
+  Baseline body **480** HP and plates **40** HP each; plate-break body loss = 10 × mult
+- **Deploy Armored Plates:** four plate tokens (Legs/Claws, Tail, Back @ 15 ft, Head @ 5 ft).
+  AC 20; destroy → AC −1 + scaled body HP loss. Head only damageable after Bite
+- **Phases** (1–4): auto at 75% / 50% / 25% body HP (or Phase Shift). Phase 4 readies
+  **Subzero Shockwave**. Relocate areas between phases
+- Frost Breath (Recharge 5–6, 10d8 cold; Cone 45 ft or Line 90×10 ft), Frost Mist (5–6),
+  Flash Freeze (6). Hunt tuning vs MHMM (HP, damage, recharges) is listed in the build script header
+- **Native Activities first:** Bite/Kick/Lunging Bite use Midi other-activity saves + AEs
+  (Iceblight, Prone, Head Plate Exposed). Iceblight uses the Amellwind `iceblight` status
+  (half speed, no reactions) and repeats the DC 21 Con save at the end of each turn.
+  Frost Mist / Flash Freeze apply Restrained AE on fail. Body Slam / Charge apply Prone on fail.
+  Subzero Charge applies self AE (speed 0 / no LA). Legendary Resistance consumes `legres`
+- **Module riders:** Body Slam pushes 10 ft and Charge 15 ft (failed saves); Claw deals its
+  rolled cold damage to every other creature within 5 ft of the target. Pushes / pulls respect
+  walls — the GM is whispered when one is blocked. Boss AoEs never target plate / ice-block tokens
+- **Subzero Shockwave** (Recharge 6): Charge (creatures within 5 ft pushed 5 ft) → at the start
+  of Jin Dahaad's next turn the charge ends and the GM is prompted to Detonate (6d10 piercing +
+  8d10 cold); fail → Iceblight; fail by 5+ → Frozen + ice shell. Wind pressure (one Str save per
+  creature turn) → prone; fail by 5+ → pulled up to 10 ft. Saves use the player Adv/Disadv
+  dialog — never forced fast-roll. Damage respects resistance / immunity / vulnerability
+- **Ice blocks:** Frost Breath (fail by 5+), Mist, Flash Freeze place AC 18 / 20 HP tokens
+  (vulnerable to fire; immune piercing/cold/poison/psychic). Destroying a block removes the
+  Restrained (Ice) AE. If a save total can't be read, the GM is whispered to resolve fail-by-5
+
+**Use from the sheet:** Hunters Quantity, Deploy Armored Plates, Phase Shift, Multiattack,
+Bite/Claw/Kick/Tail, Body Slam, Frost Breath / Mist / Flash Freeze, Subzero Charge/Detonate,
+legendary Attack / Lunging Bite / Charge.
+
 ### Tempered Alatreon (MHW) (CR 30)
 
 Gargantuan Elder Dragon. Drag from **Amellwind MH (RaintDM) → Monsters → Monsters**.
@@ -592,6 +629,7 @@ After editing `monsters/*.js` / the build scripts:
 ```bash
 node public/data/foundry-jsons-example/monsters/build-dire-miralis-actor.mjs
 node public/data/foundry-jsons-example/monsters/build-tempered-alatreon-mhw-actor.mjs
+node public/data/foundry-jsons-example/monsters/build-jin-dahaad-actor.mjs
 pnpm build:foundry-module
 ```
 
@@ -634,9 +672,11 @@ pnpm build:foundry-module
   module script on every client. The Sync macro / Configure dialog can still re-arm
   them mid-session if needed.
 - **Dire Miralis:** Magma Armor, lava templates, Calamity Rain, Boiling Presence,
-  and Scorching Hide load from `scripts/dire-miralis.js` on world ready (GM
-  mutations run on the active GM). Item Macros call that API; they warn if the
-  module script is not armed.
+and Scorching Hide load from `scripts/dire-miralis.js` on world ready (GM
+mutations run on the active GM). Item Macros call that API; they warn if the
+module script is not armed.
+- **Jin Dahaad:** Hunters Quantity, plate tokens, phases, and Subzero Shockwave
+load from `scripts/jin-dahaad.js` on world ready.
 - **Tempered Alatreon (MHW):** Active State, Element Burst, Overload, Horns,
   Escaton, breath typing, legendary limit, and mythic gates load from
   `scripts/alatreon.js` on world ready. Item Macros call `__amellwindAlatreon`.
