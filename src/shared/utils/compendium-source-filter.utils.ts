@@ -84,26 +84,50 @@ export function buildSourcesFilterSectionFrom2024(
   };
 }
 
+export interface SourceFilterMatcher {
+  (entity: { source: string; variantSources?: string[] }): boolean;
+}
+
+/**
+ * Precompute selected source codes + display-name aliases once, then match
+ * entities with O(1) Set lookups (avoids rebuilding Sets per row).
+ */
+export function createSourceFilterMatcher(
+  selectedSources: string[],
+  catalog?: Map<string, SourceCatalogEntry>,
+  bookNames?: BookSourceNameMap,
+): SourceFilterMatcher {
+  if (selectedSources.length === 0) {
+    return () => false;
+  }
+
+  const selectedCodes = new Set(selectedSources);
+  const selectedNames =
+    catalog && bookNames
+      ? new Set(
+          selectedSources.map((code) =>
+            normalizeSourceLabel(getSourceDisplayName(code, catalog, bookNames)),
+          ),
+        )
+      : null;
+
+  return (entity) => {
+    const sources = entity.variantSources ?? [entity.source];
+    if (sources.some((s) => selectedCodes.has(s))) return true;
+    if (!selectedNames || !catalog || !bookNames) return false;
+    return sources.some((source) =>
+      selectedNames.has(
+        normalizeSourceLabel(getSourceDisplayName(source, catalog, bookNames)),
+      ),
+    );
+  };
+}
+
 export function entityMatchesSourceFilter(
   entity: { source: string; variantSources?: string[] },
   selectedSources: string[],
   catalog?: Map<string, SourceCatalogEntry>,
   bookNames?: BookSourceNameMap,
 ): boolean {
-  if (selectedSources.length === 0) return false;
-  const sources = entity.variantSources ?? [entity.source];
-  if (sources.some((s) => selectedSources.includes(s))) return true;
-
-  // Same display name, different identity codes (e.g. DnDBeyondDrops / BndD).
-  if (!catalog || !bookNames) return false;
-  const selectedNames = new Set(
-    selectedSources.map((code) =>
-      normalizeSourceLabel(getSourceDisplayName(code, catalog, bookNames)),
-    ),
-  );
-  return sources.some((source) =>
-    selectedNames.has(
-      normalizeSourceLabel(getSourceDisplayName(source, catalog, bookNames)),
-    ),
-  );
+  return createSourceFilterMatcher(selectedSources, catalog, bookNames)(entity);
 }

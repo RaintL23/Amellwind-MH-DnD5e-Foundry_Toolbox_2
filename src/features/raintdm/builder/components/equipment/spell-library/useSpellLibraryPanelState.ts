@@ -48,7 +48,7 @@ import { useBookSourceNames } from "@/shared/hooks/useBookSourceNames";
 import { useSourceCatalog } from "@/shared/hooks/useSourceCatalog";
 import {
   buildSourcesFilterSection,
-  entityMatchesSourceFilter,
+  createSourceFilterMatcher,
 } from "@/shared/utils/compendium-source-filter.utils";
 import { defaultOfficialSourceCodes } from "@/shared/services/source-catalog.service";
 import {
@@ -436,11 +436,19 @@ export function useSpellLibraryPanelState({
   );
 
   const availableSpells = useMemo(() => {
+    const srcSelected = Array.isArray(filterValues.src)
+      ? (filterValues.src as string[])
+      : [];
+    const matcher =
+      srcSelected.length > 0
+        ? createSourceFilterMatcher(srcSelected, catalog, bookNames)
+        : null;
     const spells = slotEligibleSpells.filter((s) => {
       if (q && !s.name.toLowerCase().includes(q)) return false;
       return spellMatchesFacetFilters(s, filterValues, {
-        sourceMatcher: (spell, selected) =>
-          entityMatchesSourceFilter(spell, selected, catalog, bookNames),
+        sourceMatcher: matcher
+          ? (spell, _selected) => matcher(spell)
+          : undefined,
       });
     });
 

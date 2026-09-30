@@ -13,7 +13,7 @@ import {
   getSortedRowModel,
   useReactTable,
 } from "@tanstack/react-table";
-import { useCallback, useEffect, useState } from "react";
+import { useCallback, useEffect, useState, type ReactNode } from "react";
 import {
   Table,
   TableBody,
@@ -61,6 +61,13 @@ interface DataTableProps<TData, TValue> {
   /** When false, no built-in debounced search toolbar is used. */
   enableSearchToolbar?: boolean;
   getRowClassName?: (row: TData) => string | undefined;
+  /**
+   * When set, below `md` renders a card list from the same paginated/sorted
+   * row model instead of the HTML table. Desktop table stays `hidden md:block`.
+   */
+  renderMobileRow?: (row: TData) => ReactNode;
+  /** Forwarded to TanStack; set false when the parent resets page on filter change. */
+  autoResetPageIndex?: boolean;
 }
 
 export function DataTable<TData, TValue>({
@@ -87,6 +94,8 @@ export function DataTable<TData, TValue>({
   onPaginationChange,
   enableSearchToolbar = true,
   getRowClassName,
+  renderMobileRow,
+  autoResetPageIndex,
 }: DataTableProps<TData, TValue>) {
   const [internalSorting, setInternalSorting] =
     useState<SortingState>(initialSorting);
@@ -168,14 +177,24 @@ export function DataTable<TData, TValue>({
     getPaginationRowModel: getPaginationRowModel(),
     globalFilterFn: enableSearchToolbar ? globalFilterFn : undefined,
     enableMultiSort,
+    autoResetPageIndex,
   });
 
   useEffect(() => {
-    setPagination((prev) => ({ ...prev, pageIndex: 0 }));
+    if (autoResetPageIndex !== false) {
+      setPagination((prev) => ({ ...prev, pageIndex: 0 }));
+    }
     if (lockedSorting) {
       setSorting(lockedSorting);
     }
-  }, [enableSearchToolbar ? appliedSearch : null, columnFilters, lockedSorting, setPagination, setSorting]);
+  }, [
+    enableSearchToolbar ? appliedSearch : null,
+    columnFilters,
+    lockedSorting,
+    autoResetPageIndex,
+    setPagination,
+    setSorting,
+  ]);
 
   useEffect(() => {
     onFilterStateChange?.({
@@ -198,6 +217,7 @@ export function DataTable<TData, TValue>({
   const filteredCount = table.getFilteredRowModel().rows.length;
   const totalCount = table.getCoreRowModel().rows.length;
   const currentPageSize = table.getState().pagination.pageSize;
+  const pageRows = table.getRowModel().rows;
 
   const handleRowClick = useCallback(
     (row: TData) => {
@@ -221,7 +241,28 @@ export function DataTable<TData, TValue>({
         <ListAreaLoading />
       ) : (
         <>
-          <div className="rounded-lg border border-border overflow-hidden [&_th]:px-3 [&_td]:px-3 md:[&_th]:px-4 md:[&_td]:px-4">
+          {renderMobileRow && (
+            <div className="space-y-2 md:hidden">
+              {pageRows.length > 0 ? (
+                pageRows.map((row) => (
+                  <div key={row.id}>{renderMobileRow(row.original)}</div>
+                ))
+              ) : (
+                <p className="px-2 py-10 text-center text-sm text-muted-foreground">
+                  {emptyMessage}
+                </p>
+              )}
+            </div>
+          )}
+
+          <div
+            className={[
+              "rounded-lg border border-border overflow-hidden [&_th]:px-3 [&_td]:px-3 md:[&_th]:px-4 md:[&_td]:px-4",
+              renderMobileRow ? "hidden md:block" : undefined,
+            ]
+              .filter(Boolean)
+              .join(" ")}
+          >
             <Table>
               <TableHeader>
                 {table.getHeaderGroups().map((headerGroup) => (
@@ -249,8 +290,8 @@ export function DataTable<TData, TValue>({
                 ))}
               </TableHeader>
               <TableBody>
-                {table.getRowModel().rows.length > 0 ? (
-                  table.getRowModel().rows.map((row) => (
+                {pageRows.length > 0 ? (
+                  pageRows.map((row) => (
                     <TableRow
                       key={row.id}
                       className={[

@@ -124,6 +124,15 @@ function applyCopyMods(
   }
 }
 
+export interface ResolveEntityCopiesOptions {
+  /**
+   * When true (default), deep-clone every entity before resolving.
+   * When false, only entities that still have `_copy` (or are used as a copy
+   * base) are cloned — much cheaper for large pools like the bestiary.
+   */
+  cloneAll?: boolean;
+}
+
 /**
  * Resolve 5etools `_copy` stubs by merging parent entities (iterates until stable).
  */
@@ -131,13 +140,17 @@ export function resolveEntityCopies<T extends Record<string, unknown>>(
   entities: T[],
   keyFn: (entity: T) => string,
   resolveRef: (entity: T, ref: CopyRef) => T | undefined,
+  options?: ResolveEntityCopiesOptions,
 ): T[] {
+  const cloneAll = options?.cloneAll !== false;
   const index = new Map<string, T>();
   for (const ent of entities) {
     index.set(keyFn(ent), ent);
   }
 
-  let result = entities.map((ent) => copyFast(ent));
+  let result = cloneAll
+    ? entities.map((ent) => copyFast(ent))
+    : entities.map((ent) => (ent._copy ? copyFast(ent) : ent));
   let changed = true;
   let passes = 0;
   const maxPasses = 20;
@@ -177,30 +190,37 @@ export function resolveEntityCopies<T extends Record<string, unknown>>(
 
 export function resolveByNameSource<T extends { name: string; source: string }>(
   entities: T[],
+  options?: ResolveEntityCopiesOptions,
 ): T[] {
   const index = new Map<string, T>();
   for (const ent of entities) {
     index.set(`${ent.name}|${ent.source}`.toLowerCase(), ent);
   }
-  return resolveEntityCopies(entities as T[] & Record<string, unknown>[], (e) =>
-    `${e.name}|${e.source}`.toLowerCase(),
-  (_entity, ref) => {
-    if (!ref.name || !ref.source) return undefined;
-    return index.get(`${ref.name}|${ref.source}`.toLowerCase());
-  }) as T[];
+  return resolveEntityCopies(
+    entities as T[] & Record<string, unknown>[],
+    (e) => `${e.name}|${e.source}`.toLowerCase(),
+    (_entity, ref) => {
+      if (!ref.name || !ref.source) return undefined;
+      return index.get(`${ref.name}|${ref.source}`.toLowerCase());
+    },
+    options,
+  ) as T[];
 }
 
 export function resolveByAbbreviationSource<
   T extends { abbreviation: string; source: string },
->(entities: T[]): T[] {
+>(entities: T[], options?: ResolveEntityCopiesOptions): T[] {
   const index = new Map<string, T>();
   for (const ent of entities) {
     index.set(`${ent.abbreviation}|${ent.source}`.toLowerCase(), ent);
   }
-  return resolveEntityCopies(entities as T[] & Record<string, unknown>[], (e) =>
-    `${e.abbreviation}|${e.source}`.toLowerCase(),
-  (_entity, ref) => {
-    if (!ref.abbreviation || !ref.source) return undefined;
-    return index.get(`${ref.abbreviation}|${ref.source}`.toLowerCase());
-  }) as T[];
+  return resolveEntityCopies(
+    entities as T[] & Record<string, unknown>[],
+    (e) => `${e.abbreviation}|${e.source}`.toLowerCase(),
+    (_entity, ref) => {
+      if (!ref.abbreviation || !ref.source) return undefined;
+      return index.get(`${ref.abbreviation}|${ref.source}`.toLowerCase());
+    },
+    options,
+  ) as T[];
 }

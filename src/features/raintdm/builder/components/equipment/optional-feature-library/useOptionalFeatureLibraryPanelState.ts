@@ -55,7 +55,7 @@ import {
   dndFeatMatchesTypeFilter,
   FEAT_LIBRARY_FILTER_SECTIONS,
 } from "@/features/raintdm/builder/utils/builder-library-filters";
-import { entityMatchesSourceFilter } from "@/shared/utils/compendium-source-filter.utils";
+import { createSourceFilterMatcher } from "@/shared/utils/compendium-source-filter.utils";
 import {
   canAddOptionalFeature,
   isOptionalFeaturePicked,
@@ -283,6 +283,10 @@ export function useOptionalFeatureLibraryPanelState({
   }, [filterSections, selectedSlot]);
 
   const filteredOptions = useMemo(() => {
+    const matcher =
+      sourceFilter.length > 0
+        ? createSourceFilterMatcher(sourceFilter, catalog, bookNames)
+        : null;
     const base = catalogOptions.filter((item) => {
       if (
         q &&
@@ -294,10 +298,7 @@ export function useOptionalFeatureLibraryPanelState({
       ) {
         return false;
       }
-      if (
-        sourceFilter.length > 0 &&
-        !entityMatchesSourceFilter(item, sourceFilter, catalog, bookNames)
-      ) {
+      if (matcher && !matcher(item)) {
         return false;
       }
       if (usesFeatCatalog && featTypeFilter) {

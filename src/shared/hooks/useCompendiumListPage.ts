@@ -6,7 +6,9 @@ import { useListSessionFilters } from "@/shared/hooks/useListSessionFilters";
 import { useListItemUrlParam } from "@/shared/hooks/useListItemUrlParam";
 import {
   buildSourcesFilterSection,
+  createSourceFilterMatcher,
   entityMatchesSourceFilter,
+  type SourceFilterMatcher,
 } from "@/shared/utils/compendium-source-filter.utils";
 import { defaultOfficialSourceCodes } from "@/shared/services/source-catalog.service";
 
@@ -191,10 +193,28 @@ export function useCompendiumListPage<T extends CompendiumNamedEntity>(
     [filterSourceCodes, catalog, bookNames],
   );
 
+  const sourceMatcher: SourceFilterMatcher | null = useMemo(() => {
+    if (sourceFilter.length === 0) return null;
+    return createSourceFilterMatcher(sourceFilter, catalog, bookNames);
+  }, [sourceFilter, catalog, bookNames]);
+
   const matchesSourceFilter = useCallback(
-    (entity: T, selectedSources: string[]) =>
-      entityMatchesSourceFilter(entity, selectedSources, catalog, bookNames),
-    [catalog, bookNames],
+    (entity: T, selectedSources: string[]) => {
+      if (
+        sourceMatcher &&
+        selectedSources.length === sourceFilter.length &&
+        selectedSources.every((code, i) => code === sourceFilter[i])
+      ) {
+        return sourceMatcher(entity);
+      }
+      return entityMatchesSourceFilter(
+        entity,
+        selectedSources,
+        catalog,
+        bookNames,
+      );
+    },
+    [sourceMatcher, sourceFilter, catalog, bookNames],
   );
 
   const openItem = useCallback(
@@ -276,6 +296,7 @@ export function useCompendiumListPage<T extends CompendiumNamedEntity>(
     ensureMultiIfEmpty,
     sourceFilter,
     sourceSection,
+    sourceMatcher,
     matchesSourceFilter,
     searchDraft,
     setSearchDraft,
