@@ -18,6 +18,42 @@ function formatItemPropertyTagLabel(
   return PROPERTY_LABELS[key] ?? PROPERTY_LABELS[key.toUpperCase()] ?? key;
 }
 
+/** Single attack-type codes used by `{@atk …}` / `{@atkr …}`. */
+const ATK_PART_LABELS: Record<string, string> = {
+  m: "Melee",
+  r: "Ranged",
+  mw: "Melee Weapon",
+  rw: "Ranged Weapon",
+  ms: "Melee Spell",
+  rs: "Ranged Spell",
+};
+
+/** Combined codes that use SRD/5etools phrasing (not "X or Y" of each full part). */
+const ATK_COMBO_LABELS: Record<string, string> = {
+  "m,r": "Melee or Ranged",
+  "r,m": "Melee or Ranged",
+  "mw,rw": "Melee or Ranged Weapon",
+  "rw,mw": "Melee or Ranged Weapon",
+  "ms,rs": "Melee or Ranged Spell",
+  "rs,ms": "Melee or Ranged Spell",
+};
+
+/**
+ * Expands 5etools attack-type codes (`m`, `mw`, `mw,rw`, …) to book text.
+ * Examples: `m` → "Melee Attack:", `mw` → "Melee Weapon Attack:"
+ */
+export function formatFiveToolsAttackType(codes: string): string {
+  const normalized = codes.trim().toLowerCase().replace(/\s+/g, "");
+  if (!normalized) return "Attack:";
+  const combo = ATK_COMBO_LABELS[normalized];
+  if (combo) return `${combo} Attack:`;
+  const labels = normalized
+    .split(",")
+    .filter(Boolean)
+    .map((part) => ATK_PART_LABELS[part] ?? part.toUpperCase());
+  return `${labels.join(" or ")} Attack:`;
+}
+
 /**
  * Formats a 5etools `{ type: "abilityDc", name, attributes }` block into book-style text.
  * Example: `Ammo save DC = 8 + your proficiency bonus + your Dexterity modifier`
@@ -79,9 +115,7 @@ function isPreservedEntityTagMatch(match: string): boolean {
 }
 
 const FIVETOOLS_PATTERNS: Array<[RegExp, string | ((match: string, ...args: string[]) => string)]> = [
-  [/\{@atk mw\}/g, "Melee Weapon Attack:"],
-  [/\{@atk rw\}/g, "Ranged Weapon Attack:"],
-  [/\{@atk mw,rw\}/g, "Melee or Ranged Weapon Attack:"],
+  [/\{@atk ([^}]+)\}/g, (_m, codes) => formatFiveToolsAttackType(codes)],
   [/\{@h\}/g, "Hit:"],
   [/\{@hit (-?\d+)\}/g, (_m, n) => `+${n} to hit`],
   [/\{@damage ([^}]+)\}/g, (_m, dmg) => dmg],
@@ -117,7 +151,7 @@ const FIVETOOLS_PATTERNS: Array<[RegExp, string | ((match: string, ...args: stri
   [/\{@actSaveFail\}/g, "On a failed save"],
   [/\{@actSaveSuccess\}/g, "On a successful save"],
   [/\{@actSaveSuccessOrFail\}/g, "Whether the save succeeds or fails"],
-  [/\{@atkr ([^}]+)\}/g, (_m, mode) => `${mode.toUpperCase()} Attack:`],
+  [/\{@atkr ([^}]+)\}/g, (_m, codes) => formatFiveToolsAttackType(codes)],
   [/\{@chance [^}]+\}/g, ""],
   [/\{@b ([^}]+)\}/g, (_m, text) => text],
   [/\{@bold ([^}]+)\}/g, (_m, text) => text],

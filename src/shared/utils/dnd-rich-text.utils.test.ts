@@ -79,6 +79,29 @@ describe("parseRichText entity links", () => {
     });
   });
 
+  it("expands {@atk m} / {@atkr m} to Melee Attack (not M Attack)", () => {
+    const melee = parseRichText("{@atk m} {@hit 6}", {
+      highlightKeywords: false,
+    });
+    expect(melee.map((s) => s.content).join("")).toBe(
+      "Melee Attack: +6 to hit",
+    );
+
+    const weapon = parseRichText("{@atk mw} {@hit 5}", {
+      highlightKeywords: false,
+    });
+    expect(weapon.map((s) => s.content).join("")).toBe(
+      "Melee Weapon Attack: +5 to hit",
+    );
+
+    const atkr = parseRichText("{@atkr r} {@hit 4}", {
+      highlightKeywords: false,
+    });
+    expect(atkr.map((s) => s.content).join("")).toBe(
+      "Ranged Attack: +4 to hit",
+    );
+  });
+
   it("resolves {@itemProperty} to display name, not abbreviation", () => {
     const withDisplay = parseRichText(
       "weapon with the {@itemProperty AF|XDMG|Ammunition} property",

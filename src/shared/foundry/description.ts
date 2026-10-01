@@ -6,6 +6,7 @@
  * Do NOT use `parseFiveToolsMarkup` here — that strips tags for the app UI.
  */
 
+import { formatFiveToolsAttackType } from "@/shared/utils/fivetools-parser";
 import {
   buildToolboxFilterHref,
   buildToolboxWeaponHref,
@@ -78,15 +79,8 @@ function convertFiveToolsTag(tag: string, body: string): string {
   if (lower === "h") {
     return `<strong>Hit:</strong>`;
   }
-  if (lower === "atk") {
-    const map: Record<string, string> = {
-      mw: "Melee Weapon Attack:",
-      rw: "Ranged Weapon Attack:",
-      "mw,rw": "Melee or Ranged Weapon Attack:",
-      ms: "Melee Spell Attack:",
-      rs: "Ranged Spell Attack:",
-    };
-    return `<em>${map[body.trim()] ?? `${body} Attack:`}</em>`;
+  if (lower === "atk" || lower === "atkr") {
+    return `<em>${escapeHtml(formatFiveToolsAttackType(body))}</em>`;
   }
   if (lower === "dc") {
     return `DC ${escapeHtml(body.trim())}`;
@@ -134,10 +128,6 @@ function convertFiveToolsTag(tag: string, body: string): string {
   if (lower === "actsavesuccessorfail") {
     return "Whether the save succeeds or fails";
   }
-  if (lower === "atkr") {
-    return `<em>${escapeHtml(body.trim().toUpperCase())} Attack:</em>`;
-  }
-
   const entity = resolveToolboxEntityRef(lower, body);
   if (entity) {
     return toolboxAnchorHtml(entity.href, entity.label);

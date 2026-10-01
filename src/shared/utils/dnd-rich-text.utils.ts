@@ -4,6 +4,7 @@ import {
   splitDndKeywords,
 } from "./dnd-keywords.utils";
 import { PROPERTY_LABELS } from "@/shared/types/weapon.types";
+import { formatFiveToolsAttackType } from "./fivetools-parser";
 import {
   type ToolboxEntityKind,
   buildToolboxFilterHref,
@@ -165,10 +166,11 @@ function segmentsFromFiveToolsTag(tag: string, body: string): RichTextSegment[] 
     case "h":
       return [{ kind: "text", content: "Hit: " }];
     case "atk":
+    case "atkr":
       return [
         {
           kind: "text",
-          content: `${content.replace("mw,rw", "mw or rw").toUpperCase()} Attack: `,
+          content: formatFiveToolsAttackType(content),
         },
       ];
     case "action":
