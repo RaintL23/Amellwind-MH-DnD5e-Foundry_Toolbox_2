@@ -1,10 +1,8 @@
 import { useCallback } from "react";
 import type { DndItem } from "@/shared/types";
 import { DataTable } from "@/components/data-table/data-table";
-import {
-  CompendiumMobileCard,
-  formatVariantSources,
-} from "@/shared/components/CompendiumMobileCard";
+import { CompendiumMobileCard } from "@/shared/components/CompendiumMobileCard";
+import { SourceAbbreviations } from "@/shared/components/SourceAbbreviations";
 import { dndItemColumns } from "./dnd-item-columns";
 
 interface DndItemDataTableProps {
@@ -33,9 +31,12 @@ export function DndItemDataTable({ items, onRowClick }: DndItemDataTableProps) {
           <>
             <span className="truncate">{item.typeLabel}</span>
             <span aria-hidden="true">·</span>
-            <span>
-              {formatVariantSources(item.source, item.variantSources)}
-            </span>
+            <SourceAbbreviations
+              source={item.source}
+              variantSources={item.variantSources}
+              maxVisible={1}
+              nativeTitle
+            />
           </>
         }
       />

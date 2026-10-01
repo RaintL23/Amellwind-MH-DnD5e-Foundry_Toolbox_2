@@ -1,6 +1,7 @@
 import { ColumnDef, FilterFn } from "@tanstack/react-table";
 import { Class } from "@/shared/types";
 import { DataTableColumnHeader } from "@/components/data-table/data-table-column-header";
+import { SourceAbbreviations } from "@/shared/components/SourceAbbreviations";
 import { getCasterLabel } from "../mappers/class.mapper";
 
 const classGlobalFilter: FilterFn<Class> = (row, _columnId, filterValue) => {
@@ -91,9 +92,11 @@ export const classColumns: ColumnDef<Class>[] = [
     ),
     meta: { hideBelowMd: true },
     cell: ({ row }) => (
-      <span className="text-muted-foreground font-mono text-xs">
-        {row.original.source}
-      </span>
+      <SourceAbbreviations
+        source={row.original.source}
+        variantSources={row.original.variantSources}
+        className="font-mono"
+      />
     ),
     filterFn: sourceFilter,
   },

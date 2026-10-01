@@ -1,5 +1,6 @@
 import { memo } from "react";
 import type { BestiaryCreature } from "@/shared/types/bestiary-creature.types";
+import { SourceAbbreviations } from "@/shared/components/SourceAbbreviations";
 import { getTier } from "@/shared/utils/cr.utils";
 import { cn } from "@/shared/utils/cn";
 
@@ -25,11 +26,6 @@ export const BestiaryMobileCard = memo(function BestiaryMobileCard({
   creature,
   onSelect,
 }: BestiaryMobileCardProps) {
-  const sources = creature.variantSources ?? [creature.source];
-  const sourceLabel =
-    sources.length <= 1
-      ? sources[0]
-      : `${sources[0]} +${sources.length - 1}`;
   const typeLabel = creature.type.tags?.length
     ? `${creature.type.type} (${creature.type.tags.join(", ")})`
     : creature.type.type;
@@ -53,9 +49,12 @@ export const BestiaryMobileCard = memo(function BestiaryMobileCard({
         <span aria-hidden="true">·</span>
         <span>{creature.size}</span>
         <span aria-hidden="true">·</span>
-        <span title={sources.length > 1 ? sources.join(", ") : undefined}>
-          {sourceLabel}
-        </span>
+        <SourceAbbreviations
+          source={creature.source}
+          variantSources={creature.variantSources}
+          maxVisible={1}
+          nativeTitle
+        />
       </p>
     </button>
   );

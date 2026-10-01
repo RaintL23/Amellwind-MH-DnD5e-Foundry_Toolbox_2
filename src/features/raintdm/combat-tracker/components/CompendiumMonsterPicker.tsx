@@ -8,6 +8,7 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Select } from "@/components/ui/select";
 import { NumberStepper } from "@/shared/components/NumberStepper";
+import { SourceAbbreviations } from "@/shared/components/SourceAbbreviations";
 import { getAllBestiaryCreatures } from "@/features/dnd/bestiary/services/bestiary.service";
 import { getAllMonsters } from "@/features/amellwind/monsters/services/monster.service";
 import type { BestiaryCreature } from "@/shared/types/bestiary-creature.types";
@@ -186,9 +187,7 @@ export function CompendiumMonsterPicker({
           <DataTableColumnHeader column={column} title="Source" />
         ),
         cell: ({ row }) => (
-          <span className="text-xs text-muted-foreground">
-            {row.original.source}
-          </span>
+          <SourceAbbreviations source={row.original.source} maxVisible={1} />
         ),
       },
       {

@@ -1,10 +1,8 @@
 import { useCallback } from "react";
 import type { Spell } from "@/shared/types";
 import { DataTable } from "@/components/data-table/data-table";
-import {
-  CompendiumMobileCard,
-  formatVariantSources,
-} from "@/shared/components/CompendiumMobileCard";
+import { CompendiumMobileCard } from "@/shared/components/CompendiumMobileCard";
+import { SourceAbbreviations } from "@/shared/components/SourceAbbreviations";
 import { spellColumns } from "./spell-columns";
 
 interface SpellDataTableProps {
@@ -37,9 +35,12 @@ export function SpellDataTable({ spells, onRowClick }: SpellDataTableProps) {
               <span>+{spell.classNames.length - 3}</span>
             ) : null}
             <span aria-hidden="true">·</span>
-            <span>
-              {formatVariantSources(spell.source, spell.variantSources)}
-            </span>
+            <SourceAbbreviations
+              source={spell.source}
+              variantSources={spell.variantSources}
+              maxVisible={1}
+              nativeTitle
+            />
           </>
         }
       />

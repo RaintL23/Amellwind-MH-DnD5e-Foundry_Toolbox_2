@@ -38,12 +38,3 @@ export const CompendiumMobileCard = memo(function CompendiumMobileCard({
     </button>
   );
 });
-
-export function formatVariantSources(
-  source: string,
-  variantSources?: string[],
-): string {
-  const sources = variantSources ?? [source];
-  if (sources.length <= 1) return sources[0] ?? source;
-  return `${sources[0]} +${sources.length - 1}`;
-}

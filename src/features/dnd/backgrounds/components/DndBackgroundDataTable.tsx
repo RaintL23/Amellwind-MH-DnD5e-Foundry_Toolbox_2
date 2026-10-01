@@ -2,10 +2,8 @@ import { useCallback } from "react";
 import type { DndBackground } from "@/shared/types";
 import { DND_BACKGROUND_EDITION_LABELS } from "@/shared/types";
 import { DataTable } from "@/components/data-table/data-table";
-import {
-  CompendiumMobileCard,
-  formatVariantSources,
-} from "@/shared/components/CompendiumMobileCard";
+import { CompendiumMobileCard } from "@/shared/components/CompendiumMobileCard";
+import { SourceAbbreviations } from "@/shared/components/SourceAbbreviations";
 import { dndBackgroundColumns } from "./dnd-background-columns";
 
 interface DndBackgroundDataTableProps {
@@ -39,7 +37,12 @@ export function DndBackgroundDataTable({
               <span className="truncate">{bg.abilitySummary}</span>
             ) : null}
             {bg.abilitySummary ? <span aria-hidden="true">·</span> : null}
-            <span>{formatVariantSources(bg.source, bg.variantSources)}</span>
+            <SourceAbbreviations
+              source={bg.source}
+              variantSources={bg.variantSources}
+              maxVisible={1}
+              nativeTitle
+            />
           </>
         }
       />

@@ -1,6 +1,7 @@
 import { ColumnDef, FilterFn } from "@tanstack/react-table";
 import { Spell } from "@/shared/types";
 import { DataTableColumnHeader } from "@/components/data-table/data-table-column-header";
+import { SourceAbbreviations } from "@/shared/components/SourceAbbreviations";
 import { cn } from "@/shared/utils/cn";
 
 const spellGlobalFilter: FilterFn<Spell> = (row, _columnId, filterValue) => {
@@ -163,22 +164,12 @@ export const spellColumns: ColumnDef<Spell>[] = [
       <DataTableColumnHeader column={column} title="Source" />
     ),
     meta: { hideBelowMd: true },
-    cell: ({ row }) => {
-      const spell = row.original;
-      const sources = spell.variantSources ?? [spell.source];
-      const label =
-        sources.length <= 2
-          ? sources.join(", ")
-          : `${sources[0]} +${sources.length - 1}`;
-      return (
-        <span
-          className="text-muted-foreground text-xs whitespace-nowrap"
-          title={sources.length > 1 ? sources.join(", ") : undefined}
-        >
-          {label}
-        </span>
-      );
-    },
+    cell: ({ row }) => (
+      <SourceAbbreviations
+        source={row.original.source}
+        variantSources={row.original.variantSources}
+      />
+    ),
     filterFn: (row, _id, value) => {
       if (!value) return true;
       const sources = row.original.variantSources ?? [row.original.source];

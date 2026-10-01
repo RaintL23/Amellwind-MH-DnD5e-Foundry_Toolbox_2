@@ -1,10 +1,8 @@
 import { useCallback } from "react";
 import type { Class } from "@/shared/types";
 import { DataTable } from "@/components/data-table/data-table";
-import {
-  CompendiumMobileCard,
-  formatVariantSources,
-} from "@/shared/components/CompendiumMobileCard";
+import { CompendiumMobileCard } from "@/shared/components/CompendiumMobileCard";
+import { SourceAbbreviations } from "@/shared/components/SourceAbbreviations";
 import { getCasterLabel } from "../mappers/class.mapper";
 import { classColumns } from "./class-columns";
 
@@ -42,7 +40,12 @@ export function ClassDataTable({ classes, onRowClick }: ClassDataTableProps) {
               {cls.subclasses.length === 1 ? "" : "es"}
             </span>
             <span aria-hidden="true">·</span>
-            <span>{formatVariantSources(cls.source, cls.variantSources)}</span>
+            <SourceAbbreviations
+              source={cls.source}
+              variantSources={cls.variantSources}
+              maxVisible={1}
+              nativeTitle
+            />
           </>
         }
       />

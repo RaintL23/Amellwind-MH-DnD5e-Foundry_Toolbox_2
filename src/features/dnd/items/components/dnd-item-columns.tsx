@@ -6,6 +6,7 @@ import {
   formatShopPriceGp,
   resolveItemPriceGp,
 } from "@/features/dnd/shop-generator/utils/price-resolve.utils";
+import { SourceAbbreviations } from "@/shared/components/SourceAbbreviations";
 import { cn } from "@/shared/utils/cn";
 
 export const dndItemGlobalFilter: FilterFn<DndItem> = (row, _columnId, filterValue) => {
@@ -158,19 +159,12 @@ export const dndItemColumns: ColumnDef<DndItem>[] = [
       <DataTableColumnHeader column={column} title="Source" />
     ),
     meta: { hideBelowMd: true },
-    cell: ({ row }) => {
-      const item = row.original;
-      const sources = item.variantSources ?? [item.source];
-      const label = sources.length <= 2 ? sources.join(", ") : `${sources[0]}`;
-      return (
-        <span
-          className="text-muted-foreground text-xs whitespace-nowrap"
-          title={sources.length > 1 ? sources.join(", ") : undefined}
-        >
-          {label}
-        </span>
-      );
-    },
+    cell: ({ row }) => (
+      <SourceAbbreviations
+        source={row.original.source}
+        variantSources={row.original.variantSources}
+      />
+    ),
     filterFn: (row, _id, value) => {
       if (!value) return true;
       const sources = row.original.variantSources ?? [row.original.source];

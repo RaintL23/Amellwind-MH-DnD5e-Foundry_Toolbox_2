@@ -1,5 +1,6 @@
 import { ColumnDef, FilterFn } from "@tanstack/react-table";
 import type { DndBackground } from "@/shared/types";
+import { SourceAbbreviations } from "@/shared/components/SourceAbbreviations";
 
 export const backgroundGlobalFilter: FilterFn<DndBackground> = (
   row,
@@ -34,22 +35,12 @@ export const dndBackgroundColumns: ColumnDef<DndBackground>[] = [
     header: "Source",
     enableSorting: false,
     meta: { hideBelowMd: true },
-    cell: ({ row }) => {
-      const bg = row.original;
-      const sources = bg.variantSources ?? [bg.source];
-      const label =
-        sources.length <= 2
-          ? sources.join(", ")
-          : `${sources[0]} +${sources.length - 1}`;
-      return (
-        <span
-          className="text-muted-foreground text-xs whitespace-nowrap"
-          title={sources.length > 1 ? sources.join(", ") : undefined}
-        >
-          {label}
-        </span>
-      );
-    },
+    cell: ({ row }) => (
+      <SourceAbbreviations
+        source={row.original.source}
+        variantSources={row.original.variantSources}
+      />
+    ),
     filterFn: (row, _id, value) => {
       if (!value) return true;
       const sources = row.original.variantSources ?? [row.original.source];

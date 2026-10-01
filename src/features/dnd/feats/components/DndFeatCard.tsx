@@ -2,6 +2,7 @@ import { memo } from "react";
 import type { DndFeat } from "@/shared/types";
 import { DND_FEAT_CATEGORY_LABELS } from "@/shared/types";
 import { Card } from "@/components/ui/card";
+import { SourceAbbreviations } from "@/shared/components/SourceAbbreviations";
 import { Award } from "lucide-react";
 
 interface DndFeatCardProps {
@@ -79,11 +80,12 @@ export const DndFeatCard = memo(function DndFeatCard({
       )}
 
       <div className="flex items-center justify-between text-xs text-muted-foreground border-t border-border/50 pt-2.5">
-        <span>
-          {feat.variantSources && feat.variantSources.length > 1
-            ? feat.variantSources.join(", ")
-            : feat.source}
-        </span>
+        <SourceAbbreviations
+          source={feat.source}
+          variantSources={feat.variantSources}
+          maxVisible={3}
+          nativeTitle
+        />
         {feat.page !== undefined && <span>p. {feat.page}</span>}
       </div>
       </button>

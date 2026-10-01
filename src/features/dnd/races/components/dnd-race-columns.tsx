@@ -1,6 +1,7 @@
 import { ColumnDef, FilterFn } from "@tanstack/react-table";
 import type { DndRace } from "@/shared/types";
 import { DND_RACE_KIND_LABELS } from "@/shared/types";
+import { SourceAbbreviations } from "@/shared/components/SourceAbbreviations";
 import { cn } from "@/shared/utils/cn";
 import { compareRacesForGroupedList } from "../utils/dnd-race-dedupe.utils";
 
@@ -112,22 +113,12 @@ export const dndRaceColumns: ColumnDef<DndRace>[] = [
     enableSorting: false,
     header: "Source",
     meta: { hideBelowMd: true },
-    cell: ({ row }) => {
-      const race = row.original;
-      const sources = race.variantSources ?? [race.source];
-      const label =
-        sources.length <= 2
-          ? sources.join(", ")
-          : `${sources[0]} +${sources.length - 1}`;
-      return (
-        <span
-          className="text-muted-foreground text-xs whitespace-nowrap"
-          title={sources.length > 1 ? sources.join(", ") : undefined}
-        >
-          {label}
-        </span>
-      );
-    },
+    cell: ({ row }) => (
+      <SourceAbbreviations
+        source={row.original.source}
+        variantSources={row.original.variantSources}
+      />
+    ),
     filterFn: (row, _id, value) => {
       if (!value) return true;
       const sources = row.original.variantSources ?? [row.original.source];

@@ -3,10 +3,8 @@ import type { SortingState } from "@tanstack/react-table";
 import type { DndRace } from "@/shared/types";
 import { DND_RACE_KIND_LABELS } from "@/shared/types";
 import { DataTable } from "@/components/data-table/data-table";
-import {
-  CompendiumMobileCard,
-  formatVariantSources,
-} from "@/shared/components/CompendiumMobileCard";
+import { CompendiumMobileCard } from "@/shared/components/CompendiumMobileCard";
+import { SourceAbbreviations } from "@/shared/components/SourceAbbreviations";
 import { dndRaceColumns } from "./dnd-race-columns";
 
 interface DndRaceDataTableProps {
@@ -41,7 +39,12 @@ export function DndRaceDataTable({ races, onRowClick }: DndRaceDataTableProps) {
           <>
             {race.parentName ? <span>{race.parentName}</span> : null}
             {race.parentName ? <span aria-hidden="true">·</span> : null}
-            <span>{formatVariantSources(race.source, race.variantSources)}</span>
+            <SourceAbbreviations
+              source={race.source}
+              variantSources={race.variantSources}
+              maxVisible={1}
+              nativeTitle
+            />
           </>
         }
       />
