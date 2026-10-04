@@ -86,6 +86,37 @@ function isoFromUnix(seconds: number | undefined): string | undefined {
   return new Date(seconds * 1000).toISOString().slice(0, 10);
 }
 
+/**
+ * Best available brew date for year grouping.
+ * Prefer published (`p`); fall back to added (`a`) then modified (`m`) when
+ * partnered/UA indexes omit `p` (e.g. D&D Beyond Drops).
+ */
+export function brewDateUnix(
+  stamp: { a?: number; m?: number; p?: number } | undefined,
+): number | undefined {
+  if (!stamp) return undefined;
+  for (const value of [stamp.p, stamp.a, stamp.m]) {
+    if (typeof value === "number" && Number.isFinite(value)) return value;
+  }
+  return undefined;
+}
+
+/** True when the display name already encodes a calendar year (…2024…, (2024), etc.). */
+const SOURCE_NAME_HAS_YEAR = /\b(?:19|20)\d{2}\b/;
+
+/**
+ * Append catalog year when the brew name lacks one
+ * (e.g. "D&D Beyond Drops" → "D&D Beyond Drops 2026").
+ */
+export function withBrewSourceYearLabel(
+  name: string,
+  year: number | undefined,
+): string {
+  if (year == null || !Number.isFinite(year)) return name;
+  if (SOURCE_NAME_HAS_YEAR.test(name)) return name;
+  return `${name} ${year}`;
+}
+
 function indexOfficialCatalog(
   entries: OfficialCatalogEntry[] | undefined,
   into: Map<string, SourceCatalogEntry>,
@@ -173,13 +204,15 @@ function mergeBrewIndexIntoCatalog(options: {
       (abbrIdx >= 0 ? names[abbrIdx] : undefined) ??
       names[0] ??
       fileName.replace(/\.json$/i, "").replace(/^Unearthed Arcana(?: \d+)? - /, "UA: ");
-    const published = isoFromUnix(stamp?.p);
-    const year = yearFromUnix(stamp?.p);
+    const dateUnix = brewDateUnix(stamp);
+    const published = isoFromUnix(dateUnix);
+    const year = yearFromUnix(dateUnix);
     const kind = kindForCode(code);
+    const labeledName = withBrewSourceYearLabel(name, year);
 
     into.set(code, {
       code,
-      name,
+      name: labeledName,
       kind,
       published,
       year,
@@ -193,7 +226,7 @@ function mergeBrewIndexIntoCatalog(options: {
       if (into.has(alt) && into.get(alt)?.kind === "official") continue;
       into.set(alt, {
         code: alt,
-        name: names[i] ?? name,
+        name: withBrewSourceYearLabel(names[i] ?? name, year),
         kind: kindForCode(alt),
         published,
         year,
