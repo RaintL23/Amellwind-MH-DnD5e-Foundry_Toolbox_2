@@ -38,9 +38,13 @@ function mapListItems(items: unknown[]): StatBlockListItem[] {
         String(entry.name ?? ""),
         UI_MARKUP,
       ).trim();
-      const children = mapStatBlockEntries(
-        Array.isArray(entry.entries) ? (entry.entries as unknown[]) : [],
-      );
+      // 5etools list items use singular `entry` (string) or `entries` (array).
+      const nestedEntries: unknown[] = Array.isArray(entry.entries)
+        ? (entry.entries as unknown[])
+        : typeof entry.entry === "string"
+          ? [entry.entry]
+          : [];
+      const children = mapStatBlockEntries(nestedEntries);
       result.push({ type: "named", name, children });
       continue;
     }

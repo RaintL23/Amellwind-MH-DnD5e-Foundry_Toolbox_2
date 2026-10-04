@@ -45,6 +45,54 @@ describe("mapStatBlockEntries preserves creature tags", () => {
       expect(content[0].text).toContain("{@creature Beast of the Sky|TCE}");
     }
   });
+
+  it("maps list items that use singular entry (Aspect of the Wyrm style)", () => {
+    const content = mapStatBlockEntries([
+      {
+        type: "list",
+        style: "list-hang-notitle",
+        items: [
+          {
+            type: "item",
+            name: "Frightful Presence",
+            entry:
+              "The target must succeed on a Wisdom saving throw or become {@condition frightened}.",
+          },
+          {
+            type: "item",
+            name: "Resistance",
+            entry:
+              "You and your allies within the aura have resistance to that damage.",
+          },
+        ],
+      },
+    ]);
+
+    expect(content).toHaveLength(1);
+    expect(content[0]).toMatchObject({ type: "list" });
+    if (content[0]?.type !== "list") return;
+
+    expect(content[0].items).toHaveLength(2);
+    const frightful = content[0].items[0];
+    const resistance = content[0].items[1];
+    expect(frightful).toMatchObject({
+      type: "named",
+      name: "Frightful Presence",
+    });
+    expect(resistance).toMatchObject({ type: "named", name: "Resistance" });
+    if (frightful?.type === "named") {
+      expect(frightful.children).toEqual([
+        {
+          type: "paragraph",
+          text: "The target must succeed on a Wisdom saving throw or become {@condition frightened}.",
+        },
+      ]);
+    }
+    if (resistance?.type === "named") {
+      expect(resistance.children).toHaveLength(1);
+      expect(resistance.children[0]).toMatchObject({ type: "paragraph" });
+    }
+  });
 });
 
 describe("renderFiveToolsEntries preserveEntityTags", () => {
