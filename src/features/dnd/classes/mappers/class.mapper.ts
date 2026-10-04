@@ -213,18 +213,13 @@ export function mergeProgressionWithSubclass(
         }))
       : [];
 
+    // Class rows mark archetype slots with `gainSubclassFeature`. With no
+    // subclass selected those placeholders stay visible; once a subclass is
+    // chosen they are replaced by the real subclass features.
     const classFeatures = row.features.filter((f) => !f.gainSubclassFeature);
-    const placeholders = row.features.filter((f) => f.gainSubclassFeature);
 
     const mergedFeatures: ClassFeatureEntry[] = subclass
-      ? [
-          ...classFeatures,
-          ...subclassFeatures,
-          ...placeholders.map((f) => ({
-            ...f,
-            displayName: subclass.name,
-          })),
-        ]
+      ? [...classFeatures, ...subclassFeatures]
       : row.features;
 
     const tableCells = tableGroups

@@ -79,9 +79,9 @@ export function getFeaturesUpToLevel(
   return progression
     .filter((row) => row.level <= level)
     .flatMap((row) =>
-      row.features.filter(
-        (f) => !f.gainSubclassFeature || subclass !== null,
-      ),
+      // Archetype placeholders are omitted once a subclass is merged in;
+      // without a subclass they are never real features for the builder.
+      row.features.filter((f) => !f.gainSubclassFeature),
     );
 }
 
