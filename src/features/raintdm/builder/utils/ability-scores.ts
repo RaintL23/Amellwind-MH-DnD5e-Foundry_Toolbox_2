@@ -1,4 +1,5 @@
 import { AbilityKey, AbilityScores } from "@/shared/types";
+import { ABILITY_KEYS } from "@/shared/constants/dnd";
 
 export type AbilityScoreGenerationMethod =
   | "manual"
@@ -125,4 +126,41 @@ export function assignmentsToAbilityScores(
   return result;
 }
 
-export { ABILITY_KEYS } from "@/shared/constants/dnd";
+/** Base scores implied by pool assignments: unassigned abilities sit at 8. */
+export function poolAssignmentsToScores(
+  assignments: Partial<Record<AbilityKey, number>>
+): AbilityScores {
+  return { ...defaultPointBuyScores(), ...assignmentsToAbilityScores(assignments) };
+}
+
+/**
+ * Rebuilds pool assignments from persisted base scores (import, autosave
+ * rehydration, remount). A full permutation of `source` assigns every ability;
+ * otherwise only non-8 matches are assigned, because 8 is also the unassigned
+ * default and cannot be told apart from a deliberate pick.
+ */
+export function poolStateFromScores(
+  scores: AbilityScores,
+  source: readonly number[]
+): { assignments: Partial<Record<AbilityKey, number>>; pool: number[] } {
+  const take = (skipMin: boolean) => {
+    const pool = [...source];
+    const assignments: Partial<Record<AbilityKey, number>> = {};
+    for (const key of ABILITY_KEYS) {
+      const value = scores[key];
+      if (skipMin && value === POINT_BUY_MIN) continue;
+      const idx = pool.indexOf(value);
+      if (idx === -1) continue;
+      pool.splice(idx, 1);
+      assignments[key] = value;
+    }
+    pool.sort((a, b) => b - a);
+    return { assignments, pool };
+  };
+
+  const full = take(false);
+  if (Object.keys(full.assignments).length === ABILITY_KEYS.length) return full;
+  return take(true);
+}
+
+export { ABILITY_KEYS };

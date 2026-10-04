@@ -1,7 +1,8 @@
-import { useCallback, useEffect, useState } from "react";
-import { AbilityKey } from "@/shared/types";
+import { useCallback, useEffect, useRef, useState } from "react";
+import type { AbilityKey, AbilityScores } from "@/shared/types";
 import { useCharacterBuilder } from "../../../context/CharacterBuilderContext";
 import {
+  ABILITY_KEYS,
   STANDARD_ARRAY,
   pointBuyRemaining,
   pointBuyTotalSpent,
@@ -10,7 +11,8 @@ import {
   defaultPointBuyScores,
   rollSixAbilityScores,
   assignFromPool,
-  assignmentsToAbilityScores,
+  poolAssignmentsToScores,
+  poolStateFromScores,
 } from "../../../utils/ability-scores";
 import type { GenerationMethod } from "./constants";
 
@@ -36,12 +38,29 @@ export function useAbilityGenerationState() {
     setLastRolls(null);
   }, [method]);
 
+  // Scores changed outside this hook (import, autosave, randomizer, remount):
+  // rebuild the pool picks so the selects reflect the restored build.
+  const resyncedFrom = useRef<AbilityScores | null>(null);
+  useEffect(() => {
+    if (method !== "standard" && method !== "dice") return;
+    if (resyncedFrom.current === character.abilities) return;
+    const expected = poolAssignmentsToScores(assignments);
+    if (ABILITY_KEYS.every((k) => expected[k] === character.abilities[k])) {
+      return;
+    }
+    resyncedFrom.current = character.abilities;
+    const source =
+      method === "standard"
+        ? STANDARD_ARRAY
+        : ABILITY_KEYS.map((k) => character.abilities[k]);
+    const next = poolStateFromScores(character.abilities, source);
+    setAssignments(next.assignments);
+    setPool(next.pool);
+  }, [method, character.abilities, assignments]);
+
   const syncAssignmentsToCharacter = useCallback(
     (next: Partial<Record<AbilityKey, number>>) => {
-      const scores = assignmentsToAbilityScores(next);
-      if (Object.keys(scores).length > 0) {
-        setAbilityScores(scores);
-      }
+      setAbilityScores(poolAssignmentsToScores(next));
     },
     [setAbilityScores],
   );
