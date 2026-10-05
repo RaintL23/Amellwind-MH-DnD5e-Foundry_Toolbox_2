@@ -1,6 +1,6 @@
 {
-  "_id": "wz2EcLafIwKkllEV",
-  "name": "Hard Mossplate Rune",
+  "_id": "FRF5tWnfj2s680O4",
+  "name": "Banbaro Great Horn Rune",
   "type": "equipment",
   "img": "mh-icons/material-rune.webp",
   "system": {
@@ -13,10 +13,10 @@
       "revision": 1
     },
     "description": {
-      "value": "<h4>Source Monster</h4>\n<p><strong>Monster:</strong> Duramboros | CR: 9 | Tier: 2</p>\n<p><strong>Compatible Slots:</strong> Armor, Weapon</p>\n<h3>Weapon Effect</h3>\n<p>FastCharge. When you roll for initiative, your greatsword, longsword, charge blade, or tonfas gains 1 charge, spirit, or phial charge.</p>\n<h3>Armor Effect</h3>\n<p>While you are attuned to this armor, you can use your reaction to grant yourself advantage on any Acrobatics check. Once used, you can't use it again until you finish a short or long rest.</p>",
+      "value": "<h4>Source Monster</h4>\n<p><strong>Monster:</strong> Banbaro | CR: 12 | Tier: 3</p>\n<p><strong>Compatible Slots:</strong> Armor, Weapon</p>\n<h3>Weapon Effect</h3>\n<p>While attuned to this weapon, you can cast the catapult spell at 2nd level from it. Once you use this property, you can't use it again until you finish a long rest.</p>\n<h3>Armor Effect</h3>\n<p>You have resistance to cold damage while you wear this armor.</p>",
       "chat": ""
     },
-    "identifier": "hardmossplaterune",
+    "identifier": "banbarogreathornrune",
     "quantity": 1,
     "weight": {
       "value": 0.1,
@@ -29,7 +29,7 @@
     "attuned": false,
     "attunement": "",
     "equipped": false,
-    "rarity": "uncommon",
+    "rarity": "rare",
     "identified": true,
     "type": {
       "value": "trinket",
@@ -44,16 +44,16 @@
     "proficient": null,
     "strength": null,
     "activities": {
-      "HCyIiQh9fCFhbXUs": {
-        "_id": "HCyIiQh9fCFhbXUs",
+      "DCoTeTsEr2KmZFkC": {
+        "_id": "DCoTeTsEr2KmZFkC",
         "type": "utility",
         "sort": 0,
-        "name": "Acrobatics Advantage",
+        "name": "Cast Catapult (2nd Level)",
         "img": "mh-icons/material-rune.webp",
         "activation": {
-          "type": "reaction",
+          "type": "action",
           "value": null,
-          "condition": "When you make an Acrobatics check — Armor side active",
+          "condition": "Weapon side active",
           "override": false
         },
         "consumption": {
@@ -74,7 +74,7 @@
           ]
         },
         "description": {
-          "chatFlavor": "Grant yourself advantage on an Acrobatics check. 1/SR or LR."
+          "chatFlavor": "Cast catapult at 2nd level from this weapon (add/cast the spell; expend this use). 1/LR."
         },
         "duration": {
           "value": "",
@@ -114,81 +114,7 @@
           "recovery": []
         },
         "midiProperties": {
-          "identifier": "acrobatics-advantage",
-          "displayActivityName": true
-        },
-        "roll": {
-          "formula": "",
-          "name": "",
-          "prompt": false,
-          "visible": false
-        },
-        "useConditionText": "",
-        "useConditionReason": "",
-        "effectConditionText": ""
-      },
-      "8MtXQLcGnuC5YvLW": {
-        "_id": "8MtXQLcGnuC5YvLW",
-        "type": "utility",
-        "sort": 0,
-        "name": "FastCharge Reminder",
-        "img": "mh-icons/material-rune.webp",
-        "activation": {
-          "type": "special",
-          "value": null,
-          "condition": "Weapon side — when you roll initiative",
-          "override": false
-        },
-        "consumption": {
-          "scaling": {
-            "allowed": false,
-            "max": ""
-          },
-          "spellSlot": false,
-          "targets": []
-        },
-        "description": {
-          "chatFlavor": "FastCharge: on initiative, greatsword/longsword/charge blade/tonfas gain 1 charge, spirit, or phial charge (apply manually)."
-        },
-        "duration": {
-          "value": "",
-          "units": "inst",
-          "concentration": false,
-          "override": false
-        },
-        "effects": [],
-        "range": {
-          "value": null,
-          "units": "self",
-          "special": "",
-          "override": false
-        },
-        "target": {
-          "template": {
-            "count": "",
-            "contiguous": false,
-            "type": "",
-            "size": "",
-            "width": "",
-            "height": "",
-            "units": "ft"
-          },
-          "affects": {
-            "count": "",
-            "type": "self",
-            "choice": false,
-            "special": ""
-          },
-          "prompt": false,
-          "override": false
-        },
-        "uses": {
-          "spent": 0,
-          "max": "",
-          "recovery": []
-        },
-        "midiProperties": {
-          "identifier": "fastcharge-reminder",
+          "identifier": "cast-catapult-2nd-level",
           "displayActivityName": true
         },
         "roll": {
@@ -213,7 +139,7 @@
       "max": "1",
       "recovery": [
         {
-          "period": "sr",
+          "period": "lr",
           "type": "recoverAll"
         }
       ]
@@ -221,8 +147,8 @@
   },
   "effects": [
     {
-      "_id": "8eesdk7EnsK6LFaH",
-      "name": "Hard Mossplate Rune (Equip)",
+      "_id": "FvJ9usOGQol2mJCg",
+      "name": "Banbaro Great Horn Rune (Equip)",
       "img": "mh-icons/material-rune.webp",
       "type": "base",
       "system": {},
@@ -278,8 +204,8 @@
       }
     },
     {
-      "_id": "SqWrUZ6qq3FXZYAG",
-      "name": "Hard Mossplate - FastCharge",
+      "_id": "gWYznK7CD25ej9Cg",
+      "name": "Banbaro Great Horn - Catapult",
       "img": "mh-icons/material-rune.webp",
       "type": "base",
       "system": {},
@@ -294,7 +220,7 @@
         "startRound": null,
         "startTurn": null
       },
-      "description": "On initiative: GS/LS/CB/tonfas gain 1 charge/spirit/phial (manual).",
+      "description": "Action: cast catapult at 2nd level. 1/LR (item activity).",
       "origin": null,
       "tint": "#ffffff",
       "transfer": false,
@@ -314,7 +240,7 @@
         },
         "amellwind-toolbox": {
           "runeSide": "weapon",
-          "materialEffectName": "FastCharge"
+          "materialEffectName": "Catapult (2nd)"
         }
       },
       "_stats": {
@@ -329,12 +255,19 @@
       }
     },
     {
-      "_id": "P93fq3HOEjRZcVLr",
-      "name": "Hard Mossplate - Acrobatics Advantage",
+      "_id": "QMM6qgHX5LszwptZ",
+      "name": "Banbaro Great Horn - Cold Resistance",
       "img": "mh-icons/material-rune.webp",
       "type": "base",
       "system": {},
-      "changes": [],
+      "changes": [
+        {
+          "key": "system.traits.dr.value",
+          "mode": 2,
+          "value": "cold",
+          "priority": 20
+        }
+      ],
       "disabled": true,
       "duration": {
         "startTime": null,
@@ -345,7 +278,7 @@
         "startRound": null,
         "startTurn": null
       },
-      "description": "Reaction: advantage on an Acrobatics check. 1/SR (item activity).",
+      "description": "Resistance to cold damage.",
       "origin": null,
       "tint": "#ffffff",
       "transfer": false,
@@ -365,7 +298,7 @@
         },
         "amellwind-toolbox": {
           "runeSide": "armor",
-          "materialEffectName": "Acrobatics Advantage"
+          "materialEffectName": "Cold Resistance"
         }
       },
       "_stats": {
@@ -381,28 +314,28 @@
     }
   ],
   "folder": null,
-  "sort": 9990000,
+  "sort": 10000000,
   "ownership": {
     "default": 0
   },
   "flags": {
     "amellwind-toolbox": {
       "exportKind": "rune",
-      "runeName": "Hard Mossplate",
-      "monsterName": "Duramboros",
+      "runeName": "Banbaro Great Horn",
+      "monsterName": "Banbaro",
       "unified": true,
       "sides": {
         "weapon": {
-          "label": "Weapon Effect — FastCharge"
+          "label": "Weapon Effect — Catapult (2nd)"
         },
         "armor": {
-          "label": "Armor Effect — Acrobatics Advantage"
+          "label": "Armor Effect — Cold Resistance"
         }
       }
     },
     "itemacro": {
       "macro": {
-        "name": "Hard Mossplate Rune",
+        "name": "Banbaro Great Horn Rune",
         "type": "script",
         "scope": "global",
         "author": "",
@@ -428,8 +361,8 @@
     "coreVersion": "12.331",
     "systemId": "dnd5e",
     "systemVersion": "4.4.4",
-    "createdTime": 1791238606598,
-    "modifiedTime": 1791238606598,
+    "createdTime": 1791126023619,
+    "modifiedTime": 1791126023619,
     "lastModifiedBy": null
   }
 }

@@ -1,6 +1,6 @@
 {
-  "_id": "wz2EcLafIwKkllEV",
-  "name": "Hard Mossplate Rune",
+  "_id": "2s9MHjmYcJdFQTSr",
+  "name": "Teostra Mane Rune",
   "type": "equipment",
   "img": "mh-icons/material-rune.webp",
   "system": {
@@ -13,10 +13,10 @@
       "revision": 1
     },
     "description": {
-      "value": "<h4>Source Monster</h4>\n<p><strong>Monster:</strong> Duramboros | CR: 9 | Tier: 2</p>\n<p><strong>Compatible Slots:</strong> Armor, Weapon</p>\n<h3>Weapon Effect</h3>\n<p>FastCharge. When you roll for initiative, your greatsword, longsword, charge blade, or tonfas gains 1 charge, spirit, or phial charge.</p>\n<h3>Armor Effect</h3>\n<p>While you are attuned to this armor, you can use your reaction to grant yourself advantage on any Acrobatics check. Once used, you can't use it again until you finish a short or long rest.</p>",
+      "value": "<h4>Source Monster</h4>\n<p><strong>Monster:</strong> Teostra | CR: 13 | Tier: 3</p>\n<p><strong>Compatible Slots:</strong> Armor, Weapon</p>\n<h3>Weapon Effect</h3>\n<p>Critical Eye. Your weapon attacks critical hit range is increased by 1.</p>\n<h3>Armor Effect</h3>\n<p>(Paladin Only) You can use an action to speak this armor's command word to extend your aura by 5 feet for 1 minute. Once you use this property, you can't use it again until you finish a long rest.</p>",
       "chat": ""
     },
-    "identifier": "hardmossplaterune",
+    "identifier": "teostramanerune",
     "quantity": 1,
     "weight": {
       "value": 0.1,
@@ -29,7 +29,7 @@
     "attuned": false,
     "attunement": "",
     "equipped": false,
-    "rarity": "uncommon",
+    "rarity": "rare",
     "identified": true,
     "type": {
       "value": "trinket",
@@ -44,16 +44,16 @@
     "proficient": null,
     "strength": null,
     "activities": {
-      "HCyIiQh9fCFhbXUs": {
-        "_id": "HCyIiQh9fCFhbXUs",
+      "5ZAtLoKn8DdahikI": {
+        "_id": "5ZAtLoKn8DdahikI",
         "type": "utility",
         "sort": 0,
-        "name": "Acrobatics Advantage",
+        "name": "Extend Aura +5 ft",
         "img": "mh-icons/material-rune.webp",
         "activation": {
-          "type": "reaction",
+          "type": "action",
           "value": null,
-          "condition": "When you make an Acrobatics check — Armor side active",
+          "condition": "Armor side — Paladin only",
           "override": false
         },
         "consumption": {
@@ -74,11 +74,11 @@
           ]
         },
         "description": {
-          "chatFlavor": "Grant yourself advantage on an Acrobatics check. 1/SR or LR."
+          "chatFlavor": "(Paladin Only) Extend your aura by 5 feet for 1 minute. 1/LR."
         },
         "duration": {
-          "value": "",
-          "units": "inst",
+          "value": "1",
+          "units": "minute",
           "concentration": false,
           "override": false
         },
@@ -114,81 +114,7 @@
           "recovery": []
         },
         "midiProperties": {
-          "identifier": "acrobatics-advantage",
-          "displayActivityName": true
-        },
-        "roll": {
-          "formula": "",
-          "name": "",
-          "prompt": false,
-          "visible": false
-        },
-        "useConditionText": "",
-        "useConditionReason": "",
-        "effectConditionText": ""
-      },
-      "8MtXQLcGnuC5YvLW": {
-        "_id": "8MtXQLcGnuC5YvLW",
-        "type": "utility",
-        "sort": 0,
-        "name": "FastCharge Reminder",
-        "img": "mh-icons/material-rune.webp",
-        "activation": {
-          "type": "special",
-          "value": null,
-          "condition": "Weapon side — when you roll initiative",
-          "override": false
-        },
-        "consumption": {
-          "scaling": {
-            "allowed": false,
-            "max": ""
-          },
-          "spellSlot": false,
-          "targets": []
-        },
-        "description": {
-          "chatFlavor": "FastCharge: on initiative, greatsword/longsword/charge blade/tonfas gain 1 charge, spirit, or phial charge (apply manually)."
-        },
-        "duration": {
-          "value": "",
-          "units": "inst",
-          "concentration": false,
-          "override": false
-        },
-        "effects": [],
-        "range": {
-          "value": null,
-          "units": "self",
-          "special": "",
-          "override": false
-        },
-        "target": {
-          "template": {
-            "count": "",
-            "contiguous": false,
-            "type": "",
-            "size": "",
-            "width": "",
-            "height": "",
-            "units": "ft"
-          },
-          "affects": {
-            "count": "",
-            "type": "self",
-            "choice": false,
-            "special": ""
-          },
-          "prompt": false,
-          "override": false
-        },
-        "uses": {
-          "spent": 0,
-          "max": "",
-          "recovery": []
-        },
-        "midiProperties": {
-          "identifier": "fastcharge-reminder",
+          "identifier": "extend-aura-5-ft",
           "displayActivityName": true
         },
         "roll": {
@@ -213,7 +139,7 @@
       "max": "1",
       "recovery": [
         {
-          "period": "sr",
+          "period": "lr",
           "type": "recoverAll"
         }
       ]
@@ -221,8 +147,8 @@
   },
   "effects": [
     {
-      "_id": "8eesdk7EnsK6LFaH",
-      "name": "Hard Mossplate Rune (Equip)",
+      "_id": "s3C8Opt8kPpPg8To",
+      "name": "Teostra Mane Rune (Equip)",
       "img": "mh-icons/material-rune.webp",
       "type": "base",
       "system": {},
@@ -278,12 +204,19 @@
       }
     },
     {
-      "_id": "SqWrUZ6qq3FXZYAG",
-      "name": "Hard Mossplate - FastCharge",
+      "_id": "l7iAuzbQA9pg3Km9",
+      "name": "Teostra Mane - Critical Eye",
       "img": "mh-icons/material-rune.webp",
       "type": "base",
       "system": {},
-      "changes": [],
+      "changes": [
+        {
+          "key": "flags.dnd5e.weaponCriticalThreshold",
+          "mode": 5,
+          "value": "19",
+          "priority": 20
+        }
+      ],
       "disabled": true,
       "duration": {
         "startTime": null,
@@ -294,7 +227,7 @@
         "startRound": null,
         "startTurn": null
       },
-      "description": "On initiative: GS/LS/CB/tonfas gain 1 charge/spirit/phial (manual).",
+      "description": "Critical hit range increased by 1.",
       "origin": null,
       "tint": "#ffffff",
       "transfer": false,
@@ -314,7 +247,7 @@
         },
         "amellwind-toolbox": {
           "runeSide": "weapon",
-          "materialEffectName": "FastCharge"
+          "materialEffectName": "Critical Eye"
         }
       },
       "_stats": {
@@ -329,8 +262,8 @@
       }
     },
     {
-      "_id": "P93fq3HOEjRZcVLr",
-      "name": "Hard Mossplate - Acrobatics Advantage",
+      "_id": "9eIBKK09NDx42DEs",
+      "name": "Teostra Mane - Extend Aura",
       "img": "mh-icons/material-rune.webp",
       "type": "base",
       "system": {},
@@ -345,7 +278,7 @@
         "startRound": null,
         "startTurn": null
       },
-      "description": "Reaction: advantage on an Acrobatics check. 1/SR (item activity).",
+      "description": "(Paladin Only) Action: extend aura +5 ft for 1 minute. 1/LR.",
       "origin": null,
       "tint": "#ffffff",
       "transfer": false,
@@ -365,7 +298,7 @@
         },
         "amellwind-toolbox": {
           "runeSide": "armor",
-          "materialEffectName": "Acrobatics Advantage"
+          "materialEffectName": "Extend Aura +5 ft"
         }
       },
       "_stats": {
@@ -381,28 +314,28 @@
     }
   ],
   "folder": null,
-  "sort": 9990000,
+  "sort": 10040000,
   "ownership": {
     "default": 0
   },
   "flags": {
     "amellwind-toolbox": {
       "exportKind": "rune",
-      "runeName": "Hard Mossplate",
-      "monsterName": "Duramboros",
+      "runeName": "Teostra Mane",
+      "monsterName": "Teostra",
       "unified": true,
       "sides": {
         "weapon": {
-          "label": "Weapon Effect — FastCharge"
+          "label": "Weapon Effect — Critical Eye"
         },
         "armor": {
-          "label": "Armor Effect — Acrobatics Advantage"
+          "label": "Armor Effect — Extend Aura +5 ft"
         }
       }
     },
     "itemacro": {
       "macro": {
-        "name": "Hard Mossplate Rune",
+        "name": "Teostra Mane Rune",
         "type": "script",
         "scope": "global",
         "author": "",
@@ -428,8 +361,8 @@
     "coreVersion": "12.331",
     "systemId": "dnd5e",
     "systemVersion": "4.4.4",
-    "createdTime": 1791238606598,
-    "modifiedTime": 1791238606598,
+    "createdTime": 1791161820644,
+    "modifiedTime": 1791161820644,
     "lastModifiedBy": null
   }
 }

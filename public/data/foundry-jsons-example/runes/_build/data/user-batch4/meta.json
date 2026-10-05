@@ -1,0 +1,82 @@
+[
+  {
+    "name": "Adolescent Defiled Scale",
+    "monster": "Adolescent Magala",
+    "cr": "11",
+    "tier": 3,
+    "rarity": "rare",
+    "slots": ["A", "W"],
+    "armor": "Handicraft. For 24 hours, you gain proficiency with one artisan tool of your choice each dawn.",
+    "weapon": "Your weapon deals an extra 1d6 necrotic damage."
+  },
+  {
+    "name": "Nu Udra Flamegem",
+    "monster": "Nu Udra",
+    "cr": "13",
+    "tier": 3,
+    "rarity": "rare",
+    "slots": ["A", "W"],
+    "armor": "You are immune to fire damage while you wear this armor.",
+    "weapon": "Chain Crit. Every consecutive hit on a creature increases your crit range by 1 until you score a critical hit, miss an attack, or hit a different creature."
+  },
+  {
+    "name": "Bazelgeusling Gem",
+    "monster": "Bazelgeusling",
+    "cr": "10",
+    "tier": 2,
+    "rarity": "uncommon",
+    "slots": ["A", "W"],
+    "armor": "You have resistance to fire damage while you wear this armor.",
+    "weapon": "Your Strength score is 19 while you are attuned to this weapon. They have no effect on you if your Strength is already 19 or higher without them."
+  },
+  {
+    "name": "Pumpkin.U Marrow",
+    "monster": "Pumpkin Uragaan",
+    "cr": "10",
+    "tier": 2,
+    "rarity": "uncommon",
+    "slots": ["A"],
+    "armor": "Guts+. When you are reduced to 0 hit points but not killed outright, you can drop to 1 hit point instead. Once you use this property, you can't use it again until you finish a long rest.",
+    "weapon": null
+  },
+  {
+    "name": "Lunastra Wing",
+    "monster": "Lunastra",
+    "cr": "12",
+    "tier": 3,
+    "rarity": "rare",
+    "slots": ["A", "W"],
+    "armor": "Evade Window. This armor has 3 runes, and it regains 1d3 expended runes daily at dawn. When you fail a Dexterity saving throw while wearing it, you can use your reaction to expend 1 of its runes to succeed on that saving throw instead.",
+    "weapon": "When you hit a creature with a melee weapon attack using this weapon, you can engulf the target in flames. At the start of each of the engulfed creature's turns, it takes 1d4 fire damage and it can then make a DC 15 Dexterity saving throw, putting out the flames on a successful save. Alternatively, the engulfed creature, or a creature within 5 feet of it, can use an action to smother the flames ending the effect. Once used, this property can't be used again until you finish a short or long rest."
+  },
+  {
+    "name": "Banbaro Great Horn",
+    "monster": "Banbaro",
+    "cr": "12",
+    "tier": 3,
+    "rarity": "rare",
+    "slots": ["A", "W"],
+    "armor": "You have resistance to cold damage while you wear this armor.",
+    "weapon": "While attuned to this weapon, you can cast the catapult spell at 2nd level from it. Once you use this property, you can't use it again until you finish a long rest."
+  },
+  {
+    "name": "Chatacabra Hide",
+    "monster": "Chatacabra",
+    "cr": "3",
+    "tier": 1,
+    "rarity": "common",
+    "slots": ["A", "W"],
+    "armor": "Recovery Speed. Whenever you roll a Hit Die to regain hit points, double the number of hit points it restores.",
+    "weapon": "Stamina Drain. When you hit a creature with this weapon, its speed is reduced by 5 feet until the start of your next turn."
+  },
+  {
+    "name": "Aurora Gem",
+    "monster": "Aurora Somnacanth",
+    "cr": "14",
+    "tier": 3,
+    "rarity": "rare",
+    "slots": ["W"],
+    "armor": null,
+    "weapon": "Agitator. Your weapon attacks critical hit range is increased by 1 and your weapon deals an extra 1d6 weapon damage. (This material counts as both a critical eye material and a \"your weapon deals an extra damage material\")"
+  }
+]

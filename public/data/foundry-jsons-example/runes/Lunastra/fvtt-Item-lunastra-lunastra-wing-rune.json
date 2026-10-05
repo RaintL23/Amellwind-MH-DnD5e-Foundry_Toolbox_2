@@ -1,6 +1,6 @@
 {
-  "_id": "wz2EcLafIwKkllEV",
-  "name": "Hard Mossplate Rune",
+  "_id": "K41BhRoGyAcCRpac",
+  "name": "Lunastra Wing Rune",
   "type": "equipment",
   "img": "mh-icons/material-rune.webp",
   "system": {
@@ -13,10 +13,10 @@
       "revision": 1
     },
     "description": {
-      "value": "<h4>Source Monster</h4>\n<p><strong>Monster:</strong> Duramboros | CR: 9 | Tier: 2</p>\n<p><strong>Compatible Slots:</strong> Armor, Weapon</p>\n<h3>Weapon Effect</h3>\n<p>FastCharge. When you roll for initiative, your greatsword, longsword, charge blade, or tonfas gains 1 charge, spirit, or phial charge.</p>\n<h3>Armor Effect</h3>\n<p>While you are attuned to this armor, you can use your reaction to grant yourself advantage on any Acrobatics check. Once used, you can't use it again until you finish a short or long rest.</p>",
+      "value": "<h4>Source Monster</h4>\n<p><strong>Monster:</strong> Lunastra | CR: 12 | Tier: 3</p>\n<p><strong>Compatible Slots:</strong> Armor, Weapon</p>\n<h3>Weapon Effect</h3>\n<p>When you hit a creature with a melee weapon attack using this weapon, you can engulf the target in flames. At the start of each of the engulfed creature's turns, it takes 1d4 fire damage and it can then make a DC 15 Dexterity saving throw, putting out the flames on a successful save. Alternatively, the engulfed creature, or a creature within 5 feet of it, can use an action to smother the flames ending the effect. Once used, this property can't be used again until you finish a short or long rest.</p>\n<h3>Armor Effect</h3>\n<p>Evade Window. This armor has 3 runes, and it regains 1d3 expended runes daily at dawn. When you fail a Dexterity saving throw while wearing it, you can use your reaction to expend 1 of its runes to succeed on that saving throw instead.</p>",
       "chat": ""
     },
-    "identifier": "hardmossplaterune",
+    "identifier": "lunastrawingrune",
     "quantity": 1,
     "weight": {
       "value": 0.1,
@@ -29,7 +29,7 @@
     "attuned": false,
     "attunement": "",
     "equipped": false,
-    "rarity": "uncommon",
+    "rarity": "rare",
     "identified": true,
     "type": {
       "value": "trinket",
@@ -44,16 +44,16 @@
     "proficient": null,
     "strength": null,
     "activities": {
-      "HCyIiQh9fCFhbXUs": {
-        "_id": "HCyIiQh9fCFhbXUs",
+      "mEedBLZkxB0QAzJr": {
+        "_id": "mEedBLZkxB0QAzJr",
         "type": "utility",
         "sort": 0,
-        "name": "Acrobatics Advantage",
+        "name": "Evade Window (Succeed Dex Save)",
         "img": "mh-icons/material-rune.webp",
         "activation": {
           "type": "reaction",
           "value": null,
-          "condition": "When you make an Acrobatics check — Armor side active",
+          "condition": "When you fail a Dexterity saving throw — Armor side active",
           "override": false
         },
         "consumption": {
@@ -74,7 +74,7 @@
           ]
         },
         "description": {
-          "chatFlavor": "Grant yourself advantage on an Acrobatics check. 1/SR or LR."
+          "chatFlavor": "When you fail a Dexterity saving throw, expend 1 rune to succeed instead."
         },
         "duration": {
           "value": "",
@@ -114,7 +114,7 @@
           "recovery": []
         },
         "midiProperties": {
-          "identifier": "acrobatics-advantage",
+          "identifier": "evade-window-succeed-dex-save",
           "displayActivityName": true
         },
         "roll": {
@@ -127,16 +127,16 @@
         "useConditionReason": "",
         "effectConditionText": ""
       },
-      "8MtXQLcGnuC5YvLW": {
-        "_id": "8MtXQLcGnuC5YvLW",
+      "wLzni9V6ONK27BBi": {
+        "_id": "wLzni9V6ONK27BBi",
         "type": "utility",
-        "sort": 0,
-        "name": "FastCharge Reminder",
+        "sort": 1,
+        "name": "Engulf in Flames",
         "img": "mh-icons/material-rune.webp",
         "activation": {
           "type": "special",
           "value": null,
-          "condition": "Weapon side — when you roll initiative",
+          "condition": "On melee weapon hit — Weapon side active",
           "override": false
         },
         "consumption": {
@@ -145,10 +145,19 @@
             "max": ""
           },
           "spellSlot": false,
-          "targets": []
+          "targets": [
+            {
+              "type": "activityUses",
+              "value": "1",
+              "scaling": {
+                "mode": "",
+                "formula": ""
+              }
+            }
+          ]
         },
         "description": {
-          "chatFlavor": "FastCharge: on initiative, greatsword/longsword/charge blade/tonfas gain 1 charge, spirit, or phial charge (apply manually)."
+          "chatFlavor": "Engulf the hit target in flames: 1d4 fire at start of each of its turns; DC 15 Dex after that damage to end. Action (self or ally within 5 ft) can smother. 1/SR or LR."
         },
         "duration": {
           "value": "",
@@ -156,10 +165,14 @@
           "concentration": false,
           "override": false
         },
-        "effects": [],
+        "effects": [
+          {
+            "_id": "7JIpW0yCF0akVLIJ"
+          }
+        ],
         "range": {
           "value": null,
-          "units": "self",
+          "units": "ft",
           "special": "",
           "override": false
         },
@@ -174,21 +187,26 @@
             "units": "ft"
           },
           "affects": {
-            "count": "",
-            "type": "self",
+            "count": "1",
+            "type": "creature",
             "choice": false,
             "special": ""
           },
-          "prompt": false,
+          "prompt": true,
           "override": false
         },
         "uses": {
           "spent": 0,
-          "max": "",
-          "recovery": []
+          "max": "1",
+          "recovery": [
+            {
+              "period": "sr",
+              "type": "recoverAll"
+            }
+          ]
         },
         "midiProperties": {
-          "identifier": "fastcharge-reminder",
+          "identifier": "engulf-in-flames",
           "displayActivityName": true
         },
         "roll": {
@@ -196,10 +214,7 @@
           "name": "",
           "prompt": false,
           "visible": false
-        },
-        "useConditionText": "",
-        "useConditionReason": "",
-        "effectConditionText": ""
+        }
       }
     },
     "container": null,
@@ -210,19 +225,20 @@
     },
     "uses": {
       "spent": 0,
-      "max": "1",
+      "max": "3",
       "recovery": [
         {
-          "period": "sr",
-          "type": "recoverAll"
+          "period": "dawn",
+          "type": "formula",
+          "formula": "1d3"
         }
       ]
     }
   },
   "effects": [
     {
-      "_id": "8eesdk7EnsK6LFaH",
-      "name": "Hard Mossplate Rune (Equip)",
+      "_id": "AT2NrgIoM6BziWHe",
+      "name": "Lunastra Wing Rune (Equip)",
       "img": "mh-icons/material-rune.webp",
       "type": "base",
       "system": {},
@@ -278,8 +294,70 @@
       }
     },
     {
-      "_id": "SqWrUZ6qq3FXZYAG",
-      "name": "Hard Mossplate - FastCharge",
+      "_id": "7JIpW0yCF0akVLIJ",
+      "name": "Engulfed in Flames (Lunastra Wing)",
+      "img": "icons/svg/fire.svg",
+      "type": "base",
+      "system": {},
+      "changes": [],
+      "disabled": true,
+      "duration": {
+        "startTime": null,
+        "seconds": null,
+        "combat": null,
+        "rounds": null,
+        "turns": null,
+        "startRound": null,
+        "startTurn": null
+      },
+      "description": "1d4 fire at the start of each turn, then DC 15 Dexterity save to end. Or action (self/ally within 5 ft) to smother.",
+      "origin": null,
+      "tint": "#ffffff",
+      "transfer": false,
+      "statuses": [
+        "burning"
+      ],
+      "sort": 1,
+      "flags": {
+        "dae": {
+          "enableCondition": "",
+          "selfTarget": false,
+          "selfTargetAlways": false,
+          "stackable": "noneName",
+          "showIcon": true,
+          "durationExpression": "",
+          "specialDuration": [],
+          "disableIncapacitated": false,
+          "dontApply": false
+        },
+        "amellwind-toolbox": {
+          "lunastraEngulfBlueprint": true
+        },
+        "midi-qol": {
+          "overtime": {
+            "turn": "start",
+            "saveAbility": "dex",
+            "saveDC": "15",
+            "damageRoll": "1d4",
+            "damageType": "fire",
+            "label": "Engulfed in Flames"
+          }
+        }
+      },
+      "_stats": {
+        "compendiumSource": null,
+        "duplicateSource": null,
+        "coreVersion": "12.331",
+        "systemId": "dnd5e",
+        "systemVersion": "4.4.4",
+        "createdTime": null,
+        "modifiedTime": null,
+        "lastModifiedBy": null
+      }
+    },
+    {
+      "_id": "42aQtzfRULMHzkZp",
+      "name": "Lunastra Wing - Engulf in Flames",
       "img": "mh-icons/material-rune.webp",
       "type": "base",
       "system": {},
@@ -294,7 +372,7 @@
         "startRound": null,
         "startTurn": null
       },
-      "description": "On initiative: GS/LS/CB/tonfas gain 1 charge/spirit/phial (manual).",
+      "description": "On melee hit: use Engulf in Flames activity (1/SR). Applies burning AE with 1d4 fire/turn, DC 15 Dex to end.",
       "origin": null,
       "tint": "#ffffff",
       "transfer": false,
@@ -314,7 +392,7 @@
         },
         "amellwind-toolbox": {
           "runeSide": "weapon",
-          "materialEffectName": "FastCharge"
+          "materialEffectName": "Engulf in Flames"
         }
       },
       "_stats": {
@@ -329,8 +407,8 @@
       }
     },
     {
-      "_id": "P93fq3HOEjRZcVLr",
-      "name": "Hard Mossplate - Acrobatics Advantage",
+      "_id": "tYa7deAXpazEYQm6",
+      "name": "Lunastra Wing - Evade Window",
       "img": "mh-icons/material-rune.webp",
       "type": "base",
       "system": {},
@@ -345,7 +423,7 @@
         "startRound": null,
         "startTurn": null
       },
-      "description": "Reaction: advantage on an Acrobatics check. 1/SR (item activity).",
+      "description": "3 runes; regain 1d3 at dawn. Reaction: succeed failed Dex save (item uses).",
       "origin": null,
       "tint": "#ffffff",
       "transfer": false,
@@ -365,7 +443,7 @@
         },
         "amellwind-toolbox": {
           "runeSide": "armor",
-          "materialEffectName": "Acrobatics Advantage"
+          "materialEffectName": "Evade Window"
         }
       },
       "_stats": {
@@ -388,21 +466,21 @@
   "flags": {
     "amellwind-toolbox": {
       "exportKind": "rune",
-      "runeName": "Hard Mossplate",
-      "monsterName": "Duramboros",
+      "runeName": "Lunastra Wing",
+      "monsterName": "Lunastra",
       "unified": true,
       "sides": {
         "weapon": {
-          "label": "Weapon Effect — FastCharge"
+          "label": "Weapon Effect — Engulf in Flames"
         },
         "armor": {
-          "label": "Armor Effect — Acrobatics Advantage"
+          "label": "Armor Effect — Evade Window"
         }
       }
     },
     "itemacro": {
       "macro": {
-        "name": "Hard Mossplate Rune",
+        "name": "Lunastra Wing Rune",
         "type": "script",
         "scope": "global",
         "author": "",
@@ -428,8 +506,8 @@
     "coreVersion": "12.331",
     "systemId": "dnd5e",
     "systemVersion": "4.4.4",
-    "createdTime": 1791238606598,
-    "modifiedTime": 1791238606598,
+    "createdTime": 1791126023619,
+    "modifiedTime": 1791126023619,
     "lastModifiedBy": null
   }
 }

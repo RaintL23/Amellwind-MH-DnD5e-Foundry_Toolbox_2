@@ -1,6 +1,6 @@
 {
-  "_id": "wz2EcLafIwKkllEV",
-  "name": "Hard Mossplate Rune",
+  "_id": "sQHkWLNlEX7TvzNZ",
+  "name": "Uber Plesioth Head Rune",
   "type": "equipment",
   "img": "mh-icons/material-rune.webp",
   "system": {
@@ -13,10 +13,10 @@
       "revision": 1
     },
     "description": {
-      "value": "<h4>Source Monster</h4>\n<p><strong>Monster:</strong> Duramboros | CR: 9 | Tier: 2</p>\n<p><strong>Compatible Slots:</strong> Armor, Weapon</p>\n<h3>Weapon Effect</h3>\n<p>FastCharge. When you roll for initiative, your greatsword, longsword, charge blade, or tonfas gains 1 charge, spirit, or phial charge.</p>\n<h3>Armor Effect</h3>\n<p>While you are attuned to this armor, you can use your reaction to grant yourself advantage on any Acrobatics check. Once used, you can't use it again until you finish a short or long rest.</p>",
+      "value": "<h4>Source Monster</h4>\n<p><strong>Monster:</strong> Green Plesioth | CR: 13 | Tier: 3</p>\n<p><strong>Compatible Slots:</strong> Armor, Weapon</p>\n<h3>Weapon Effect</h3>\n<p>(Hammer & Lance Only) You gain a +2 bonus to your attack and damage rolls if you move 20 feet in a straight line towards a creature without taking damage.</p>\n<h3>Armor Effect</h3>\n<p>When you take the Dash action while attuned to this armor, you don't provoke opportunity attacks if you moved at least 20 feet in a straight line during the dash.</p>",
       "chat": ""
     },
-    "identifier": "hardmossplaterune",
+    "identifier": "uberplesiothheadrune",
     "quantity": 1,
     "weight": {
       "value": 0.1,
@@ -29,7 +29,7 @@
     "attuned": false,
     "attunement": "",
     "equipped": false,
-    "rarity": "uncommon",
+    "rarity": "rare",
     "identified": true,
     "type": {
       "value": "trinket",
@@ -44,16 +44,16 @@
     "proficient": null,
     "strength": null,
     "activities": {
-      "HCyIiQh9fCFhbXUs": {
-        "_id": "HCyIiQh9fCFhbXUs",
+      "lCOLCSqAwYn4bWIR": {
+        "_id": "lCOLCSqAwYn4bWIR",
         "type": "utility",
         "sort": 0,
-        "name": "Acrobatics Advantage",
+        "name": "Charge Attack +2 Reminder",
         "img": "mh-icons/material-rune.webp",
         "activation": {
-          "type": "reaction",
+          "type": "special",
           "value": null,
-          "condition": "When you make an Acrobatics check — Armor side active",
+          "condition": "Weapon side — Hammer/Lance only",
           "override": false
         },
         "consumption": {
@@ -62,19 +62,10 @@
             "max": ""
           },
           "spellSlot": false,
-          "targets": [
-            {
-              "type": "itemUses",
-              "value": "1",
-              "scaling": {
-                "mode": "",
-                "formula": ""
-              }
-            }
-          ]
+          "targets": []
         },
         "description": {
-          "chatFlavor": "Grant yourself advantage on an Acrobatics check. 1/SR or LR."
+          "chatFlavor": "(Hammer & Lance Only) After moving 20 ft in a straight line toward a creature without taking damage, +2 attack and damage (apply manually)."
         },
         "duration": {
           "value": "",
@@ -114,7 +105,7 @@
           "recovery": []
         },
         "midiProperties": {
-          "identifier": "acrobatics-advantage",
+          "identifier": "charge-attack-2-reminder",
           "displayActivityName": true
         },
         "roll": {
@@ -127,16 +118,16 @@
         "useConditionReason": "",
         "effectConditionText": ""
       },
-      "8MtXQLcGnuC5YvLW": {
-        "_id": "8MtXQLcGnuC5YvLW",
+      "UOBznWiog0sywntb": {
+        "_id": "UOBznWiog0sywntb",
         "type": "utility",
         "sort": 0,
-        "name": "FastCharge Reminder",
+        "name": "Dash No Opportunity Attacks",
         "img": "mh-icons/material-rune.webp",
         "activation": {
           "type": "special",
           "value": null,
-          "condition": "Weapon side — when you roll initiative",
+          "condition": "Armor side — when you take the Dash action",
           "override": false
         },
         "consumption": {
@@ -148,7 +139,7 @@
           "targets": []
         },
         "description": {
-          "chatFlavor": "FastCharge: on initiative, greatsword/longsword/charge blade/tonfas gain 1 charge, spirit, or phial charge (apply manually)."
+          "chatFlavor": "When you Dash and move at least 20 ft in a straight line, you don't provoke opportunity attacks during that dash (resolve manually)."
         },
         "duration": {
           "value": "",
@@ -188,7 +179,7 @@
           "recovery": []
         },
         "midiProperties": {
-          "identifier": "fastcharge-reminder",
+          "identifier": "dash-no-opportunity-attacks",
           "displayActivityName": true
         },
         "roll": {
@@ -210,19 +201,14 @@
     },
     "uses": {
       "spent": 0,
-      "max": "1",
-      "recovery": [
-        {
-          "period": "sr",
-          "type": "recoverAll"
-        }
-      ]
+      "max": "",
+      "recovery": []
     }
   },
   "effects": [
     {
-      "_id": "8eesdk7EnsK6LFaH",
-      "name": "Hard Mossplate Rune (Equip)",
+      "_id": "7NPFGIdNHF4b2X8k",
+      "name": "Uber Plesioth Head Rune (Equip)",
       "img": "mh-icons/material-rune.webp",
       "type": "base",
       "system": {},
@@ -278,8 +264,8 @@
       }
     },
     {
-      "_id": "SqWrUZ6qq3FXZYAG",
-      "name": "Hard Mossplate - FastCharge",
+      "_id": "oBuClzfHzbyZ8FMs",
+      "name": "Uber Plesioth Head - Charge +2",
       "img": "mh-icons/material-rune.webp",
       "type": "base",
       "system": {},
@@ -294,7 +280,7 @@
         "startRound": null,
         "startTurn": null
       },
-      "description": "On initiative: GS/LS/CB/tonfas gain 1 charge/spirit/phial (manual).",
+      "description": "(Hammer & Lance Only) +2 attack/damage after 20 ft straight charge without taking damage (manual).",
       "origin": null,
       "tint": "#ffffff",
       "transfer": false,
@@ -314,7 +300,7 @@
         },
         "amellwind-toolbox": {
           "runeSide": "weapon",
-          "materialEffectName": "FastCharge"
+          "materialEffectName": "Charge Attack +2"
         }
       },
       "_stats": {
@@ -329,8 +315,8 @@
       }
     },
     {
-      "_id": "P93fq3HOEjRZcVLr",
-      "name": "Hard Mossplate - Acrobatics Advantage",
+      "_id": "xsX7zsU6T6btPUD6",
+      "name": "Uber Plesioth Head - Dash No OA",
       "img": "mh-icons/material-rune.webp",
       "type": "base",
       "system": {},
@@ -345,7 +331,7 @@
         "startRound": null,
         "startTurn": null
       },
-      "description": "Reaction: advantage on an Acrobatics check. 1/SR (item activity).",
+      "description": "Dash with 20+ ft straight line: no opportunity attacks (manual).",
       "origin": null,
       "tint": "#ffffff",
       "transfer": false,
@@ -365,7 +351,7 @@
         },
         "amellwind-toolbox": {
           "runeSide": "armor",
-          "materialEffectName": "Acrobatics Advantage"
+          "materialEffectName": "Dash No OA"
         }
       },
       "_stats": {
@@ -381,28 +367,28 @@
     }
   ],
   "folder": null,
-  "sort": 9990000,
+  "sort": 10000000,
   "ownership": {
     "default": 0
   },
   "flags": {
     "amellwind-toolbox": {
       "exportKind": "rune",
-      "runeName": "Hard Mossplate",
-      "monsterName": "Duramboros",
+      "runeName": "Uber Plesioth Head",
+      "monsterName": "Green Plesioth",
       "unified": true,
       "sides": {
         "weapon": {
-          "label": "Weapon Effect — FastCharge"
+          "label": "Weapon Effect — Charge Attack +2 (Hammer/Lance)"
         },
         "armor": {
-          "label": "Armor Effect — Acrobatics Advantage"
+          "label": "Armor Effect — Dash No OA"
         }
       }
     },
     "itemacro": {
       "macro": {
-        "name": "Hard Mossplate Rune",
+        "name": "Uber Plesioth Head Rune",
         "type": "script",
         "scope": "global",
         "author": "",
@@ -428,8 +414,8 @@
     "coreVersion": "12.331",
     "systemId": "dnd5e",
     "systemVersion": "4.4.4",
-    "createdTime": 1791238606598,
-    "modifiedTime": 1791238606598,
+    "createdTime": 1791161820642,
+    "modifiedTime": 1791161820642,
     "lastModifiedBy": null
   }
 }

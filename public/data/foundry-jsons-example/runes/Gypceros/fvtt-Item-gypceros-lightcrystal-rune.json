@@ -1,6 +1,6 @@
 {
-  "_id": "wz2EcLafIwKkllEV",
-  "name": "Hard Mossplate Rune",
+  "_id": "Iymi9zCOmQ4IOWH9",
+  "name": "Lightcrystal Rune",
   "type": "equipment",
   "img": "mh-icons/material-rune.webp",
   "system": {
@@ -13,10 +13,10 @@
       "revision": 1
     },
     "description": {
-      "value": "<h4>Source Monster</h4>\n<p><strong>Monster:</strong> Duramboros | CR: 9 | Tier: 2</p>\n<p><strong>Compatible Slots:</strong> Armor, Weapon</p>\n<h3>Weapon Effect</h3>\n<p>FastCharge. When you roll for initiative, your greatsword, longsword, charge blade, or tonfas gains 1 charge, spirit, or phial charge.</p>\n<h3>Armor Effect</h3>\n<p>While you are attuned to this armor, you can use your reaction to grant yourself advantage on any Acrobatics check. Once used, you can't use it again until you finish a short or long rest.</p>",
+      "value": "<h4>Source Monster</h4>\n<p><strong>Monster:</strong> Gypceros | CR: 8 | Tier: 2</p>\n<p><strong>Compatible Slots:</strong> Armor, Weapon</p>\n<h3>Weapon Effect</h3>\n<p>While holding this weapon in darkness, it sheds moonlight, creating bright light in a 15-foot radius and dim light for an additional 15 feet.</p>\n<h3>Armor Effect</h3>\n<p>While wearing this armor, you can use a bonus action to speak its command word to ignite the magic within it, causing it to flare brilliantly. Any creature within a 10-foot radius of you must use its reaction to shield its eyes or be blinded until the end of its next turn. You can use this property twice, regaining all expended uses when you finish a long rest.</p>",
       "chat": ""
     },
-    "identifier": "hardmossplaterune",
+    "identifier": "lightcrystalrune",
     "quantity": 1,
     "weight": {
       "value": 0.1,
@@ -44,16 +44,16 @@
     "proficient": null,
     "strength": null,
     "activities": {
-      "HCyIiQh9fCFhbXUs": {
-        "_id": "HCyIiQh9fCFhbXUs",
+      "nDEEB9VTeuxoN8iu": {
+        "_id": "nDEEB9VTeuxoN8iu",
         "type": "utility",
         "sort": 0,
-        "name": "Acrobatics Advantage",
+        "name": "Brilliant Flare",
         "img": "mh-icons/material-rune.webp",
         "activation": {
-          "type": "reaction",
+          "type": "bonus",
           "value": null,
-          "condition": "When you make an Acrobatics check — Armor side active",
+          "condition": "Armor side active",
           "override": false
         },
         "consumption": {
@@ -74,7 +74,7 @@
           ]
         },
         "description": {
-          "chatFlavor": "Grant yourself advantage on an Acrobatics check. 1/SR or LR."
+          "chatFlavor": "Creatures within 10 ft must use their reaction to shield their eyes or be blinded until the end of their next turn. Apply Blinded AE to those who don't. 2/LR."
         },
         "duration": {
           "value": "",
@@ -114,7 +114,7 @@
           "recovery": []
         },
         "midiProperties": {
-          "identifier": "acrobatics-advantage",
+          "identifier": "brilliant-flare",
           "displayActivityName": true
         },
         "roll": {
@@ -127,16 +127,16 @@
         "useConditionReason": "",
         "effectConditionText": ""
       },
-      "8MtXQLcGnuC5YvLW": {
-        "_id": "8MtXQLcGnuC5YvLW",
+      "4ejHR3QIOYpEBMH4": {
+        "_id": "4ejHR3QIOYpEBMH4",
         "type": "utility",
         "sort": 0,
-        "name": "FastCharge Reminder",
+        "name": "Moonlight Reminder",
         "img": "mh-icons/material-rune.webp",
         "activation": {
           "type": "special",
           "value": null,
-          "condition": "Weapon side — when you roll initiative",
+          "condition": "Weapon side — while in darkness",
           "override": false
         },
         "consumption": {
@@ -148,7 +148,7 @@
           "targets": []
         },
         "description": {
-          "chatFlavor": "FastCharge: on initiative, greatsword/longsword/charge blade/tonfas gain 1 charge, spirit, or phial charge (apply manually)."
+          "chatFlavor": "While holding this weapon in darkness: bright light 15 ft, dim light +15 ft (set token light manually)."
         },
         "duration": {
           "value": "",
@@ -188,7 +188,7 @@
           "recovery": []
         },
         "midiProperties": {
-          "identifier": "fastcharge-reminder",
+          "identifier": "moonlight-reminder",
           "displayActivityName": true
         },
         "roll": {
@@ -210,10 +210,10 @@
     },
     "uses": {
       "spent": 0,
-      "max": "1",
+      "max": "2",
       "recovery": [
         {
-          "period": "sr",
+          "period": "lr",
           "type": "recoverAll"
         }
       ]
@@ -221,8 +221,8 @@
   },
   "effects": [
     {
-      "_id": "8eesdk7EnsK6LFaH",
-      "name": "Hard Mossplate Rune (Equip)",
+      "_id": "E2NcfJ08V3SqYJ22",
+      "name": "Lightcrystal Rune (Equip)",
       "img": "mh-icons/material-rune.webp",
       "type": "base",
       "system": {},
@@ -278,8 +278,8 @@
       }
     },
     {
-      "_id": "SqWrUZ6qq3FXZYAG",
-      "name": "Hard Mossplate - FastCharge",
+      "_id": "kkuJh62C1wSSYik0",
+      "name": "Lightcrystal - Moonlight",
       "img": "mh-icons/material-rune.webp",
       "type": "base",
       "system": {},
@@ -294,7 +294,7 @@
         "startRound": null,
         "startTurn": null
       },
-      "description": "On initiative: GS/LS/CB/tonfas gain 1 charge/spirit/phial (manual).",
+      "description": "In darkness: bright 15 ft / dim +15 ft moonlight (manual token light).",
       "origin": null,
       "tint": "#ffffff",
       "transfer": false,
@@ -314,7 +314,7 @@
         },
         "amellwind-toolbox": {
           "runeSide": "weapon",
-          "materialEffectName": "FastCharge"
+          "materialEffectName": "Moonlight"
         }
       },
       "_stats": {
@@ -329,8 +329,8 @@
       }
     },
     {
-      "_id": "P93fq3HOEjRZcVLr",
-      "name": "Hard Mossplate - Acrobatics Advantage",
+      "_id": "nw93jmRRuX0px0Xg",
+      "name": "Lightcrystal - Brilliant Flare",
       "img": "mh-icons/material-rune.webp",
       "type": "base",
       "system": {},
@@ -345,7 +345,7 @@
         "startRound": null,
         "startTurn": null
       },
-      "description": "Reaction: advantage on an Acrobatics check. 1/SR (item activity).",
+      "description": "Bonus action flare 10 ft: reaction or blinded until end of next turn. 2/LR.",
       "origin": null,
       "tint": "#ffffff",
       "transfer": false,
@@ -365,7 +365,61 @@
         },
         "amellwind-toolbox": {
           "runeSide": "armor",
-          "materialEffectName": "Acrobatics Advantage"
+          "materialEffectName": "Brilliant Flare"
+        }
+      },
+      "_stats": {
+        "compendiumSource": null,
+        "duplicateSource": null,
+        "coreVersion": "12.331",
+        "systemId": "dnd5e",
+        "systemVersion": "4.4.4",
+        "createdTime": null,
+        "modifiedTime": null,
+        "lastModifiedBy": null
+      }
+    },
+    {
+      "_id": "0MtiGqiSXOg70CDl",
+      "name": "Blinded (Lightcrystal Flare)",
+      "img": "icons/svg/blind.svg",
+      "type": "base",
+      "system": {},
+      "changes": [],
+      "disabled": true,
+      "duration": {
+        "startTime": null,
+        "seconds": null,
+        "combat": null,
+        "rounds": null,
+        "turns": null,
+        "startRound": null,
+        "startTurn": null
+      },
+      "description": "Blinded until the end of your next turn (Lightcrystal Brilliant Flare).",
+      "origin": null,
+      "tint": "#ffffff",
+      "transfer": false,
+      "statuses": [
+        "blinded"
+      ],
+      "sort": 1,
+      "flags": {
+        "dae": {
+          "enableCondition": "",
+          "selfTarget": false,
+          "selfTargetAlways": false,
+          "stackable": "noneName",
+          "showIcon": true,
+          "durationExpression": "",
+          "specialDuration": [
+            "turnEnd"
+          ],
+          "disableIncapacitated": false,
+          "dontApply": false
+        },
+        "amellwind-toolbox": {
+          "lightcrystalBlindBlueprint": true
         }
       },
       "_stats": {
@@ -381,28 +435,28 @@
     }
   ],
   "folder": null,
-  "sort": 9990000,
+  "sort": 10040000,
   "ownership": {
     "default": 0
   },
   "flags": {
     "amellwind-toolbox": {
       "exportKind": "rune",
-      "runeName": "Hard Mossplate",
-      "monsterName": "Duramboros",
+      "runeName": "Lightcrystal",
+      "monsterName": "Gypceros",
       "unified": true,
       "sides": {
         "weapon": {
-          "label": "Weapon Effect — FastCharge"
+          "label": "Weapon Effect — Moonlight"
         },
         "armor": {
-          "label": "Armor Effect — Acrobatics Advantage"
+          "label": "Armor Effect — Brilliant Flare"
         }
       }
     },
     "itemacro": {
       "macro": {
-        "name": "Hard Mossplate Rune",
+        "name": "Lightcrystal Rune",
         "type": "script",
         "scope": "global",
         "author": "",
@@ -428,8 +482,8 @@
     "coreVersion": "12.331",
     "systemId": "dnd5e",
     "systemVersion": "4.4.4",
-    "createdTime": 1791238606598,
-    "modifiedTime": 1791238606598,
+    "createdTime": 1791238606601,
+    "modifiedTime": 1791238606601,
     "lastModifiedBy": null
   }
 }

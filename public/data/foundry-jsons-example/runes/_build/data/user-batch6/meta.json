@@ -1,0 +1,52 @@
+[
+  {
+    "name": "Giant Beak+",
+    "monster": "Tempered Yian Kut-Ku",
+    "cr": "10",
+    "tier": 2,
+    "rarity": "uncommon",
+    "slots": ["A", "W"],
+    "armor": "Constitution. While you are attuned to this armor, you can reroll a Constitution saving throw that you fail. If you do so, you must use the new roll, and you can't use this property again until you finish a long rest.",
+    "weapon": "Critical Eye. Your weapon attacks critical hit range is increased by 1."
+  },
+  {
+    "name": "Golden Corneum",
+    "monster": "Xu Wu",
+    "cr": "15",
+    "tier": 3,
+    "rarity": "rare",
+    "slots": ["A", "W"],
+    "armor": "HG Earplugs. While you are attuned to this armor, you can use a bonus action to conjure two earplugs in the shape of your choice. While using these earplugs, you can only hear creatures you choose to be able to hear and you have advantage on saving throws against thunder damage.",
+    "weapon": "(Rogue Only) Ambusher. While attuned to this weapon, your sneak attack damage deals an extra 2d6 damage."
+  },
+  {
+    "name": "Drilltusk Carapace",
+    "monster": "Drilltusk Tetsucabra",
+    "cr": "12",
+    "tier": 3,
+    "rarity": "rare",
+    "slots": ["A", "W"],
+    "armor": "While you are wearing this armor, you cannot be knocked prone.",
+    "weapon": "(Sorcerer & Wizard only) Mini-Bombardier. This weapon has 5 runes. While holding it, you can use an action to expend 1 or more of its runes to cast one of the following Spells from it, using your spell save DC: burning hands (1 rune) scorching ray (2 runes), aganazzar's scorcher (2 runes), or flaming sphere (2 runes). This weapon regains 1d4 + 1 expended runes daily at dawn. If you expend the last rune it cannot regain any runes for one week."
+  },
+  {
+    "name": "Blue Kut-Ku Carapace",
+    "monster": "Blue Yian Kut-Ku",
+    "cr": "5",
+    "tier": 2,
+    "rarity": "uncommon",
+    "slots": ["A", "W"],
+    "armor": "While you are attuned to this armor, you and your equipment suffer no ill effects from Strong Winds.",
+    "weapon": "(Spellcaster Only) While you are attuned to this weapon, you can use an action to cast the scorching ray spell from it. Once you use this property, you can't use it again until you finish a long rest."
+  },
+  {
+    "name": "Nerscylla Carapace",
+    "monster": "Tempered Nerscylla",
+    "cr": "14",
+    "tier": 3,
+    "rarity": "rare",
+    "slots": ["A", "W"],
+    "armor": "Honey Hunter++. Once per day, when you use an herbalist kit to gather plants, you gather 1d4+1 honey with it.",
+    "weapon": "(Rogue Only) Ambusher. While attuned to this weapon, your sneak attack damage deals an extra 2d6 damage."
+  }
+]

@@ -1,6 +1,6 @@
 {
-  "_id": "wz2EcLafIwKkllEV",
-  "name": "Hard Mossplate Rune",
+  "_id": "p7rx6T9k9AGA6NXv",
+  "name": "Rey Dau Tail Rune",
   "type": "equipment",
   "img": "mh-icons/material-rune.webp",
   "system": {
@@ -13,10 +13,10 @@
       "revision": 1
     },
     "description": {
-      "value": "<h4>Source Monster</h4>\n<p><strong>Monster:</strong> Duramboros | CR: 9 | Tier: 2</p>\n<p><strong>Compatible Slots:</strong> Armor, Weapon</p>\n<h3>Weapon Effect</h3>\n<p>FastCharge. When you roll for initiative, your greatsword, longsword, charge blade, or tonfas gains 1 charge, spirit, or phial charge.</p>\n<h3>Armor Effect</h3>\n<p>While you are attuned to this armor, you can use your reaction to grant yourself advantage on any Acrobatics check. Once used, you can't use it again until you finish a short or long rest.</p>",
+      "value": "<h4>Source Monster</h4>\n<p><strong>Monster:</strong> Rey Dau | CR: 14 | Tier: 3</p>\n<p><strong>Compatible Slots:</strong> Armor, Weapon</p>\n<h3>Weapon Effect</h3>\n<p>(Spellcaster Only) This weapon has 6 runes. While holding it, you can use an action to expend 1 or more of its runes to cast the lightning bolt spell (save DC 15) from it. For 1 rune, you cast the 3rd-level version of the spell. You can increase the spell slot level by one for each additional rune you expend. This weapon regains 1d6 expended runes daily at dawn. If you expend the weapon's last rune, roll a d20. On a 1, the runes cannot recharge for a week.</p>\n<h3>Armor Effect</h3>\n<p>Evade Extender (M). You gain a +2 bonus to Dexterity saving throws while you wear this armor.</p>",
       "chat": ""
     },
-    "identifier": "hardmossplaterune",
+    "identifier": "reydautailrune",
     "quantity": 1,
     "weight": {
       "value": 0.1,
@@ -29,7 +29,7 @@
     "attuned": false,
     "attunement": "",
     "equipped": false,
-    "rarity": "uncommon",
+    "rarity": "rare",
     "identified": true,
     "type": {
       "value": "trinket",
@@ -44,16 +44,16 @@
     "proficient": null,
     "strength": null,
     "activities": {
-      "HCyIiQh9fCFhbXUs": {
-        "_id": "HCyIiQh9fCFhbXUs",
-        "type": "utility",
+      "nEHBCttAblQ7tPYy": {
+        "_id": "nEHBCttAblQ7tPYy",
+        "type": "save",
         "sort": 0,
-        "name": "Acrobatics Advantage",
+        "name": "Lightning Bolt (3rd)",
         "img": "mh-icons/material-rune.webp",
         "activation": {
-          "type": "reaction",
+          "type": "action",
           "value": null,
-          "condition": "When you make an Acrobatics check — Armor side active",
+          "condition": "Weapon side — Spellcaster only; expend 1 rune (more runes = higher level)",
           "override": false
         },
         "consumption": {
@@ -74,7 +74,7 @@
           ]
         },
         "description": {
-          "chatFlavor": "Grant yourself advantage on an Acrobatics check. 1/SR or LR."
+          "chatFlavor": "Lightning bolt DC 15 Dex, 100-ft line. 8d6 lightning (half on save). Base 3rd-level for 1 rune; spend extra runes to upcast (+1 level each). If this spends the last rune, roll a d20 — on a 1, runes cannot recharge for a week (manual)."
         },
         "duration": {
           "value": "",
@@ -93,19 +93,19 @@
           "template": {
             "count": "",
             "contiguous": false,
-            "type": "",
-            "size": "",
-            "width": "",
+            "type": "line",
+            "size": "100",
+            "width": "5",
             "height": "",
             "units": "ft"
           },
           "affects": {
             "count": "",
-            "type": "self",
+            "type": "creature",
             "choice": false,
             "special": ""
           },
-          "prompt": false,
+          "prompt": true,
           "override": false
         },
         "uses": {
@@ -113,30 +113,59 @@
           "max": "",
           "recovery": []
         },
+        "damage": {
+          "parts": [
+            {
+              "number": 8,
+              "denomination": 6,
+              "bonus": "",
+              "types": [
+                "lightning"
+              ],
+              "custom": {
+                "enabled": false,
+                "formula": ""
+              },
+              "scaling": {
+                "mode": "",
+                "number": null,
+                "formula": ""
+              }
+            }
+          ],
+          "onSave": "half"
+        },
+        "save": {
+          "ability": [
+            "dex"
+          ],
+          "dc": {
+            "calculation": "",
+            "formula": "15"
+          }
+        },
         "midiProperties": {
-          "identifier": "acrobatics-advantage",
-          "displayActivityName": true
+          "identifier": "lightning-bolt-3rd",
+          "displayActivityName": true,
+          "magicDamage": true
         },
         "roll": {
           "formula": "",
           "name": "",
           "prompt": false,
           "visible": false
-        },
-        "useConditionText": "",
-        "useConditionReason": "",
-        "effectConditionText": ""
+        }
       },
-      "8MtXQLcGnuC5YvLW": {
-        "_id": "8MtXQLcGnuC5YvLW",
+      "0bFUBw9uyvx0KDdp": {
+        "_id": "0bFUBw9uyvx0KDdp",
         "type": "utility",
         "sort": 0,
-        "name": "FastCharge Reminder",
+        "name": "Upcast / Last-Rune Check Reminder",
         "img": "mh-icons/material-rune.webp",
         "activation": {
           "type": "special",
           "value": null,
-          "condition": "Weapon side — when you roll initiative",
+          "condition": "Weapon side — when casting with 2+ runes or spending the last rune",
           "override": false
         },
         "consumption": {
@@ -148,7 +177,7 @@
           "targets": []
         },
         "description": {
-          "chatFlavor": "FastCharge: on initiative, greatsword/longsword/charge blade/tonfas gain 1 charge, spirit, or phial charge (apply manually)."
+          "chatFlavor": "Upcast: expend extra item uses before/with Lightning Bolt (+1 spell level each). If you spend the last rune, roll d20 — on 1, no recharge for a week (track manually)."
         },
         "duration": {
           "value": "",
@@ -188,7 +217,7 @@
           "recovery": []
         },
         "midiProperties": {
-          "identifier": "fastcharge-reminder",
+          "identifier": "upcast-last-rune-check-reminder",
           "displayActivityName": true
         },
         "roll": {
@@ -210,19 +239,20 @@
     },
     "uses": {
       "spent": 0,
-      "max": "1",
+      "max": "6",
       "recovery": [
         {
-          "period": "sr",
-          "type": "recoverAll"
+          "period": "dawn",
+          "type": "formula",
+          "formula": "1d6"
         }
       ]
     }
   },
   "effects": [
     {
-      "_id": "8eesdk7EnsK6LFaH",
-      "name": "Hard Mossplate Rune (Equip)",
+      "_id": "OWh6S7b73Sedil1o",
+      "name": "Rey Dau Tail Rune (Equip)",
       "img": "mh-icons/material-rune.webp",
       "type": "base",
       "system": {},
@@ -278,8 +308,8 @@
       }
     },
     {
-      "_id": "SqWrUZ6qq3FXZYAG",
-      "name": "Hard Mossplate - FastCharge",
+      "_id": "MVCywM4bCOmrug3y",
+      "name": "Rey Dau Tail - Lightning Bolt",
       "img": "mh-icons/material-rune.webp",
       "type": "base",
       "system": {},
@@ -294,7 +324,7 @@
         "startRound": null,
         "startTurn": null
       },
-      "description": "On initiative: GS/LS/CB/tonfas gain 1 charge/spirit/phial (manual).",
+      "description": "(Spellcaster Only) 6 runes; action Lightning Bolt DC 15 (activity). Regain 1d6 at dawn. Last-rune d20 lockout manual.",
       "origin": null,
       "tint": "#ffffff",
       "transfer": false,
@@ -314,7 +344,7 @@
         },
         "amellwind-toolbox": {
           "runeSide": "weapon",
-          "materialEffectName": "FastCharge"
+          "materialEffectName": "Lightning Bolt (Runes)"
         }
       },
       "_stats": {
@@ -329,12 +359,19 @@
       }
     },
     {
-      "_id": "P93fq3HOEjRZcVLr",
-      "name": "Hard Mossplate - Acrobatics Advantage",
+      "_id": "xjz7QAjhxKr1XSdB",
+      "name": "Rey Dau Tail - Evade Extender (M)",
       "img": "mh-icons/material-rune.webp",
       "type": "base",
       "system": {},
-      "changes": [],
+      "changes": [
+        {
+          "key": "system.abilities.dex.bonuses.save",
+          "mode": 2,
+          "value": "2",
+          "priority": 20
+        }
+      ],
       "disabled": true,
       "duration": {
         "startTime": null,
@@ -345,7 +382,7 @@
         "startRound": null,
         "startTurn": null
       },
-      "description": "Reaction: advantage on an Acrobatics check. 1/SR (item activity).",
+      "description": "+2 bonus to Dexterity saving throws.",
       "origin": null,
       "tint": "#ffffff",
       "transfer": false,
@@ -365,7 +402,7 @@
         },
         "amellwind-toolbox": {
           "runeSide": "armor",
-          "materialEffectName": "Acrobatics Advantage"
+          "materialEffectName": "Evade Extender (M)"
         }
       },
       "_stats": {
@@ -388,21 +425,21 @@
   "flags": {
     "amellwind-toolbox": {
       "exportKind": "rune",
-      "runeName": "Hard Mossplate",
-      "monsterName": "Duramboros",
+      "runeName": "Rey Dau Tail",
+      "monsterName": "Rey Dau",
       "unified": true,
       "sides": {
         "weapon": {
-          "label": "Weapon Effect — FastCharge"
+          "label": "Weapon Effect — Lightning Bolt (Runes)"
         },
         "armor": {
-          "label": "Armor Effect — Acrobatics Advantage"
+          "label": "Armor Effect — Evade Extender (M)"
         }
       }
     },
     "itemacro": {
       "macro": {
-        "name": "Hard Mossplate Rune",
+        "name": "Rey Dau Tail Rune",
         "type": "script",
         "scope": "global",
         "author": "",
@@ -428,8 +465,8 @@
     "coreVersion": "12.331",
     "systemId": "dnd5e",
     "systemVersion": "4.4.4",
-    "createdTime": 1791238606598,
-    "modifiedTime": 1791238606598,
+    "createdTime": 1791158630976,
+    "modifiedTime": 1791158630976,
     "lastModifiedBy": null
   }
 }

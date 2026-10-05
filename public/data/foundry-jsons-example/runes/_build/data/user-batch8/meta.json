@@ -1,0 +1,62 @@
+[
+  {
+    "name": "Hard Mossplate",
+    "monster": "Duramboros",
+    "cr": "9",
+    "tier": 2,
+    "rarity": "uncommon",
+    "slots": ["A", "W"],
+    "armor": "While you are attuned to this armor, you can use your reaction to grant yourself advantage on any Acrobatics check. Once used, you can't use it again until you finish a short or long rest.",
+    "weapon": "FastCharge. When you roll for initiative, your greatsword, longsword, charge blade, or tonfas gains 1 charge, spirit, or phial charge."
+  },
+  {
+    "name": "B.Tetsucabra Shard",
+    "monster": "Berserk Tetsucabra",
+    "cr": "8",
+    "tier": 2,
+    "rarity": "uncommon",
+    "slots": ["A", "W"],
+    "armor": "Guard. You cannot be pushed or knocked backwards while you wear this armor.",
+    "weapon": "While attuned to this weapon, you can cast the mold earth cantrip at will."
+  },
+  {
+    "name": "J.Barroth Scalp",
+    "monster": "Jade Barroth",
+    "cr": "8",
+    "tier": 2,
+    "rarity": "uncommon",
+    "slots": ["A", "W"],
+    "armor": "You have resistance to cold damage while you wear this armor.",
+    "weapon": "Critical Status (frozen). When you make a weapon attack with this weapon, and roll a 20 for the attack roll, the target is frozen. A frozen creature can use an action to make a DC 14 Strength check. On a successful check, the creature is no longer frozen."
+  },
+  {
+    "name": "T.Zamtrios Grandfin",
+    "monster": "Tigerstripe Zamtrios",
+    "cr": "10",
+    "tier": 2,
+    "rarity": "uncommon",
+    "slots": ["A", "W"],
+    "armor": "Tremor-Proof. You cannot be knocked prone while you wear this armor.",
+    "weapon": "(Race with natural weapons only.) When a hostile creature takes damage while within 5 feet of you, you can use your reaction to make an attack with your race's natural weapon against them."
+  },
+  {
+    "name": "Rathalos Carapace",
+    "monster": "Rathalos",
+    "cr": "10",
+    "tier": 2,
+    "rarity": "uncommon",
+    "slots": ["A"],
+    "armor": "You have a +1 bonus to your AC while you wear this armor.",
+    "weapon": null
+  },
+  {
+    "name": "Lightcrystal",
+    "monster": "Gypceros",
+    "cr": "8",
+    "tier": 2,
+    "rarity": "uncommon",
+    "slots": ["A", "W"],
+    "armor": "While wearing this armor, you can use a bonus action to speak its command word to ignite the magic within it, causing it to flare brilliantly. Any creature within a 10-foot radius of you must use its reaction to shield its eyes or be blinded until the end of its next turn. You can use this property twice, regaining all expended uses when you finish a long rest.",
+    "weapon": "While holding this weapon in darkness, it sheds moonlight, creating bright light in a 15-foot radius and dim light for an additional 15 feet."
+  }
+]
