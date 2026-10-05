@@ -5,7 +5,7 @@
   "img": "mh-icons/bowgun-ammo.webp",
   "system": {
     "description": {
-      "value": "<p><strong>Spread Ammo</strong> (Heavy Bowgun)</p><p>15-foot cone. Each creature must make a Dexterity saving throw against your Ammo DC. On a failed save, a creature takes [[/r 1d10]] Piercing damage.</p>",
+      "value": "<p><strong>Spread Ammo</strong> (Heavy Bowgun)</p><p>15-foot cone. Each creature must make a Dexterity saving throw against your Ammo DC. On a failed save, a creature takes [[/r 1d10]] Piercing damage.</p><p><strong>Very Rare Heavy Bowgun:</strong> deals an extra 1d6 piercing on a failed save.</p>",
       "chat": "<p><strong>Spread Ammo</strong></p><p>15-ft cone, Dex save, 1d10 piercing.</p>"
     },
     "source": {
@@ -61,107 +61,11 @@
     "properties": [],
     "uses": {
       "spent": 0,
-      "max": "1",
+      "max": "",
       "recovery": [],
       "autoDestroy": false
     },
-    "activities": {
-      "loadAmmoType0001": {
-        "_id": "loadAmmoType0001",
-        "type": "utility",
-        "sort": 0,
-        "name": "Load Ammo Type",
-        "img": "mh-icons/bowgun-ammo.webp",
-        "activation": {
-          "type": "special",
-          "value": null,
-          "condition": "When you Reload the Heavy Bowgun",
-          "override": false
-        },
-        "consumption": {
-          "scaling": {
-            "allowed": false,
-            "max": ""
-          },
-          "spellSlot": false,
-          "targets": []
-        },
-        "description": {
-          "chatFlavor": "Choose Spread Ammo when reloading the Heavy Bowgun magazine."
-        },
-        "duration": {
-          "value": "",
-          "units": "inst",
-          "concentration": false,
-          "override": false
-        },
-        "effects": [],
-        "range": {
-          "value": null,
-          "units": "self",
-          "special": "",
-          "override": false
-        },
-        "target": {
-          "template": {
-            "count": "",
-            "contiguous": false,
-            "type": "",
-            "size": "",
-            "width": "",
-            "height": "",
-            "units": "ft"
-          },
-          "affects": {
-            "count": "",
-            "type": "self",
-            "choice": false,
-            "special": ""
-          },
-          "prompt": false,
-          "override": false
-        },
-        "uses": {
-          "spent": 0,
-          "max": "",
-          "recovery": []
-        },
-        "midiProperties": {
-          "ignoreTraits": [],
-          "triggeredActivityId": "none",
-          "triggeredActivityConditionText": "",
-          "triggeredActivityTargets": "targets",
-          "triggeredActivityRollAs": "self",
-          "autoConsume": false,
-          "forceConsumeDialog": "default",
-          "forceRollDialog": "default",
-          "forceDamageDialog": "default",
-          "confirmTargets": "default",
-          "autoTargetType": "any",
-          "autoTargetAction": "default",
-          "automationOnly": false,
-          "otherActivityCompatible": true,
-          "identifier": "load-ammo-type",
-          "displayActivityName": true,
-          "rollMode": "default",
-          "chooseEffects": false,
-          "toggleEffect": false,
-          "ignoreFullCover": false,
-          "removeChatButtons": "default",
-          "magicEffect": false,
-          "magicDamage": false,
-          "noConcentrationCheck": false,
-          "autoCEEffects": "default"
-        },
-        "roll": {
-          "formula": "",
-          "name": "",
-          "prompt": false,
-          "visible": false
-        },
-        "otherActivityId": "none"
-      }
-    }
+    "activities": {}
   },
   "effects": [],
   "folder": null,

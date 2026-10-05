@@ -84,7 +84,7 @@
       "value": null
     },
     "uses": {
-      "spent": 0,
+      "spent": 4,
       "recovery": [],
       "max": "4"
     },
@@ -93,7 +93,7 @@
         "_id": "WVLUGynHr4dhbmvg",
         "type": "attack",
         "sort": 0,
-        "name": "Attack",
+        "name": "Normal Ammo",
         "activation": {
           "type": "action",
           "value": 1,
@@ -101,12 +101,25 @@
         },
         "consumption": {
           "scaling": {
-            "allowed": false
+            "allowed": false,
+            "max": ""
           },
-          "spellSlot": true,
-          "targets": []
+          "spellSlot": false,
+          "targets": [
+            {
+              "type": "itemUses",
+              "target": "",
+              "value": "1",
+              "scaling": {
+                "mode": "",
+                "formula": ""
+              }
+            }
+          ]
         },
-        "description": {},
+        "description": {
+          "chatFlavor": "Weapon damage. Spends 1 loaded round."
+        },
         "duration": {
           "units": "inst",
           "concentration": false,
@@ -168,8 +181,8 @@
           "autoTargetAction": "default",
           "automationOnly": false,
           "otherActivityCompatible": true,
-          "identifier": "attack",
-          "displayActivityName": false,
+          "identifier": "normal-ammo",
+          "displayActivityName": true,
           "rollMode": "default",
           "chooseEffects": false,
           "toggleEffect": false,
@@ -205,7 +218,7 @@
       "9b3e86uO2WByWkdF": {
         "_id": "9b3e86uO2WByWkdF",
         "sort": 300000,
-        "name": "Reload",
+        "name": "Reload (Bonus Action)",
         "activation": {
           "type": "bonus",
           "value": 1,
@@ -221,7 +234,119 @@
           "targets": []
         },
         "description": {
-          "chatFlavor": "Fully reload magazine (also usable as an Action). Set spent uses to 0 for standard ammo, or to max − Special Ammo capacity when loading Special Ammo."
+          "chatFlavor": "Action or Bonus Action. Choose ammunition from your inventory and fill the magazine."
+        },
+        "duration": {
+          "value": "",
+          "units": "inst",
+          "concentration": false,
+          "override": false
+        },
+        "effects": [],
+        "range": {
+          "units": "self",
+          "special": "",
+          "override": false
+        },
+        "target": {
+          "template": {
+            "count": "",
+            "contiguous": false,
+            "type": "",
+            "size": "",
+            "width": "",
+            "height": "",
+            "units": "ft"
+          },
+          "affects": {
+            "count": "",
+            "type": "self",
+            "choice": false,
+            "special": ""
+          },
+          "prompt": false,
+          "override": false
+        },
+        "uses": {
+          "spent": 0,
+          "max": "",
+          "recovery": []
+        },
+        "midiProperties": {
+          "ignoreTraits": [],
+          "triggeredActivityId": "none",
+          "triggeredActivityConditionText": "",
+          "triggeredActivityTargets": "targets",
+          "triggeredActivityRollAs": "self",
+          "autoConsume": false,
+          "forceConsumeDialog": "default",
+          "forceRollDialog": "default",
+          "forceDamageDialog": "default",
+          "confirmTargets": "default",
+          "autoTargetType": "any",
+          "autoTargetAction": "default",
+          "automationOnly": false,
+          "otherActivityCompatible": true,
+          "identifier": "reload",
+          "displayActivityName": true,
+          "rollMode": "default",
+          "chooseEffects": false,
+          "toggleEffect": false,
+          "ignoreFullCover": false,
+          "removeChatButtons": "default",
+          "magicEffect": false,
+          "magicDamage": false,
+          "noConcentrationCheck": false,
+          "autoCEEffects": "default"
+        },
+        "useConditionText": "",
+        "useConditionReason": "",
+        "effectConditionText": "",
+        "type": "utility",
+        "roll": {
+          "formula": "",
+          "name": "",
+          "prompt": false,
+          "visible": false
+        },
+        "macroData": {
+          "name": "",
+          "command": ""
+        },
+        "ignoreTraits": {
+          "idi": false,
+          "idr": false,
+          "idv": false,
+          "ida": false
+        },
+        "isOverTimeFlag": false,
+        "overTimeProperties": {
+          "saveRemoves": true,
+          "preRemoveConditionText": "",
+          "postRemoveConditionText": ""
+        },
+        "otherActivityId": "none"
+      },
+      "reldHbgAct000001": {
+        "_id": "reldHbgAct000001",
+        "sort": 300000,
+        "name": "Reload",
+        "activation": {
+          "type": "action",
+          "value": 1,
+          "condition": "",
+          "override": false
+        },
+        "consumption": {
+          "scaling": {
+            "allowed": false,
+            "max": ""
+          },
+          "spellSlot": false,
+          "targets": []
+        },
+        "description": {
+          "chatFlavor": "Action or Bonus Action. Choose ammunition from your inventory and fill the magazine."
         },
         "duration": {
           "value": "",
@@ -382,7 +507,28 @@
       "itemCondition": "",
       "reactionCondition": "",
       "otherCondition": "",
-      "effectCondition": ""
+      "effectCondition": "",
+      "onUseMacroName": "[preTargeting]ItemMacro,[preambleComplete]ItemMacro,[preDamageRoll]ItemMacro,[postActiveEffects]ItemMacro",
+      "onUseMacroParts": {
+        "items": [
+          {
+            "macroName": "ItemMacro",
+            "option": "preTargeting"
+          },
+          {
+            "macroName": "ItemMacro",
+            "option": "preambleComplete"
+          },
+          {
+            "macroName": "ItemMacro",
+            "option": "preDamageRoll"
+          },
+          {
+            "macroName": "ItemMacro",
+            "option": "postActiveEffects"
+          }
+        ]
+      }
     },
     "midiProperties": {
       "autoFailFriendly": false,
@@ -398,6 +544,45 @@
       "system": "dnd5e",
       "coreVersion": "12.331",
       "systemVersion": "4.4.4"
+    },
+    "itemacro": {
+      "macro": {
+        "_id": null,
+        "name": "Heavy Bowgun",
+        "type": "script",
+        "author": "",
+        "img": "icons/svg/dice-target.svg",
+        "scope": "global",
+        "command": "// Heavy Bowgun — Item Macro (MidiQOL 12.4 / Foundry v12 / dnd5e 4.4)\r\n// On Use:\r\n//   [preTargeting]ItemMacro,[preambleComplete]ItemMacro,[preDamageRoll]ItemMacro,[postActiveEffects]ItemMacro\r\n//\r\n// Reload (Action or Bonus Action):\r\n//   Dialog → pick unlocked ammo → fill Magazine → spend quantity from the stack.\r\n//   Same type: top up empty slots only. Other type: replace the magazine (leftovers are discarded).\r\n//   Special ammo fills only up to flags.world.hbg.specialAmmoMax.\r\n// Fire activities require flags.world.hbg.loadedAmmoKey and a round in the magazine.\r\n// Wyvernheart / Wyverncounter / Wyvernpiercer fire the weapon's normal damage (no special ammo rider).\r\n// Wyvernheart bonus dice (if you already hit earlier this turn): 1d6 / 1d8 / 1d10 by tier.\r\n//   The bonus is decided in preDamageRoll from the previous hit flag. postActiveEffects records this hit.\r\n// Guard: roll 1d4 (1d6 from Rare) and apply +AC with dae.specialDuration isAttacked.\r\n//   On a miss, offers Wyverncounter (no extra action) when that activity exists.\r\n// Wyvernpiercer: 2 Ignition + 1 round, then blocks Guard until the start of your next turn.\r\n// Ignition Mode (Legendary): while the AE is up, hits grant 2 Ignition and Wyvernpiercer can be a Bonus Action.\r\n//   Guard and Wyverncounter are blocked. Uses are the activity's PB / Long Rest pool.\r\n//\r\n// Flags (weapon): flags.world.hbg.*\r\n// Flags (actor, turn): flags.world.hbg.hitThisTurn / usedWyvernheartTurn / usedGuardTurn / guardCausedMiss\r\n\r\nconst esc = (value) => {\r\n  const s = String(value ?? \"\");\r\n  if (globalThis.Handlebars?.Utils?.escapeExpression) return Handlebars.Utils.escapeExpression(s);\r\n  return s\r\n    .replaceAll(\"&\", \"&amp;\")\r\n    .replaceAll(\"<\", \"&lt;\")\r\n    .replaceAll(\">\", \"&gt;\")\r\n    .replaceAll('\"', \"&quot;\")\r\n    .replaceAll(\"'\", \"&#39;\");\r\n};\r\n\r\nconst macroPass = String(\r\n  args?.[0]?.macroPass\r\n  ?? workflow?.macroPass\r\n  ?? \"\",\r\n).toLowerCase();\r\n\r\nconst rolled = (typeof rolledActivity !== \"undefined\" && rolledActivity)\r\n  ? rolledActivity\r\n  : (workflow?.activity ?? args?.[0]?.activity ?? null);\r\n\r\nconst actName = (rolled?.name ?? workflow?.activity?.name ?? \"\").toLowerCase();\r\nconst actId = String(\r\n  rolled?.identifier\r\n  ?? rolled?.midiProperties?.identifier\r\n  ?? workflow?.activity?.identifier\r\n  ?? workflow?.activity?.midiProperties?.identifier\r\n  ?? \"\",\r\n).toLowerCase();\r\n\r\nconst actorDoc = actor\r\n  ?? workflow?.actor\r\n  ?? item?.actor\r\n  ?? item?.parent\r\n  ?? (typeof token !== \"undefined\" ? token?.actor : null);\r\n\r\nif (!actorDoc) {\r\n  ui.notifications.warn(\"Heavy Bowgun: actor not found.\");\r\n  return;\r\n}\r\n\r\nconst isHbgWeapon = foundry.utils.getProperty(item, \"flags.world.hbg.isHeavyBowgun\") === true\r\n  || String(item?.system?.identifier ?? \"\") === \"heavybowgun\"\r\n  || /^heavy bowgun\\b/i.test(item?.name ?? \"\");\r\n\r\nif (!isHbgWeapon) return;\r\n\r\nconst STANDARD_KEYS = new Set([\"normal\", \"pierce\", \"spread\"]);\r\nconst SPECIAL_KEYS = new Set([\r\n  \"cluster\", \"recover\", \"poison\", \"paralysis\", \"sticky\", \"slicing\", \"wyvern\",\r\n]);\r\n\r\nconst AMMO_LABELS = {\r\n  normal: \"Normal Ammo\",\r\n  pierce: \"Pierce Ammo\",\r\n  spread: \"Spread Ammo\",\r\n  cluster: \"Cluster Ammo\",\r\n  recover: \"Recover Ammo\",\r\n  poison: \"Poison Ammo\",\r\n  paralysis: \"Paralysis Ammo\",\r\n  sticky: \"Sticky Ammo\",\r\n  slicing: \"Slicing Ammo\",\r\n  wyvern: \"Wyvern Ammo\",\r\n};\r\n\r\nconst activityToAmmoKey = () => {\r\n  if (actId.endsWith(\"-save\") || actId.endsWith(\"-burst\") || actId === \"sticky-escape\") return null;\r\n  if (actName.includes(\": save\") || actName.includes(\"burst\") || actName.includes(\"escape\")) return null;\r\n  if (actId === \"normal-ammo\" || actName === \"normal ammo\") return \"normal\";\r\n  if (actId === \"pierce-ammo\" || actName.includes(\"pierce ammo\")) return \"pierce\";\r\n  if (actId === \"spread-ammo\" || actName.includes(\"spread ammo\")) return \"spread\";\r\n  if (actId === \"cluster-ammo\" || actName.includes(\"cluster ammo\")) return \"cluster\";\r\n  if (actId === \"recover-ammo\" || actName.includes(\"recover ammo\")) return \"recover\";\r\n  if (actId === \"poison-ammo\" || actName.includes(\"poison ammo\")) return \"poison\";\r\n  if (actId === \"paralysis-ammo\" || actName.includes(\"paralysis ammo\")) return \"paralysis\";\r\n  if (actId === \"sticky-ammo\" || actName.includes(\"sticky ammo\")) return \"sticky\";\r\n  if (actId === \"slicing-ammo\" || actName.includes(\"slicing ammo\")) return \"slicing\";\r\n  if (actId === \"wyvern-ammo\" || (actName.includes(\"wyvern ammo\") && !actName.includes(\"wyvernpiercer\"))) return \"wyvern\";\r\n  return null;\r\n};\r\n\r\nconst isReload = actId === \"reload\" || actName === \"reload\" || actName.startsWith(\"reload\");\r\nconst isWyvernheart = actId === \"wyvernheart\" || actName.includes(\"wyvernheart\");\r\nconst isWyverncounter = actId === \"wyverncounter\" || actName.includes(\"wyverncounter\");\r\nconst isWyvernpiercer = actId === \"wyvernpiercer\" || actId === \"wyvernpiercer-bonus\" || actName.includes(\"wyvernpiercer\");\r\nconst isGuard = actId === \"guard\" || actName === \"guard\";\r\nconst isIgnitionMode = actId === \"ignition-mode\" || actName === \"ignition mode\";\r\nconst isStickyEscape = actId === \"sticky-escape\" || actName.includes(\"sticky ammo: escape\");\r\nconst isPoisonSave = actId === \"poison-ammo-save\" || actName.includes(\"poison ammo: save\");\r\nconst isParalysisSave = actId === \"paralysis-ammo-save\" || actName.includes(\"paralysis ammo: save\");\r\nconst isClusterBurst = actId === \"cluster-burst\" || actName.includes(\"cluster burst\");\r\nconst isCluster = actId === \"cluster-ammo\" || (actName.includes(\"cluster ammo\") && !actName.includes(\"burst\"));\r\nconst isPierce = actId === \"pierce-ammo\" || actName.includes(\"pierce ammo\");\r\nconst isSlicing = actId === \"slicing-ammo\" || actName.includes(\"slicing ammo\");\r\nconst fireAmmoKey = activityToAmmoKey();\r\nconst isPlainShot = isWyvernheart || isWyverncounter || isWyvernpiercer;\r\nconst isFireActivity = Boolean(fireAmmoKey) || isPlainShot;\r\nconst noIgnitionAmmo = new Set([\"spread\", \"recover\", \"slicing\", \"wyvern\"]);\r\n\r\nconst tierKey = () => String(\r\n  foundry.utils.getProperty(item, \"flags.world.hbg.tier\") ?? \"\",\r\n).toLowerCase().replace(/\\s+/g, \"\");\r\n\r\nconst abort = (msg) => {\r\n  if (msg) ui.notifications.warn(msg);\r\n  if (workflow) workflow.aborted = true;\r\n  return false;\r\n};\r\n\r\nconst turnMark = () => {\r\n  const combat = game.combat;\r\n  if (!combat?.started) return null;\r\n  return `${combat.id}:${combat.round}:${combat.turn}:${actorDoc.id}`;\r\n};\r\n\r\nconst bowItem = () => actorDoc.items.get(item.id) ?? item;\r\n\r\nconst magazineMax = () => {\r\n  const n = Number(item.system?.uses?.max);\r\n  if (Number.isFinite(n) && n > 0) return Math.trunc(n);\r\n  return 4;\r\n};\r\n\r\nconst magazineSpent = () => Math.max(0, Number(item.system?.uses?.spent ?? 0));\r\nconst magazineAvailable = () => Math.max(0, magazineMax() - magazineSpent());\r\n\r\nconst specialMax = () => {\r\n  const n = Number(foundry.utils.getProperty(item, \"flags.world.hbg.specialAmmoMax\"));\r\n  if (!Number.isFinite(n)) return 2;\r\n  return Math.max(0, Math.trunc(n));\r\n};\r\n\r\nconst ignitionMax = () => Math.max(\r\n  1,\r\n  Number(foundry.utils.getProperty(item, \"flags.world.hbg.ignitionMax\") ?? 3),\r\n);\r\n\r\nconst ignitionValue = () => Math.max(\r\n  0,\r\n  Number(foundry.utils.getProperty(item, \"flags.world.hbg.ignition\") ?? 0),\r\n);\r\n\r\nconst ignitionEnabled = () => tierKey() !== \"common\"\r\n  && foundry.utils.getProperty(item, \"flags.world.hbg.ignitionOnHit\") !== false;\r\n\r\nconst heartDie = () => {\r\n  const flagged = foundry.utils.getProperty(item, \"flags.world.hbg.wyvernheartBonus\");\r\n  if (flagged) return String(flagged);\r\n  const tier = tierKey();\r\n  if (tier === \"veryrare\" || tier === \"legendary\") return \"1d10\";\r\n  if (tier === \"rare\") return \"1d8\";\r\n  return \"1d6\";\r\n};\r\n\r\nconst guardDie = () => {\r\n  const flagged = foundry.utils.getProperty(item, \"flags.world.hbg.guardDie\");\r\n  if (flagged) return String(flagged);\r\n  const tier = tierKey();\r\n  if (tier === \"rare\" || tier === \"veryrare\" || tier === \"legendary\") return \"1d6\";\r\n  return \"1d4\";\r\n};\r\n\r\nconst ammoDc = () => {\r\n  const prof = Number(actorDoc.system?.attributes?.prof ?? 0);\r\n  const dex = Number(actorDoc.system?.abilities?.dex?.mod ?? 0);\r\n  return 8 + prof + dex;\r\n};\r\n\r\nconst effectList = (doc) => {\r\n  const list = doc?.appliedEffects ?? doc?.effects?.contents ?? doc?.effects ?? [];\r\n  return Array.from(list);\r\n};\r\n\r\nconst hasIgnitionMode = () => effectList(actorDoc).some((ef) =>\r\n  !ef.disabled && foundry.utils.getProperty(ef, \"flags.world.hbg.isIgnitionMode\") === true,\r\n);\r\n\r\nconst guardLocked = () => effectList(actorDoc).some((ef) =>\r\n  !ef.disabled && foundry.utils.getProperty(ef, \"flags.world.hbg.guardLocked\") === true,\r\n);\r\n\r\nconst unlockedAmmo = () => {\r\n  const listed = foundry.utils.getProperty(item, \"flags.world.hbg.unlockedAmmo\");\r\n  if (Array.isArray(listed) && listed.length) return listed.map((k) => String(k).toLowerCase());\r\n  return [\"normal\", \"pierce\", \"spread\", \"cluster\", \"recover\"];\r\n};\r\n\r\nconst isAmmoItem = (i) => {\r\n  if (foundry.utils.getProperty(i, \"flags.world.hbg.isAmmo\") === true) return true;\r\n  const id = String(i.system?.identifier ?? \"\").toLowerCase();\r\n  if (id.endsWith(\"-ammo\")) return true;\r\n  if (i.type === \"consumable\" && /ammo$/i.test(i.name ?? \"\")) return true;\r\n  return false;\r\n};\r\n\r\nconst ammoKeyOf = (i) => {\r\n  const flagged = foundry.utils.getProperty(i, \"flags.world.hbg.ammoKey\");\r\n  if (flagged) return String(flagged).toLowerCase();\r\n  const id = String(i.system?.identifier ?? \"\").toLowerCase().replace(/-ammo$/, \"\");\r\n  if (id) return id;\r\n  return String(i.name ?? \"\")\r\n    .toLowerCase()\r\n    .replace(/\\s+ammo.*$/, \"\")\r\n    .replace(/[^a-z0-9]+/g, \"-\")\r\n    .replace(/^-|-$/g, \"\");\r\n};\r\n\r\nconst isSpecialAmmoKey = (key) => {\r\n  if (SPECIAL_KEYS.has(key)) return true;\r\n  if (STANDARD_KEYS.has(key)) return false;\r\n  return foundry.utils.getProperty(\r\n    actorDoc.items.find((i) => isAmmoItem(i) && ammoKeyOf(i) === key),\r\n    \"flags.world.hbg.isSpecial\",\r\n  ) === true;\r\n};\r\n\r\nconst capacityFor = (key) => (isSpecialAmmoKey(key) ? specialMax() : magazineMax());\r\n\r\nconst inventoryAmmoOptions = () => {\r\n  const unlocked = new Set(unlockedAmmo());\r\n  const byKey = new Map();\r\n  for (const i of actorDoc.items) {\r\n    if (!isAmmoItem(i)) continue;\r\n    const key = ammoKeyOf(i);\r\n    if (!unlocked.has(key)) continue;\r\n    const qty = Math.max(0, Number(i.system?.quantity ?? 0));\r\n    if (qty <= 0) continue;\r\n    const prev = byKey.get(key);\r\n    if (!prev || qty > prev.qty) {\r\n      byKey.set(key, { key, item: i, qty, label: AMMO_LABELS[key] ?? i.name });\r\n    }\r\n  }\r\n  return [...byKey.values()].sort((a, b) => a.label.localeCompare(b.label));\r\n};\r\n\r\nconst loadedKey = () => String(\r\n  foundry.utils.getProperty(item, \"flags.world.hbg.loadedAmmoKey\") ?? \"\",\r\n).toLowerCase() || null;\r\n\r\nconst workflowToken = () => token\r\n  ?? workflow?.token\r\n  ?? canvas?.tokens?.get(workflow?.tokenId)\r\n  ?? actorDoc.getActiveTokens?.()?.[0]\r\n  ?? null;\r\n\r\nconst asToken = (t) => t?.object ?? t;\r\n\r\nconst firstTargetToken = () => {\r\n  const targets = workflow?.targets;\r\n  const first = targets?.first ? targets.first() : targets?.values?.()?.next?.()?.value;\r\n  return asToken(first);\r\n};\r\n\r\nconst distanceFt = (fromTok, toTok) => {\r\n  const a = asToken(fromTok);\r\n  const b = asToken(toTok);\r\n  if (!a || !b) return Infinity;\r\n  if (typeof MidiQOL?.computeDistance === \"function\") {\r\n    const d = Number(MidiQOL.computeDistance(a, b, { wallsBlock: false }));\r\n    if (Number.isFinite(d)) return d;\r\n  }\r\n  if (canvas?.grid?.measureDistance && a.center && b.center) {\r\n    const d = Number(canvas.grid.measureDistance(a.center, b.center));\r\n    if (Number.isFinite(d)) return d;\r\n  }\r\n  return Infinity;\r\n};\r\n\r\nconst hitCount = () => {\r\n  const ht = workflow?.hitTargets;\r\n  if (ht instanceof Set) return ht.size;\r\n  if (Array.isArray(ht)) return ht.length;\r\n  const n = Number(ht?.size ?? workflow?.hits ?? 0);\r\n  if (Number.isFinite(n) && n > 0) return n;\r\n  return 0;\r\n};\r\n\r\nconst hitTokens = () => {\r\n  const ht = workflow?.hitTargets;\r\n  const list = ht instanceof Set || Array.isArray(ht) ? [...ht] : [];\r\n  return list.map(asToken).filter(Boolean);\r\n};\r\n\r\nconst addDamageBonus = (formula) => {\r\n  const prior = String(workflow?.damageBonus ?? \"\").trim();\r\n  workflow.damageBonus = prior ? `${prior} + ${formula}` : formula;\r\n};\r\n\r\nconst spendIgnition = async (amount) => {\r\n  const next = Math.max(0, ignitionValue() - amount);\r\n  await bowItem().update({ \"flags.world.hbg.ignition\": next });\r\n  return next;\r\n};\r\n\r\nconst gainIgnition = async (hits) => {\r\n  if (!ignitionEnabled() || hits <= 0) return;\r\n  const per = hasIgnitionMode() ? 2 : 1;\r\n  const next = Math.min(ignitionMax(), ignitionValue() + (hits * per));\r\n  await bowItem().update({ \"flags.world.hbg.ignition\": next });\r\n  await ChatMessage.create({\r\n    speaker: ChatMessage.getSpeaker({ actor: actorDoc }),\r\n    content: `<div class=\"dnd5e2\"><p><strong>Ignition</strong> ${esc(actorDoc.name)}: <strong>${next}/${ignitionMax()}</strong> (+${hits * per}).</p></div>`,\r\n  });\r\n};\r\n\r\nconst activityValues = () => {\r\n  const list = bowItem().system?.activities;\r\n  if (!list) return [];\r\n  if (typeof list.values === \"function\") return [...list.values()];\r\n  return Object.values(list);\r\n};\r\n\r\nconst findActivity = (identifier) => activityValues().find((a) => {\r\n  const id = String(a.identifier ?? a.midiProperties?.identifier ?? \"\").toLowerCase();\r\n  return id === identifier;\r\n});\r\n\r\nconst confirmDialog = (title, content, yesLabel, noLabel) => new Promise((resolve) => {\r\n  let settled = false;\r\n  const done = (v) => { if (!settled) { settled = true; resolve(v); } };\r\n  new Dialog({\r\n    title,\r\n    content: `<p>${content}</p>`,\r\n    buttons: {\r\n      yes: { icon: '<i class=\"fas fa-check\"></i>', label: yesLabel, callback: () => done(true) },\r\n      no: { icon: '<i class=\"fas fa-times\"></i>', label: noLabel, callback: () => done(false) },\r\n    },\r\n    default: \"yes\",\r\n    close: () => done(false),\r\n  }).render(true);\r\n});\r\n\r\nconst blankDuration = () => ({\r\n  startTime: null,\r\n  seconds: null,\r\n  combat: null,\r\n  rounds: null,\r\n  turns: null,\r\n  startRound: null,\r\n  startTurn: null,\r\n});\r\n\r\nconst speedZeroChanges = () => [\"walk\", \"fly\", \"swim\", \"climb\", \"burrow\"].map((move) => ({\r\n  key: `system.attributes.movement.${move}`,\r\n  mode: CONST?.ACTIVE_EFFECT_MODES?.OVERRIDE ?? 5,\r\n  value: \"0\",\r\n  priority: 20,\r\n}));\r\n\r\nconst createEffect = async (targetActor, data) => {\r\n  const [created] = await targetActor.createEmbeddedDocuments(\"ActiveEffect\", [data]);\r\n  return created;\r\n};\r\n\r\nconst deleteNamed = async (targetActor, predicate) => {\r\n  const stale = effectList(targetActor).filter(predicate);\r\n  if (!stale.length) return;\r\n  await targetActor.deleteEmbeddedDocuments(\"ActiveEffect\", stale.map((e) => e.id));\r\n};\r\n\r\nconst applyGuardLock = async () => {\r\n  await deleteNamed(actorDoc, (ef) => foundry.utils.getProperty(ef, \"flags.world.hbg.guardLocked\") === true);\r\n  await createEffect(actorDoc, {\r\n    name: \"Wyvernpiercer (Guard locked)\",\r\n    img: item.img,\r\n    origin: item.uuid,\r\n    transfer: false,\r\n    disabled: false,\r\n    duration: blankDuration(),\r\n    changes: [],\r\n    flags: {\r\n      dae: {\r\n        specialDuration: [\"turnStartSource\"],\r\n        stackable: \"noneName\",\r\n        showIcon: true,\r\n      },\r\n      world: { hbg: { guardLocked: true } },\r\n    },\r\n  });\r\n};\r\n\r\nconst applySlow = async (targets) => {\r\n  const applied = [];\r\n  for (const tok of targets) {\r\n    const targetActor = tok.actor;\r\n    if (!targetActor) continue;\r\n    const already = effectList(targetActor).some((ef) =>\r\n      !ef.disabled && foundry.utils.getProperty(ef, \"flags.world.hbg.isSlow\") === true,\r\n    );\r\n    if (already) continue;\r\n    await createEffect(targetActor, {\r\n      name: \"Slowed (Heavy Bowgun)\",\r\n      img: \"icons/skills/movement/feet-bladed-boots-fire.webp\",\r\n      origin: item.uuid,\r\n      transfer: false,\r\n      disabled: false,\r\n      duration: blankDuration(),\r\n      changes: [{\r\n        key: \"system.attributes.movement.walk\",\r\n        mode: CONST?.ACTIVE_EFFECT_MODES?.ADD ?? 2,\r\n        value: \"-10\",\r\n        priority: 20,\r\n      }],\r\n      flags: {\r\n        dae: {\r\n          specialDuration: [\"turnStartSource\"],\r\n          stackable: \"noneName\",\r\n          showIcon: true,\r\n        },\r\n        world: { hbg: { isSlow: true } },\r\n      },\r\n    });\r\n    applied.push(targetActor.name);\r\n  }\r\n  if (!applied.length) return;\r\n  await ChatMessage.create({\r\n    speaker: ChatMessage.getSpeaker({ actor: actorDoc }),\r\n    content: `<div class=\"dnd5e2\"><p><strong>Mastery (Slow):</strong> ${esc(applied.join(\", \"))} speed is reduced by 10 feet until the start of your next turn. Dismiss the effect if you choose not to slow them.</p></div>`,\r\n  });\r\n};\r\n\r\nconst clusterFormula = () => {\r\n  const burst = findActivity(\"cluster-burst\");\r\n  const part = burst?.damage?.parts?.[0];\r\n  const n = Number(part?.number ?? (tierKey() === \"veryrare\" || tierKey() === \"legendary\" ? 3 : 2));\r\n  const den = Number(part?.denomination ?? 6);\r\n  return `${Number.isFinite(n) && n > 0 ? n : 2}d${Number.isFinite(den) && den > 0 ? den : 6}`;\r\n};\r\n\r\nconst tokensNear = (center) => {\r\n  const origin = asToken(center);\r\n  const found = new Map();\r\n  if (origin?.id) found.set(origin.id, origin);\r\n  const pool = canvas?.tokens?.placeables ?? [];\r\n  for (const tok of pool) {\r\n    if (!tok?.actor || !tok.id) continue;\r\n    if (distanceFt(origin, tok) <= 5) found.set(tok.id, tok);\r\n  }\r\n  return [...found.values()];\r\n};\r\n\r\nconst applyClusterBurst = async (centers) => {\r\n  const formula = clusterFormula();\r\n  const roll = await new Roll(`${formula}[fire]`).evaluate();\r\n  await roll.toMessage({\r\n    speaker: ChatMessage.getSpeaker({ actor: actorDoc }),\r\n    flavor: `Cluster Ammo — ${formula} fire (5 ft)`,\r\n  });\r\n  const damaged = new Map();\r\n  for (const center of centers) {\r\n    for (const tok of tokensNear(center)) damaged.set(tok.id, tok);\r\n  }\r\n  const tokens = [...damaged.values()];\r\n  const total = Number(roll.total ?? 0);\r\n  try {\r\n    if (typeof MidiQOL?.applyTokenDamage === \"function\") {\r\n      await MidiQOL.applyTokenDamage(\r\n        [{ type: \"fire\", damage: total }],\r\n        total,\r\n        new Set(tokens),\r\n        item,\r\n        new Set(),\r\n      );\r\n    } else {\r\n      for (const tok of tokens) {\r\n        if (tok.actor?.applyDamage) await tok.actor.applyDamage(total, { type: \"fire\" });\r\n      }\r\n    }\r\n  } catch (err) {\r\n    console.error(\"Heavy Bowgun cluster burst\", err);\r\n    for (const tok of tokens) {\r\n      if (tok.actor?.applyDamage) await tok.actor.applyDamage(total, { type: \"fire\" });\r\n    }\r\n  }\r\n  const names = tokens.map((t) => t.name).filter(Boolean).join(\", \");\r\n  await ChatMessage.create({\r\n    speaker: ChatMessage.getSpeaker({ actor: actorDoc }),\r\n    content: `<div class=\"dnd5e2\"><p><strong>Cluster Ammo</strong> explodes for <strong>${total}</strong> fire (${esc(formula)}) — ${esc(names || \"no creatures\")}.</p></div>`,\r\n  });\r\n};\r\n\r\nconst saveTotalFor = (tok) => {\r\n  const tid = tok?.id ?? tok?.document?.id;\r\n  const tuuid = tok?.document?.uuid ?? tok?.uuid;\r\n  const same = (t) => Boolean(t) && ((t.id ?? t.document?.id) === tid || (t.document?.uuid ?? t.uuid) === tuuid);\r\n  for (const row of workflow?.saveDisplayData ?? []) {\r\n    if (!same(row?.target) && row?.tokenUuid !== tuuid) continue;\r\n    const total = Number(row?.rollTotal ?? row?.total);\r\n    if (Number.isFinite(total)) return total;\r\n  }\r\n  for (const row of workflow?.saveRolls ?? []) {\r\n    const rowUuid = row?.options?.tokenUuid ?? row?.data?.tokenUuid;\r\n    if (!same(row?.target ?? row?.token) && rowUuid !== tuuid) continue;\r\n    const total = Number(row?.total ?? row?.roll?.total);\r\n    if (Number.isFinite(total)) return total;\r\n  }\r\n  return null;\r\n};\r\n\r\nconst failedSaveTokens = () => {\r\n  const failed = [...(workflow?.failedSaves ?? [])].map(asToken).filter(Boolean);\r\n  if (failed.length) return failed;\r\n  const saved = new Set([...(workflow?.saves ?? [])].map((t) => t.id ?? t.document?.id));\r\n  return [...(workflow?.targets ?? [])].map(asToken).filter((t) => t && !saved.has(t.id));\r\n};\r\n\r\nconst findAttackTotal = () => {\r\n  const opts = args?.[0]?.workflowOptions ?? workflow?.workflowOptions ?? {};\r\n  const direct = Number(opts.attackTotal ?? opts.attackRollTotal ?? args?.[0]?.attackTotal);\r\n  if (Number.isFinite(direct) && direct > 0) return direct;\r\n  const srcId = opts.triggeredWorkflowId ?? opts.sourceWorkflowId ?? opts.workflowId ?? opts.attackWorkflowId;\r\n  if (srcId && globalThis.MidiQOL?.Workflow?.getWorkflow) {\r\n    const atk = MidiQOL.Workflow.getWorkflow(srcId);\r\n    const t = Number(atk?.attackTotal ?? atk?.attackRoll?.total);\r\n    if (Number.isFinite(t) && t > 0) return t;\r\n  }\r\n  const reacted = Number(workflow?.attackTotal ?? workflow?.attackRoll?.total);\r\n  if (Number.isFinite(reacted) && reacted > 0) return reacted;\r\n  return null;\r\n};\r\n\r\nconst poisonOvertime = (dc) => ({\r\n  turn: \"end\",\r\n  label: \"Poison Ammo\",\r\n  saveAbility: \"con\",\r\n  saveDC: String(dc),\r\n  saveRemove: true,\r\n});\r\n\r\nconst stampPoison = async () => {\r\n  const dc = ammoDc();\r\n  for (const tok of failedSaveTokens()) {\r\n    const targetActor = tok.actor;\r\n    if (!targetActor) continue;\r\n    let ef = effectList(targetActor).find((e) =>\r\n      e.name === \"Ammo: Poisoned\" || foundry.utils.getProperty(e, \"flags.world.hbg.isPoisonAmmo\") === true,\r\n    );\r\n    if (!ef) {\r\n      ef = await createEffect(targetActor, {\r\n        name: \"Ammo: Poisoned\",\r\n        img: \"systems/dnd5e/icons/svg/statuses/poisoned.svg\",\r\n        origin: item.uuid,\r\n        transfer: false,\r\n        disabled: false,\r\n        statuses: [\"poisoned\"],\r\n        duration: { ...blankDuration(), seconds: 60, rounds: 10 },\r\n        changes: [],\r\n        flags: {\r\n          dae: { specialDuration: [], stackable: \"noneName\", showIcon: true },\r\n          world: { hbg: { isPoisonAmmo: true } },\r\n          \"midi-qol\": { overtime: poisonOvertime(dc) },\r\n        },\r\n      });\r\n      continue;\r\n    }\r\n    await ef.update({\r\n      \"flags.world.hbg.isPoisonAmmo\": true,\r\n      \"flags.midi-qol.overtime\": poisonOvertime(dc),\r\n    });\r\n  }\r\n};\r\n\r\nconst upgradeParalysis = async () => {\r\n  const dc = Number(workflow?.saveDC ?? ammoDc());\r\n  for (const tok of failedSaveTokens()) {\r\n    const targetActor = tok.actor;\r\n    if (!targetActor) continue;\r\n    const total = saveTotalFor(tok);\r\n    const hasIncap = effectList(targetActor).some((ef) =>\r\n      ef.name === \"Ammo: Incapacitated\" || foundry.utils.getProperty(ef, \"flags.world.hbg.isParalysisIncap\") === true,\r\n    );\r\n    if (!hasIncap && !Number.isFinite(total)) {\r\n      await createEffect(targetActor, {\r\n        name: \"Ammo: Incapacitated\",\r\n        img: \"systems/dnd5e/icons/svg/statuses/incapacitated.svg\",\r\n        origin: item.uuid,\r\n        transfer: false,\r\n        disabled: false,\r\n        statuses: [\"incapacitated\"],\r\n        duration: blankDuration(),\r\n        changes: speedZeroChanges(),\r\n        flags: {\r\n          dae: { specialDuration: [\"turnEndSource\"], stackable: \"noneName\", showIcon: true },\r\n          world: { hbg: { isParalysisIncap: true } },\r\n        },\r\n      });\r\n    }\r\n    if (!Number.isFinite(total)) {\r\n      await ChatMessage.create({\r\n        speaker: ChatMessage.getSpeaker({ actor: actorDoc }),\r\n        content: `<div class=\"dnd5e2\"><p><em>Paralysis Ammo:</em> could not read the save for ${esc(targetActor.name)}. If it failed by 5 or more, replace Incapacitated with Paralyzed.</p></div>`,\r\n      });\r\n      continue;\r\n    }\r\n    if (dc - total < 5) continue;\r\n    await deleteNamed(targetActor, (ef) =>\r\n      ef.name === \"Ammo: Incapacitated\" || foundry.utils.getProperty(ef, \"flags.world.hbg.isParalysisIncap\") === true,\r\n    );\r\n    await createEffect(targetActor, {\r\n      name: \"Ammo: Paralyzed\",\r\n      img: \"systems/dnd5e/icons/svg/statuses/paralyzed.svg\",\r\n      origin: item.uuid,\r\n      transfer: false,\r\n      disabled: false,\r\n      statuses: [\"paralyzed\"],\r\n      duration: blankDuration(),\r\n      changes: speedZeroChanges(),\r\n      description: \"<p>Paralyzed until the end of the attacker's next turn.</p>\",\r\n      flags: {\r\n        dae: { specialDuration: [\"turnEndSource\"], stackable: \"noneName\", showIcon: true },\r\n        world: { hbg: { isParalysisParalyzed: true } },\r\n      },\r\n    });\r\n  }\r\n};\r\n\r\nconst handleStickyEscape = async () => {\r\n  const tok = firstTargetToken();\r\n  const targetActor = tok?.actor;\r\n  if (!targetActor) return abort(\"Heavy Bowgun: select the restrained creature.\");\r\n  const ef = effectList(targetActor).find((e) =>\r\n    !e.disabled && (\r\n      e.name === \"Ammo: Restrained\"\r\n      || foundry.utils.getProperty(e, \"flags.world.hbg.isStickyAmmo\") === true\r\n    ),\r\n  );\r\n  if (!ef) return abort(`${targetActor.name} is not restrained by Sticky Ammo.`);\r\n  const dc = ammoDc();\r\n  const mod = Number(targetActor.system?.abilities?.str?.mod ?? 0);\r\n  const roll = await new Roll(`1d20 + ${mod}`).evaluate();\r\n  await roll.toMessage({\r\n    speaker: ChatMessage.getSpeaker({ actor: targetActor }),\r\n    flavor: `Escape Sticky Ammo (DC ${dc}) — uses the creature's action`,\r\n  });\r\n  if (Number(roll.total) >= dc) {\r\n    await targetActor.deleteEmbeddedDocuments(\"ActiveEffect\", [ef.id]);\r\n    await ChatMessage.create({\r\n      speaker: ChatMessage.getSpeaker({ actor: actorDoc }),\r\n      content: `<div class=\"dnd5e2\"><p>${esc(targetActor.name)} breaks free of Sticky Ammo.</p></div>`,\r\n    });\r\n  }\r\n  return true;\r\n};\r\n\r\nconst handleGuard = async () => {\r\n  const die = guardDie();\r\n  const roll = await new Roll(die).evaluate();\r\n  await roll.toMessage({\r\n    speaker: ChatMessage.getSpeaker({ actor: actorDoc }),\r\n    flavor: `Guard — ${die} AC`,\r\n  });\r\n  const bonus = Number(roll.total ?? 0);\r\n  await deleteNamed(actorDoc, (ef) => foundry.utils.getProperty(ef, \"flags.world.hbg.isGuardAc\") === true);\r\n  await createEffect(actorDoc, {\r\n    name: `Guard (+${bonus} AC)`,\r\n    img: \"icons/skills/melee/shield-block-gray-orange.webp\",\r\n    origin: item.uuid,\r\n    transfer: false,\r\n    disabled: false,\r\n    duration: blankDuration(),\r\n    changes: [{\r\n      key: \"system.attributes.ac.bonus\",\r\n      mode: CONST?.ACTIVE_EFFECT_MODES?.ADD ?? 2,\r\n      value: String(bonus),\r\n      priority: 20,\r\n    }],\r\n    flags: {\r\n      dae: {\r\n        specialDuration: [\"isAttacked\"],\r\n        stackable: \"noneName\",\r\n        showIcon: true,\r\n      },\r\n      world: { hbg: { isGuardAc: true } },\r\n    },\r\n  });\r\n  const mark = turnMark() ?? \"nocombat\";\r\n  await actorDoc.setFlag(\"world\", \"hbg.usedGuardTurn\", mark);\r\n  const attackTotal = findAttackTotal();\r\n  const ac = Number(actorDoc.system?.attributes?.ac?.value);\r\n  let causedMiss = false;\r\n  if (Number.isFinite(attackTotal) && Number.isFinite(ac)) {\r\n    causedMiss = attackTotal < ac;\r\n  } else {\r\n    causedMiss = await confirmDialog(\r\n      \"Guard\",\r\n      \"Did Guard cause the triggering attack to miss?\",\r\n      \"It missed\",\r\n      \"It still hit\",\r\n    );\r\n  }\r\n  await actorDoc.setFlag(\"world\", \"hbg.guardCausedMiss\", causedMiss ? mark : null);\r\n  const missText = causedMiss\r\n    ? \"The attack misses.\"\r\n    : (Number.isFinite(attackTotal) ? `The attack still hits (total ${attackTotal} vs AC ${ac}).` : \"The attack still hits.\");\r\n  await ChatMessage.create({\r\n    speaker: ChatMessage.getSpeaker({ actor: actorDoc }),\r\n    content: `<div class=\"dnd5e2\"><p><strong>${esc(actorDoc.name)}</strong> Guards: <strong>+${bonus} AC</strong> against the triggering attack. ${esc(missText)}</p></div>`,\r\n  });\r\n\r\n  const counter = findActivity(\"wyverncounter\");\r\n  if (!causedMiss || !counter || hasIgnitionMode()) return;\r\n  if (foundry.utils.getProperty(actorDoc, \"flags.world.hbg.usedWyvernheartTurn\") === mark) return;\r\n  if (ignitionValue() < 1 || magazineAvailable() < 1) {\r\n    await ChatMessage.create({\r\n      speaker: ChatMessage.getSpeaker({ actor: actorDoc }),\r\n      content: `<div class=\"dnd5e2\"><p>Wyverncounter is available only with 1 Ignition and 1 loaded round.</p></div>`,\r\n    });\r\n    return;\r\n  }\r\n  const fire = await confirmDialog(\r\n    \"Wyverncounter\",\r\n    \"Guard caused the attack to miss. Spend 1 Ignition and 1 loaded round to attack that creature? This does not apply a special ammo effect. Within 15 feet it deals an extra 1d8 piercing.\",\r\n    \"Wyverncounter\",\r\n    \"Decline\",\r\n  );\r\n  if (!fire) return;\r\n  if (typeof counter.use === \"function\") await counter.use();\r\n};\r\n\r\nconst requireLoadedRound = () => {\r\n  if (magazineAvailable() <= 0) return abort(\"Heavy Bowgun: magazine empty — Reload first.\");\r\n  if (!loadedKey()) return abort(\"Heavy Bowgun: no ammo type loaded — use Reload.\");\r\n  return true;\r\n};\r\n\r\nconst blockGuard = () => {\r\n  const mark = turnMark();\r\n  if (mark && foundry.utils.getProperty(actorDoc, \"flags.world.hbg.usedWyvernheartTurn\") === mark) {\r\n    return abort(\"Heavy Bowgun: Guard cannot be used on a turn you used Wyvernheart.\");\r\n  }\r\n  if (hasIgnitionMode()) return abort(\"Heavy Bowgun: Guard cannot be used during Ignition Mode.\");\r\n  if (guardLocked()) return abort(\"Heavy Bowgun: Guard is locked until the start of your next turn (Wyvernpiercer).\");\r\n  return true;\r\n};\r\n\r\n// ── preDamageRoll: bonus dice from an earlier hit / close Wyverncounter ─────\r\nif (macroPass.includes(\"predamageroll\")) {\r\n  if (isWyvernheart) {\r\n    const lastHit = foundry.utils.getProperty(actorDoc, \"flags.world.hbg.hitThisTurn\");\r\n    if (lastHit && lastHit === turnMark()) addDamageBonus(`${heartDie()}[piercing]`);\r\n  } else if (isWyverncounter && distanceFt(workflowToken(), firstTargetToken()) <= 15) {\r\n    addDamageBonus(\"1d8[piercing]\");\r\n  }\r\n  return;\r\n}\r\n\r\n// ── postActiveEffects: hits, conditions, guard, cluster ─────────────────────\r\nif (macroPass.includes(\"postactiveeffects\")) {\r\n  if (isGuard) {\r\n    await handleGuard();\r\n    return;\r\n  }\r\n  if (isPoisonSave) {\r\n    await stampPoison();\r\n    return;\r\n  }\r\n  if (isParalysisSave) {\r\n    await upgradeParalysis();\r\n    return;\r\n  }\r\n  if (isStickyEscape || isReload || isIgnitionMode) return;\r\n\r\n  const hits = hitCount();\r\n  if (hits <= 0) return;\r\n  await actorDoc.setFlag(\"world\", \"hbg.hitThisTurn\", turnMark());\r\n  await applySlow(hitTokens());\r\n  if (isCluster) await applyClusterBurst(hitTokens());\r\n  if (isWyvernheart || isWyverncounter || isWyvernpiercer) return;\r\n  if (noIgnitionAmmo.has(fireAmmoKey)) return;\r\n  await gainIgnition(hits);\r\n  return;\r\n}\r\n\r\n// ── preambleComplete: spend Ignition once the shot is committed ─────────────\r\nif (macroPass.includes(\"preamblecomplete\")) {\r\n  if (isSlicing) {\r\n    const normal = Number(item.system?.range?.value ?? 100);\r\n    const dist = distanceFt(workflowToken(), firstTargetToken());\r\n    if (Number.isFinite(dist) && dist > normal) {\r\n      if (workflow) {\r\n        workflow.advantage = true;\r\n        workflow.disadvantage = false;\r\n        workflow.rollOptions = foundry.utils.mergeObject(workflow.rollOptions ?? {}, { advantage: true });\r\n      }\r\n      ui.notifications.info(\"Slicing Ammo: target is beyond normal range — advantage on the save.\");\r\n    }\r\n    return;\r\n  }\r\n  if (isWyvernheart) {\r\n    const mark = turnMark();\r\n    if (mark) await actorDoc.setFlag(\"world\", \"hbg.usedWyvernheartTurn\", mark);\r\n    await spendIgnition(1);\r\n    return;\r\n  }\r\n  if (isWyverncounter) {\r\n    await spendIgnition(1);\r\n    await actorDoc.setFlag(\"world\", \"hbg.guardCausedMiss\", null);\r\n    return;\r\n  }\r\n  if (isWyvernpiercer) {\r\n    await spendIgnition(2);\r\n    await applyGuardLock();\r\n    await ChatMessage.create({\r\n      speaker: ChatMessage.getSpeaker({ actor: actorDoc }),\r\n      content: `<div class=\"dnd5e2\"><p><strong>Wyvernpiercer:</strong> Guard cannot be used until the start of your next turn.</p></div>`,\r\n    });\r\n  }\r\n  return;\r\n}\r\n\r\nif (macroPass && !macroPass.includes(\"pretargeting\") && !macroPass.includes(\"preitemroll\")) return;\r\n\r\nif (isClusterBurst) return abort(\"Heavy Bowgun: the burst is applied when Cluster Ammo hits.\");\r\n\r\n// ── Sticky escape (special; the restrained creature spends its action) ──────\r\nif (isStickyEscape) {\r\n  await handleStickyEscape();\r\n  return;\r\n}\r\n\r\n// ── Ignition Mode ───────────────────────────────────────────────────────────\r\nif (isIgnitionMode) {\r\n  if (hasIgnitionMode()) return abort(\"Heavy Bowgun: Ignition Mode is already active.\");\r\n  return;\r\n}\r\n\r\n// ── Guard gate ──────────────────────────────────────────────────────────────\r\nif (isGuard) {\r\n  if (!blockGuard()) return;\r\n  return;\r\n}\r\n\r\n// ── Fire gate ───────────────────────────────────────────────────────────────\r\nif (isFireActivity) {\r\n  if (!requireLoadedRound()) return;\r\n  if (isWyverncounter) {\r\n    const mark = turnMark() ?? \"nocombat\";\r\n    if (turnMark() && foundry.utils.getProperty(actorDoc, \"flags.world.hbg.usedWyvernheartTurn\") === mark) {\r\n      return abort(\"Heavy Bowgun: Wyverncounter cannot be used on a turn you used Wyvernheart.\");\r\n    }\r\n    if (hasIgnitionMode()) return abort(\"Heavy Bowgun: Wyverncounter cannot be used during Ignition Mode.\");\r\n    if (foundry.utils.getProperty(actorDoc, \"flags.world.hbg.usedGuardTurn\") !== mark\r\n      || foundry.utils.getProperty(actorDoc, \"flags.world.hbg.guardCausedMiss\") !== mark) {\r\n      return abort(\"Heavy Bowgun: Wyverncounter requires Guard to have caused the attack to miss this turn.\");\r\n    }\r\n    if (ignitionValue() < 1) return abort(\"Heavy Bowgun: no Ignition — land a hit first.\");\r\n    return;\r\n  }\r\n  if (isWyvernpiercer) {\r\n    if (actId === \"wyvernpiercer-bonus\" && !hasIgnitionMode()) {\r\n      return abort(\"Heavy Bowgun: Wyvernpiercer as a Bonus Action requires Ignition Mode.\");\r\n    }\r\n    if (ignitionValue() < 2) return abort(\"Heavy Bowgun: Wyvernpiercer spends 2 Ignition.\");\r\n    return;\r\n  }\r\n  if (isWyvernheart) {\r\n    if (ignitionValue() < 1) return abort(\"Heavy Bowgun: no Ignition — land a hit first.\");\r\n    return;\r\n  }\r\n  if (fireAmmoKey && fireAmmoKey !== loadedKey()) {\r\n    return abort(\r\n      `Heavy Bowgun: magazine is loaded with ${AMMO_LABELS[loadedKey()] ?? loadedKey()}, not ${AMMO_LABELS[fireAmmoKey] ?? fireAmmoKey}. Reload to switch.`,\r\n    );\r\n  }\r\n  return;\r\n}\r\n\r\nif (!isReload) return;\r\n\r\n// ── Reload ──────────────────────────────────────────────────────────────────\r\nconst options = inventoryAmmoOptions();\r\nif (!options.length) return abort(\"Heavy Bowgun: no unlocked ammo in inventory (quantity > 0).\");\r\n\r\nconst currentLoaded = loadedKey();\r\nconst magMax = magazineMax();\r\nconst magAvail = magazineAvailable();\r\n\r\nconst optsHtml = options.map((o) => {\r\n  const cap = capacityFor(o.key);\r\n  const sameType = Boolean(currentLoaded && currentLoaded === o.key);\r\n  const need = sameType ? Math.max(0, cap - magAvail) : cap;\r\n  const selected = currentLoaded === o.key ? \" selected\" : \"\";\r\n  const special = isSpecialAmmoKey(o.key) ? \" [Special]\" : \"\";\r\n  const loadHint = sameType\r\n    ? (need > 0 ? `top up ${need}/${cap}` : `full ${magAvail}/${cap}`)\r\n    : `load ${Math.min(cap, o.qty)}/${cap}`;\r\n  return `<option value=\"${esc(o.key)}\"${selected}>${esc(o.label)}${special} — pack ${o.qty}, ${loadHint}</option>`;\r\n}).join(\"\");\r\n\r\nconst content = `\r\n<form class=\"flexcol\">\r\n  <p>Magazine: <strong>${magAvail}/${magMax}</strong>${\r\n    currentLoaded ? ` · loaded <em>${esc(AMMO_LABELS[currentLoaded] ?? currentLoaded)}</em>` : \"\"\r\n  }${ignitionEnabled() ? ` · Ignition <strong>${ignitionValue()}/${ignitionMax()}</strong>` : \"\"}</p>\r\n  <p>Same ammo type only spends rounds for empty slots. Switching ammo replaces the magazine.</p>\r\n  <div class=\"form-group\">\r\n    <label>Ammunition</label>\r\n    <div class=\"form-fields\">\r\n      <select name=\"hbg-ammo\">${optsHtml}</select>\r\n    </div>\r\n  </div>\r\n</form>`;\r\n\r\nconst chosenKey = await new Promise((resolve) => {\r\n  let settled = false;\r\n  const done = (v) => { if (!settled) { settled = true; resolve(v); } };\r\n  new Dialog({\r\n    title: \"Reload — Magazine\",\r\n    content,\r\n    buttons: {\r\n      ok: {\r\n        icon: '<i class=\"fas fa-sync\"></i>',\r\n        label: \"Reload\",\r\n        callback: (html) => {\r\n          const $h = html?.find ? html : $(html);\r\n          done($h.find('select[name=\"hbg-ammo\"]').val() || null);\r\n        },\r\n      },\r\n      cancel: {\r\n        icon: '<i class=\"fas fa-times\"></i>',\r\n        label: \"Cancel\",\r\n        callback: () => done(null),\r\n      },\r\n    },\r\n    default: \"ok\",\r\n    close: () => done(null),\r\n  }).render(true);\r\n});\r\n\r\nif (!chosenKey) return abort(\"Heavy Bowgun: reload cancelled.\");\r\n\r\nconst pick = options.find((o) => o.key === chosenKey);\r\nif (!pick) return abort(\"Heavy Bowgun: invalid ammo selection.\");\r\n\r\nconst cap = capacityFor(chosenKey);\r\nif (cap <= 0) return abort(\"Heavy Bowgun: this ammo cannot be loaded at this tier.\");\r\n\r\nconst sameType = Boolean(currentLoaded && currentLoaded === chosenKey);\r\nconst need = sameType ? Math.max(0, cap - magAvail) : cap;\r\nif (sameType && need <= 0) return abort(\"Heavy Bowgun: magazine already full for this ammo.\");\r\n\r\nconst loadAmt = Math.min(need, pick.qty);\r\nif (loadAmt <= 0) return abort(`Heavy Bowgun: no rounds left in ${pick.label}.`);\r\n\r\nconst finalAvail = sameType ? magAvail + loadAmt : loadAmt;\r\nconst newSpent = Math.max(0, magMax - finalAvail);\r\nconst newQty = Math.max(0, Number(pick.item.system?.quantity ?? 0) - loadAmt);\r\n\r\nawait pick.item.update({ \"system.quantity\": newQty });\r\nawait bowItem().update({\r\n  \"system.uses.spent\": newSpent,\r\n  \"flags.world.hbg.loadedAmmoKey\": chosenKey,\r\n});\r\n\r\nconst specialNote = isSpecialAmmoKey(chosenKey) ? ` Special Ammo capacity ${cap}.` : \"\";\r\nconst topUpNote = sameType ? \" (top-up)\" : \"\";\r\nawait ChatMessage.create({\r\n  speaker: ChatMessage.getSpeaker({ actor: actorDoc }),\r\n  content: `<div class=\"dnd5e2\"><p><strong>${esc(actorDoc.name)}</strong> reloads the Heavy Bowgun with <em>${esc(pick.label)}</em>${topUpNote}.</p><p>Magazine <strong>${finalAvail}/${magMax}</strong> · spent ${loadAmt} from inventory (${newQty} left).${specialNote}</p></div>`,\r\n});\r\n",
+        "folder": null,
+        "sort": 0,
+        "ownership": {
+          "default": 0
+        },
+        "flags": {},
+        "_stats": {
+          "coreVersion": "12.331",
+          "systemId": "dnd5e",
+          "systemVersion": "4.4.4",
+          "createdTime": null,
+          "modifiedTime": null,
+          "lastModifiedBy": null
+        }
+      }
+    },
+    "world": {
+      "hbg": {
+        "isHeavyBowgun": true,
+        "tier": "common",
+        "specialAmmoMax": 0,
+        "ignitionMax": 3,
+        "ignition": 0,
+        "ignitionOnHit": false,
+        "unlockedAmmo": [
+          "normal"
+        ],
+        "loadedAmmoKey": null
+      }
     }
   },
   "_stats": {

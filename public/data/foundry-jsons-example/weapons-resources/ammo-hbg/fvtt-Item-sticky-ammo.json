@@ -61,107 +61,11 @@
     "properties": [],
     "uses": {
       "spent": 0,
-      "max": "1",
+      "max": "",
       "recovery": [],
       "autoDestroy": false
     },
-    "activities": {
-      "loadAmmoType0001": {
-        "_id": "loadAmmoType0001",
-        "type": "utility",
-        "sort": 0,
-        "name": "Load Ammo Type",
-        "img": "mh-icons/bowgun-ammo.webp",
-        "activation": {
-          "type": "special",
-          "value": null,
-          "condition": "When you Reload the Heavy Bowgun",
-          "override": false
-        },
-        "consumption": {
-          "scaling": {
-            "allowed": false,
-            "max": ""
-          },
-          "spellSlot": false,
-          "targets": []
-        },
-        "description": {
-          "chatFlavor": "Choose Sticky Ammo when reloading the Heavy Bowgun magazine."
-        },
-        "duration": {
-          "value": "",
-          "units": "inst",
-          "concentration": false,
-          "override": false
-        },
-        "effects": [],
-        "range": {
-          "value": null,
-          "units": "self",
-          "special": "",
-          "override": false
-        },
-        "target": {
-          "template": {
-            "count": "",
-            "contiguous": false,
-            "type": "",
-            "size": "",
-            "width": "",
-            "height": "",
-            "units": "ft"
-          },
-          "affects": {
-            "count": "",
-            "type": "self",
-            "choice": false,
-            "special": ""
-          },
-          "prompt": false,
-          "override": false
-        },
-        "uses": {
-          "spent": 0,
-          "max": "",
-          "recovery": []
-        },
-        "midiProperties": {
-          "ignoreTraits": [],
-          "triggeredActivityId": "none",
-          "triggeredActivityConditionText": "",
-          "triggeredActivityTargets": "targets",
-          "triggeredActivityRollAs": "self",
-          "autoConsume": false,
-          "forceConsumeDialog": "default",
-          "forceRollDialog": "default",
-          "forceDamageDialog": "default",
-          "confirmTargets": "default",
-          "autoTargetType": "any",
-          "autoTargetAction": "default",
-          "automationOnly": false,
-          "otherActivityCompatible": true,
-          "identifier": "load-ammo-type",
-          "displayActivityName": true,
-          "rollMode": "default",
-          "chooseEffects": false,
-          "toggleEffect": false,
-          "ignoreFullCover": false,
-          "removeChatButtons": "default",
-          "magicEffect": false,
-          "magicDamage": false,
-          "noConcentrationCheck": false,
-          "autoCEEffects": "default"
-        },
-        "roll": {
-          "formula": "",
-          "name": "",
-          "prompt": false,
-          "visible": false
-        },
-        "otherActivityId": "none"
-      }
-    }
+    "activities": {}
   },
   "effects": [],
   "folder": null,

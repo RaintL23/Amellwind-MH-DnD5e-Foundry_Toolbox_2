@@ -3,6 +3,7 @@
  * Run: node public/data/foundry-jsons-example/weapons-resources/ammo-hbg/generate-rare.mjs
  */
 import { readFileSync, writeFileSync } from "node:fs";
+import { patchHbg } from "./apply-hbg-fixes.mjs";
 import { dirname, join } from "node:path";
 import { fileURLToPath } from "node:url";
 
@@ -1573,3 +1574,4 @@ for (const def of ammoDefs) {
 
 void id;
 console.log("Wrote Heavy Bowgun (Rare) weapon + 5 Rare ammo stacks.");
+patchHbg();

@@ -58,7 +58,7 @@ const GRAFT_MACRO_FROM: Record<string, Tier> = {
 
 /** Uncommon/Rare goldens that are hand-tuned (ammo macros, dialogs); do not overwrite. */
 const PRESERVE_EXISTING_TIERS: Record<string, Tier[]> = {
-  "heavy-bowgun.json": ["Uncommon", "Rare"],
+  "heavy-bowgun.json": ["Common", "Uncommon", "Rare", "Very Rare", "Legendary"],
   "light-bowgun.json": ["Uncommon", "Rare", "Very Rare"],
   "bow.json": ["Uncommon", "Rare"],
   "gunlance.json": ["Uncommon", "Rare"],
