@@ -12,11 +12,15 @@ import {
   getListDndFeats,
 } from "@/features/dnd/feats/services/dnd-feat.service";
 import { useCharacterBuilder } from "@/features/raintdm/builder/context/CharacterBuilderContext";
+import { useSpellcastingContext } from "@/features/raintdm/builder/context/SpellcastingContext";
+import { useSelectedSubclass } from "@/features/raintdm/builder/hooks/useBuilderSelections";
+import { isCharacterSpellcaster } from "@/features/amellwind/runes/utils/rune-compatibility.utils";
 import { useLibraryVariants } from "@/features/raintdm/builder/hooks/useLibraryVariants";
 import type { BuilderSlotSelection } from "@/features/raintdm/builder/hooks/useBuilderSlotSelection";
 import {
   ABILITY_SCORE_IMPROVEMENT,
   DEFAULT_ASI_CHOICES,
+  getFeatSlotLevels,
   isAsiFeatSelection,
   isFeatSlotSelection,
   isOptionalOriginFeatSlot,
@@ -59,7 +63,15 @@ import {
   libraryOptionMatchesSourceFilter,
   type FeatDataSource,
 } from "@/features/raintdm/builder/utils/builder-library-filters";
-import { isGeneralFeatSlotCategory } from "@/features/raintdm/builder/utils/feat-prerequisites.utils";
+import {
+  isSelectableGeneralFeat,
+  meetsCheckableFeatPrerequisites,
+} from "@/features/raintdm/builder/utils/feat-prerequisites.utils";
+import { useEffectiveAbilityScores } from "@/features/raintdm/builder/hooks/useEffectiveAbilityScores";
+import {
+  buildClassLevelEntries,
+  getFeatSlotLevelsForBuild,
+} from "@/features/raintdm/builder/utils/multiclass.utils";
 import { AsiLibraryPanel } from "../AsiLibraryPanel";
 import { FeatLibraryDetail } from "./FeatLibraryDetail";
 import { FeatLibraryPreview } from "./FeatLibraryPreview";
@@ -91,9 +103,16 @@ export function FeatLibraryPanel({
   const [featsLoading, setFeatsLoading] = useState(false);
 
   const {
+    character,
     featSelections,
     background,
     class: classSelection,
+    classData,
+    subclass,
+    multiclassEnabled,
+    multiclassEntries,
+    multiclassClassData,
+    primaryClassLevel,
     useAmellwindHomebrew,
     speciesOriginFeatGrant,
     backgroundOriginFeatGrant,
@@ -106,7 +125,11 @@ export function FeatLibraryPanel({
     setBackgroundOriginFeat,
     setOptionalFeatureOriginFeatAtIndex,
     clearBonusCantripSpellSelections,
+    resolvedArmorItems,
   } = useCharacterBuilder();
+  const effectiveAbilities = useEffectiveAbilityScores();
+  const subclassData = useSelectedSubclass();
+  const { spellcasting, centerPanelSpellcasting } = useSpellcastingContext();
 
   const identityBookNames = useBookSourceNames();
   const sourceCatalog = useSourceCatalog();
@@ -275,6 +298,64 @@ export function FeatLibraryPanel({
     onSearchHiddenChange,
   ]);
 
+  const featSlotLevels = useMemo(() => {
+    if (multiclassEnabled) {
+      return getFeatSlotLevelsForBuild(
+        buildClassLevelEntries(
+          classSelection,
+          classData,
+          primaryClassLevel,
+          subclass,
+          multiclassEntries,
+          multiclassClassData,
+        ),
+        character.level,
+      );
+    }
+    return getFeatSlotLevels(classSelection?.name ?? "", character.level);
+  }, [
+    multiclassEnabled,
+    classSelection,
+    classData,
+    primaryClassLevel,
+    subclass,
+    multiclassEntries,
+    multiclassClassData,
+    character.level,
+  ]);
+
+  const featGateLevel =
+    featSlotIndex !== null
+      ? (featSlotLevels[featSlotIndex] ?? character.level)
+      : character.level;
+
+  const hasSpellcasting = useMemo(() => {
+    if (spellcasting.isSpellcaster || centerPanelSpellcasting.isSpellcaster) {
+      return true;
+    }
+    if (isCharacterSpellcaster(classData, subclassData)) return true;
+    return multiclassClassData.some(
+      (entry) =>
+        !!entry?.casterProgression && entry.casterProgression !== "none",
+    );
+  }, [
+    spellcasting.isSpellcaster,
+    centerPanelSpellcasting.isSpellcaster,
+    classData,
+    subclassData,
+    multiclassClassData,
+  ]);
+
+  const featPrereqContext = useMemo(
+    () => ({
+      level: featGateLevel,
+      abilities: effectiveAbilities,
+      hasSpellcasting,
+      armorProficiencies: resolvedArmorItems,
+    }),
+    [featGateLevel, effectiveAbilities, hasSpellcasting, resolvedArmorItems],
+  );
+
   const featTypeFilter = asFilterString(listFilters.filter);
 
   const featListOptions = useMemo((): LibraryListOption[] => {
@@ -320,7 +401,11 @@ export function FeatLibraryPanel({
     if (featSource === "amellwind") {
       // Amellwind feats lack D&D feat-type facets; ignore type filter.
       const list = amellwindFeats
-        .filter((f) => f.name !== ABILITY_SCORE_IMPROVEMENT.name)
+        .filter(
+          (f) =>
+            f.name !== ABILITY_SCORE_IMPROVEMENT.name &&
+            meetsCheckableFeatPrerequisites(f, featPrereqContext),
+        )
         .map((f) => ({
           id: f.id,
           name: f.name,
@@ -330,20 +415,21 @@ export function FeatLibraryPanel({
       return [asiOption, ...filtered];
     }
 
-    // ASI / level-feat slots: General + Epic Boon only (not Origin or Fighting Style).
+    // ASI / level-feat slots: General + Epic Boon that meet this slot's level
+    // and the character's ability scores (not Origin or Fighting Style).
     // Fighting Styles are chosen via optional-feature slots when the class grants them.
     const editionFeats =
       featSource === "dnd2014"
         ? dndFeats.filter(
             (f) =>
               !isDnd2024Feat(f) &&
-              isGeneralFeatSlotCategory(f) &&
+              isSelectableGeneralFeat(f, featPrereqContext) &&
               dndFeatMatchesTypeFilter(f, featTypeFilter),
           )
         : dndFeats.filter(
             (f) =>
               isDnd2024Feat(f) &&
-              isGeneralFeatSlotCategory(f) &&
+              isSelectableGeneralFeat(f, featPrereqContext) &&
               dndFeatMatchesTypeFilter(f, featTypeFilter),
           );
 
@@ -379,6 +465,7 @@ export function FeatLibraryPanel({
     sourceFilter,
     sourceCatalog,
     identityBookNames,
+    featPrereqContext,
   ]);
 
   const isDndFeatSelection =
@@ -757,6 +844,9 @@ export function FeatLibraryPanel({
         ? getFeatSpellListOptions(featDetail as DndFeat)
         : [];
     const canEditChoices = !!selectedFeat && !isAsiFeatSelection(selectedFeat);
+    const prerequisitesUnmet =
+      isFeatSlot &&
+      !meetsCheckableFeatPrerequisites(featDetail, featPrereqContext);
     return (
       <div>
         <LibraryBackToListButton
@@ -765,6 +855,7 @@ export function FeatLibraryPanel({
         />
         <FeatLibraryDetail
           feat={featDetail}
+          prerequisitesUnmet={prerequisitesUnmet}
           sourceVariants={isDndFeatSelection ? dndFeatSourceVariants : undefined}
           activeSourceId={selectedFeat?.id}
           onSourceSelect={

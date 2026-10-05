@@ -4,6 +4,8 @@ import { mapDndFeat } from "@/features/dnd/feats/mappers/dnd-feat.mapper";
 import {
   isEligibleGeneralFeat,
   isGeneralFeatSlotCategory,
+  isSelectableGeneralFeat,
+  meetsCheckableFeatPrerequisites,
   meetsFeatPrerequisites,
 } from "@/features/raintdm/builder/utils/feat-prerequisites.utils";
 import { buildFeatSelectionsForLevel } from "@/features/raintdm/builder/utils/randomizer/feat-randomizer.utils";
@@ -41,6 +43,55 @@ describe("feat prerequisites eligibility", () => {
     expect(
       isEligibleGeneralFeat(boon, { level: 19, abilities: scores({}) }),
     ).toBe(true);
+    expect(
+      isSelectableGeneralFeat(boon, { level: 8, abilities: scores({}) }),
+    ).toBe(false);
+    expect(
+      isSelectableGeneralFeat(boon, { level: 16, abilities: scores({}) }),
+    ).toBe(false);
+    expect(
+      isSelectableGeneralFeat(boon, { level: 19, abilities: scores({}) }),
+    ).toBe(true);
+  });
+
+  it("keeps spellcasting feats selectable when level is met", () => {
+    const warCaster = mapDndFeat({
+      name: "War Caster",
+      source: "XPHB",
+      category: "G",
+      prerequisite: [{ level: 4, spellcasting: true }],
+      entries: ["You have practiced casting spells."],
+    });
+
+    expect(
+      isEligibleGeneralFeat(warCaster, { level: 8, abilities: scores({}) }),
+    ).toBe(false);
+    expect(
+      meetsCheckableFeatPrerequisites(warCaster, {
+        level: 8,
+        abilities: scores({}),
+      }),
+    ).toBe(true);
+    expect(
+      isSelectableGeneralFeat(warCaster, { level: 4, abilities: scores({}) }),
+    ).toBe(true);
+    expect(
+      isSelectableGeneralFeat(warCaster, {
+        level: 4,
+        abilities: scores({}),
+        hasSpellcasting: false,
+      }),
+    ).toBe(false);
+    expect(
+      isSelectableGeneralFeat(warCaster, {
+        level: 4,
+        abilities: scores({}),
+        hasSpellcasting: true,
+      }),
+    ).toBe(true);
+    expect(
+      isSelectableGeneralFeat(warCaster, { level: 3, abilities: scores({}) }),
+    ).toBe(false);
   });
 
   it("treats OR ability groups as alternatives (Athlete)", () => {
@@ -106,6 +157,36 @@ describe("feat prerequisites eligibility", () => {
         abilities: scores({}),
       }),
     ).toBe(false);
+    expect(
+      isSelectableGeneralFeat(heavilyArmored, {
+        level: 8,
+        abilities: scores({}),
+        armorProficiencies: ["Light"],
+      }),
+    ).toBe(false);
+    expect(
+      isSelectableGeneralFeat(heavilyArmored, {
+        level: 8,
+        abilities: scores({}),
+        armorProficiencies: ["Medium", "Shield"],
+      }),
+    ).toBe(true);
+    expect(
+      isSelectableGeneralFeat(
+        mapDndFeat({
+          name: "Shield Master",
+          source: "XPHB",
+          category: "G",
+          prerequisite: [{ level: 4, proficiency: [{ armor: "shield" }] }],
+          entries: ["You gain training."],
+        }),
+        {
+          level: 4,
+          abilities: scores({}),
+          armorProficiencies: ["Shield"],
+        },
+      ),
+    ).toBe(true);
   });
 
   it("maps Amellwind feats with empty check groups when no prereqs", () => {

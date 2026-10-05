@@ -52,6 +52,8 @@ interface FeatLibraryDetailProps {
   onDamageTypeChoiceChange?: (damageType: DamageType | null) => void;
   /** Rendered inside a library row: omit the icon + name heading. */
   inline?: boolean;
+  /** Selected feat fails the slot level or ability-score prerequisites. */
+  prerequisitesUnmet?: boolean;
 }
 
 export function FeatLibraryDetail({
@@ -69,6 +71,7 @@ export function FeatLibraryDetail({
   damageTypeChoice,
   onDamageTypeChoiceChange,
   inline = false,
+  prerequisitesUnmet = false,
 }: FeatLibraryDetailProps) {
   const categoryLabel =
     "category" in feat && feat.category
@@ -158,6 +161,12 @@ export function FeatLibraryDetail({
             Prerequisites:
           </span>{" "}
           {feat.prerequisites.join("; ")}
+        </p>
+      )}
+
+      {prerequisitesUnmet && (
+        <p className="text-[11px] font-medium text-destructive">
+          This character does not meet the prerequisites for this feat.
         </p>
       )}
 

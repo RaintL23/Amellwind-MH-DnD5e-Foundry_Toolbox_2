@@ -271,6 +271,18 @@ function mapPrerequisites(raw: Raw): MappedPrerequisites {
           checkGroup.hasUnverifiedRequirements = true;
           groupTouched = true;
         }
+        if (typeof prof.armor === "string" && prof.armor.trim()) {
+          checkGroup.requiredArmor = [
+            ...(checkGroup.requiredArmor ?? []),
+            prof.armor.trim().toLowerCase(),
+          ];
+        }
+        if (prof.shield === true) {
+          checkGroup.requiredArmor = [
+            ...(checkGroup.requiredArmor ?? []),
+            "shield",
+          ];
+        }
       }
     }
 
@@ -280,6 +292,7 @@ function mapPrerequisites(raw: Raw): MappedPrerequisites {
       prereq.spellcastingFeature === true
     ) {
       pushPrereq(out, "spellcasting", "Spellcasting");
+      checkGroup.requiresSpellcasting = true;
       checkGroup.hasUnverifiedRequirements = true;
       groupTouched = true;
     }

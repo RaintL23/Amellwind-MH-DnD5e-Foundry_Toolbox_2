@@ -31,12 +31,20 @@ export interface FeatPrerequisiteAbilityReq {
 /**
  * One OR-branch from 5etools `prerequisite[]`.
  * Ability alternatives within the branch are OR; each alternative is AND of its reqs.
- * Groups with unverified requirements never auto-qualify (randomizer / eligibility).
+ * Groups with unverified requirements never auto-qualify for the randomizer.
+ * The feat picker still enforces level, abilities, spellcasting, and armor/shield.
  */
 export interface FeatPrerequisiteCheckGroup {
   level?: number;
   /** OR of ability alternatives; each alternative is AND of its score floors. */
   abilityAlternatives: FeatPrerequisiteAbilityReq[][];
+  /** Spellcasting or Pact Magic feature is required on this branch. */
+  requiresSpellcasting?: boolean;
+  /**
+   * Armor or shield proficiencies required on this branch.
+   * 5etools values: "light", "medium", "heavy", or "shield".
+   */
+  requiredArmor?: string[];
   hasUnverifiedRequirements: boolean;
 }
 
