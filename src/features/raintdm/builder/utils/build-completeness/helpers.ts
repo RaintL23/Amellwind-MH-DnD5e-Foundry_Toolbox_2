@@ -163,6 +163,10 @@ export function hasBuildStarted(input: BuildCompletenessInput): boolean {
     input.speciesToolChoices.length > 0 ||
     input.backgroundToolChoices.length > 0 ||
     Object.values(input.classToolChoices).some((choices) => choices.length > 0) ||
+    input.speciesWeaponChoices.length > 0 ||
+    Object.values(input.classWeaponChoices).some((choices) => choices.length > 0) ||
+    Object.values(input.featWeaponChoices).some((choices) => choices.length > 0) ||
+    Object.values(input.featToolChoices).some((choices) => choices.length > 0) ||
     input.speciesLanguageChoices.length > 0 ||
     input.backgroundLanguageChoices.length > 0 ||
     Object.values(input.classLanguageChoices).some((choices) => choices.length > 0) ||

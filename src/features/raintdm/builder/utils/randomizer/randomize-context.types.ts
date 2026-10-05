@@ -87,6 +87,10 @@ export interface RandomizerSetters {
     slotIndex: number,
     choices: SkillKey[],
   ) => void;
+  setSpeciesWeaponChoices: (choices: string[]) => void;
+  setClassWeaponChoicesAtIndex: (grantIndex: number, choices: string[]) => void;
+  setFeatWeaponChoicesAtIndex: (grantIndex: number, choices: string[]) => void;
+  setFeatToolChoicesAtIndex: (grantIndex: number, choices: string[]) => void;
   setBackgroundToolChoices: (choices: string[]) => void;
   setBackgroundLanguageChoices: (choices: string[]) => void;
   setSpeciesLanguageChoices: (choices: string[]) => void;

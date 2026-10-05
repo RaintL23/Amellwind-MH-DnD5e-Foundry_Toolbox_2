@@ -11,7 +11,10 @@ import { ORIGIN_FEAT_SOURCE_NAME } from "./origin-feat.constants";
 import { optionalFeatureOriginFeatSourceName } from "./optional-feature-feat-grants.utils";
 import type { OptionalFeatureOriginFeatSlot } from "./optional-feature-feat-grants.utils";
 import { EMPTY_FEAT_GRANTS } from "./grant-sync.constants";
-import { parseEntriesProficiencyGrants } from "@/shared/utils/text-proficiency-grants.parser";
+import {
+  collectProficiencyEntryLines,
+  parseEntriesProficiencyGrants,
+} from "@/shared/utils/text-proficiency-grants.parser";
 
 interface ActiveFeatEntry {
   selection: BuilderFeatSelection;
@@ -118,7 +121,10 @@ export async function loadFeatGrantPayload(
       expertiseGrants.push({ ...grant, source: tagSource });
     }
 
-    const textGrants = parseEntriesProficiencyGrants(feat.paragraphs ?? [], tagSource);
+    const textGrants = parseEntriesProficiencyGrants(
+      collectProficiencyEntryLines(feat.paragraphs, feat.sections),
+      tagSource,
+    );
     armorGrants.push(...textGrants.armorGrants);
     weaponGrants.push(...textGrants.weaponGrants);
     toolGrants.push(...textGrants.toolGrants);

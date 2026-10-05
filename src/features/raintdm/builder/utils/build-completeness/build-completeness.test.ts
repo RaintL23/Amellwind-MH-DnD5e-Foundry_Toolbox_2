@@ -61,6 +61,49 @@ function spellcastingStub(
   };
 }
 
+describe("evaluateBuildCompleteness — weapon and feat tool picks", () => {
+  it("requires a feat weapon choice before the build is complete", () => {
+    const open = evaluateBuildCompleteness(
+      createEmptyCompletenessInput({
+        classSelection: { id: "rogue|xphb", name: "Rogue" },
+        classData: minimalClass({ id: "rogue|xphb", name: "Rogue" }),
+        species: { id: "human|xphb", name: "Human" },
+        background: { id: "soldier|xphb", name: "Soldier" },
+        allWeaponGrants: [
+          {
+            kind: "any",
+            count: 1,
+            label: "Weapon",
+            options: ["Heavy Crossbow"],
+            source: { type: "feat", name: "Feat slot 1" },
+          },
+        ],
+      }),
+    );
+    expect(hasIssueId(open.issues, "weapons-feat-0")).toBe(true);
+
+    const filled = evaluateBuildCompleteness(
+      createEmptyCompletenessInput({
+        classSelection: { id: "rogue|xphb", name: "Rogue" },
+        classData: minimalClass({ id: "rogue|xphb", name: "Rogue" }),
+        species: { id: "human|xphb", name: "Human" },
+        background: { id: "soldier|xphb", name: "Soldier" },
+        allWeaponGrants: [
+          {
+            kind: "any",
+            count: 1,
+            label: "Weapon",
+            options: ["Heavy Crossbow"],
+            source: { type: "feat", name: "Feat slot 1" },
+          },
+        ],
+        featWeaponChoices: { 0: ["Heavy Crossbow"] },
+      }),
+    );
+    expect(hasIssueId(filled.issues, "weapons-feat-0")).toBe(false);
+  });
+});
+
 describe("evaluateBuildCompleteness", () => {
   it("reports no issues before the build has started", () => {
     const result = evaluateBuildCompleteness(createEmptyCompletenessInput());

@@ -103,6 +103,15 @@ export function applyBuilderSnapshot(
   builder.setBackgroundToolChoices(snap.backgroundToolChoices);
   builder.setSpeciesToolChoices(snap.speciesToolChoices);
   builder.setSpeciesWeaponChoices(snap.speciesWeaponChoices ?? []);
+  for (const [index, choices] of Object.entries(snap.classWeaponChoices ?? {})) {
+    builder.setClassWeaponChoicesAtIndex(Number(index), choices);
+  }
+  for (const [index, choices] of Object.entries(snap.featWeaponChoices ?? {})) {
+    builder.setFeatWeaponChoicesAtIndex(Number(index), choices);
+  }
+  for (const [index, choices] of Object.entries(snap.featToolChoices ?? {})) {
+    builder.setFeatToolChoicesAtIndex(Number(index), choices);
+  }
   for (const [index, choices] of Object.entries(snap.classLanguageChoices)) {
     builder.setClassLanguageChoicesAtIndex(Number(index), choices);
   }

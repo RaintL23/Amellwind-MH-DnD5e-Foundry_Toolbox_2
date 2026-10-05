@@ -106,6 +106,9 @@ export interface BuilderChoiceSnapshot {
   backgroundToolChoices: string[];
   speciesToolChoices: string[];
   speciesWeaponChoices: string[];
+  classWeaponChoices: Record<number, string[]>;
+  featWeaponChoices: Record<number, string[]>;
+  featToolChoices: Record<number, string[]>;
   classLanguageChoices: Record<number, string[]>;
   backgroundLanguageChoices: string[];
   speciesLanguageChoices: string[];
@@ -209,6 +212,9 @@ export function normalizeBuilderSnapshot(raw: unknown): BuilderChoiceSnapshot | 
     backgroundToolChoices: arrayOr<string>(raw.backgroundToolChoices),
     speciesToolChoices: arrayOr<string>(raw.speciesToolChoices),
     speciesWeaponChoices: arrayOr<string>(raw.speciesWeaponChoices),
+    classWeaponChoices: recordOr<string[]>(raw.classWeaponChoices),
+    featWeaponChoices: recordOr<string[]>(raw.featWeaponChoices),
+    featToolChoices: recordOr<string[]>(raw.featToolChoices),
     classLanguageChoices: recordOr<string[]>(raw.classLanguageChoices),
     backgroundLanguageChoices: arrayOr<string>(raw.backgroundLanguageChoices),
     speciesLanguageChoices: arrayOr<string>(raw.speciesLanguageChoices),

@@ -102,6 +102,42 @@ describe("checkWeaponProficiency — XPHB Rogue martial Finesse/Light grant", ()
     expect(result.allowed).toBe(true);
   });
 
+  it("denies Heavy Bowgun until Martial or Heavy Crossbow is granted", () => {
+    const denied = checkWeaponProficiency(
+      "Heavy Bowgun",
+      ROGUE_XPHB_WEAPONS,
+      [],
+      amellwindWeapon("Heavy Bowgun", ["A", "2H", "H"]),
+    );
+    expect(denied.allowed).toBe(false);
+
+    const fromCategory = checkWeaponProficiency(
+      "Heavy Bowgun",
+      [...ROGUE_XPHB_WEAPONS, "Martial"],
+      [],
+      amellwindWeapon("Heavy Bowgun", ["A", "2H", "H"]),
+    );
+    expect(fromCategory.allowed).toBe(true);
+
+    const fromNamedWeapon = checkWeaponProficiency(
+      "Heavy Bowgun",
+      [...ROGUE_XPHB_WEAPONS, "Heavy Crossbow"],
+      [],
+      amellwindWeapon("Heavy Bowgun", ["A", "2H", "H"]),
+    );
+    expect(fromNamedWeapon.allowed).toBe(true);
+  });
+
+  it("allows Dual Repeaters from Firearms proficiency alone", () => {
+    const result = checkWeaponProficiency(
+      "Dual Repeaters",
+      ["Firearms"],
+      [],
+      amellwindWeapon("Dual Repeaters", ["A", "L"]),
+    );
+    expect(result.allowed).toBe(true);
+  });
+
   it("denies D&D Longsword (martial without Finesse/Light)", () => {
     const result = checkWeaponProficiency(
       "Longsword",

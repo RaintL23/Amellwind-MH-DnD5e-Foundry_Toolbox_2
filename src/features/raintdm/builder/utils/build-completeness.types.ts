@@ -70,6 +70,7 @@ export interface BuildCompletenessInput {
   allSkillGrants: SkillProficiencyGrant[];
   allExpertiseGrants: ExpertiseGrant[];
   allToolGrants: NamedProficiencyGrant[];
+  allWeaponGrants: NamedProficiencyGrant[];
   allLanguageGrants: NamedProficiencyGrant[];
   allDefenseGrants: DefenseGrant[];
   classSkillChoices: Record<number, SkillKey[]>;
@@ -82,6 +83,10 @@ export interface BuildCompletenessInput {
   classToolChoices: Record<number, string[]>;
   backgroundToolChoices: string[];
   speciesToolChoices: string[];
+  speciesWeaponChoices: string[];
+  classWeaponChoices: Record<number, string[]>;
+  featWeaponChoices: Record<number, string[]>;
+  featToolChoices: Record<number, string[]>;
   classLanguageChoices: Record<number, string[]>;
   backgroundLanguageChoices: string[];
   speciesLanguageChoices: string[];

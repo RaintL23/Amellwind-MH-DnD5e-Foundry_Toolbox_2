@@ -8,7 +8,10 @@ import type {
   Subclass,
 } from "@/shared/types";
 import type { NamedProficiencyGrant } from "@/shared/types/proficiency.types";
-import { parseEntriesProficiencyGrants } from "@/shared/utils/text-proficiency-grants.parser";
+import {
+  collectProficiencyEntryLines,
+  parseEntriesProficiencyGrants,
+} from "@/shared/utils/text-proficiency-grants.parser";
 import { parseCantripBonusFromEntries } from "@/shared/utils/text-spell-grants.parser";
 import { statBlockContentToPlainText } from "@/shared/utils/statblock-entries.mapper";
 import { getFeaturesUpToLevel } from "./builder-class.utils";
@@ -98,7 +101,8 @@ function resolveFeatEntries(
       candidate.id === pick.id ||
       normalizeSelectionName(candidate.name) === normalizeSelectionName(pick.name),
   );
-  return feat?.paragraphs ?? [];
+  if (!feat) return [];
+  return collectProficiencyEntryLines(feat.paragraphs, feat.sections);
 }
 
 function resolveSelectionEntries(

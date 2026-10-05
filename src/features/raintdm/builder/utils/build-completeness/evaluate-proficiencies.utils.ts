@@ -235,6 +235,73 @@ export function evaluateProficienciesCompleteness(
     });
   }
 
+  const pendingFeatTools = pendingTools.filter((grant) => grant.source.type === "feat");
+  pendingFeatTools.forEach((grant, grantIndex) => {
+    if (isNamedPickerComplete([grant], input.featToolChoices[grantIndex] ?? [])) {
+      return;
+    }
+    issues.push({
+      id: `tools-feat-${grantIndex}`,
+      section: "tools",
+      message: `Complete tool proficiencies for ${grant.source.name}`,
+      highlightKey: `feat-tool-${grantIndex}`,
+    });
+  });
+
+  const pendingWeapons = getPendingNamedChoiceGrants(input.allWeaponGrants);
+  const speciesWeaponGrants = pendingWeapons.filter(
+    (grant) => grant.source.type === "species",
+  );
+  const classWeaponGrants = pendingWeapons.filter(
+    (grant) => grant.source.type === "class",
+  );
+  const featWeaponGrants = pendingWeapons.filter(
+    (grant) => grant.source.type === "feat",
+  );
+
+  if (
+    speciesWeaponGrants.length > 0 &&
+    !isNamedPickerComplete(speciesWeaponGrants, input.speciesWeaponChoices)
+  ) {
+    issues.push({
+      id: "weapons-species",
+      section: "tools",
+      message: "Complete species weapon proficiencies",
+      highlightKey: "species-weapons",
+    });
+  }
+
+  classWeaponGrants.forEach((grant, grantIndex) => {
+    if (
+      isNamedPickerComplete([grant], input.classWeaponChoices[grantIndex] ?? [])
+    ) {
+      return;
+    }
+    issues.push({
+      id: `weapons-class-${grantIndex}`,
+      section: "tools",
+      message:
+        classWeaponGrants.length > 1
+          ? `Complete class weapon proficiencies (${grantIndex + 1}/${classWeaponGrants.length})`
+          : "Complete class weapon proficiencies",
+      highlightKey: `class-weapon-${grantIndex}`,
+    });
+  });
+
+  featWeaponGrants.forEach((grant, grantIndex) => {
+    if (
+      isNamedPickerComplete([grant], input.featWeaponChoices[grantIndex] ?? [])
+    ) {
+      return;
+    }
+    issues.push({
+      id: `weapons-feat-${grantIndex}`,
+      section: "tools",
+      message: `Complete weapon proficiencies for ${grant.source.name}`,
+      highlightKey: `feat-weapon-${grantIndex}`,
+    });
+  });
+
   pendingToolBySource.class.forEach((grant, grantIndex) => {
     if (
       isNamedPickerComplete([grant], input.classToolChoices[grantIndex] ?? [])

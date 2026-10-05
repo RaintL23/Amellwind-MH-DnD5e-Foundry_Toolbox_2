@@ -276,11 +276,17 @@ export interface CharacterBuilderContextValue {
   backgroundToolChoices: string[];
   speciesToolChoices: string[];
   speciesWeaponChoices: string[];
+  classWeaponChoices: Record<number, string[]>;
+  featWeaponChoices: Record<number, string[]>;
+  featToolChoices: Record<number, string[]>;
   classLanguageChoices: Record<number, string[]>;
   backgroundLanguageChoices: string[];
   speciesLanguageChoices: string[];
   speciesDefenseChoices: Record<number, DamageType[]>;
   setClassToolChoicesAtIndex: (grantIndex: number, choices: string[]) => void;
+  setClassWeaponChoicesAtIndex: (grantIndex: number, choices: string[]) => void;
+  setFeatWeaponChoicesAtIndex: (grantIndex: number, choices: string[]) => void;
+  setFeatToolChoicesAtIndex: (grantIndex: number, choices: string[]) => void;
   setBackgroundToolChoices: (choices: string[]) => void;
   setSpeciesToolChoices: (choices: string[]) => void;
   setSpeciesWeaponChoices: (choices: string[]) => void;

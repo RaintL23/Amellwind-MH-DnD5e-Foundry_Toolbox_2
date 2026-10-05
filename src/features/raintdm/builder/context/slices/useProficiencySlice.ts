@@ -121,6 +121,15 @@ export function useProficiencySlice({
   const [backgroundToolChoices, setBackgroundToolChoices] = useState<string[]>([]);
   const [speciesToolChoices, setSpeciesToolChoices] = useState<string[]>([]);
   const [speciesWeaponChoices, setSpeciesWeaponChoices] = useState<string[]>([]);
+  const [classWeaponChoices, setClassWeaponChoicesState] = useState<
+    Record<number, string[]>
+  >({});
+  const [featWeaponChoices, setFeatWeaponChoicesState] = useState<
+    Record<number, string[]>
+  >({});
+  const [featToolChoices, setFeatToolChoicesState] = useState<
+    Record<number, string[]>
+  >({});
   const [classLanguageChoices, setClassLanguageChoicesState] = useState<Record<number, string[]>>({});
   const [backgroundLanguageChoices, setBackgroundLanguageChoices] = useState<string[]>([]);
   const [speciesLanguageChoices, setSpeciesLanguageChoices] = useState<string[]>([]);
@@ -237,6 +246,27 @@ export function useProficiencySlice({
     setClassToolChoicesState((prev) => ({ ...prev, [grantIndex]: choices }));
   }, []);
 
+  const setClassWeaponChoicesAtIndex = useCallback(
+    (grantIndex: number, choices: string[]) => {
+      setClassWeaponChoicesState((prev) => ({ ...prev, [grantIndex]: choices }));
+    },
+    [],
+  );
+
+  const setFeatWeaponChoicesAtIndex = useCallback(
+    (grantIndex: number, choices: string[]) => {
+      setFeatWeaponChoicesState((prev) => ({ ...prev, [grantIndex]: choices }));
+    },
+    [],
+  );
+
+  const setFeatToolChoicesAtIndex = useCallback(
+    (grantIndex: number, choices: string[]) => {
+      setFeatToolChoicesState((prev) => ({ ...prev, [grantIndex]: choices }));
+    },
+    [],
+  );
+
   const setClassLanguageChoicesAtIndex = useCallback(
     (grantIndex: number, choices: string[]) => {
       setClassLanguageChoicesState((prev) => ({ ...prev, [grantIndex]: choices }));
@@ -288,6 +318,7 @@ export function useProficiencySlice({
     setClassSkillChoicesState({});
     setExpertiseChoicesState({});
     setClassToolChoicesState({});
+    setClassWeaponChoicesState({});
     setClassLanguageChoicesState({});
   }, []);
 
@@ -323,6 +354,9 @@ export function useProficiencySlice({
     setBackgroundToolChoices([]);
     setSpeciesToolChoices([]);
     setSpeciesWeaponChoices([]);
+    setClassWeaponChoicesState({});
+    setFeatWeaponChoicesState({});
+    setFeatToolChoicesState({});
     setClassLanguageChoicesState({});
     setBackgroundLanguageChoices([]);
     setSpeciesLanguageChoices([]);
@@ -446,33 +480,35 @@ export function useProficiencySlice({
       classChoices: Record<number, string[]>,
       backgroundChoices: string[],
       speciesChoices: string[],
+      featChoices: Record<number, string[]> = {},
     ) {
       const fixed = resolveFixedNamedGrants(grants);
       const classChooseGrants = grants.filter(
         (g) => g.kind !== "fixed" && g.source.type === "class",
       );
-      const fromClass = Object.entries(classChoices).flatMap(([idx, items]) =>
-        items.map((item) => ({
-          item,
-          source:
-            classChooseGrants[Number(idx)]?.source ?? {
-              type: "class" as const,
-              name: "Class",
-            },
-        })),
+      const fromClass = Object.entries(classChoices).flatMap(([idx, items]) => {
+        const grant = classChooseGrants[Number(idx)];
+        if (!grant) return [];
+        return items.map((item) => ({ item, source: grant.source }));
+      });
+      const featChooseGrants = grants.filter(
+        (g) => g.kind !== "fixed" && g.source.type === "feat",
       );
+      const fromFeat = Object.entries(featChoices).flatMap(([idx, items]) => {
+        const grant = featChooseGrants[Number(idx)];
+        if (!grant) return [];
+        return items.map((item) => ({ item, source: grant.source }));
+      });
       const bgGrant = grants.find((g) => g.kind !== "fixed" && g.source.type === "background");
-      const fromBackground = backgroundChoices.map((item) => ({
-        item,
-        source: bgGrant?.source ?? { type: "background" as const, name: "Background" },
-      }));
+      const fromBackground = bgGrant
+        ? backgroundChoices.map((item) => ({ item, source: bgGrant.source }))
+        : [];
       const speciesGrant = grants.find((g) => g.kind !== "fixed" && g.source.type === "species");
-      const fromSpecies = speciesChoices.map((item) => ({
-        item,
-        source: speciesGrant?.source ?? { type: "species" as const, name: "Species" },
-      }));
+      const fromSpecies = speciesGrant
+        ? speciesChoices.map((item) => ({ item, source: speciesGrant.source }))
+        : [];
 
-      const all = [...fixed, ...fromClass, ...fromBackground, ...fromSpecies];
+      const all = [...fixed, ...fromClass, ...fromFeat, ...fromBackground, ...fromSpecies];
       const sources: Partial<Record<string, ProficiencySource[]>> = {};
       for (const { item, source } of all) {
         const key = item.toLowerCase();
@@ -490,12 +526,14 @@ export function useProficiencySlice({
       classToolChoices,
       backgroundToolChoices,
       speciesToolChoices,
+      featToolChoices,
     );
     const weapons = resolveNamedWithChoices(
       allWeaponGrants,
-      {},
+      classWeaponChoices,
       [],
       speciesWeaponChoices,
+      featWeaponChoices,
     );
     const armor = resolveFixedGrantList(allArmorGrants);
     const languages = resolveNamedWithChoices(
@@ -559,6 +597,9 @@ export function useProficiencySlice({
     backgroundToolChoices,
     speciesToolChoices,
     speciesWeaponChoices,
+    classWeaponChoices,
+    featWeaponChoices,
+    featToolChoices,
     classLanguageChoices,
     backgroundLanguageChoices,
     speciesLanguageChoices,
@@ -642,6 +683,9 @@ export function useProficiencySlice({
       setFeatSkillChoices,
       setExpertiseChoices,
       setClassToolChoicesAtIndex,
+      setClassWeaponChoicesAtIndex,
+      setFeatWeaponChoicesAtIndex,
+      setFeatToolChoicesAtIndex,
       setBackgroundToolChoices,
       setSpeciesToolChoices,
       setSpeciesWeaponChoices,
@@ -654,6 +698,9 @@ export function useProficiencySlice({
       allLanguageGrants,
       allDefenseGrants,
       classToolChoices,
+      classWeaponChoices,
+      featWeaponChoices,
+      featToolChoices,
       backgroundToolChoices,
       speciesToolChoices,
       speciesWeaponChoices,
@@ -696,6 +743,9 @@ export function useProficiencySlice({
       setFeatSkillChoices,
       setExpertiseChoices,
       setClassToolChoicesAtIndex,
+      setClassWeaponChoicesAtIndex,
+      setFeatWeaponChoicesAtIndex,
+      setFeatToolChoicesAtIndex,
       setBackgroundToolChoices,
       setSpeciesToolChoices,
       setSpeciesWeaponChoices,
@@ -708,6 +758,9 @@ export function useProficiencySlice({
       allLanguageGrants,
       allDefenseGrants,
       classToolChoices,
+      classWeaponChoices,
+      featWeaponChoices,
+      featToolChoices,
       backgroundToolChoices,
       speciesToolChoices,
       speciesWeaponChoices,

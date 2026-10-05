@@ -275,6 +275,12 @@ export async function randomizeSpeciesAndBackgroundPhase(
       if (speciesLanguages.length > 0) {
         setters.setSpeciesLanguageChoices(speciesLanguages);
       }
+      const speciesWeapons = pickNamedChoicesFromGrants(
+        pickedSpecies.weaponProficiencyGrants ?? [],
+      );
+      if (speciesWeapons.length > 0) {
+        setters.setSpeciesWeaponChoices(speciesWeapons);
+      }
       const resolvedSpeciesOriginFeat =
         await resolveOriginFeatSelectionForGrant(
           pickedSpecies.originFeatGrant,
@@ -382,6 +388,12 @@ export async function randomizeSpeciesAndBackgroundPhase(
         speciesLanguageChoices = speciesLanguages;
         if (speciesLanguages.length > 0) {
           setters.setSpeciesLanguageChoices(speciesLanguages);
+        }
+        const speciesWeapons = pickNamedChoicesFromGrants(
+          speciesDetail.weaponProficiencyGrants ?? [],
+        );
+        if (speciesWeapons.length > 0) {
+          setters.setSpeciesWeaponChoices(speciesWeapons);
         }
         const resolvedSpeciesOriginFeat = await resolveOriginFeatSelectionForGrant(
           speciesDetail.originFeatGrant,

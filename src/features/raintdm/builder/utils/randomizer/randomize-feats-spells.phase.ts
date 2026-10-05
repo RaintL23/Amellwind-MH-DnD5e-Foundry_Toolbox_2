@@ -1,4 +1,12 @@
+import { getFeatById } from "@/features/amellwind/feats/services/feat.service";
 import { getDndFeatById } from "@/features/dnd/feats/services/dnd-feat.service";
+import { buildActiveFeatEntries } from "@/features/raintdm/builder/utils/feat-grant-sync.utils";
+import { pickIndexedNamedChoicesForSource } from "@/features/raintdm/builder/utils/randomizer/named-proficiency-randomizer.utils";
+import {
+  collectProficiencyEntryLines,
+  parseEntriesProficiencyGrants,
+} from "@/shared/utils/text-proficiency-grants.parser";
+import type { NamedProficiencyGrant } from "@/shared/types/proficiency.types";
 import { resolveOptionalFeatureOriginFeatSlots } from "@/features/raintdm/builder/utils/optional-feature-feat-grants.utils";
 import {
   buildFeatSelectionsForLevel,
@@ -174,6 +182,40 @@ export async function randomizeFeatsAndSpellsPhase(
     featSkillChoicesMap[index] = choices;
     setters.setFeatSkillChoices(index, choices);
     for (const skill of choices) classFeatSkillExclude.add(skill);
+  }
+
+  const optionalOriginFeats: (BuilderFeatSelection | null)[] = [];
+  for (const [slot, selection] of state.invocationOriginFeatBySlot) {
+    optionalOriginFeats[slot] = selection;
+  }
+  const activeFeatEntries = buildActiveFeatEntries(
+    featSelections,
+    state.speciesOriginFeatSelection,
+    state.backgroundOriginFeatSelection,
+    optionalOriginFeats,
+  );
+  const featWeaponGrants: NamedProficiencyGrant[] = [];
+  const featToolGrants: NamedProficiencyGrant[] = [];
+  for (const entry of activeFeatEntries) {
+    const feat =
+      entry.selection.source === "dnd2014" || entry.selection.source === "dnd2024"
+        ? await getDndFeatById(entry.selection.id)
+        : await getFeatById(entry.selection.id);
+    if (!feat) continue;
+    const parsed = parseEntriesProficiencyGrants(
+      collectProficiencyEntryLines(feat.paragraphs, feat.sections),
+      { type: "feat", name: feat.name },
+    );
+    featWeaponGrants.push(...parsed.weaponGrants);
+    featToolGrants.push(...parsed.toolGrants);
+  }
+  const featWeaponPicks = pickIndexedNamedChoicesForSource(featWeaponGrants, "feat");
+  for (const [index, choices] of Object.entries(featWeaponPicks)) {
+    setters.setFeatWeaponChoicesAtIndex(Number(index), choices);
+  }
+  const featToolPicks = pickIndexedNamedChoicesForSource(featToolGrants, "feat");
+  for (const [index, choices] of Object.entries(featToolPicks)) {
+    setters.setFeatToolChoicesAtIndex(Number(index), choices);
   }
 
   return featSkillChoicesMap;

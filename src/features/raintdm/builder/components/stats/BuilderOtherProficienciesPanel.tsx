@@ -52,7 +52,13 @@ export function BuilderOtherProficienciesPanel() {
     backgroundToolChoices,
     speciesToolChoices,
     speciesWeaponChoices,
+    classWeaponChoices,
+    featWeaponChoices,
+    featToolChoices,
     setClassToolChoicesAtIndex,
+    setClassWeaponChoicesAtIndex,
+    setFeatWeaponChoicesAtIndex,
+    setFeatToolChoicesAtIndex,
     setBackgroundToolChoices,
     setSpeciesToolChoices,
     setSpeciesWeaponChoices,
@@ -72,25 +78,42 @@ export function BuilderOtherProficienciesPanel() {
   const speciesWeaponGrantPickers = pendingWeapons.filter(
     (g) => g.source.type === "species",
   );
+  const classWeaponGrantPickers = pendingWeapons.filter(
+    (g) => g.source.type === "class",
+  );
+  const featWeaponGrantPickers = pendingWeapons.filter(
+    (g) => g.source.type === "feat",
+  );
   const bgToolGrants = pendingTools.filter((g) => g.source.type === "background");
   const classToolGrants = pendingTools.filter((g) => g.source.type === "class");
-  const hasWeaponPickers = speciesWeaponGrantPickers.length > 0;
+  const featToolGrants = pendingTools.filter((g) => g.source.type === "feat");
+  const hasWeaponPickers =
+    speciesWeaponGrantPickers.length > 0 ||
+    classWeaponGrantPickers.length > 0 ||
+    featWeaponGrantPickers.length > 0;
   const hasToolPickers =
     speciesToolGrantPickers.length > 0 ||
     bgToolGrants.length > 0 ||
-    classToolGrants.length > 0;
+    classToolGrants.length > 0 ||
+    featToolGrants.length > 0;
   const hasPickers = hasWeaponPickers || hasToolPickers;
 
   const classToolChoiceLists = Object.values(classToolChoices);
+  const classWeaponChoiceLists = Object.values(classWeaponChoices);
+  const featWeaponChoiceLists = Object.values(featWeaponChoices);
+  const featToolChoiceLists = Object.values(featToolChoices);
   const fixedWeaponItems = excludeChosenItems(
     resolvedWeaponItems,
     hasWeaponPickers ? speciesWeaponChoices : undefined,
+    ...(hasWeaponPickers ? classWeaponChoiceLists : []),
+    ...(hasWeaponPickers ? featWeaponChoiceLists : []),
   );
   const fixedToolItems = excludeChosenItems(
     resolvedToolItems,
     hasToolPickers ? speciesToolChoices : undefined,
     hasToolPickers ? backgroundToolChoices : undefined,
     ...(hasToolPickers ? classToolChoiceLists : []),
+    ...(hasToolPickers ? featToolChoiceLists : []),
   );
 
   const totalCount =
@@ -191,6 +214,34 @@ export function BuilderOtherProficienciesPanel() {
                     pickerSourceType="species"
                   />
                 )}
+                {classWeaponGrantPickers.map((grant, grantIndex) => (
+                  <BuilderNamedPicker
+                    key={`class-weapon-${grantIndex}`}
+                    grants={[grant]}
+                    chosen={classWeaponChoices[grantIndex] ?? []}
+                    onChange={(items) =>
+                      setClassWeaponChoicesAtIndex(grantIndex, items)
+                    }
+                    label={
+                      classWeaponGrantPickers.length > 1
+                        ? `Class weapons (${grantIndex + 1}/${classWeaponGrantPickers.length})`
+                        : grant.source.name
+                    }
+                    pickerSourceType="class"
+                  />
+                ))}
+                {featWeaponGrantPickers.map((grant, grantIndex) => (
+                  <BuilderNamedPicker
+                    key={`feat-weapon-${grantIndex}`}
+                    grants={[grant]}
+                    chosen={featWeaponChoices[grantIndex] ?? []}
+                    onChange={(items) =>
+                      setFeatWeaponChoicesAtIndex(grantIndex, items)
+                    }
+                    label={grant.source.name}
+                    pickerSourceType="feat"
+                  />
+                ))}
               </div>
             )}
 
@@ -221,6 +272,18 @@ export function BuilderOtherProficienciesPanel() {
                     pickerSourceType="background"
                   />
                 )}
+                {featToolGrants.map((grant, grantIndex) => (
+                  <BuilderNamedPicker
+                    key={`feat-tool-${grantIndex}`}
+                    grants={[grant]}
+                    chosen={featToolChoices[grantIndex] ?? []}
+                    onChange={(items) =>
+                      setFeatToolChoicesAtIndex(grantIndex, items)
+                    }
+                    label={grant.source.name}
+                    pickerSourceType="feat"
+                  />
+                ))}
                 {classToolGrants.map((grant, grantIndex) => (
                   <BuilderNamedPicker
                     key={`class-tool-${grantIndex}`}

@@ -5,7 +5,9 @@ import {
   pickIndexedSkillChoices,
   pickPendingSkillGrants,
 } from "@/features/raintdm/builder/utils/randomizer/skill-randomizer.utils";
+import { subclassesForClassVariant } from "@/features/dnd/classes/utils/class-subclass.utils";
 import { buildClassLanguageGrants } from "@/features/raintdm/builder/utils/class-language-grants.utils";
+import { computeAllClassEquipmentGrants } from "@/features/raintdm/builder/utils/feature-choice-grants.utils";
 import {
   collectResolvedNamedItems,
   pickIndexedNamedChoicesForSource,
@@ -49,6 +51,28 @@ export async function randomizeProficienciesPhase(
     featLookup,
   } = state;
   const { resolvedLanguagePool } = catalogs;
+
+  const activeSubclass = pickedSubclass
+    ? (subclassesForClassVariant(classData).find(
+        (sc) => sc.id === pickedSubclass.id,
+      ) ?? null)
+    : null;
+  const featureEquipmentGrants = computeAllClassEquipmentGrants(
+    state.randomFeatureChoiceSelections ?? {},
+    (state.activeProgressions ?? []).map((row) => row.progression),
+    classData,
+    activeSubclass,
+    preservedLevel,
+    catalogs.allOptionalFeatures,
+    catalogs.allFeatCatalog,
+  );
+  const classWeaponChoices = pickIndexedNamedChoicesForSource(
+    [...classData.weaponGrants, ...featureEquipmentGrants.weaponGrants],
+    "class",
+  );
+  for (const [index, choices] of Object.entries(classWeaponChoices)) {
+    setters.setClassWeaponChoicesAtIndex(Number(index), choices);
+  }
 
   const languageExclude = collectResolvedNamedItems(
     [...speciesLanguageGrants, ...backgroundLanguageGrants],
