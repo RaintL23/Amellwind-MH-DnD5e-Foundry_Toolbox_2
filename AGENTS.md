@@ -134,7 +134,9 @@ features/<section>/<x>/
 └── context/
 ```
 
-Placement: **same Sidebar section**. Character Builder is RaintDM. Features without a route (e.g. `dnd/optionalfeatures`) stay with the 5e compendium.
+Placement: **same Sidebar section**. Character Builder is RaintDM.
+
+**Compendium ↔ Builder parity:** both surfaces parse and render entities the same way; only the presentation differs. Entity content renderers (`SpeciesContent`, `BackgroundContent`, `DndItemContent`, `DndFeatContent`, `ClassFeatureDetailsPanel`, `SourceVariantSwitcher`) and domain logic live in `src/shared/` or the compendium feature; the Builder imports them and adds only character-specific state. `features/dnd`, `features/amellwind` and `shared` must not import from `features/raintdm/builder` (ESLint `no-restricted-imports`). Details: `docs/domain/features-builder.md` → "Paridad Builder ↔ compendium". Features without a route (e.g. `dnd/optionalfeatures`) stay with the 5e compendium.
 
 ### Data layer (do not break)
 

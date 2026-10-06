@@ -59,4 +59,35 @@ module.exports = {
     // without any correctness impact.
     "react-refresh/only-export-components": "off",
   },
+  overrides: [
+    {
+      // Compendium ↔ Builder parity: the compendium and shared layers own the
+      // domain (parsing, interpretation, content renderers); the Builder only
+      // adds character-specific state on top. Shared logic lives in `shared/`
+      // or the compendium feature, never inside the Builder.
+      files: [
+        "src/features/dnd/**/*.{ts,tsx}",
+        "src/features/amellwind/**/*.{ts,tsx}",
+        "src/shared/**/*.{ts,tsx}",
+      ],
+      rules: {
+        "no-restricted-imports": [
+          "error",
+          {
+            patterns: [
+              {
+                group: [
+                  "@/features/raintdm/builder",
+                  "@/features/raintdm/builder/*",
+                  "**/raintdm/builder/*",
+                ],
+                message:
+                  "Compendium/shared code must not depend on the Builder. Move the shared logic to src/shared/ or the compendium feature (see docs/domain/features-builder.md → Paridad Builder ↔ compendium).",
+              },
+            ],
+          },
+        ],
+      },
+    },
+  ],
 };
