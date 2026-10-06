@@ -20,8 +20,8 @@ import { DndRichText } from "@/shared/components/DndRichText";
 import {
   getFeatCategoryLabel,
   progressionDisplayName,
-} from "@/features/raintdm/builder/utils/class-optional-features.utils";
-import { getWeaponMasteryWeapon } from "@/features/raintdm/builder/data/weapon-mastery.data";
+} from "@/features/dnd/classes/utils/optional-feature-catalog.utils";
+import { getWeaponMasteryWeapon } from "@/shared/data/weapon-mastery.data";
 import { useOptionalFeatureCatalogBrowse } from "../../hooks/useOptionalFeatureCatalogBrowse";
 
 interface ClassOptionalFeatureOptionsDialogProps {

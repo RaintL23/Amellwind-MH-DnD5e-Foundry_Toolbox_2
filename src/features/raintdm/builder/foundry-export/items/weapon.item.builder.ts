@@ -19,7 +19,7 @@ import type { Weapon, EquippedWeapon } from "@/shared/types";
 import {
   buildWeaponMasteryDescriptionBlock,
   getWeaponMasteryKeyByWeaponName,
-} from "../../data/weapon-mastery.data";
+} from "@/shared/data/weapon-mastery.data";
 import { sourceBlock, parseDice, parseMagicBonus } from "./item-shared";
 
 // ─── Weapon items ────────────────────────────────────────────────────────────

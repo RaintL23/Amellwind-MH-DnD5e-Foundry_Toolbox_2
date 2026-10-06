@@ -16,10 +16,8 @@ import { hasStartingEquipmentOffers } from "@/shared/utils/starting-equipment.pa
 import { StartingEquipmentPicker } from "../StartingEquipmentPicker";
 import type { BookSourceNameMap } from "@/features/dnd/spells/services/book-source.service";
 import type { ClassVariantField } from "@/features/dnd/classes/utils/class-variant.utils";
-import {
-  getFeaturesUpToLevel,
-  getSubclassGainLevel,
-} from "../../../utils/builder-class.utils";
+import { getFeaturesUpToLevel } from "@/features/dnd/classes/utils/class-features-at-level.utils";
+import { getSubclassGainLevel } from "../../../utils/builder-class.utils";
 import { collectClassOptionalFeatureProgressions } from "@/features/dnd/classes/utils/class-optional-feature-browse.utils";
 import { ClassMetaListSection } from "@/features/dnd/classes/components/detail/ClassMetaListSection";
 import {

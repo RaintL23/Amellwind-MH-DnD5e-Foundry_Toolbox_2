@@ -2,7 +2,7 @@ import type { AbilityScores, ArmorClass, DamageType } from "@/shared/types";
 import type { Species } from "@/shared/types";
 import type { NpcTemplate } from "@/shared/types/npc.types";
 import { getAbilityModifier } from "@/shared/utils/cr.utils";
-import { detectNaturalArmorFromTraits } from "@/features/raintdm/builder/utils/species-natural-armor";
+import { detectNaturalArmorFromTraits } from "@/shared/utils/species-natural-armor";
 
 /**
  * Compute the ArmorClass array for a generated NPC, taking into account:

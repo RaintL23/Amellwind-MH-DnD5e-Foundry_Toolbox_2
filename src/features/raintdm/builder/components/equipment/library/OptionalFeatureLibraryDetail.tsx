@@ -7,7 +7,7 @@ import type { SourceVariant } from "@/shared/types";
 import {
   getFeatCategoryLabel,
   type OptionalFeatureCatalogItem,
-} from "@/features/raintdm/builder/utils/class-optional-features.utils";
+} from "@/features/dnd/classes/utils/optional-feature-catalog.utils";
 import { DndRichText } from "@/shared/components/DndRichText";
 
 interface OptionalFeatureLibraryDetailProps {

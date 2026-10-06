@@ -3,7 +3,7 @@ import type {
   RpgbotLookupFn,
 } from "@/features/raintdm/builder/data/rpgbot-ratings.utils";
 import type { RpgbotRatingsData } from "@/features/raintdm/builder/data/rpgbot-ratings.types";
-import type { AbilityScoreGenerationMethod } from "@/features/raintdm/builder/utils/ability-scores";
+import type { AbilityScoreGenerationMethod } from "@/shared/utils/ability-scores";
 import type { ResolvedOptionalFeatureProgression } from "@/features/raintdm/builder/utils/class-optional-features.utils";
 import type { OptionalFeatureOriginFeatSlot } from "@/features/raintdm/builder/utils/optional-feature-feat-grants.utils";
 import type {

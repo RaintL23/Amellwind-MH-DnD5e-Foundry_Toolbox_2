@@ -28,7 +28,7 @@ import {
 import { Character } from "../models/Character";
 import { getPrimaryClassLevel } from "../utils/multiclass.utils";
 import { computeEffectiveAbilityScores } from "../utils/effective-ability-scores";
-import type { AbilityScoreGenerationMethod } from "../utils/ability-scores";
+import type { AbilityScoreGenerationMethod } from "@/shared/utils/ability-scores";
 import { getDndBackgroundById } from "@/features/dnd/backgrounds/services/dnd-background.service";
 import { useBuilderInventory } from "./BuilderInventoryContext";
 import type { CharacterBuilderContextValue } from "./character-builder.types";

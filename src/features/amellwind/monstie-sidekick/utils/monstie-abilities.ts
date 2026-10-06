@@ -1,5 +1,8 @@
 import type { AbilityScores } from "@/shared/types";
-import { STANDARD_ARRAY, ABILITY_KEYS } from "@/features/raintdm/builder/utils/ability-scores";
+import {
+  STANDARD_ARRAY,
+  ABILITY_KEYS,
+} from "@/shared/utils/ability-scores";
 import { ABILITY_ABBREVIATIONS } from "@/shared/constants/dnd";
 
 /** Maps the original monster's ability order onto the sidekick standard array (15,14,13,12,10,8). */

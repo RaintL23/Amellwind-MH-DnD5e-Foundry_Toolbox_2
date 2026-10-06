@@ -7,7 +7,7 @@ import {
   canRaisePointBuy,
   canLowerPointBuy,
   poolOptionsForAbility,
-} from "../../../utils/ability-scores";
+} from "@/shared/utils/ability-scores";
 import {
   effectiveModifier,
   formatBonusTooltip,

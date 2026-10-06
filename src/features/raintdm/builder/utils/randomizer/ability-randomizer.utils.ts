@@ -2,7 +2,7 @@ import type { AbilityKey, AbilityScores } from "@/shared/types";
 import {
   ABILITY_KEYS,
   defaultPointBuyScores,
-} from "../ability-scores";
+} from "@/shared/utils/ability-scores";
 
 /** Optimal 27-point-buy spread (same total as the standard array). */
 const CLASS_POINT_BUY_TEMPLATE = [15, 14, 13, 12, 10, 8] as const;

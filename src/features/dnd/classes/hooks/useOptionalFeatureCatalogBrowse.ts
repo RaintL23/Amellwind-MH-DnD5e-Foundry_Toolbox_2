@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react";
 import type { Class, OptionalFeatureProgression, Subclass } from "@/shared/types";
-import type { OptionalFeatureCatalogItem } from "@/features/raintdm/builder/utils/class-optional-features.utils";
+import type { OptionalFeatureCatalogItem } from "@/features/dnd/classes/utils/optional-feature-catalog.utils";
 import { loadOptionalFeatureCatalogItems } from "../utils/class-optional-feature-browse.utils";
 
 export function useOptionalFeatureCatalogBrowse(

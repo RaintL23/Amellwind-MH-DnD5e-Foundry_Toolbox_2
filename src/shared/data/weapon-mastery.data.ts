@@ -1,6 +1,5 @@
 import type { FeatureChoiceOption } from "@/shared/types";
 import { parseFiveToolsMarkup } from "@/shared/utils/fivetools-parser";
-import { checkPhbWeaponNameProficiency } from "../utils/equipment-proficiency.utils";
 
 /** Weapon Mastery property names (D&D 2024). */
 export type WeaponMasteryProperty =
@@ -211,38 +210,6 @@ export function buildWeaponMasteryDescriptionBlock(
   if (!body) return undefined;
   const label = key.charAt(0).toUpperCase() + key.slice(1);
   return `***Mastery: ${label}.*** ${body}`;
-}
-
-export interface WeaponMasteryAvailabilityOptions {
-  /** Barbarian and similar features restrict picks to melee weapons. */
-  meleeOnly?: boolean;
-}
-
-export function getWeaponMasteryAvailability(
-  weapon: Pick<WeaponMasteryWeaponEntry, "name" | "category" | "range">,
-  weaponProficiencies: string[],
-  options: WeaponMasteryAvailabilityOptions = {},
-): { allowed: boolean; reason?: string } {
-  const proficiency = checkPhbWeaponNameProficiency(
-    weapon.name,
-    weapon.category,
-    weaponProficiencies,
-  );
-  if (!proficiency.allowed) {
-    return {
-      allowed: false,
-      reason: proficiency.reason ?? "Not proficient with this weapon.",
-    };
-  }
-
-  if (options.meleeOnly && weapon.range === "ranged") {
-    return {
-      allowed: false,
-      reason: "Your class only allows melee weapons for Weapon Mastery.",
-    };
-  }
-
-  return { allowed: true };
 }
 
 /** True when the class Weapon Mastery feature text limits picks to melee weapons. */

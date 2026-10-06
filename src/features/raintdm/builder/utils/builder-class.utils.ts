@@ -2,11 +2,8 @@ import type {
   BuilderAsiChoices,
   BuilderFeatSelection,
   Class,
-  ClassFeatureEntry,
-  Subclass,
 } from "@/shared/types";
 import type { BuilderFeatSlot } from "@/shared/types";
-import { mergeProgressionWithSubclass } from "@/features/dnd/classes/mappers/class.mapper";
 
 const STANDARD_ASI_LEVELS = [4, 8, 12, 16, 19] as const;
 const FIGHTER_EXTRA_ASI_LEVELS = [6, 14] as const;
@@ -64,25 +61,6 @@ export function getFeatSlotLevels(className: string, level: number): number[] {
     className.toLowerCase() === "fighter" ? [...FIGHTER_EXTRA_ASI_LEVELS] : [];
   const all = [...STANDARD_ASI_LEVELS, ...extras].sort((a, b) => a - b);
   return all.filter((l) => l <= level);
-}
-
-export function getFeaturesUpToLevel(
-  classData: Class,
-  subclass: Subclass | null,
-  level: number,
-): ClassFeatureEntry[] {
-  const progression = mergeProgressionWithSubclass(
-    classData.progression,
-    subclass,
-  );
-
-  return progression
-    .filter((row) => row.level <= level)
-    .flatMap((row) =>
-      // Archetype placeholders are omitted once a subclass is merged in;
-      // without a subclass they are never real features for the builder.
-      row.features.filter((f) => !f.gainSubclassFeature),
-    );
 }
 
 export function isFeatSlotSelection(

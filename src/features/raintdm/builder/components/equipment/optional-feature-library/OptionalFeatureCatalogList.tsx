@@ -7,7 +7,7 @@ import { resolveBookSourceName } from "@/features/dnd/spells/services/book-sourc
 import {
   getFeatCategoryLabel,
   type OptionalFeatureCatalogItem,
-} from "@/features/raintdm/builder/utils/class-optional-features.utils";
+} from "@/features/dnd/classes/utils/optional-feature-catalog.utils";
 import { RPGBOT_ROW_ACCENT } from "@/features/raintdm/builder/utils/library-variant.utils";
 import type { BuilderOptionalFeatureSelection } from "@/shared/types";
 import { cn } from "@/shared/utils/cn";

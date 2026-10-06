@@ -13,7 +13,7 @@ import {
   assignFromPool,
   poolAssignmentsToScores,
   poolStateFromScores,
-} from "../../../utils/ability-scores";
+} from "@/shared/utils/ability-scores";
 import type { GenerationMethod } from "./constants";
 
 export function useAbilityGenerationState() {

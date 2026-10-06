@@ -40,7 +40,7 @@ import type {
 import type { DamageType } from "@/shared/types";
 import type { Character } from "../models/Character";
 import type { BuilderPersonality } from "../storage/builder.storage";
-import type { AbilityScoreGenerationMethod } from "../utils/ability-scores";
+import type { AbilityScoreGenerationMethod } from "@/shared/utils/ability-scores";
 
 export interface CharacterBuilderContextValue {
   // Character

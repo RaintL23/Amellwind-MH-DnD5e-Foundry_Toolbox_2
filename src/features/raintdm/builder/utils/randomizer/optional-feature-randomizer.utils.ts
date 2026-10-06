@@ -9,10 +9,12 @@ import type {
 } from "@/shared/types";
 import {
   collectOptionPoolRefs,
-  dndFeatToSelection,
-  dndOptionalFeatureToSelection,
   filterCatalogForProgression,
   filterFeatsForProgression,
+} from "@/features/dnd/classes/utils/optional-feature-catalog.utils";
+import {
+  dndFeatToSelection,
+  dndOptionalFeatureToSelection,
   featureChoiceToSelection,
   getProgressionPicks,
 } from "@/features/raintdm/builder/utils/class-optional-features.utils";

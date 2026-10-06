@@ -16,7 +16,7 @@ import type {
 } from "../storage/builder-autosave.storage";
 import { BUILDER_SNAPSHOT_VERSION } from "../foundry-export/builder-snapshot";
 import type { BuilderChoiceSnapshot } from "../foundry-export/builder-snapshot";
-import type { AbilityScoreGenerationMethod } from "../utils/ability-scores";
+import type { AbilityScoreGenerationMethod } from "@/shared/utils/ability-scores";
 
 export const BUILDER_CHARACTER_JSON_KIND = "amellwind-builder-character" as const;
 

@@ -3,7 +3,7 @@ import type {
   BuilderOptionalFeatureSelections,
   OptionalFeatureProgression,
 } from "@/shared/types";
-import { isFeatureChoiceProgression } from "@/features/raintdm/builder/utils/class-optional-features.utils";
+import { isFeatureChoiceProgression } from "@/features/dnd/classes/utils/optional-feature-catalog.utils";
 
 function normalizeName(value: string): string {
   return value.trim().toLowerCase();

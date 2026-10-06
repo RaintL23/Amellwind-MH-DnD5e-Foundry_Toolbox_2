@@ -17,7 +17,8 @@ import type { ProficiencySource } from "@/shared/types/proficiency.types";
 import { ABILITY_ABBREVIATIONS, SKILL_LABELS } from "@/shared/constants/dnd";
 import { subclassesForClassVariant } from "@/features/dnd/classes/utils/class-subclass.utils";
 import type { CharacterBuilderContextValue } from "../context/character-builder.types";
-import { getFeatSlotLevels, getFeaturesUpToLevel } from "../utils/builder-class.utils";
+import { getFeatSlotLevels } from "../utils/builder-class.utils";
+import { getFeaturesUpToLevel } from "@/features/dnd/classes/utils/class-features-at-level.utils";
 import {
   buildClassLevelEntries,
   getFeatSlotLevelsForBuild,

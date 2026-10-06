@@ -4,7 +4,7 @@ import {
   STANDARD_ARRAY,
   rollSixAbilityScores,
   ABILITY_KEYS,
-} from "@/features/raintdm/builder/utils/ability-scores";
+} from "@/shared/utils/ability-scores";
 import type { Species } from "@/shared/types";
 
 function shuffle<T>(arr: T[]): T[] {

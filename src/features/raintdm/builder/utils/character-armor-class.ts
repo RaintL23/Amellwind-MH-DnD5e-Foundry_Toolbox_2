@@ -8,11 +8,11 @@ import type {
 import { formatModifier } from "@/shared/utils/cr.utils";
 import { ABILITY_SHORT_LABELS as ABILITY_LABELS } from "@/shared/constants/dnd";
 import { isClothingArmor } from "../data/armor.data";
-import { getFeaturesUpToLevel } from "./builder-class.utils";
+import { getFeaturesUpToLevel } from "@/features/dnd/classes/utils/class-features-at-level.utils";
 import {
   detectNaturalArmorFromTraits,
   type NaturalArmorRule,
-} from "./species-natural-armor";
+} from "@/shared/utils/species-natural-armor";
 
 interface UnarmoredDefenseRule {
   featureName: string;

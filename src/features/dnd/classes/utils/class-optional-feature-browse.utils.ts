@@ -17,12 +17,12 @@ import {
   optionalFeatureToCatalogItem,
   progressionDisplayName,
   type OptionalFeatureCatalogItem,
-} from "@/features/raintdm/builder/utils/class-optional-features.utils";
+} from "@/features/dnd/classes/utils/optional-feature-catalog.utils";
 import {
   getFeatPrerequisiteSummary,
   getPrerequisiteSummary,
-} from "@/features/raintdm/builder/utils/optional-feature-prerequisites.utils";
-import { WEAPON_MASTERY_OPTIONS } from "@/features/raintdm/builder/data/weapon-mastery.data";
+} from "@/features/dnd/classes/utils/optional-feature-catalog.utils";
+import { WEAPON_MASTERY_OPTIONS } from "@/shared/data/weapon-mastery.data";
 import { getAllDndOptionalFeatures } from "@/features/dnd/optionalfeatures/services/dnd-optionalfeature.service";
 import { getAllDndFeats } from "@/features/dnd/feats/services/dnd-feat.service";
 

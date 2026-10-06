@@ -4,7 +4,7 @@ import { Label } from "@/components/ui/label";
 import {
   POINT_BUY_BUDGET,
   POINT_BUY_MAX,
-} from "../../../utils/ability-scores";
+} from "@/shared/utils/ability-scores";
 import type { GenerationMethod } from "./constants";
 
 type MethodHintPanelsProps = {

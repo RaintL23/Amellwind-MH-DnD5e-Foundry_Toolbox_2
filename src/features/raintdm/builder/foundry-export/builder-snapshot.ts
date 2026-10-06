@@ -31,7 +31,7 @@ import {
   EMPTY_BUILDER_PERSONALITY,
   type BuilderPersonality,
 } from "../storage/builder.storage";
-import type { AbilityScoreGenerationMethod } from "../utils/ability-scores";
+import type { AbilityScoreGenerationMethod } from "@/shared/utils/ability-scores";
 
 /** Module namespace used for the Foundry actor/item `flags` object. */
 export const TOOLBOX_FLAG_NAMESPACE = "amellwind-toolbox";

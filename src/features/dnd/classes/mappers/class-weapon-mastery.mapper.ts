@@ -1,5 +1,5 @@
 import type { OptionalFeatureProgression } from "@/shared/types";
-import { WEAPON_MASTERY_OPTIONS } from "@/features/raintdm/builder/data/weapon-mastery.data";
+import { WEAPON_MASTERY_OPTIONS } from "@/shared/data/weapon-mastery.data";
 import { DEFAULT_CLASS_SOURCE } from "../utils/class-raw.types";
 import type { RawClassFeature, RawClassTableGroup } from "../utils/class-raw.types";
 import {

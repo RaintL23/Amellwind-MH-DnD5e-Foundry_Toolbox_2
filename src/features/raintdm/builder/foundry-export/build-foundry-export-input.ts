@@ -21,7 +21,7 @@ import {
 } from "../utils/character-sheet-export.utils";
 import { getAttunementInfo } from "../utils/attunement.utils";
 import { standaloneShieldToArmorItem } from "../data/shield.data";
-import { getWeaponMasteryWeapon } from "../data/weapon-mastery.data";
+import { getWeaponMasteryWeapon } from "@/shared/data/weapon-mastery.data";
 import type { CharacterBuilderContextValue } from "../context/character-builder.types";
 import type { CharacterHitPointBreakdown } from "../utils/character-hit-points";
 import type { CharacterSpeedBreakdown } from "../utils/character-speed";

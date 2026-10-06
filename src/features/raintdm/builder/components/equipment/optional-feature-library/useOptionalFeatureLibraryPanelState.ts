@@ -18,26 +18,28 @@ import { useSourceCatalog } from "@/shared/hooks/useSourceCatalog";
 import {
   collectOptionPoolRefs,
   dndFeatToCatalogItem,
-  dndFeatToSelection,
-  dndOptionalFeatureToSelection,
   featureChoiceToCatalogItem,
-  featureChoiceToSelection,
   filterCatalogForProgression,
   filterFeatsForProgression,
-  getOtherFightingStylePicks,
-  getProgressionPicks,
   isFeatureChoiceProgression,
-  isFightingStyleProgression,
   isWeaponMasteryProgression,
   optionalFeatureToCatalogItem,
-  parseOptionalFeatureSlot,
   type OptionalFeatureCatalogItem,
+} from "@/features/dnd/classes/utils/optional-feature-catalog.utils";
+import {
+  dndFeatToSelection,
+  dndOptionalFeatureToSelection,
+  featureChoiceToSelection,
+  getOtherFightingStylePicks,
+  getProgressionPicks,
+  parseOptionalFeatureSlot,
   type ResolvedOptionalFeatureProgression,
 } from "@/features/raintdm/builder/utils/class-optional-features.utils";
+import { isFightingStyleProgression } from "@/features/dnd/classes/utils/optional-feature-progression.utils";
 import {
   getFeatPrerequisiteSummary,
   getPrerequisiteSummary,
-} from "@/features/raintdm/builder/utils/optional-feature-prerequisites.utils";
+} from "@/features/dnd/classes/utils/optional-feature-catalog.utils";
 import {
   resolveOptionalFeatureRpgbotContext,
   sortByRpgbotRating,
@@ -47,7 +49,7 @@ import {
   isMeleeOnlyWeaponMasteryClass,
   WEAPON_MASTERY_GROUPS,
   WEAPON_MASTERY_OPTIONS,
-} from "@/features/raintdm/builder/data/weapon-mastery.data";
+} from "@/shared/data/weapon-mastery.data";
 import {
   asFilterString,
   asFilterStringArray,

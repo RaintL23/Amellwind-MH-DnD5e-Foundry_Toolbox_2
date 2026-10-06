@@ -1,10 +1,8 @@
 import type { DndFeat, DndOptionalFeature } from "@/shared/types";
 import type { BuilderOptionalFeatureSelection } from "@/shared/types";
-import {
-  isFightingStyleProgression,
-  type OptionalFeatureCatalogItem,
-  type ResolvedOptionalFeatureProgression,
-} from "@/features/raintdm/builder/utils/class-optional-features.utils";
+import { isFightingStyleProgression } from "@/features/dnd/classes/utils/optional-feature-progression.utils";
+import { type OptionalFeatureCatalogItem } from "@/features/dnd/classes/utils/optional-feature-catalog.utils";
+import { type ResolvedOptionalFeatureProgression } from "@/features/raintdm/builder/utils/class-optional-features.utils";
 import {
   isFightingStyleFeatAvailable,
   isOptionalFeatureAvailable,

@@ -14,7 +14,7 @@ import type {
 } from "@/shared/types";
 import { parseFiveToolsMarkup } from "@/shared/utils/fivetools-parser";
 import { mergeProgressionWithSubclass } from "@/features/dnd/classes/mappers/class.mapper";
-import { getFeaturesUpToLevel } from "./builder-class.utils";
+import { getFeaturesUpToLevel } from "@/features/dnd/classes/utils/class-features-at-level.utils";
 
 export interface SpeedBonus {
   label: string;

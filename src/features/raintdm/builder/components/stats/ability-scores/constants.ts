@@ -1,6 +1,6 @@
 import type { AbilityKey } from "@/shared/types";
 import { ABILITY_KEYS, ABILITY_ABBREVIATIONS } from "@/shared/constants/dnd";
-import type { AbilityScoreGenerationMethod } from "../../../utils/ability-scores";
+import type { AbilityScoreGenerationMethod } from "@/shared/utils/ability-scores";
 
 export const ABILITIES: { key: AbilityKey; label: string }[] = ABILITY_KEYS.map(
   (key) => ({ key, label: ABILITY_ABBREVIATIONS[key] }),

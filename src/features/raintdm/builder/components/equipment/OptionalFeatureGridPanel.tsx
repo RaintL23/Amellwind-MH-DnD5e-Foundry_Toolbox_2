@@ -4,14 +4,16 @@ import { GridElementSlot } from "../shared/GridElementSlot";
 import type { BuilderSlotSelection } from "../../hooks/useBuilderSlotSelection";
 import {
   getProgressionPicks,
-  isFeatureChoiceProgression,
-  isFightingStyleProgression,
   isOptionalFeatureSlot,
-  isWeaponMasteryProgression,
-  progressionDisplayName,
   toOptionalFeatureSlot,
   type ResolvedOptionalFeatureProgression,
 } from "../../utils/class-optional-features.utils";
+import {
+  isFeatureChoiceProgression,
+  isWeaponMasteryProgression,
+  progressionDisplayName,
+} from "@/features/dnd/classes/utils/optional-feature-catalog.utils";
+import { isFightingStyleProgression } from "@/features/dnd/classes/utils/optional-feature-progression.utils";
 import { useSlotCompletenessHighlight } from "../../context/BuildCompletenessContext";
 
 interface OptionalFeatureGridPanelProps {

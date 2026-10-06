@@ -14,7 +14,7 @@ import {
 } from "@/shared/utils/text-proficiency-grants.parser";
 import { parseCantripBonusFromEntries } from "@/shared/utils/text-spell-grants.parser";
 import { statBlockContentToPlainText } from "@/shared/utils/statblock-entries.mapper";
-import { getFeaturesUpToLevel } from "./builder-class.utils";
+import { getFeaturesUpToLevel } from "@/features/dnd/classes/utils/class-features-at-level.utils";
 
 // ─── Types ───────────────────────────────────────────────────────────────────
 

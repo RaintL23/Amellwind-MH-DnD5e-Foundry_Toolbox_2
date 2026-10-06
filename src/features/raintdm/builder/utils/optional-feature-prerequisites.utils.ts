@@ -76,16 +76,6 @@ export function filterAvailableOptionalFeatures(
   });
 }
 
-export function getPrerequisiteSummary(feature: DndOptionalFeature): string {
-  if (feature.prerequisites.length === 0) return "";
-  return feature.prerequisites.map((p) => p.summary).join(" · ");
-}
-
-export function getFeatPrerequisiteSummary(feat: DndFeat): string {
-  if (feat.prerequisites.length === 0) return "";
-  return feat.prerequisites.join(" · ");
-}
-
 export function isFightingStyleFeatAvailable(
   feat: DndFeat,
   otherFightingStylePicks: BuilderOptionalFeatureSelection[],

@@ -1,14 +1,12 @@
 import { Check, Swords } from "lucide-react";
 import type { FeatureChoiceOption } from "@/shared/types";
-import type { WeaponMasteryGroup } from "@/features/raintdm/builder/data/weapon-mastery.data";
-import {
-  getWeaponMasteryAvailability,
-  getWeaponMasteryWeapon,
-} from "@/features/raintdm/builder/data/weapon-mastery.data";
+import type { WeaponMasteryGroup } from "@/shared/data/weapon-mastery.data";
+import { getWeaponMasteryAvailability } from "@/features/raintdm/builder/utils/weapon-mastery-availability.utils";
+import { getWeaponMasteryWeapon } from "@/shared/data/weapon-mastery.data";
 import {
   featureChoiceToCatalogItem,
   type OptionalFeatureCatalogItem,
-} from "@/features/raintdm/builder/utils/class-optional-features.utils";
+} from "@/features/dnd/classes/utils/optional-feature-catalog.utils";
 import { cn } from "@/shared/utils/cn";
 
 interface OptionalFeatureWeaponMasteryListProps {
