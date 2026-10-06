@@ -3,9 +3,14 @@
 // MidiQOL on-use passes arrive with args[0].macroPass (registered by the cloned effect on the actor).
 //
 // Canonical source: public/data/scripts/runes/unified-rune-controller.js
-// Injected into each rune Item by foundry-jsons-example/runes/build-runes-itemacro.mjs
+// Injected into each rune Item by foundry-jsons-example/runes/_build/sync-itemacro.mjs
 // Per-rune combat / on-equip hooks fill the RUNE_COMBAT_PASSES slot below (must run before
 // the on/off handlers so wraps of runeApplySide / runeCleanup and runeOnEquip take effect).
+
+// DAE ("on"/"off") does not provide the Midi on-use variables, and per-rune passes read them
+// before the equip handler runs. `var` keeps Midi's value when it passes them as parameters
+// and yields undefined otherwise (a bare read would throw ReferenceError and skip the dialog).
+var workflow, rolledActivity;
 const FLAG = "amellwind-toolbox";
 // Foundry only allows getFlag/setFlag for active module ids / "world" / "core".
 // This content pack uses a custom namespace, so read/write via getProperty + update.
