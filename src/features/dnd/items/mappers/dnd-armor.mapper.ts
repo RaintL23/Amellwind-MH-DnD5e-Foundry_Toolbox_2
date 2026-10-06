@@ -1,6 +1,6 @@
 import type { ArmorCategory, ArmorItem } from "@/shared/types";
-import { parseFiveToolsMarkup } from "@/shared/utils/fivetools-parser";
-import type { RawItemEntity } from "../utils/item-raw.types";
+import type { ItemBaseIndexes, RawItemEntity } from "../utils/item-raw.types";
+import { renderDndItemPlainDescription } from "./item.mapper";
 import {
   buildEquipmentSourcePriority,
   pickPreferredBySource,
@@ -14,20 +14,6 @@ function parseArmorCategory(type?: string): ArmorCategory | null {
   if (abbrev === "MA") return "medium";
   if (abbrev === "HA") return "heavy";
   return null;
-}
-
-/** Renders an armor's 5etools entries into a single plain-text description. */
-function renderArmorDescription(raw: RawItemEntity): string | undefined {
-  const entries = [
-    ...(Array.isArray(raw.entries) ? raw.entries : []),
-    ...(Array.isArray(raw.additionalEntries) ? raw.additionalEntries : []),
-  ];
-  const text = entries
-    .filter((entry): entry is string => typeof entry === "string")
-    .map((entry) => parseFiveToolsMarkup(entry).trim())
-    .filter(Boolean)
-    .join("\n\n");
-  return text || undefined;
 }
 
 function isDndShieldType(type?: string): boolean {
@@ -55,12 +41,16 @@ export function isBuilderDndArmor(raw: RawItemEntity): boolean {
   return true;
 }
 
-export function mapDndBaseItemToArmor(raw: RawItemEntity): ArmorItem | null {
+export function mapDndBaseItemToArmor(
+  raw: RawItemEntity,
+  indexes: ItemBaseIndexes,
+): ArmorItem | null {
   const category = parseArmorCategory(
     typeof raw.type === "string" ? raw.type : undefined,
   );
   if (!category) return null;
 
+  const description = renderDndItemPlainDescription(raw, indexes) || undefined;
   const itemRarityLabel = mapDndRarityLabel(
     typeof raw.rarity === "string" ? raw.rarity : undefined,
   );
@@ -77,7 +67,7 @@ export function mapDndBaseItemToArmor(raw: RawItemEntity): ArmorItem | null {
       runeSlots: 0,
       stealthDisadvantage: false,
       weight: typeof raw.weight === "number" ? raw.weight : 6,
-      description: renderArmorDescription(raw),
+      description,
       contentSource: "dnd",
       itemRarityLabel,
       baseName:
@@ -98,7 +88,7 @@ export function mapDndBaseItemToArmor(raw: RawItemEntity): ArmorItem | null {
     runeSlots: 0,
     stealthDisadvantage: raw.stealth === true,
     weight: typeof raw.weight === "number" ? raw.weight : 0,
-    description: renderArmorDescription(raw),
+    description,
     contentSource: "dnd",
     itemRarityLabel,
     baseName:

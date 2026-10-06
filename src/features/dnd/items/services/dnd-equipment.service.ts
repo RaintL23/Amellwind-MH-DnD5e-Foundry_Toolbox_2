@@ -1,6 +1,10 @@
 import type { ArmorItem, Weapon } from "@/shared/types";
 import { DEFAULT_DND_ITEM_SOURCES } from "@/shared/constants/api.constants";
-import { getAllRawItems, loadItemSources } from "../utils/item-list-builder.utils";
+import {
+  getAllRawItems,
+  getItemBaseIndexes,
+  loadItemSources,
+} from "../utils/item-list-builder.utils";
 import {
   groupDndWeaponsForCatalog,
   isBuilderDndWeapon,
@@ -22,9 +26,10 @@ async function ensureDndWeaponsLoaded(): Promise<Weapon[]> {
   if (allWeaponsCache) return allWeaponsCache;
 
   await loadItemSources([...DEFAULT_DND_ITEM_SOURCES]);
+  const indexes = getItemBaseIndexes();
   allWeaponsCache = getAllRawItems()
     .filter(isBuilderDndWeapon)
-    .map(mapDndBaseItemToWeapon);
+    .map((raw) => mapDndBaseItemToWeapon(raw, indexes));
 
   return allWeaponsCache;
 }
@@ -53,9 +58,10 @@ export async function getDndArmors(prefer2024 = true): Promise<ArmorItem[]> {
   if (armorCache && armorPrefer2024 === prefer2024) return armorCache;
 
   await loadItemSources([...DEFAULT_DND_ITEM_SOURCES]);
+  const indexes = getItemBaseIndexes();
   const armors = getAllRawItems()
     .filter(isBuilderDndArmor)
-    .map(mapDndBaseItemToArmor)
+    .map((raw) => mapDndBaseItemToArmor(raw, indexes))
     .filter((armor): armor is ArmorItem => armor !== null);
 
   armorCache = dedupeDndArmorsByName(armors, prefer2024);

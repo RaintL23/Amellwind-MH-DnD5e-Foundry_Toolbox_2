@@ -10,23 +10,12 @@ import {
   DialogBody,
 } from "@/components/ui/dialog";
 import { Badge } from "@/components/ui/badge";
-import { Separator } from "@/components/ui/separator";
-import { cn } from "@/shared/utils/cn";
-import { StatBlockContentView } from "@/components/statblock/StatBlockContentView";
-import { HintTooltip } from "@/shared/components/HintTooltip";
 import { SourceBadge } from "@/features/dnd/spells/components/SourceBadge";
 import {
   getBookSourceNames,
   resolveBookSourceName,
   type BookSourceNameMap,
 } from "@/features/dnd/spells/services/book-source.service";
-import { MAGIC_ITEM_PRICING_ATTRIBUTION } from "@/features/dnd/shop-generator/data/magic-item-pricing-attribution";
-import {
-  formatPriceBreakdownTooltip,
-  formatShopPriceGp,
-  resolveItemPriceGp,
-} from "@/features/dnd/shop-generator/utils/price-resolve.utils";
-import { getDndItemById, getSpecificVariantsForGeneric } from "../services/dnd-item.service";
 import { sortDndItemVariants } from "../utils/item-dedupe.utils";
 import {
   formatFieldValue,
@@ -35,57 +24,13 @@ import {
   getVariantFieldLabel,
   type DndItemVariantField,
 } from "../utils/item-variant.utils";
+import { DndItemContent } from "./DndItemContent";
 
 interface DndItemDetailDialogProps {
   item: DndItem | null;
   variants?: DndItem[];
   open: boolean;
   onOpenChange: (open: boolean) => void;
-}
-
-function MetaRow({
-  label,
-  value,
-  differs,
-  tooltip,
-}: {
-  label: string;
-  value: string;
-  differs?: boolean;
-  tooltip?: string;
-}) {
-  if (!value || value === "—") return null;
-  const valueEl = (
-    <span
-      className={cn(
-        "text-sm",
-        differs ? "text-amber-300 font-medium" : "text-foreground",
-        tooltip &&
-          "cursor-help underline decoration-dotted decoration-muted-foreground/60 underline-offset-2",
-      )}
-    >
-      {value}
-      {differs && (
-        <span className="ml-1.5 text-[10px] font-normal text-amber-500/80">
-          (varies)
-        </span>
-      )}
-    </span>
-  );
-  return (
-    <div className="flex gap-2">
-      <span className="text-xs font-semibold text-muted-foreground uppercase tracking-wide w-28 shrink-0">
-        {label}
-      </span>
-      {tooltip ? (
-        <HintTooltip content={tooltip} side="top" align="start" className="max-w-sm">
-          {valueEl}
-        </HintTooltip>
-      ) : (
-        valueEl
-      )}
-    </div>
-  );
 }
 
 function VariantDiffBanner({
@@ -154,6 +99,7 @@ function itemsDiffer(a: DndItem, b: DndItem): boolean {
   return getFieldsDifferentFromVariant(a, b).length > 0;
 }
 
+
 export function DndItemDetailDialog({
   item,
   variants: variantsProp,
@@ -171,8 +117,6 @@ export function DndItemDetailDialog({
 
   const [activeId, setActiveId] = useState("");
   const [bookNames, setBookNames] = useState<BookSourceNameMap>({});
-  const [groupMembers, setGroupMembers] = useState<DndItem[]>([]);
-  const [baseVariants, setBaseVariants] = useState<DndItem[]>([]);
   const [linkedItem, setLinkedItem] = useState<DndItem | null>(null);
   const [linkedOpen, setLinkedOpen] = useState(false);
 
@@ -201,62 +145,6 @@ export function DndItemDetailDialog({
     () => getFieldsThatVaryAcrossVariants(variants),
     [variants],
   );
-
-  const differs = useMemo(() => {
-    const set = new Set(varyingFields);
-    return (field: DndItemVariantField) => set.has(field);
-  }, [varyingFields]);
-
-  const resolvedPrice = useMemo(
-    () => (active ? resolveItemPriceGp(active) : null),
-    [active],
-  );
-
-  const priceTooltip = useMemo(() => {
-    if (!resolvedPrice) return undefined;
-    const lines = [
-      ...resolvedPrice.breakdown,
-      "",
-      MAGIC_ITEM_PRICING_ATTRIBUTION.shortCredit,
-      MAGIC_ITEM_PRICING_ATTRIBUTION.url,
-    ];
-    return formatPriceBreakdownTooltip({
-      ...resolvedPrice,
-      breakdown: lines,
-    });
-  }, [resolvedPrice]);
-
-  useEffect(() => {
-    if (!active?.isItemGroup || !active.groupItemRefs?.length) {
-      setGroupMembers([]);
-      return;
-    }
-    void Promise.all(
-      active.groupItemRefs.map(async (ref) => {
-        const pipe = ref.indexOf("|");
-        if (pipe === -1) return undefined;
-        const name = ref.slice(0, pipe);
-        const source = ref.slice(pipe + 1);
-        return getDndItemById(`${source}::${name}`);
-      }),
-    ).then((results) => {
-      setGroupMembers(results.filter((r): r is DndItem => r != null));
-    });
-  }, [active?.id, active?.groupItemRefs]);
-
-  useEffect(() => {
-    if (!active?.isGenericVariant) {
-      setBaseVariants([]);
-      return;
-    }
-    let cancelled = false;
-    void getSpecificVariantsForGeneric(active.name).then((list) => {
-      if (!cancelled) setBaseVariants(list);
-    });
-    return () => {
-      cancelled = true;
-    };
-  }, [active?.id, active?.isGenericVariant, active?.name]);
 
   function openLinkedItem(next: DndItem) {
     setLinkedItem(next);
@@ -316,194 +204,12 @@ export function DndItemDetailDialog({
             />
           </div>
 
-          <div className="space-y-1.5 mb-4 p-3 rounded-md border border-border bg-muted/20">
-            <MetaRow
-              label="Category"
-              value={active.category}
-              differs={differs("category")}
-            />
-            {resolvedPrice ? (
-              <MetaRow
-                label="Price"
-                value={formatShopPriceGp(resolvedPrice.basePriceGp)}
-                tooltip={priceTooltip}
-              />
-            ) : null}
-            <MetaRow
-              label="Value"
-              value={active.valueGp ?? "—"}
-              differs={differs("valueGp")}
-            />
-            <MetaRow
-              label="Weight"
-              value={active.weight ?? "—"}
-              differs={differs("weight")}
-            />
-            {active.armorClass && (
-              <MetaRow
-                label="Armor Class"
-                value={active.armorClass}
-                differs={differs("armorClass")}
-              />
-            )}
-            {active.strengthRequirement && (
-              <MetaRow
-                label="Strength"
-                value={active.strengthRequirement}
-                differs={differs("strengthRequirement")}
-              />
-            )}
-            {active.stealth && (
-              <MetaRow
-                label="Stealth"
-                value={active.stealth}
-                differs={differs("stealth")}
-              />
-            )}
-            {active.damage && (
-              <MetaRow
-                label="Damage"
-                value={active.damage}
-                differs={differs("damage")}
-              />
-            )}
-            {active.range && (
-              <MetaRow
-                label="Range"
-                value={active.range}
-                differs={differs("range")}
-              />
-            )}
-            {active.ammoType && (
-              <MetaRow
-                label="Ammunition"
-                value={active.ammoType}
-                differs={differs("ammoType")}
-              />
-            )}
-            {active.weaponCategory && (
-              <MetaRow
-                label="Proficiency"
-                value={
-                  active.weaponCategory === "martial" ? "Martial" : "Simple"
-                }
-                differs={differs("weaponCategory")}
-              />
-            )}
-            {active.properties && (
-              <MetaRow
-                label="Properties"
-                value={active.properties}
-                differs={differs("properties")}
-              />
-            )}
-            {active.mastery && (
-              <MetaRow
-                label="Mastery"
-                value={active.mastery}
-                differs={differs("mastery")}
-              />
-            )}
-            {active.bonusWeapon && (
-              <MetaRow
-                label="Weapon Bonus"
-                value={active.bonusWeapon}
-                differs={differs("bonusWeapon")}
-              />
-            )}
-            {active.bonusAc && (
-              <MetaRow
-                label="AC Bonus"
-                value={active.bonusAc}
-                differs={differs("bonusAc")}
-              />
-            )}
-            {active.baseName && (
-              <MetaRow
-                label="Base item"
-                value={`${active.baseName}${active.baseItemRef ? ` (${active.baseItemRef})` : ""}`}
-              />
-            )}
-            {active.variantName && active.variantName !== active.name && (
-              <MetaRow label="Variant" value={active.variantName} />
-            )}
-          </div>
-
-          {active.isItemGroup &&
-            active.groupItemRefs &&
-            active.groupItemRefs.length > 0 && (
-              <>
-                <h3 className="text-xs font-bold uppercase tracking-wider text-amber-400 mb-2">
-                  Group variants ({active.groupItemRefs.length})
-                </h3>
-                <ul className="mb-4 space-y-1 text-sm text-muted-foreground">
-                  {groupMembers.length > 0
-                    ? groupMembers.map((m) => (
-                        <li key={m.id}>
-                          <button
-                            type="button"
-                            className="text-left font-medium text-sky-300 hover:underline underline-offset-2"
-                            onClick={() => openLinkedItem(m)}
-                          >
-                            {m.name}
-                          </button>
-                          <span className="ml-2 text-xs">({m.source})</span>
-                        </li>
-                      ))
-                    : active.groupItemRefs.map((ref) => (
-                        <li key={ref}>{ref}</li>
-                      ))}
-                </ul>
-                <Separator className="my-4" />
-              </>
-            )}
-
-          {active.description.length > 0 && (
-            <>
-              <h3 className="text-xs font-bold uppercase tracking-wider text-amber-400 mb-3">
-                Description
-                {differs("description") && (
-                  <span className="ml-2 text-[10px] font-normal text-amber-500/80">
-                    (varies by source)
-                  </span>
-                )}
-              </h3>
-              <StatBlockContentView content={active.description} />
-            </>
-          )}
-
-          {active.isGenericVariant && baseVariants.length > 0 && (
-            <>
-              <Separator className="my-4" />
-              <h3 className="text-xs font-bold uppercase tracking-wider text-amber-400 mb-2">
-                Base items
-              </h3>
-              <p className="mb-2 text-sm italic text-muted-foreground">
-                This item variant can be applied to the following base items:
-              </p>
-              <ul className="mb-2 space-y-1.5">
-                {baseVariants.map((variant) => (
-                  <li key={variant.id}>
-                    <button
-                      type="button"
-                      className="text-left text-sm text-sky-300 hover:underline underline-offset-2"
-                      onClick={() => openLinkedItem(variant)}
-                    >
-                      <span className="font-medium">
-                        {variant.baseName ?? variant.name}
-                      </span>
-                      {variant.baseName ? (
-                        <span className="text-muted-foreground">
-                          {" "}
-                          ({variant.name})
-                        </span>
-                      ) : null}
-                    </button>
-                  </li>
-                ))}
-              </ul>
-            </>
-          )}
+          <DndItemContent
+            item={active}
+            variants={variants}
+            onOpenItem={openLinkedItem}
+            density="comfortable"
+          />
         </DialogBody>
       </DialogContent>
     </Dialog>

@@ -7,6 +7,8 @@ import {
 } from "../../../data/armor.data";
 import { RuneFeaturesSection } from "../RuneFeaturesSection";
 import { RarityButtonGroup } from "@/features/raintdm/builder/components/shared/RarityButtonGroup";
+import { DndItemContent } from "@/features/dnd/items/components/DndItemContent";
+import { useDndItemByNameSource } from "@/features/dnd/items/hooks/useDndItemByNameSource";
 import { LibraryDetailAccordion } from "./shared/LibraryDetailAccordion";
 
 interface ArmorLibraryDetailProps {
@@ -46,6 +48,11 @@ export function ArmorLibraryDetail({
   const isCloth = isClothingArmor(armor);
   const Icon = isCloth ? Shirt : Shield;
   const accentClass = isCloth ? "text-violet-400" : "text-sky-400";
+  const dndItem = useDndItemByNameSource(
+    armor.name,
+    armor.source,
+    armor.contentSource === "dnd",
+  );
 
   const dexLabel =
     armor.maxDexBonus === null
@@ -88,8 +95,10 @@ export function ArmorLibraryDetail({
           label="Rune Slots"
           value={`${equipped.runeSlots} slot${equipped.runeSlots !== 1 ? "s" : ""}`}
         />
-        <StatBox label="Weight" value={`${armor.weight} lb`} />
+        {!dndItem && <StatBox label="Weight" value={`${armor.weight} lb`} />}
       </div>
+
+      {dndItem && <DndItemContent item={dndItem} density="compact" />}
 
       <RuneFeaturesSection runes={runes} effectKind="armor" />
     </LibraryDetailAccordion>

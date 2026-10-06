@@ -40,6 +40,8 @@ import { RarityButtonGroup } from "@/features/raintdm/builder/components/shared/
 import type { SourceVariant } from "@/shared/types";
 import { customFeaturesToOptionalMap } from "@/features/raintdm/weapon-forge/mappers/weapon-forge.mapper";
 import { isWeaponForgeWeapon } from "@/features/raintdm/weapon-forge/utils/is-forge-weapon";
+import { DndItemContent } from "@/features/dnd/items/components/DndItemContent";
+import { useDndItemByNameSource } from "@/features/dnd/items/hooks/useDndItemByNameSource";
 import { LibraryDetailAccordion } from "./shared/LibraryDetailAccordion";
 
 interface WeaponLibraryDetailProps {
@@ -232,6 +234,11 @@ export function WeaponLibraryDetail({
   const { weapon, activeModeIndex } = equipped;
   const isDndWeapon = weapon.contentSource === "dnd" || !showHomebrewDetails;
   const rarityIndex = useMemo(() => getRarityIndex(equipped), [equipped]);
+  const dndItem = useDndItemByNameSource(
+    weapon.name,
+    weapon.source,
+    weapon.contentSource === "dnd",
+  );
 
   const gripModeDisabled = (mode: WeaponGripMode) =>
     gripContext ? isGripModeBlockedByOccupiedHand(mode, gripContext) : false;
@@ -268,16 +275,29 @@ export function WeaponLibraryDetail({
         )}
 
         <div className="mb-2 flex flex-wrap items-center gap-1.5">
-          {weapon.weaponCategory && (
-            <Badge variant="secondary" className="text-[10px] capitalize">
-              {weapon.weaponCategory}
+          {dndItem ? (
+            <Badge variant="secondary" className="text-[10px]">
+              {dndItem.rarityLabel}
+            </Badge>
+          ) : (
+            <>
+              {weapon.weaponCategory && (
+                <Badge variant="secondary" className="text-[10px] capitalize">
+                  {weapon.weaponCategory}
+                </Badge>
+              )}
+              {weapon.properties.map((prop) => (
+                <Badge key={prop} variant="outline" className="text-[10px]">
+                  {PROPERTY_LABELS[prop] ?? prop}
+                </Badge>
+              ))}
+            </>
+          )}
+          {dndItem?.attunement && (
+            <Badge variant="outline" className="text-[10px] text-violet-300">
+              {dndItem.attunement}
             </Badge>
           )}
-          {weapon.properties.map((prop) => (
-            <Badge key={prop} variant="outline" className="text-[10px]">
-              {PROPERTY_LABELS[prop] ?? prop}
-            </Badge>
-          ))}
           {!(sourceVariants && onSourceChange) && (
             <span className="text-[10px] text-muted-foreground">
               {weapon.source}
@@ -297,24 +317,40 @@ export function WeaponLibraryDetail({
           />
         )}
 
-        <div className="mb-3 grid grid-cols-2 gap-2 text-xs">
-          <StatBox
-            label={
-              damageModeLabel === "Damage"
-                ? "Damage"
-                : `Damage (${damageModeLabel})`
-            }
-            value={`${activeDamage} ${damageTypeLabel}`}
-          />
-          <StatBox label="Weight" value={`${weapon.weight} lb`} />
-          <StatBox label="Value" value={formatWeaponValue(weapon.valueCp)} />
-          {weapon.range && <StatBox label="Range" value={weapon.range} />}
-        </div>
+        {dndItem ? (
+          <>
+            {damageModeLabel !== "Damage" && (
+              <div className="mb-3 grid grid-cols-2 gap-2 text-xs">
+                <StatBox
+                  label={`Damage (${damageModeLabel})`}
+                  value={`${activeDamage} ${damageTypeLabel}`}
+                />
+              </div>
+            )}
+            <DndItemContent item={dndItem} density="compact" />
+          </>
+        ) : (
+          <>
+            <div className="mb-3 grid grid-cols-2 gap-2 text-xs">
+              <StatBox
+                label={
+                  damageModeLabel === "Damage"
+                    ? "Damage"
+                    : `Damage (${damageModeLabel})`
+                }
+                value={`${activeDamage} ${damageTypeLabel}`}
+              />
+              <StatBox label="Weight" value={`${weapon.weight} lb`} />
+              <StatBox label="Value" value={formatWeaponValue(weapon.valueCp)} />
+              {weapon.range && <StatBox label="Range" value={weapon.range} />}
+            </div>
 
-        {weapon.description && (
-          <div className="text-xs text-muted-foreground">
-            <DndRichText text={weapon.description} />
-          </div>
+            {weapon.description && (
+              <div className="text-xs text-muted-foreground">
+                <DndRichText text={weapon.description} />
+              </div>
+            )}
+          </>
         )}
       </LibraryDetailAccordion>
     );

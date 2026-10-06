@@ -14,6 +14,7 @@ import {
 import { expandItemEntryRefs } from "../utils/item-entry-resolve.utils";
 import { itemId, unpackItemTypeUid } from "../utils/item-uids.utils";
 import { formatGpFromCp } from "@/shared/utils/currency.utils";
+import { parseFiveToolsMarkup } from "@/shared/utils/fivetools-parser";
 
 const RARITY_LABELS: Record<string, string> = {
   none: "None",
@@ -117,6 +118,89 @@ function formatWeaponCategoryLabel(
   return category === "martial" ? "Martial" : "Simple";
 }
 
+/**
+ * The item's own entries (+ additionalEntries) with `{#itemEntry}` refs
+ * expanded. Single source for the compendium description and the Builder's
+ * weapon/armor description (Foundry export).
+ */
+export function resolveDndItemOwnEntries(
+  raw: RawItemEntity,
+  indexes: ItemBaseIndexes,
+): unknown[] {
+  const ownEntries = [
+    ...(Array.isArray(raw.entries) ? raw.entries : []),
+    ...(Array.isArray(raw.additionalEntries) ? raw.additionalEntries : []),
+  ];
+  return expandItemEntryRefs(ownEntries, raw, indexes);
+}
+
+function entriesToPlainLines(entries: unknown[]): string[] {
+  const lines: string[] = [];
+  for (const entry of entries) {
+    if (typeof entry === "string") {
+      const text = parseFiveToolsMarkup(entry).trim();
+      if (text) lines.push(text);
+      continue;
+    }
+    if (typeof entry !== "object" || entry === null) continue;
+    const e = entry as Record<string, unknown>;
+    if (e.type === "list" && Array.isArray(e.items)) {
+      for (const item of e.items) {
+        if (typeof item === "string") {
+          lines.push(`• ${parseFiveToolsMarkup(item).trim()}`);
+          continue;
+        }
+        if (typeof item !== "object" || item === null) continue;
+        const listItem = item as Record<string, unknown>;
+        const body = entriesToPlainLines(
+          Array.isArray(listItem.entries)
+            ? listItem.entries
+            : typeof listItem.entry === "string"
+              ? [listItem.entry]
+              : [],
+        ).join(" ");
+        const name =
+          typeof listItem.name === "string"
+            ? parseFiveToolsMarkup(listItem.name).trim()
+            : "";
+        lines.push(`• ${[name && `${name}.`, body].filter(Boolean).join(" ")}`);
+      }
+      continue;
+    }
+    if (e.type === "table" && Array.isArray(e.rows)) {
+      for (const row of e.rows) {
+        if (!Array.isArray(row)) continue;
+        lines.push(
+          row
+            .map((cell) =>
+              typeof cell === "string" ? parseFiveToolsMarkup(cell).trim() : String(cell ?? ""),
+            )
+            .join(" | "),
+        );
+      }
+      continue;
+    }
+    if (Array.isArray(e.entries)) {
+      const nested = entriesToPlainLines(e.entries);
+      if (typeof e.name === "string" && nested.length) {
+        nested[0] = `${parseFiveToolsMarkup(e.name).trim()}. ${nested[0]}`;
+      }
+      lines.push(...nested);
+    }
+  }
+  return lines;
+}
+
+/** Export-safe plain text (no UI entity tags) of the item's own description. */
+export function renderDndItemPlainDescription(
+  raw: RawItemEntity,
+  indexes: ItemBaseIndexes,
+): string {
+  return entriesToPlainLines(resolveDndItemOwnEntries(raw, indexes)).join(
+    "\n\n",
+  );
+}
+
 export function mapDndItem(
   raw: RawItemEntity,
   indexes: ItemBaseIndexes,
@@ -125,16 +209,15 @@ export function mapDndItem(
   const isMundane = rarity === "none";
   const typeCode = raw.type != null ? String(raw.type) : undefined;
 
-  const attachedRules = collectDndItemAttachedRuleEntries(raw, indexes);
-  const ownEntries = [
-    ...(Array.isArray(raw.entries) ? raw.entries : []),
-    ...(Array.isArray(raw.additionalEntries) ? raw.additionalEntries : []),
-  ];
-  const resolvedEntries = expandItemEntryRefs(
-    [...attachedRules, ...ownEntries],
+  const attachedRules = expandItemEntryRefs(
+    collectDndItemAttachedRuleEntries(raw, indexes),
     raw,
     indexes,
   );
+  const resolvedEntries = [
+    ...attachedRules,
+    ...resolveDndItemOwnEntries(raw, indexes),
+  ];
   const description = mapStatBlockEntries(resolvedEntries);
   const descriptionPlain = statBlockContentsToPlainText(description, " ");
 

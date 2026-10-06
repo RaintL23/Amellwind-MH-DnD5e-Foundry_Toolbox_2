@@ -1,12 +1,14 @@
-import { parseFiveToolsMarkup } from "@/shared/utils/fivetools-parser";
 import type { Weapon } from "@/shared/types";
-import type { RawItemEntity } from "../utils/item-raw.types";
+import type { ItemBaseIndexes, RawItemEntity } from "../utils/item-raw.types";
 import {
   buildEquipmentSourcePriority,
   pickPreferredBySource,
 } from "../utils/item-dedupe.utils";
 import { mapDndRarityLabel } from "../utils/dnd-equipment-rarity.utils";
-import { parseWeaponCategory } from "./item.mapper";
+import {
+  parseWeaponCategory,
+  renderDndItemPlainDescription,
+} from "./item.mapper";
 
 function normalizeProperty(prop: unknown): string {
   const raw = String(prop);
@@ -31,19 +33,6 @@ export function buildDndWeaponId(name: string, source: string): string {
   return `${name}|${source}`;
 }
 
-function renderWeaponDescription(raw: RawItemEntity): string {
-  const entries = [
-    ...(Array.isArray(raw.entries) ? raw.entries : []),
-    ...(Array.isArray(raw.additionalEntries) ? raw.additionalEntries : []),
-  ];
-
-  return entries
-    .filter((entry): entry is string => typeof entry === "string")
-    .map((entry) => parseFiveToolsMarkup(entry).trim())
-    .filter(Boolean)
-    .join("\n\n");
-}
-
 export function isBuilderDndWeapon(raw: RawItemEntity): boolean {
   if (raw.weapon !== true) return false;
   if (raw.age === "futuristic") return false;
@@ -52,7 +41,10 @@ export function isBuilderDndWeapon(raw: RawItemEntity): boolean {
   return true;
 }
 
-export function mapDndBaseItemToWeapon(raw: RawItemEntity): Weapon {
+export function mapDndBaseItemToWeapon(
+  raw: RawItemEntity,
+  indexes: ItemBaseIndexes,
+): Weapon {
   const properties = Array.isArray(raw.property)
     ? raw.property.map(normalizeProperty)
     : [];
@@ -61,7 +53,7 @@ export function mapDndBaseItemToWeapon(raw: RawItemEntity): Weapon {
   );
   const name = String(raw.name ?? "Unknown");
   const source = String(raw.source ?? "PHB");
-  const description = renderWeaponDescription(raw);
+  const description = renderDndItemPlainDescription(raw, indexes);
 
   return {
     id: buildDndWeaponId(name, source),
