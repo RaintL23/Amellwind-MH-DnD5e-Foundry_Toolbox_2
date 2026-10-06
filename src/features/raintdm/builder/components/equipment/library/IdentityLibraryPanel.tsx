@@ -27,13 +27,13 @@ import {
   entityToLibraryOption,
   prepareLibraryListOptions,
   type LibraryListOption,
-  type SourceVariant,
 } from "@/features/raintdm/builder/utils/library-variant.utils";
 import { resolveRpgbotContext } from "@/features/raintdm/builder/data/rpgbot-ratings.utils";
 import { useRpgbotRatingsLookup } from "@/features/raintdm/builder/hooks/useRpgbotRatingsLookup";
 import { RpgbotLoadingHint } from "@/features/raintdm/builder/components/shared/RpgbotLoadingHint";
 import type { IdentityDataSource } from "@/features/raintdm/builder/utils/builder-library-filters";
-import type { NamedVariant } from "@/features/raintdm/builder/components/shared/NamedVariantSwitcher";
+import type { NamedVariant } from "@/shared/components/NamedVariantSwitcher";
+import type { SourceVariant } from "@/shared/types";
 import { LibraryList } from "@/features/raintdm/builder/components/shared/LibraryList";
 import type {
   Background,

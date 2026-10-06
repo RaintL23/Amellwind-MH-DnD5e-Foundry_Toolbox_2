@@ -2,7 +2,7 @@ import type { ReactNode } from "react";
 import { Wrench } from "lucide-react";
 import { Badge } from "@/components/ui/badge";
 import { cn } from "@/shared/utils/cn";
-import type { LibraryProficiencySummaryRow } from "@/features/raintdm/builder/utils/library-proficiency-highlight.utils";
+import type { LibraryProficiencySummaryRow } from "@/shared/utils/library-proficiency-highlight.utils";
 
 /** Compact badge marking a trait/feature/paragraph that grants proficiency. */
 export function ProficiencyGrantBadge({ className }: { className?: string }) {

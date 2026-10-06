@@ -3,8 +3,8 @@ import { Badge } from "@/components/ui/badge";
 import { Select } from "@/components/ui/select";
 import { Separator } from "@/components/ui/separator";
 import type { BookSourceNameMap } from "@/features/dnd/spells/services/book-source.service";
-import { SourceVariantSwitcher } from "@/features/raintdm/builder/components/shared/SourceVariantSwitcher";
-import type { SourceVariant } from "@/features/raintdm/builder/utils/library-variant.utils";
+import { SourceVariantSwitcher } from "@/shared/components/SourceVariantSwitcher";
+import type { SourceVariant } from "@/shared/types";
 import {
   FeatParagraphList,
   FeatSectionBlock,
@@ -22,11 +22,11 @@ import {
   LibraryProficiencySummary,
   ProficiencyGrantBadge,
   ProficiencyHighlightFrame,
-} from "./shared/LibraryProficiencyHighlight";
+} from "@/shared/components/LibraryProficiencyHighlight";
 import {
   buildSkillGrantSummaryRows,
   textMentionsProficiencyGrant,
-} from "@/features/raintdm/builder/utils/library-proficiency-highlight.utils";
+} from "@/shared/utils/library-proficiency-highlight.utils";
 import { isChoosableAbilityIncrease } from "@/features/raintdm/builder/utils/feat-ability-increase-choices.utils";
 import {
   featDamageTypeLabel,

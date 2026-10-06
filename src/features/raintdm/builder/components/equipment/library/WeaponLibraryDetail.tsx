@@ -35,9 +35,9 @@ import {
 } from "@/features/amellwind/weapons/utils/weapon-hands.utils";
 import { getWeaponEffectiveTierLabel } from "../../../utils/equipment-proficiency.utils";
 import { useBookSourceNames } from "@/shared/hooks/useBookSourceNames";
-import { SourceVariantSwitcher } from "@/features/raintdm/builder/components/shared/SourceVariantSwitcher";
+import { SourceVariantSwitcher } from "@/shared/components/SourceVariantSwitcher";
 import { RarityButtonGroup } from "@/features/raintdm/builder/components/shared/RarityButtonGroup";
-import type { SourceVariant } from "@/features/raintdm/builder/utils/library-variant.utils";
+import type { SourceVariant } from "@/shared/types";
 import { customFeaturesToOptionalMap } from "@/features/raintdm/weapon-forge/mappers/weapon-forge.mapper";
 import { isWeaponForgeWeapon } from "@/features/raintdm/weapon-forge/utils/is-forge-weapon";
 import { LibraryDetailAccordion } from "./shared/LibraryDetailAccordion";

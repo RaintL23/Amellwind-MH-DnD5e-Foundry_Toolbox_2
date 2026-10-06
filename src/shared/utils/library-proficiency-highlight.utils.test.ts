@@ -8,7 +8,7 @@ import {
   entriesMentionProficiencyGrant,
   formatNamedProficiencyGrant,
   textMentionsProficiencyGrant,
-} from "@/features/raintdm/builder/utils/library-proficiency-highlight.utils";
+} from "@/shared/utils/library-proficiency-highlight.utils";
 
 describe("resolveAnyProficiencyOptions", () => {
   it("uses the live artisan catalog even if stale options were passed", () => {

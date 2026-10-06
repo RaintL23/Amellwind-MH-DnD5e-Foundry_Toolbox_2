@@ -9,10 +9,10 @@ import { Badge } from "@/components/ui/badge";
 import { StatBlockContentView } from "@/components/statblock/StatBlockContentView";
 import { DndRichText } from "@/shared/components/DndRichText";
 import { cn } from "@/shared/utils/cn";
-import { entriesMentionProficiencyGrant } from "@/features/raintdm/builder/utils/library-proficiency-highlight.utils";
+import { entriesMentionProficiencyGrant } from "@/shared/utils/library-proficiency-highlight.utils";
 import {
   ProficiencyGrantBadge,
-} from "@/features/raintdm/builder/components/equipment/library/shared/LibraryProficiencyHighlight";
+} from "@/shared/components/LibraryProficiencyHighlight";
 import {
   buildOptionalFeaturePhraseLinks,
   findProgressionById,

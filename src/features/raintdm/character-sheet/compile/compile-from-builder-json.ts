@@ -13,7 +13,7 @@ import { resolveSpeciesParts } from "@/features/raintdm/builder/utils/species-re
 import {
   resolveSpeciesTraitEntries,
   resolveTraitChoiceSelection,
-} from "@/features/raintdm/builder/utils/species-trait-choice.utils";
+} from "@/shared/utils/species-trait-choice.utils";
 import {
   findFeatureChoiceProgressionForFeature,
   shouldOmitClassFeatureForChoices,

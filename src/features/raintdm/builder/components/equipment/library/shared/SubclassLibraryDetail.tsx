@@ -7,8 +7,8 @@ import {
   AccordionTrigger,
 } from "@/components/ui/accordion";
 import { ClassFeatureDetailsPanel } from "@/features/dnd/classes/components/detail/ClassFeatureDetailsPanel";
-import { SourceVariantSwitcher } from "@/features/raintdm/builder/components/shared/SourceVariantSwitcher";
-import type { SourceVariant } from "@/features/raintdm/builder/utils/library-variant.utils";
+import { SourceVariantSwitcher } from "@/shared/components/SourceVariantSwitcher";
+import type { SourceVariant } from "@/shared/types";
 import type { Subclass } from "@/shared/types";
 import { EmptyState } from "./LibraryUi";
 import { collectClassOptionalFeatureProgressions } from "@/features/dnd/classes/utils/class-optional-feature-browse.utils";

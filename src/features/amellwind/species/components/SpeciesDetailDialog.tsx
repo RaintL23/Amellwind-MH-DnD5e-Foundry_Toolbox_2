@@ -12,7 +12,7 @@ import { Badge } from "@/components/ui/badge";
 import { Separator } from "@/components/ui/separator";
 import { DndRichText } from "@/shared/components/DndRichText";
 import { DndMarkupTable } from "@/shared/components/DndMarkupTable";
-import { NamedVariantSwitcher } from "@/features/raintdm/builder/components/shared/NamedVariantSwitcher";
+import { NamedVariantSwitcher } from "@/shared/components/NamedVariantSwitcher";
 import { getSubracesOf } from "../services/species.service";
 
 interface SpeciesDetailDialogProps {

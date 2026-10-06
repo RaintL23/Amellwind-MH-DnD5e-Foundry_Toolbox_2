@@ -2,8 +2,8 @@ import { Swords } from "lucide-react";
 import { Badge } from "@/components/ui/badge";
 import { Separator } from "@/components/ui/separator";
 import type { BookSourceNameMap } from "@/features/dnd/spells/services/book-source.service";
-import { SourceVariantSwitcher } from "@/features/raintdm/builder/components/shared/SourceVariantSwitcher";
-import type { SourceVariant } from "@/features/raintdm/builder/utils/library-variant.utils";
+import { SourceVariantSwitcher } from "@/shared/components/SourceVariantSwitcher";
+import type { SourceVariant } from "@/shared/types";
 import {
   getFeatCategoryLabel,
   type OptionalFeatureCatalogItem,

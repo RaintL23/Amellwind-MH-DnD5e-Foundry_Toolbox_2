@@ -1,4 +1,5 @@
 import { useEffect, useMemo, useState } from "react";
+import { SourceVariantSwitcher } from "@/shared/components/SourceVariantSwitcher";
 import type { DndFeat } from "@/shared/types";
 import { DND_FEAT_CATEGORY_LABELS } from "@/shared/types";
 import {
@@ -11,7 +12,6 @@ import {
 } from "@/components/ui/dialog";
 import { Badge } from "@/components/ui/badge";
 import { Separator } from "@/components/ui/separator";
-import { cn } from "@/shared/utils/cn";
 import {
   getBookSourceNames,
   resolveBookSourceName,
@@ -24,53 +24,6 @@ interface DndFeatDetailDialogProps {
   variants?: DndFeat[];
   open: boolean;
   onOpenChange: (open: boolean) => void;
-}
-
-function SourceSwitcher({
-  variants,
-  activeId,
-  onSelect,
-  bookNames,
-}: {
-  variants: DndFeat[];
-  activeId: string;
-  onSelect: (id: string) => void;
-  bookNames: BookSourceNameMap;
-}) {
-  if (variants.length <= 1) return null;
-
-  return (
-    <div className="space-y-1.5">
-      <p className="text-xs font-semibold text-muted-foreground uppercase tracking-wide">
-        Source
-      </p>
-      <div className="flex flex-wrap gap-1.5">
-        {variants.map((v) => {
-          const isActive = v.id === activeId;
-          const sourceTitle = resolveBookSourceName(bookNames, v.source);
-          return (
-            <button
-              key={v.id}
-              type="button"
-              onClick={() => onSelect(v.id)}
-              title={sourceTitle !== v.source ? sourceTitle : undefined}
-              className={cn(
-                "rounded-md border px-3 py-1.5 text-xs font-medium transition-colors",
-                isActive
-                  ? "border-amber-500 bg-amber-500/20 text-amber-300"
-                  : "border-border bg-card text-muted-foreground hover:bg-accent hover:text-foreground",
-              )}
-            >
-              {v.source}
-              {v.page !== undefined && (
-                <span className="ml-1 opacity-70">p.{v.page}</span>
-              )}
-            </button>
-          );
-        })}
-      </div>
-    </div>
-  );
 }
 
 export function DndFeatDetailDialog({
@@ -148,7 +101,9 @@ export function DndFeatDetailDialog({
         <DialogBody>
           {variants.length > 1 && (
             <>
-              <SourceSwitcher
+              <SourceVariantSwitcher
+                size="md"
+                accent="amber"
                 variants={variants}
                 activeId={activeId}
                 onSelect={setActiveId}

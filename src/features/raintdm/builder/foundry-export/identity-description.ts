@@ -15,7 +15,7 @@ import {
   resolveSpeciesTraitEntries,
   resolveTraitChoiceSelection,
   type SpeciesTraitChoices,
-} from "@/features/raintdm/builder/utils/species-trait-choice.utils";
+} from "@/shared/utils/species-trait-choice.utils";
 import {
   renderFiveToolsEntries,
   type FluffArtResult,

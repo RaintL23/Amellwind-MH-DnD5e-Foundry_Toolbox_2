@@ -1,3 +1,4 @@
+import type { SourceVariant } from "@/shared/types";
 import { useCallback, useEffect, useMemo, useState } from "react";
 import { GraduationCap, Sparkles } from "lucide-react";
 import { useBookSourceNames } from "@/shared/hooks/useBookSourceNames";
@@ -28,7 +29,6 @@ import {
   filterLibraryOptions,
   prepareLibraryListOptions,
   type LibraryListOption,
-  type SourceVariant,
 } from "@/features/raintdm/builder/utils/library-variant.utils";
 import { resolveRpgbotContext } from "@/features/raintdm/builder/data/rpgbot-ratings.utils";
 import { useRpgbotRatingsLookup } from "@/features/raintdm/builder/hooks/useRpgbotRatingsLookup";

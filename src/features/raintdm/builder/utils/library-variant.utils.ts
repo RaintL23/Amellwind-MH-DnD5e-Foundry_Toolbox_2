@@ -8,11 +8,6 @@ import {
   sortByRpgbotRating,
 } from "@/features/raintdm/builder/data/rpgbot-ratings.utils";
 
-export interface SourceVariant {
-  id: string;
-  source: string;
-  page?: number;
-}
 
 export interface LibraryListOption {
   id: string;

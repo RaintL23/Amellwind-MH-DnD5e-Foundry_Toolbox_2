@@ -24,11 +24,11 @@ import { collectClassOptionalFeatureProgressions } from "@/features/dnd/classes/
 import { ClassMetaListSection } from "@/features/dnd/classes/components/detail/ClassMetaListSection";
 import {
   LibraryProficiencySummary,
-} from "./shared/LibraryProficiencyHighlight";
+} from "@/shared/components/LibraryProficiencyHighlight";
 import {
   buildNamedGrantSummaryRows,
   buildSkillGrantSummaryRows,
-} from "@/features/raintdm/builder/utils/library-proficiency-highlight.utils";
+} from "@/shared/utils/library-proficiency-highlight.utils";
 import { hasClassMetaListContent } from "@/features/dnd/classes/utils/class-meta-list.utils";
 
 interface ClassLibraryDetailProps {

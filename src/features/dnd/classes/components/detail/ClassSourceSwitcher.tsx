@@ -5,7 +5,7 @@ import {
   type ClassVariantField,
 } from "../../utils/class-variant.utils";
 import type { BookSourceNameMap } from "@/features/dnd/spells/services/book-source.service";
-import { SourceVariantSwitcher } from "@/features/raintdm/builder/components/shared/SourceVariantSwitcher";
+import { SourceVariantSwitcher } from "@/shared/components/SourceVariantSwitcher";
 
 interface ClassSourceSwitcherProps {
   variants: Class[];
@@ -15,6 +15,10 @@ interface ClassSourceSwitcherProps {
   bookNames: BookSourceNameMap;
 }
 
+function classesDiffer(a: Class, b: Class): boolean {
+  return getFieldsDifferentFromVariant(a, b).length > 0;
+}
+
 export const ClassSourceSwitcher = memo(function ClassSourceSwitcher({
   variants,
   activeId,
@@ -22,8 +26,6 @@ export const ClassSourceSwitcher = memo(function ClassSourceSwitcher({
   varyingFields,
   bookNames,
 }: ClassSourceSwitcherProps) {
-  const hasDiffs = varyingFields.length > 0;
-
   return (
     <SourceVariantSwitcher
       variants={variants}
@@ -33,25 +35,7 @@ export const ClassSourceSwitcher = memo(function ClassSourceSwitcher({
       accent="sky"
       size="md"
       showLabel={false}
-      renderBadgeExtra={(variant, isActive) => {
-        if (isActive || !hasDiffs) return null;
-        const cls = variants.find((v) => v.id === variant.id);
-        if (!cls) return null;
-        const differsFromOthers = variants.some(
-          (other) =>
-            other.id !== cls.id &&
-            getFieldsDifferentFromVariant(cls, other).length > 0,
-        );
-        if (!differsFromOthers) return null;
-        return (
-          <span
-            className="ml-1 text-amber-400"
-            title="Differs from other sources"
-          >
-            •
-          </span>
-        );
-      }}
+      differs={varyingFields.length > 0 ? classesDiffer : undefined}
     />
   );
 });

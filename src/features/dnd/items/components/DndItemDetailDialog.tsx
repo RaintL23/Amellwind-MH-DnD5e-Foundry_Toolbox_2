@@ -1,4 +1,5 @@
 import { useEffect, useMemo, useState } from "react";
+import { SourceVariantSwitcher } from "@/shared/components/SourceVariantSwitcher";
 import { DndItem } from "@/shared/types";
 import {
   Dialog,
@@ -149,69 +150,8 @@ function VariantDiffBanner({
   );
 }
 
-function SourceSwitcher({
-  variants,
-  activeId,
-  onSelect,
-  varyingFields,
-  bookNames,
-}: {
-  variants: DndItem[];
-  activeId: string;
-  onSelect: (id: string) => void;
-  varyingFields: DndItemVariantField[];
-  bookNames: BookSourceNameMap;
-}) {
-  if (variants.length <= 1) return null;
-
-  return (
-    <div className="space-y-1.5">
-      <p className="text-xs font-semibold text-muted-foreground uppercase tracking-wide">
-        Source
-      </p>
-      <div className="flex flex-wrap gap-1.5">
-        {variants.map((v) => {
-          const isActive = v.id === activeId;
-          const differsFromOthers =
-            varyingFields.length > 0 &&
-            variants.some(
-              (other) =>
-                other.id !== v.id &&
-                getFieldsDifferentFromVariant(v, other).length > 0,
-            );
-          const sourceTitle = resolveBookSourceName(bookNames, v.source);
-
-          return (
-            <button
-              key={v.id}
-              type="button"
-              onClick={() => onSelect(v.id)}
-              title={sourceTitle !== v.source ? sourceTitle : undefined}
-              className={cn(
-                "rounded-md border px-3 py-1.5 text-xs font-medium transition-colors",
-                isActive
-                  ? "border-amber-500 bg-amber-500/20 text-amber-300"
-                  : "border-border bg-card text-muted-foreground hover:bg-accent hover:text-foreground",
-              )}
-            >
-              {v.source}
-              {v.page !== undefined && (
-                <span className="ml-1 opacity-70">p.{v.page}</span>
-              )}
-              {!isActive && differsFromOthers && (
-                <span
-                  className="ml-1 text-amber-400"
-                  title="Differs from other sources"
-                >
-                  •
-                </span>
-              )}
-            </button>
-          );
-        })}
-      </div>
-    </div>
-  );
+function itemsDiffer(a: DndItem, b: DndItem): boolean {
+  return getFieldsDifferentFromVariant(a, b).length > 0;
 }
 
 export function DndItemDetailDialog({
@@ -359,11 +299,13 @@ export function DndItemDetailDialog({
 
         <DialogBody>
           <div className="space-y-4 mb-4">
-            <SourceSwitcher
+            <SourceVariantSwitcher
+              size="md"
+              accent="amber"
               variants={variants}
               activeId={active.id}
               onSelect={setActiveId}
-              varyingFields={varyingFields}
+              differs={varyingFields.length > 0 ? itemsDiffer : undefined}
               bookNames={bookNames}
             />
             <VariantDiffBanner

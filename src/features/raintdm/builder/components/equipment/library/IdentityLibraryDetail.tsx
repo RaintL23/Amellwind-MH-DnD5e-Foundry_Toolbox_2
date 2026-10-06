@@ -5,9 +5,9 @@ import type { BookSourceNameMap } from "@/features/dnd/spells/services/book-sour
 import {
   NamedVariantSwitcher,
   type NamedVariant,
-} from "@/features/raintdm/builder/components/shared/NamedVariantSwitcher";
-import { SourceVariantSwitcher } from "@/features/raintdm/builder/components/shared/SourceVariantSwitcher";
-import type { SourceVariant } from "@/features/raintdm/builder/utils/library-variant.utils";
+} from "@/shared/components/NamedVariantSwitcher";
+import { SourceVariantSwitcher } from "@/shared/components/SourceVariantSwitcher";
+import type { SourceVariant } from "@/shared/types";
 import { cn } from "@/shared/utils/cn";
 import {
   BACKGROUND_FACTION_LABELS,
@@ -30,17 +30,17 @@ import {
   LibraryProficiencySummary,
   ProficiencyGrantBadge,
   ProficiencyHighlightFrame,
-} from "./shared/LibraryProficiencyHighlight";
+} from "@/shared/components/LibraryProficiencyHighlight";
 import { LibraryDetailAccordion } from "./shared/LibraryDetailAccordion";
 import {
   buildNamedGrantSummaryRows,
   buildSkillGrantSummaryRows,
   entriesMentionProficiencyGrant,
-} from "@/features/raintdm/builder/utils/library-proficiency-highlight.utils";
+} from "@/shared/utils/library-proficiency-highlight.utils";
 import {
   resolveSpeciesTraitEntries,
   speciesTraitChoiceKey,
-} from "@/features/raintdm/builder/utils/species-trait-choice.utils";
+} from "@/shared/utils/species-trait-choice.utils";
 
 interface IdentityLibraryDetailProps {
   species?: Species;

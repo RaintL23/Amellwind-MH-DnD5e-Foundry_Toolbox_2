@@ -19,7 +19,7 @@ import { isAsiChoicesComplete } from "./helpers";
 import {
   findSpeciesTraitChoiceGaps,
   speciesTraitsForCreationChoices,
-} from "../species-trait-choice.utils";
+} from "@/shared/utils/species-trait-choice.utils";
 
 export function evaluateIdentityCompleteness(
   input: BuildCompletenessInput,

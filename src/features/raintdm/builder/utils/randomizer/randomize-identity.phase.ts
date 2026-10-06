@@ -27,7 +27,7 @@ import {
 import { resolveClassAbilityPriority } from "@/features/raintdm/builder/utils/randomizer/class-ability-priority.utils";
 import { pickAllSkillChoices } from "@/features/raintdm/builder/utils/randomizer/skill-randomizer.utils";
 import { resolveOriginFeatSelectionForGrant } from "@/features/raintdm/builder/utils/randomizer/feat-randomizer.utils";
-import { collectSpeciesTraitsWithCreationChoice } from "@/features/raintdm/builder/utils/species-trait-choice.utils";
+import { collectSpeciesTraitsWithCreationChoice } from "@/shared/utils/species-trait-choice.utils";
 import type { SpeciesTrait } from "@/shared/types";
 
 function assignRandomSpeciesTraitChoices(

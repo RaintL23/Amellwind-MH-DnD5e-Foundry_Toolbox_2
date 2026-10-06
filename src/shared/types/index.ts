@@ -32,3 +32,4 @@ export * from "./dnd-condition.types";
 export * from "./proficiency.types";
 export * from "./starting-equipment.types";
 export * from "./dnd-optionalfeature.types";
+export * from "./source-variant.types";

@@ -9,7 +9,7 @@ import { getOptionalFeatureCountAtLevel } from "@/features/dnd/classes/utils/opt
 import {
   resolveSpeciesTraitEntries,
   resolveTraitChoiceSelection,
-} from "@/features/raintdm/builder/utils/species-trait-choice.utils";
+} from "@/shared/utils/species-trait-choice.utils";
 import { shouldOmitClassFeatureForChoices } from "@/features/raintdm/builder/utils/feature-choice-description.utils";
 
 /**
