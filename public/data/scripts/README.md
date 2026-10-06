@@ -28,19 +28,14 @@ into `foundry-jsons-example/runes/**/fvtt-Item-*-rune.json`.
 | `partbreaker-plus-one.fragment.js` | Shared Partbreaker+1 combat-pass fragment (Coral Pukei / Duramboros / Uragaan) |
 | `compose-rune-itemacro.mjs` | Helper: controller + optional combat passes → full `flags.itemacro` command |
 
-**Per-rune** Midi / on-equip code still lives with each Item (or as `macroTail` in the
-`_build-*-runes.mjs` generators). AE blueprints and `sides` flags stay on the JSON.
+**Per-rune** Midi / on-equip code lives with each Item JSON, which is the source of truth.
+AE blueprints and `sides` flags stay on the JSON.
 
-Rebuild / sync:
+Sync:
 
 ```bash
-# Generators (write full items, including macro via composeRuneItemMacroCommand)
-node public/data/foundry-jsons-example/runes/_build-requested-runes.mjs
-node public/data/foundry-jsons-example/runes/_build-alatreon-oneshot-runes.mjs
-node public/data/foundry-jsons-example/runes/_build-missing-runes.mjs
-
 # Re-inject shared controller into every rune JSON (preserves per-rune combat passes)
-node public/data/foundry-jsons-example/runes/build-runes-itemacro.mjs
+node public/data/foundry-jsons-example/runes/_build/sync-itemacro.mjs
 ```
 
 App `/runes` and Character Builder Foundry export remain **description-only**; curated
