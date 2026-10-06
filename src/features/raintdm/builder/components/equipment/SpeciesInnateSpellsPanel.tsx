@@ -6,11 +6,11 @@
 import { useEffect, useState } from "react";
 import { useCharacterBuilder } from "@/features/raintdm/builder/context/CharacterBuilderContext";
 import { resolveSpeciesParts } from "@/features/raintdm/builder/utils/species-resolution.utils";
+import { speciesSpellGrantSourceHasSpells } from "@/features/raintdm/builder/utils/species-spell-grants.utils";
 import {
   combineSpeciesSpellGrantSource,
   resolveActiveSpellGroup,
-  speciesSpellGrantSourceHasSpells,
-} from "@/features/raintdm/builder/utils/species-spell-grants.utils";
+} from "@/shared/utils/species-spell-groups.utils";
 
 export interface SpeciesSpellGrantUiState {
   groupLabel: string | null;

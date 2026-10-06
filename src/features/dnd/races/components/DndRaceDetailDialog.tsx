@@ -1,4 +1,5 @@
 import { useEffect, useMemo, useState } from "react";
+import { SourceVariantSwitcher } from "@/shared/components/SourceVariantSwitcher";
 import type { DndRace } from "@/shared/types";
 import { DND_RACE_KIND_LABELS } from "@/shared/types";
 import {
@@ -11,151 +12,20 @@ import {
 } from "@/components/ui/dialog";
 import { Badge } from "@/components/ui/badge";
 import { Separator } from "@/components/ui/separator";
-import { cn } from "@/shared/utils/cn";
-import { DndRichText } from "@/shared/components/DndRichText";
-import { DndMarkupTable } from "@/shared/components/DndMarkupTable";
+import { SpeciesContent } from "@/shared/components/species/SpeciesContent";
+import { resolveSpeciesDisplayStats } from "@/shared/utils/species-display.utils";
 import {
   getBookSourceNames,
   resolveBookSourceName,
   type BookSourceNameMap,
 } from "@/features/dnd/spells/services/book-source.service";
+import { getDndSubracesForParent } from "../services/dnd-race.service";
 
 interface DndRaceDetailDialogProps {
   race: DndRace | null;
   variants?: DndRace[];
   open: boolean;
   onOpenChange: (open: boolean) => void;
-}
-
-function SourceSwitcher({
-  variants,
-  activeId,
-  onSelect,
-  bookNames,
-}: {
-  variants: DndRace[];
-  activeId: string;
-  onSelect: (id: string) => void;
-  bookNames: BookSourceNameMap;
-}) {
-  if (variants.length <= 1) return null;
-
-  return (
-    <div className="space-y-1.5">
-      <p className="text-xs font-semibold text-muted-foreground uppercase tracking-wide">
-        Source
-      </p>
-      <div className="flex flex-wrap gap-1.5">
-        {variants.map((v) => {
-          const isActive = v.id === activeId;
-          const sourceTitle = resolveBookSourceName(bookNames, v.source);
-          return (
-            <button
-              key={v.id}
-              type="button"
-              onClick={() => onSelect(v.id)}
-              title={sourceTitle !== v.source ? sourceTitle : undefined}
-              className={cn(
-                "rounded-md border px-3 py-1.5 text-xs font-medium transition-colors",
-                isActive
-                  ? "border-emerald-500 bg-emerald-500/20 text-emerald-300"
-                  : "border-border bg-card text-muted-foreground hover:bg-accent hover:text-foreground",
-              )}
-            >
-              {v.source}
-              {v.page !== undefined && (
-                <span className="ml-1 opacity-70">p.{v.page}</span>
-              )}
-            </button>
-          );
-        })}
-      </div>
-    </div>
-  );
-}
-
-function RaceBody({ race }: { race: DndRace }) {
-  return (
-    <>
-      {race.fluff && (
-        <p className="text-sm text-muted-foreground italic mb-4 leading-relaxed border-l-2 border-emerald-800/40 pl-3 whitespace-pre-line">
-          {race.fluff}
-        </p>
-      )}
-
-      <div className="grid grid-cols-2 sm:grid-cols-3 gap-3 mb-4 text-sm">
-        {race.abilitySummary && race.abilitySummary !== "—" && (
-          <div className="rounded-md border border-border bg-muted/20 px-3 py-2">
-            <p className="text-[10px] uppercase tracking-wider text-muted-foreground mb-0.5">
-              Ability Bonuses
-            </p>
-            <p className="font-medium text-foreground">{race.abilitySummary}</p>
-          </div>
-        )}
-        {race.darkvision !== undefined && (
-          <div className="rounded-md border border-border bg-muted/20 px-3 py-2">
-            <p className="text-[10px] uppercase tracking-wider text-muted-foreground mb-0.5">
-              Darkvision
-            </p>
-            <p className="font-medium text-foreground">{race.darkvision} ft.</p>
-          </div>
-        )}
-        {(race.resistances.length > 0 || race.resistanceSummary) && (
-          <div className="rounded-md border border-border bg-muted/20 px-3 py-2">
-            <p className="text-[10px] uppercase tracking-wider text-muted-foreground mb-0.5">
-              Resistances
-            </p>
-            <p className="font-medium text-foreground capitalize">
-              {[...race.resistances, race.resistanceSummary].filter(Boolean).join(" · ")}
-            </p>
-          </div>
-        )}
-      </div>
-
-      {race.traitTags.length > 0 && (
-        <div className="flex flex-wrap gap-1 mb-4">
-          {race.traitTags.map((tag) => (
-            <Badge key={tag} variant="outline" className="text-xs">
-              {tag}
-            </Badge>
-          ))}
-        </div>
-      )}
-
-      {race.traits.length > 0 && (
-        <>
-          <Separator className="my-4" />
-          <h3 className="text-xs font-bold text-emerald-400 uppercase tracking-wider mb-3">
-            Racial Traits
-          </h3>
-          <div className="space-y-4">
-            {race.traits.map((trait) => (
-              <div key={trait.name}>
-                <h4 className="text-sm font-semibold text-foreground mb-1">{trait.name}</h4>
-                {trait.entries.map((paragraph, i) => (
-                  <p
-                    key={i}
-                    className="text-sm text-muted-foreground leading-relaxed mb-1"
-                  >
-                    <DndRichText text={paragraph} />
-                  </p>
-                ))}
-                {trait.tables?.map((table, i) => (
-                  <DndMarkupTable
-                    key={i}
-                    caption={table.caption}
-                    colLabels={table.colLabels}
-                    rows={table.rows}
-                    captionClassName="text-emerald-400/90"
-                  />
-                ))}
-              </div>
-            ))}
-          </div>
-        </>
-      )}
-    </>
-  );
 }
 
 export function DndRaceDetailDialog({
@@ -185,15 +55,43 @@ export function DndRaceDetailDialog({
     [variants, activeId, raceProp],
   );
 
+  const [subraces, setSubraces] = useState<DndRace[]>([]);
+  const [activeSubraceId, setActiveSubraceId] = useState<string | null>(null);
+  const [activeLegacyId, setActiveLegacyId] = useState<string | null>(null);
+
+  useEffect(() => {
+    setSubraces([]);
+    setActiveSubraceId(null);
+    setActiveLegacyId(null);
+    if (!activeRace || activeRace.parentName) return;
+
+    let cancelled = false;
+    void getDndSubracesForParent(activeRace.name, activeRace.source).then(
+      (list) => {
+        if (!cancelled) setSubraces(list);
+      },
+    );
+    return () => {
+      cancelled = true;
+    };
+  }, [activeRace]);
+
   if (!activeRace) return null;
 
+  const activeSubrace =
+    subraces.find((subrace) => subrace.id === activeSubraceId) ?? null;
+  const stats = resolveSpeciesDisplayStats(activeRace, activeSubrace);
   const sourceName = resolveBookSourceName(bookNames, activeRace.source);
 
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
       <DialogContent className="max-w-2xl">
         <DialogHeader>
-          <DialogTitle className="text-emerald-400 text-2xl">{activeRace.name}</DialogTitle>
+          <DialogTitle className="text-emerald-400 text-2xl">
+            {activeSubrace
+              ? `${activeRace.name} (${activeSubrace.name})`
+              : activeRace.name}
+          </DialogTitle>
           <DialogDescription asChild>
             <div className="flex items-center gap-2 flex-wrap">
               <Badge variant="secondary">{DND_RACE_KIND_LABELS[activeRace.kind]}</Badge>
@@ -203,8 +101,8 @@ export function DndRaceDetailDialog({
                   {activeRace.parentSource ? ` (${activeRace.parentSource})` : ""}
                 </Badge>
               )}
-              <Badge variant="outline">{activeRace.sizes.join(", ")}</Badge>
-              <Badge variant="outline">{activeRace.speed}</Badge>
+              <Badge variant="outline">{stats.sizes.join(", ")}</Badge>
+              <Badge variant="outline">{stats.speed}</Badge>
               <span
                 className="text-xs text-muted-foreground"
                 title={sourceName !== activeRace.source ? sourceName : undefined}
@@ -219,7 +117,9 @@ export function DndRaceDetailDialog({
         <DialogBody>
           {variants.length > 1 && (
             <>
-              <SourceSwitcher
+              <SourceVariantSwitcher
+                size="md"
+                accent="emerald"
                 variants={variants}
                 activeId={activeId}
                 onSelect={setActiveId}
@@ -229,7 +129,19 @@ export function DndRaceDetailDialog({
             </>
           )}
 
-          <RaceBody race={activeRace} />
+          <SpeciesContent
+            species={activeRace}
+            subspecies={activeSubrace}
+            subspeciesOptions={subraces.map((subrace) => ({
+              id: subrace.id,
+              name: subrace.name,
+            }))}
+            activeSubspeciesId={activeSubraceId}
+            onSubspeciesSelect={setActiveSubraceId}
+            activeLegacyId={activeLegacyId}
+            onLegacySelect={setActiveLegacyId}
+            density="comfortable"
+          />
         </DialogBody>
       </DialogContent>
     </Dialog>

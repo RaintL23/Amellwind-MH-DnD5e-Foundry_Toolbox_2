@@ -1,35 +1,12 @@
-import type { BuilderSpellSelection, DndRace, Spell, Species } from "@/shared/types";
-import type { SpeciesNamedSpellGroup } from "@/shared/types/dnd-race.types";
+import type { BuilderSpellSelection, DndRace, Spell } from "@/shared/types";
 import { getAllSpells } from "@/features/dnd/spells/services/spell.service";
+import {
+  resolveActiveSpellGroup,
+  type SpeciesSpellGrantSource,
+} from "@/shared/utils/species-spell-groups.utils";
 import { normalizeSpellRef } from "./subclass-spells.utils";
 
 export const SPECIES_LINEAGE_SPELL_SOURCE = "species-lineage";
-
-export interface SpeciesSpellGrantSource {
-  universalCantrips?: string[];
-  namedSpellGroups?: SpeciesNamedSpellGroup[];
-}
-
-export function combineSpeciesSpellGrantSource(
-  base: Species | DndRace | undefined,
-  subrace: Species | DndRace | null | undefined,
-): SpeciesSpellGrantSource | null {
-  if (!base && !subrace) return null;
-  const root = base ?? subrace!;
-  const variant = subrace ?? null;
-  const groups =
-    variant?.namedSpellGroups && variant.namedSpellGroups.length > 0
-      ? variant.namedSpellGroups
-      : root.namedSpellGroups;
-
-  return {
-    universalCantrips: [
-      ...(root.universalCantrips ?? []),
-      ...(variant?.universalCantrips ?? []),
-    ],
-    namedSpellGroups: groups,
-  };
-}
 
 export function isSpeciesLineageSpell(
   selection: Pick<BuilderSpellSelection, "id" | "source">,
@@ -60,22 +37,6 @@ export function partitionSpellSelections(
 
 function toSpellId(name: string): string {
   return normalizeSpellRef(name).toLowerCase().replace(/[^a-z0-9]+/g, "-");
-}
-
-export function resolveActiveSpellGroup(
-  source: SpeciesSpellGrantSource,
-  choice: string | null,
-): SpeciesNamedSpellGroup | null {
-  if (!source.namedSpellGroups?.length) return null;
-  if (source.namedSpellGroups.length === 1) {
-    return source.namedSpellGroups[0] ?? null;
-  }
-  if (!choice) return null;
-  return (
-    source.namedSpellGroups.find(
-      (group) => group.name.toLowerCase() === choice.toLowerCase(),
-    ) ?? null
-  );
 }
 
 function makeSelection(

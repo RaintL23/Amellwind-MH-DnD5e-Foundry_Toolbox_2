@@ -1,6 +1,6 @@
 import { useEffect, useMemo, useState } from "react";
-import type { DndBackground, DndFeat } from "@/shared/types";
-import { DND_BACKGROUND_EDITION_LABELS } from "@/shared/types";
+import { SourceVariantSwitcher } from "@/shared/components/SourceVariantSwitcher";
+import type { DndBackground } from "@/shared/types";
 import {
   Dialog,
   DialogContent,
@@ -11,256 +11,19 @@ import {
 } from "@/components/ui/dialog";
 import { Badge } from "@/components/ui/badge";
 import { Separator } from "@/components/ui/separator";
-import { cn } from "@/shared/utils/cn";
-import { DndRichText } from "@/shared/components/DndRichText";
-import { DndMarkupTable } from "@/shared/components/DndMarkupTable";
+import { BackgroundContent } from "@/shared/components/background/BackgroundContent";
+import { getBackgroundMetaLabels } from "@/shared/utils/background-display.utils";
 import {
   getBookSourceNames,
   resolveBookSourceName,
   type BookSourceNameMap,
 } from "@/features/dnd/spells/services/book-source.service";
-import { resolveDndFeatForRef } from "@/features/dnd/feats/services/dnd-feat.service";
-import { DndFeatInlineContent } from "@/features/dnd/feats/components/DndFeatDetailDialog";
 
 interface DndBackgroundDetailDialogProps {
   background: DndBackground | null;
   variants?: DndBackground[];
   open: boolean;
   onOpenChange: (open: boolean) => void;
-}
-
-function SourceSwitcher({
-  variants,
-  activeId,
-  onSelect,
-  bookNames,
-}: {
-  variants: DndBackground[];
-  activeId: string;
-  onSelect: (id: string) => void;
-  bookNames: BookSourceNameMap;
-}) {
-  if (variants.length <= 1) return null;
-
-  return (
-    <div className="space-y-1.5">
-      <p className="text-xs font-semibold text-muted-foreground uppercase tracking-wide">
-        Source
-      </p>
-      <div className="flex flex-wrap gap-1.5">
-        {variants.map((v) => {
-          const isActive = v.id === activeId;
-          const sourceTitle = resolveBookSourceName(bookNames, v.source);
-          return (
-            <button
-              key={v.id}
-              type="button"
-              onClick={() => onSelect(v.id)}
-              title={sourceTitle !== v.source ? sourceTitle : undefined}
-              className={cn(
-                "rounded-md border px-3 py-1.5 text-xs font-medium transition-colors",
-                isActive
-                  ? "border-amber-500 bg-amber-500/20 text-amber-300"
-                  : "border-border bg-card text-muted-foreground hover:bg-accent hover:text-foreground",
-              )}
-            >
-              {v.source}
-              {v.page !== undefined && (
-                <span className="ml-1 opacity-70">p.{v.page}</span>
-              )}
-            </button>
-          );
-        })}
-      </div>
-    </div>
-  );
-}
-
-function SectionBlock({
-  sections,
-  heading,
-  accentClass,
-}: {
-  sections: DndBackground["features"];
-  heading: string;
-  accentClass: string;
-}) {
-  if (!sections.length) return null;
-
-  return (
-    <>
-      <h3
-        className={`text-xs font-bold uppercase tracking-wider mb-3 ${accentClass}`}
-      >
-        {heading}
-      </h3>
-      <div className="space-y-4">
-        {sections.map((section) => (
-          <div key={section.name}>
-            <h4 className="text-sm font-semibold text-foreground mb-1">
-              {section.name}
-            </h4>
-            {section.entries.map((paragraph, i) => (
-              <p
-                key={i}
-                className="text-sm text-muted-foreground leading-relaxed mb-1"
-              >
-                <DndRichText text={paragraph} />
-              </p>
-            ))}
-            {section.tables?.map((table, i) => (
-              <DndMarkupTable key={i} {...table} />
-            ))}
-          </div>
-        ))}
-      </div>
-    </>
-  );
-}
-
-function OriginFeatSection({ background }: { background: DndBackground }) {
-  const [loadedFeats, setLoadedFeats] = useState<
-    Array<{ refId: string; feat?: DndFeat; loading: boolean }>
-  >([]);
-
-  useEffect(() => {
-    if (!background.featRefs?.length) {
-      setLoadedFeats([]);
-      return;
-    }
-
-    setLoadedFeats(
-      background.featRefs.map((ref) => ({
-        refId: ref.id,
-        loading: true,
-      })),
-    );
-
-    void Promise.all(
-      background.featRefs.map(async (ref) => ({
-        refId: ref.id,
-        feat: await resolveDndFeatForRef(ref),
-        loading: false,
-      })),
-    ).then(setLoadedFeats);
-  }, [background.id, background.featRefs]);
-
-  if (!background.featSummary && !background.featRefs?.length) return null;
-
-  return (
-    <div className="sm:col-span-2 space-y-3">
-      <div className="rounded-md border border-border bg-muted/20 px-3 py-2">
-        <p className="text-[10px] uppercase tracking-wider text-muted-foreground mb-0.5">
-          Origin Feat
-        </p>
-        <p className="font-medium text-foreground">{background.featSummary}</p>
-      </div>
-
-      {loadedFeats.map((entry) => {
-        if (entry.loading) {
-          return (
-            <div
-              key={entry.refId}
-              className="rounded-md border border-border bg-muted/10 px-3 py-4 text-sm text-muted-foreground"
-            >
-              Loading feat details…
-            </div>
-          );
-        }
-        if (!entry.feat) return null;
-        return <DndFeatInlineContent key={entry.refId} feat={entry.feat} />;
-      })}
-    </div>
-  );
-}
-
-function BackgroundBody({ background }: { background: DndBackground }) {
-  return (
-    <>
-      {background.fluff && (
-        <p className="text-sm text-muted-foreground italic mb-4 leading-relaxed border-l-2 border-amber-800/40 pl-3 whitespace-pre-line">
-          {background.fluff}
-        </p>
-      )}
-
-      <h3 className="text-xs font-bold text-amber-400 uppercase tracking-wider mb-3">
-        Proficiencies
-      </h3>
-      <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 mb-4 text-sm">
-        <div className="rounded-md border border-border bg-muted/20 px-3 py-2 sm:col-span-2">
-          <p className="text-[10px] uppercase tracking-wider text-muted-foreground mb-0.5">
-            Skills
-          </p>
-          <p className="font-medium text-foreground">
-            {background.proficiencies.skills}
-          </p>
-        </div>
-        {background.proficiencies.tools !== "—" && (
-          <div className="rounded-md border border-border bg-muted/20 px-3 py-2">
-            <p className="text-[10px] uppercase tracking-wider text-muted-foreground mb-0.5">
-              Tools
-            </p>
-            <p className="font-medium text-foreground">
-              {background.proficiencies.tools}
-            </p>
-          </div>
-        )}
-        {background.proficiencies.languages !== "—" && (
-          <div className="rounded-md border border-border bg-muted/20 px-3 py-2">
-            <p className="text-[10px] uppercase tracking-wider text-muted-foreground mb-0.5">
-              Languages
-            </p>
-            <p className="font-medium text-foreground">
-              {background.proficiencies.languages}
-            </p>
-          </div>
-        )}
-        {background.abilitySummary && (
-          <div className="rounded-md border border-border bg-muted/20 px-3 py-2">
-            <p className="text-[10px] uppercase tracking-wider text-muted-foreground mb-0.5">
-              Ability Scores
-            </p>
-            <p className="font-medium text-foreground">{background.abilitySummary}</p>
-          </div>
-        )}
-        {(background.featSummary || background.featRefs?.length) && (
-          <OriginFeatSection background={background} />
-        )}
-        {background.proficiencies.equipment !== "—" && (
-          <div className="rounded-md border border-border bg-muted/20 px-3 py-2 sm:col-span-2">
-            <p className="text-[10px] uppercase tracking-wider text-muted-foreground mb-0.5">
-              Equipment
-            </p>
-            <p className="font-medium text-foreground text-sm leading-relaxed">
-              {background.proficiencies.equipment}
-            </p>
-          </div>
-        )}
-      </div>
-
-      {background.features.length > 0 && (
-        <>
-          <Separator className="my-4" />
-          <SectionBlock
-            sections={background.features}
-            heading="Background Features"
-            accentClass="text-amber-400"
-          />
-        </>
-      )}
-
-      {background.suggestedCharacteristics.length > 0 && (
-        <>
-          <Separator className="my-4" />
-          <SectionBlock
-            sections={background.suggestedCharacteristics}
-            heading="Suggested Characteristics"
-            accentClass="text-violet-400"
-          />
-        </>
-      )}
-    </>
-  );
 }
 
 export function DndBackgroundDetailDialog({
@@ -305,15 +68,11 @@ export function DndBackgroundDetailDialog({
           </DialogTitle>
           <DialogDescription asChild>
             <div className="flex items-center gap-2 flex-wrap">
-              {activeBackground.edition && (
-                <Badge variant="secondary">
-                  {DND_BACKGROUND_EDITION_LABELS[activeBackground.edition]}
+              {getBackgroundMetaLabels(activeBackground).map((label, i) => (
+                <Badge key={label} variant={i === 0 ? "secondary" : "outline"}>
+                  {label}
                 </Badge>
-              )}
-              {activeBackground.srd && <Badge variant="outline">SRD</Badge>}
-              {activeBackground.basicRules && (
-                <Badge variant="outline">Basic Rules</Badge>
-              )}
+              ))}
               <span
                 className="text-xs text-muted-foreground"
                 title={sourceName !== activeBackground.source ? sourceName : undefined}
@@ -330,7 +89,9 @@ export function DndBackgroundDetailDialog({
         <DialogBody>
           {variants.length > 1 && (
             <>
-              <SourceSwitcher
+              <SourceVariantSwitcher
+                size="md"
+                accent="amber"
                 variants={variants}
                 activeId={activeId}
                 onSelect={setActiveId}
@@ -340,7 +101,11 @@ export function DndBackgroundDetailDialog({
             </>
           )}
 
-          <BackgroundBody background={activeBackground} />
+          <BackgroundContent
+            background={activeBackground}
+            density="comfortable"
+            accent="amber"
+          />
         </DialogBody>
       </DialogContent>
     </Dialog>

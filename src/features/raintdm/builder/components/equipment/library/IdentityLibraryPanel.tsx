@@ -1,3 +1,4 @@
+import type { SourceVariant } from "@/shared/types";
 import { useEffect, useMemo, useState } from "react";
 import { ScrollText, Users } from "lucide-react";
 import { useBookSourceNames } from "@/shared/hooks/useBookSourceNames";
@@ -33,10 +34,8 @@ import { useRpgbotRatingsLookup } from "@/features/raintdm/builder/hooks/useRpgb
 import { RpgbotLoadingHint } from "@/features/raintdm/builder/components/shared/RpgbotLoadingHint";
 import type { IdentityDataSource } from "@/features/raintdm/builder/utils/builder-library-filters";
 import type { NamedVariant } from "@/shared/components/NamedVariantSwitcher";
-import type { SourceVariant } from "@/shared/types";
 import { LibraryList } from "@/features/raintdm/builder/components/shared/LibraryList";
 import type {
-  Background,
   DndBackground,
   DndRace,
   Species,
@@ -48,10 +47,8 @@ import {
   libraryOptionMatchesSourceFilter,
 } from "@/features/raintdm/builder/utils/builder-library-filters";
 import { IdentityLibraryDetail } from "./IdentityLibraryDetail";
-import {
-  getBackgroundDetailExtras,
-  IdentityLibraryPreview,
-} from "./IdentityLibraryPreview";
+import { IdentityLibraryPreview } from "./IdentityLibraryPreview";
+import type { BackgroundDetailData } from "@/shared/utils/background-display.utils";
 import { EmptyState, LibraryBackToListButton } from "./shared/LibraryUi";
 
 interface IdentityLibraryPanelProps {
@@ -62,13 +59,17 @@ interface IdentityLibraryPanelProps {
   onSearchHiddenChange?: (hidden: boolean) => void;
 }
 
-function isLoadedSpecies(data: Species | Background | null): data is Species {
+type LoadedIdentity = Species | DndRace | BackgroundDetailData;
+
+function isLoadedSpecies(
+  data: LoadedIdentity | null,
+): data is Species | DndRace {
   return !!data && "traits" in data;
 }
 
 function isLoadedBackground(
-  data: Species | Background | null,
-): data is Background {
+  data: LoadedIdentity | null,
+): data is BackgroundDetailData {
   return !!data && "proficiencies" in data;
 }
 
@@ -88,7 +89,7 @@ export function IdentityLibraryPanel({
     [],
   );
   const [identityDetail, setIdentityDetail] = useState<
-    Species | Background | null
+    LoadedIdentity | null
   >(null);
   const [identitySubraceDetail, setIdentitySubraceDetail] =
     useState<DndRace | null>(null);
@@ -284,7 +285,7 @@ export function IdentityLibraryPanel({
         }
 
         if (dndRace) {
-          setIdentityDetail(dndRace as unknown as Species);
+          setIdentityDetail(dndRace);
           setLoadedDndRaceBase(dndRace);
 
           const subraces = await getDndSubracesForParent(
@@ -331,7 +332,7 @@ export function IdentityLibraryPanel({
 
       if (cancelled || !data) return;
 
-      setIdentityDetail(data as Species | Background);
+      setIdentityDetail(data);
     }
 
     void loadIdentityDetail().finally(() => {
@@ -435,12 +436,6 @@ export function IdentityLibraryPanel({
     }
 
     if (isSpeciesSlot && isLoadedSpecies(identityDetail)) {
-      const dndBase = loadedDndRaceBase;
-      const legacyOptions = dndBase?.namedSpellGroups?.map((g) => ({
-        id: g.name,
-        name: g.name,
-      }));
-
       const isDndSpeciesDetail = !!loadedDndRaceBase;
 
       const activeSubraceOptions = isDndSpeciesDetail
@@ -451,17 +446,9 @@ export function IdentityLibraryPanel({
           ? mhSubraceOptions
           : undefined;
 
-      const activeSubraceTraits = isDndSpeciesDetail
-        ? (identitySubraceDetail?.traits ?? [])
-        : (mhSubraceDetail?.traits ?? []);
-
-      const activeSubraceAbilitySummary = isDndSpeciesDetail
-        ? (identitySubraceDetail?.abilitySummary ?? null)
-        : (mhSubraceDetail?.abilitySummary ?? null);
-
-      const activeSubraceFluff = isDndSpeciesDetail
-        ? null
-        : (mhSubraceDetail?.fluff ?? null);
+      const activeSubrace = isDndSpeciesDetail
+        ? identitySubraceDetail
+        : mhSubraceDetail;
 
       return (
         <div>
@@ -470,7 +457,7 @@ export function IdentityLibraryPanel({
             onClick={() => setBrowsing(true)}
           />
           <IdentityLibraryDetail
-          species={identityDetail}
+          species={loadedDndRaceBase ?? identityDetail}
           sourceVariants={
             identitySource === "dnd" ? dndIdentitySourceVariants : undefined
           }
@@ -485,16 +472,11 @@ export function IdentityLibraryPanel({
           onSubspeciesSelect={
             activeSubraceOptions ? handleSubspeciesSelect : undefined
           }
-          subspeciesTraits={activeSubraceTraits}
-          subspeciesAbilitySummary={activeSubraceAbilitySummary}
-          subspeciesFluff={activeSubraceFluff}
+          subspecies={activeSubrace}
           subspeciesLabel={selectedIdentity?.subraceName ?? null}
           bookNames={identityBookNames}
-          namedSpellGroups={dndBase?.namedSpellGroups}
-          namedSpellGroupsLabel={dndBase?.namedSpellGroupsLabel}
-          universalCantrips={dndBase?.universalCantrips}
           activeLegacyId={speciesSpellGroupChoice}
-          onLegacySelect={legacyOptions ? handleLegacySelect : undefined}
+          onLegacySelect={handleLegacySelect}
           speciesTraitChoices={speciesTraitChoices}
           onSpeciesTraitChoiceSelect={handleSpeciesTraitChoiceSelect}
         />
@@ -510,9 +492,7 @@ export function IdentityLibraryPanel({
             onClick={() => setBrowsing(true)}
           />
           <IdentityLibraryDetail
-          background={identityDetail}
-          {...getBackgroundDetailExtras(identityDetail, identitySource)}
-          startingEquipmentSource={
+          background={identityDetail}          startingEquipmentSource={
             identitySource === "dnd" && selectedIdentity
               ? {
                   type: "background",

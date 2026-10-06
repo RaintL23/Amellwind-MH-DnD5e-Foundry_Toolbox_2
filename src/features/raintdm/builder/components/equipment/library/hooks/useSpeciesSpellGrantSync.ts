@@ -1,9 +1,7 @@
 import { useEffect, useRef } from "react";
 import { useCharacterBuilder } from "@/features/raintdm/builder/context/CharacterBuilderContext";
-import {
-  buildSpeciesLineageSpellSelections,
-  combineSpeciesSpellGrantSource,
-} from "@/features/raintdm/builder/utils/species-spell-grants.utils";
+import { buildSpeciesLineageSpellSelections } from "@/features/raintdm/builder/utils/species-spell-grants.utils";
+import { combineSpeciesSpellGrantSource } from "@/shared/utils/species-spell-groups.utils";
 import { resolveSpeciesParts } from "@/features/raintdm/builder/utils/species-resolution.utils";
 
 /** Syncs species lineage cantrips and innate spells into the spell grid. */
