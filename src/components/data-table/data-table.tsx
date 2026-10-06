@@ -70,6 +70,12 @@ interface DataTableProps<TData, TValue> {
   autoResetPageIndex?: boolean;
 }
 
+// Stable defaults: inline `{}` / `[]` defaults change identity every render and
+// re-trigger the responsive column-visibility effect (infinite update loop).
+const EMPTY_COLUMN_VISIBILITY: VisibilityState = {};
+const EMPTY_COLUMN_FILTERS: ColumnFiltersState = [];
+const DEFAULT_SORTING: SortingState = [{ id: "name", desc: false }];
+
 export function DataTable<TData, TValue>({
   columns,
   data,
@@ -78,9 +84,9 @@ export function DataTable<TData, TValue>({
   emptyMessage = "No results.",
   pageSize = 20,
   globalFilterFn,
-  initialColumnVisibility = {},
-  initialColumnFilters = [],
-  initialSorting = [{ id: "name", desc: false }],
+  initialColumnVisibility = EMPTY_COLUMN_VISIBILITY,
+  initialColumnFilters = EMPTY_COLUMN_FILTERS,
+  initialSorting = DEFAULT_SORTING,
   lockedSorting,
   enableMultiSort = true,
   getRowId,
@@ -146,7 +152,11 @@ export function DataTable<TData, TValue>({
             delete next[id];
           }
         }
-        return next;
+        const prevKeys = Object.keys(prev);
+        const unchanged =
+          prevKeys.length === Object.keys(next).length &&
+          prevKeys.every((key) => prev[key] === next[key]);
+        return unchanged ? prev : next;
       });
     }
 
