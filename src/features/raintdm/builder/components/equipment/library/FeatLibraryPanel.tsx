@@ -737,9 +737,10 @@ export function FeatLibraryPanel({
       return;
     }
     if (isOriginFeatSlotSelected) {
-      if (originFeatLocked) return;
-      if (!canPickOriginFeat) return;
-      setOriginFeatSelection(nextSelection);
+      // Edits a choice on the feat already shown (also when its grant is fixed),
+      // so write to the slot holding it instead of the "choose" target.
+      if (speciesOriginFeat) setSpeciesOriginFeat(nextSelection);
+      else setBackgroundOriginFeat(nextSelection);
       return;
     }
     if (featSlotIndex === null) return;
