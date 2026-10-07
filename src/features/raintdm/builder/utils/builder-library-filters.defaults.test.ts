@@ -1,8 +1,5 @@
 import { describe, expect, it } from "vitest";
-import {
-  buildLibrarySourceFilterSections,
-  buildLibrarySourceFilterSectionsFrom2024,
-} from "./builder-library-filters";
+import { buildLibrarySourceFilterSections } from "./builder-library-filters";
 import { buildSourcesFilterSection } from "@/shared/utils/compendium-source-filter.utils";
 import type { SourceCatalogEntry } from "@/shared/services/source-catalog.service";
 import { buildDefaultFilterValues } from "@/shared/components/list-filters/list-filter.utils";
@@ -25,7 +22,7 @@ function entry(
 }
 
 describe("buildLibrarySourceFilterSections defaults", () => {
-  it("preselects official sources when given a Map.keys() iterator", () => {
+  it("preselects official 2024+ sources when given a Map.keys() iterator", () => {
     const catalog = new Map<string, SourceCatalogEntry>([
       entry("XPHB", "Player's Handbook (2024)"),
       entry("PHB", "Player's Handbook", "official", 2014),
@@ -41,7 +38,10 @@ describe("buildLibrarySourceFilterSections defaults", () => {
     expect(sections).toHaveLength(1);
     expect(sections[0].defaultValues?.length).toBeGreaterThan(0);
     expect(sections[0].defaultValues).toEqual(
-      expect.arrayContaining(["XPHB", "PHB"]),
+      expect.arrayContaining(["XPHB"]),
+    );
+    expect(sections[0].defaultValues).not.toEqual(
+      expect.arrayContaining(["PHB"]),
     );
     expect(sections[0].defaultValues).not.toEqual(
       expect.arrayContaining(["UAFoo"]),
@@ -61,7 +61,7 @@ describe("buildLibrarySourceFilterSections defaults", () => {
     expect(section.defaultValues?.length).toBe(2);
   });
 
-  it("From2024 preselects official 2024+ and excludes UA, Partnered, and 2014", () => {
+  it("preselects official 2024+ and excludes UA, Partnered, and 2014", () => {
     const catalog = new Map<string, SourceCatalogEntry>([
       entry("XPHB", "Player's Handbook (2024)"),
       entry("FRHoF", "Forgotten Realms: Heroes of Faerûn"),
@@ -70,7 +70,7 @@ describe("buildLibrarySourceFilterSections defaults", () => {
       entry("PartBar", "Partnered Book", "partnered", 2024),
     ]);
 
-    const sections = buildLibrarySourceFilterSectionsFrom2024(
+    const sections = buildLibrarySourceFilterSections(
       catalog.keys(),
       catalog,
       {},

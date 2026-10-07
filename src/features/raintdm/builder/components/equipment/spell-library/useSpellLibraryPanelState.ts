@@ -47,10 +47,10 @@ import type { ListFilterValues } from "@/shared/components/list-filters";
 import { useBookSourceNames } from "@/shared/hooks/useBookSourceNames";
 import { useSourceCatalog } from "@/shared/hooks/useSourceCatalog";
 import {
-  buildSourcesFilterSection,
+  buildSourcesFilterSectionFrom2024,
   createSourceFilterMatcher,
 } from "@/shared/utils/compendium-source-filter.utils";
-import { defaultOfficialSourceCodes } from "@/shared/services/source-catalog.service";
+import { defaultOfficialSourceCodesSince } from "@/shared/services/source-catalog.service";
 import {
   ensureSpellUaSourcesLoaded,
   getListSpells,
@@ -152,7 +152,7 @@ export function useSpellLibraryPanelState({
 
   useEffect(() => {
     if (catalog.size === 0 || filterSourceCodes.length === 0) return;
-    const defaults = defaultOfficialSourceCodes(filterSourceCodes, catalog);
+    const defaults = defaultOfficialSourceCodesSince(filterSourceCodes, catalog);
     if (defaults.length === 0) return;
     setFilterValues((prev) => {
       const src = prev.src;
@@ -423,7 +423,8 @@ export function useSpellLibraryPanelState({
   );
 
   const sourceSection = useMemo(
-    () => buildSourcesFilterSection(filterSourceCodes, catalog, bookNames),
+    () =>
+      buildSourcesFilterSectionFrom2024(filterSourceCodes, catalog, bookNames),
     [filterSourceCodes, catalog, bookNames],
   );
 

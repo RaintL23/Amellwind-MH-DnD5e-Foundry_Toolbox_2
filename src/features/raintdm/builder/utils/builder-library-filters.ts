@@ -16,7 +16,6 @@ import {
   type EquipmentRarityFilter,
 } from "@/features/raintdm/builder/utils/dnd-rarity.utils";
 import {
-  buildSourcesFilterSection,
   buildSourcesFilterSectionFrom2024,
   entityMatchesSourceFilter,
 } from "@/shared/utils/compendium-source-filter.utils";
@@ -192,19 +191,8 @@ export function parseWeaponLibraryCatalog(
   return fallback;
 }
 
+/** Sources defaults = official D&D 2024+ books (older books, UA and Partnered are opt-in via Filters). */
 export function buildLibrarySourceFilterSections(
-  sourceCodes: Iterable<string>,
-  catalog: Map<string, SourceCatalogEntry>,
-  bookNames: BookSourceNameMap,
-): ListFilterSectionConfig[] {
-  // Omit defaultCodes so official sources are preselected (passing [] disables defaults).
-  const section = buildSourcesFilterSection(sourceCodes, catalog, bookNames);
-  if (section.options.length === 0) return [];
-  return [{ ...section, defaultExpanded: true }];
-}
-
-/** Sources defaults = official D&D 2024+ books (UA / Partnered opt-in via Filters). */
-export function buildLibrarySourceFilterSectionsFrom2024(
   sourceCodes: Iterable<string>,
   catalog: Map<string, SourceCatalogEntry>,
   bookNames: BookSourceNameMap,

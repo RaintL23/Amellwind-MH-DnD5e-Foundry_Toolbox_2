@@ -54,7 +54,6 @@ import {
   buildFeatCatalogFilterSection,
   buildIdentityCatalogFilterSection,
   buildLibrarySourceFilterSections,
-  buildLibrarySourceFilterSectionsFrom2024,
   buildWeaponCatalogFilterSection,
   parseFeatDataSource,
   parseIdentityDataSource,
@@ -195,7 +194,7 @@ export function BuilderLibraryPanel({ selectedSlot }: BuilderLibraryPanelProps) 
     }
     if (isFeatPicker) {
       if (isAnyOriginFeatSlotSelected) {
-        const sourceSections = buildLibrarySourceFilterSectionsFrom2024(
+        const sourceSections = buildLibrarySourceFilterSections(
           featFilterSourceCodes,
           catalog,
           bookNames,
