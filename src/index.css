@@ -47,24 +47,24 @@
     --popover: 0 0% 100%;
     --popover-foreground: 224 71% 4%;
 
-    --primary: 39 80% 45%;
+    --primary: 35 90% 36%;
     --primary-foreground: 0 0% 100%;
 
-    --secondary: 220 14% 96%;
+    --secondary: 220 16% 94%;
     --secondary-foreground: 220 14% 20%;
 
-    --muted: 220 14% 96%;
-    --muted-foreground: 220 9% 46%;
+    --muted: 220 16% 94%;
+    --muted-foreground: 220 10% 38%;
 
-    --accent: 220 14% 96%;
-    --accent-foreground: 220 14% 20%;
+    --accent: 220 16% 92%;
+    --accent-foreground: 220 14% 15%;
 
-    --destructive: 0 84% 60%;
+    --destructive: 0 72% 46%;
     --destructive-foreground: 0 0% 98%;
 
-    --border: 220 13% 91%;
-    --input: 220 13% 91%;
-    --ring: 39 80% 45%;
+    --border: 220 13% 84%;
+    --input: 220 13% 84%;
+    --ring: 35 90% 36%;
   }
 
   [data-theme="dark"] {
@@ -123,5 +123,194 @@
 
   ::-webkit-scrollbar-thumb:hover {
     @apply bg-muted-foreground;
+  }
+}
+
+/* Light theme: pale -200..-500 text accents are tuned for dark UIs; darken them for contrast on white. */
+@layer utilities {
+  [data-theme="light"] .text-amber-200 {
+    color: theme("colors.amber.800");
+  }
+  [data-theme="light"] .text-amber-300 {
+    color: theme("colors.amber.700");
+  }
+  [data-theme="light"] .text-amber-400 {
+    color: theme("colors.amber.700");
+  }
+  [data-theme="light"] .text-amber-500 {
+    color: theme("colors.amber.700");
+  }
+  [data-theme="light"] .text-yellow-200 {
+    color: theme("colors.yellow.800");
+  }
+  [data-theme="light"] .text-yellow-300 {
+    color: theme("colors.yellow.700");
+  }
+  [data-theme="light"] .text-yellow-400 {
+    color: theme("colors.yellow.700");
+  }
+  [data-theme="light"] .text-yellow-500 {
+    color: theme("colors.yellow.700");
+  }
+  [data-theme="light"] .text-orange-200 {
+    color: theme("colors.orange.800");
+  }
+  [data-theme="light"] .text-orange-300 {
+    color: theme("colors.orange.700");
+  }
+  [data-theme="light"] .text-orange-400 {
+    color: theme("colors.orange.700");
+  }
+  [data-theme="light"] .text-orange-500 {
+    color: theme("colors.orange.700");
+  }
+  [data-theme="light"] .text-rose-200 {
+    color: theme("colors.rose.800");
+  }
+  [data-theme="light"] .text-rose-300 {
+    color: theme("colors.rose.700");
+  }
+  [data-theme="light"] .text-rose-400 {
+    color: theme("colors.rose.700");
+  }
+  [data-theme="light"] .text-rose-500 {
+    color: theme("colors.rose.700");
+  }
+  [data-theme="light"] .text-red-200 {
+    color: theme("colors.red.800");
+  }
+  [data-theme="light"] .text-red-300 {
+    color: theme("colors.red.700");
+  }
+  [data-theme="light"] .text-red-400 {
+    color: theme("colors.red.700");
+  }
+  [data-theme="light"] .text-red-500 {
+    color: theme("colors.red.700");
+  }
+  [data-theme="light"] .text-emerald-200 {
+    color: theme("colors.emerald.800");
+  }
+  [data-theme="light"] .text-emerald-300 {
+    color: theme("colors.emerald.700");
+  }
+  [data-theme="light"] .text-emerald-400 {
+    color: theme("colors.emerald.700");
+  }
+  [data-theme="light"] .text-emerald-500 {
+    color: theme("colors.emerald.700");
+  }
+  [data-theme="light"] .text-green-200 {
+    color: theme("colors.green.800");
+  }
+  [data-theme="light"] .text-green-300 {
+    color: theme("colors.green.700");
+  }
+  [data-theme="light"] .text-green-400 {
+    color: theme("colors.green.700");
+  }
+  [data-theme="light"] .text-green-500 {
+    color: theme("colors.green.700");
+  }
+  [data-theme="light"] .text-lime-200 {
+    color: theme("colors.lime.800");
+  }
+  [data-theme="light"] .text-lime-300 {
+    color: theme("colors.lime.700");
+  }
+  [data-theme="light"] .text-lime-400 {
+    color: theme("colors.lime.700");
+  }
+  [data-theme="light"] .text-lime-500 {
+    color: theme("colors.lime.700");
+  }
+  [data-theme="light"] .text-teal-200 {
+    color: theme("colors.teal.800");
+  }
+  [data-theme="light"] .text-teal-300 {
+    color: theme("colors.teal.700");
+  }
+  [data-theme="light"] .text-teal-400 {
+    color: theme("colors.teal.700");
+  }
+  [data-theme="light"] .text-teal-500 {
+    color: theme("colors.teal.700");
+  }
+  [data-theme="light"] .text-cyan-200 {
+    color: theme("colors.cyan.800");
+  }
+  [data-theme="light"] .text-cyan-300 {
+    color: theme("colors.cyan.700");
+  }
+  [data-theme="light"] .text-cyan-400 {
+    color: theme("colors.cyan.700");
+  }
+  [data-theme="light"] .text-cyan-500 {
+    color: theme("colors.cyan.700");
+  }
+  [data-theme="light"] .text-sky-200 {
+    color: theme("colors.sky.800");
+  }
+  [data-theme="light"] .text-sky-300 {
+    color: theme("colors.sky.700");
+  }
+  [data-theme="light"] .text-sky-400 {
+    color: theme("colors.sky.700");
+  }
+  [data-theme="light"] .text-sky-500 {
+    color: theme("colors.sky.700");
+  }
+  [data-theme="light"] .text-blue-200 {
+    color: theme("colors.blue.800");
+  }
+  [data-theme="light"] .text-blue-300 {
+    color: theme("colors.blue.700");
+  }
+  [data-theme="light"] .text-blue-400 {
+    color: theme("colors.blue.700");
+  }
+  [data-theme="light"] .text-blue-500 {
+    color: theme("colors.blue.700");
+  }
+  [data-theme="light"] .text-violet-200 {
+    color: theme("colors.violet.800");
+  }
+  [data-theme="light"] .text-violet-300 {
+    color: theme("colors.violet.700");
+  }
+  [data-theme="light"] .text-violet-400 {
+    color: theme("colors.violet.700");
+  }
+  [data-theme="light"] .text-violet-500 {
+    color: theme("colors.violet.700");
+  }
+  [data-theme="light"] .text-purple-200 {
+    color: theme("colors.purple.800");
+  }
+  [data-theme="light"] .text-purple-300 {
+    color: theme("colors.purple.700");
+  }
+  [data-theme="light"] .text-purple-400 {
+    color: theme("colors.purple.700");
+  }
+  [data-theme="light"] .text-purple-500 {
+    color: theme("colors.purple.700");
+  }
+  [data-theme="light"] .text-fuchsia-200 {
+    color: theme("colors.fuchsia.800");
+  }
+  [data-theme="light"] .text-fuchsia-300 {
+    color: theme("colors.fuchsia.700");
+  }
+  [data-theme="light"] .text-fuchsia-400 {
+    color: theme("colors.fuchsia.700");
+  }
+  [data-theme="light"] .text-fuchsia-500 {
+    color: theme("colors.fuchsia.700");
+  }
+  [data-theme="light"] .text-gray-200,
+  [data-theme="light"] .text-gray-300,
+  [data-theme="light"] .text-slate-300 {
+    color: theme("colors.slate.600");
   }
 }
