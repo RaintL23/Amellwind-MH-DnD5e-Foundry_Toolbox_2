@@ -2,6 +2,7 @@ import {
   ADVENTURES_JSON_URL,
   BOOKS_JSON_URL,
   DDB_SOURCE_CODES,
+  FIVETOOLS_PARSER_JS_URL,
   HOMEBREW_BASE_URL,
   HOMEBREW_INDEX_META_URL,
   HOMEBREW_INDEX_PROPS_URL,
@@ -13,7 +14,11 @@ import {
   UA_INDEX_SOURCES_URL,
   UA_INDEX_TIMESTAMPS_URL,
 } from "@/shared/constants/api.constants";
-import { fetchFiveToolsJson } from "@/shared/data/fivetools-fetch";
+import {
+  fetchFiveToolsJson,
+  fetchFiveToolsParsedText,
+} from "@/shared/data/fivetools-fetch";
+import { parseParserSources } from "@/shared/services/source-parser-catalog";
 import type {
   ListFilterOption,
   ListFilterOptionGroup,
@@ -251,6 +256,7 @@ async function loadCatalogMap(): Promise<Map<string, SourceCatalogEntry>> {
     hbSourcesResult,
     hbMetaResult,
     hbTsResult,
+    parserSourcesResult,
   ] = await Promise.allSettled([
     fetchFiveToolsJson<unknown>(BOOKS_JSON_URL, "books.json"),
     fetchFiveToolsJson<unknown>(ADVENTURES_JSON_URL, "adventures.json"),
@@ -277,6 +283,11 @@ async function loadCatalogMap(): Promise<Map<string, SourceCatalogEntry>> {
     fetchFiveToolsJson<BrewIndexTimestamps>(
       HOMEBREW_INDEX_TIMESTAMPS_URL,
       "homebrew/_generated/index-timestamps.json",
+    ),
+    fetchFiveToolsParsedText(
+      FIVETOOLS_PARSER_JS_URL,
+      "parser.js",
+      parseParserSources,
     ),
   ]);
 
@@ -315,6 +326,20 @@ async function loadCatalogMap(): Promise<Map<string, SourceCatalogEntry>> {
     partneredOnly: true,
     kindForCode: () => "partnered",
   });
+
+  // Official sources absent from books/adventures (e.g. item-only codes).
+  if (parserSourcesResult.status === "fulfilled") {
+    for (const { code, name, published } of parserSourcesResult.value) {
+      if (map.has(code)) continue;
+      map.set(code, {
+        code,
+        name,
+        kind: "official",
+        published,
+        year: yearFromIso(published),
+      });
+    }
+  }
 
   catalogCache = map;
   return map;

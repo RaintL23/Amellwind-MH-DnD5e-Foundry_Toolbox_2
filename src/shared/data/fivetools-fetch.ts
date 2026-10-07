@@ -2,6 +2,10 @@ import { LOCAL_5ETOOLS_BASE, CACHE_TTL_MS } from "@/shared/constants/api.constan
 import { getStoreValue, setStoreValue } from "@/shared/db/database";
 
 const jsonCache = new Map<string, unknown>();
+
+/** Turns a successful response into the value that is cached and persisted. */
+type ResponseReader = (res: Response) => Promise<unknown>;
+const readJson: ResponseReader = (res) => res.json();
 /** URLs with an in-flight background revalidation, to avoid duplicate refreshes. */
 const revalidating = new Set<string>();
 
@@ -51,12 +55,16 @@ async function writePersistedEntry(url: string, data: unknown): Promise<void> {
 }
 
 /** Fetch from the upstream feed and store it in IndexedDB + the in-memory cache. */
-async function fetchAndStore<T>(url: string, persist: boolean): Promise<T> {
+async function fetchAndStore<T>(
+  url: string,
+  persist: boolean,
+  read: ResponseReader,
+): Promise<T> {
   const res = await fetch(url);
   if (!res.ok) {
     throw new Error(`Failed to fetch ${url}: ${res.status}`);
   }
-  const data = (await res.json()) as T;
+  const data = (await read(res)) as T;
   jsonCache.set(url, data);
   if (persist) void writePersistedEntry(url, data);
   return data;
@@ -68,14 +76,14 @@ async function fetchAndStore<T>(url: string, persist: boolean): Promise<T> {
  * served) and never overwrites the in-memory value mid-session, so data stays
  * stable within a session and picks up the refresh on the next one.
  */
-function revalidateInBackground(url: string): void {
+function revalidateInBackground(url: string, read: ResponseReader): void {
   if (revalidating.has(url)) return;
   revalidating.add(url);
   void (async () => {
     try {
       const res = await fetch(url);
       if (!res.ok) return;
-      const data = (await res.json()) as unknown;
+      const data = await read(res);
       await writePersistedEntry(url, data);
     } catch {
       /* Offline / transient failure — keep serving the stored data. */
@@ -94,9 +102,10 @@ function revalidateInBackground(url: string): void {
  * GitHub is used purely to refresh the stores; IndexedDB is authoritative.
  * IndexedDB is bypassed in local-mirror mode (VITE_5ETOOLS_DATA=local).
  */
-export async function fetchFiveToolsJson<T>(
+async function fetchFiveToolsCached<T>(
   remoteUrl: string,
   localFileName: string,
+  read: ResponseReader,
 ): Promise<T> {
   const url = resolveFiveToolsUrl(remoteUrl, localFileName);
 
@@ -105,18 +114,36 @@ export async function fetchFiveToolsJson<T>(
 
   // Local mirror: files are served from disk (public/5etools), no persistence.
   if (isLocalFiveToolsData()) {
-    return await fetchAndStore<T>(url, false);
+    return await fetchAndStore<T>(url, false, read);
   }
 
   const persisted = await readPersistedEntry(url);
   if (persisted) {
     jsonCache.set(url, persisted.data);
-    if (isStale(persisted)) revalidateInBackground(url);
+    if (isStale(persisted)) revalidateInBackground(url, read);
     return persisted.data as T;
   }
 
   // Cold start: nothing stored yet → fetch from the feed and persist it.
-  return await fetchAndStore<T>(url, true);
+  return await fetchAndStore<T>(url, true, read);
+}
+
+export function fetchFiveToolsJson<T>(
+  remoteUrl: string,
+  localFileName: string,
+): Promise<T> {
+  return fetchFiveToolsCached<T>(remoteUrl, localFileName, readJson);
+}
+
+/** Same offline-first cache for a text file; only the `parse` result is stored. */
+export function fetchFiveToolsParsedText<T>(
+  remoteUrl: string,
+  localFileName: string,
+  parse: (text: string) => T,
+): Promise<T> {
+  return fetchFiveToolsCached<T>(remoteUrl, localFileName, async (res) =>
+    parse(await res.text()),
+  );
 }
 
 export function clearFiveToolsJsonCache(): void {
