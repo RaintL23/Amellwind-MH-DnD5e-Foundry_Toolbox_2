@@ -1,43 +1,23 @@
 import { ReactNode } from "react";
-import { formatModifier, getAbilityModifier } from "@/shared/utils/cr.utils";
+import { formatModifier } from "@/shared/utils/cr.utils";
 import { Shield } from "lucide-react";
 import { useCharacterBuilder } from "../../context/CharacterBuilderContext";
-import { getAttunementInfo } from "../../utils/attunement.utils";
-import { useCharacterArmorClass } from "../../hooks/useCharacterArmorClass";
-import { useCharacterHitPoints } from "../../hooks/useCharacterHitPoints";
-import { useCharacterSpeed } from "../../hooks/useCharacterSpeed";
-import { useEffectiveAbilityScores } from "../../hooks/useEffectiveAbilityScores";
-import { useSpellcastingContext } from "../../context/SpellcastingContext";
-import { computeSpellcastingAttackStats } from "../../utils/spellcasting-stats.utils";
+import { useBuilderDerivedStats } from "../../hooks/useBuilderDerivedStats";
 import { BuilderPanel } from "../shared/BuilderPanel";
 import { HintTooltip } from "@/shared/components/HintTooltip";
 
 export function BuilderDerivedPanel() {
+  const { useAmellwindHomebrew } = useCharacterBuilder();
   const {
-    character,
-    class: classSelection,
-    useAmellwindHomebrew,
-  } = useCharacterBuilder();
-  const hitPointStats = useCharacterHitPoints();
-  const armorClass = useCharacterArmorClass();
-  const speedStats = useCharacterSpeed();
-  const effectiveScores = useEffectiveAbilityScores();
-  const attunement = getAttunementInfo(classSelection?.name, character.level);
-  const { spellcasting } = useSpellcastingContext();
-  const proficiencyBonus = character.getProficiencyBonus();
-
-  const perceptionMod =
-    getAbilityModifier(effectiveScores.wis) +
-    character.getSkillProficiencyLevel("prc") * proficiencyBonus;
-  const passivePerception = 10 + perceptionMod;
-
-  const spellAttackStats = spellcasting?.isSpellcaster
-    ? computeSpellcastingAttackStats(
-        spellcasting.spellcastingAbility,
-        proficiencyBonus,
-        (key) => getAbilityModifier(effectiveScores[key]),
-      )
-    : null;
+    proficiencyBonus,
+    hitPoints: hitPointStats,
+    armorClass,
+    speed: speedStats,
+    initiative,
+    passivePerception,
+    spellAttackStats,
+    attunement,
+  } = useBuilderDerivedStats();
 
   return (
     <BuilderPanel
@@ -68,7 +48,7 @@ export function BuilderDerivedPanel() {
         />
         <DerivedRow
           label="Initiative"
-          value={formatModifier(getAbilityModifier(effectiveScores.dex))}
+          value={formatModifier(initiative)}
         />
         <DerivedRow
           label="Passive Perception"
