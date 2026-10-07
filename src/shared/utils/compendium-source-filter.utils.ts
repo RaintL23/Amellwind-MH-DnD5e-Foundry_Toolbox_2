@@ -50,8 +50,8 @@ export function buildSourcesFilterSection(
     catalog,
     bookNames,
   );
-  const baseDefaults =
-    defaultCodes ?? defaultOfficialSourceCodes(codes, catalog);
+  const allOfficial = defaultOfficialSourceCodes(codes, catalog);
+  const baseDefaults = defaultCodes ?? allOfficial;
   const defaults = expandSourceFilterSelection(baseDefaults, options);
 
   return {
@@ -61,6 +61,27 @@ export function buildSourcesFilterSection(
     options,
     groups,
     defaultValues: defaults,
+    presets: [
+      {
+        id: "official-2024",
+        label: "2024+ Official",
+        values: expandSourceFilterSelection(
+          defaultOfficialSourceCodesSince(codes, catalog, 2024),
+          options,
+        ),
+      },
+      {
+        id: "official",
+        label: "All Official",
+        values: expandSourceFilterSelection(allOfficial, options),
+      },
+      {
+        id: "all",
+        label: "All",
+        values: [...new Set(options.flatMap(optionFilterValues))],
+      },
+      { id: "none", label: "None", values: [] },
+    ],
   };
 }
 

@@ -18,6 +18,13 @@ export interface ListFilterOptionGroup {
 
 export type ListFilterSectionMode = "multi" | "single";
 
+/** One-click selection shortcut for a multi section (e.g. "2024+ Official"). */
+export interface ListFilterPreset {
+  id: string;
+  label: string;
+  values: string[];
+}
+
 export interface ListFilterSectionConfig {
   id: string;
   title: string;
@@ -34,6 +41,8 @@ export interface ListFilterSectionConfig {
   defaultValues?: string[];
   /** When true, the section accordion starts expanded. */
   defaultExpanded?: boolean;
+  /** Quick selection shortcuts shown above grouped (kind → year) sections. */
+  presets?: ListFilterPreset[];
 }
 
 /** Dialog filter values: multi sections use string[], single sections use string ("" = none). */

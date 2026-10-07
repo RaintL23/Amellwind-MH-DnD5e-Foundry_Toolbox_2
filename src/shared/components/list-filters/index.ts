@@ -1,6 +1,7 @@
 export type {
   ListFilterOption,
   ListFilterOptionGroup,
+  ListFilterPreset,
   ListFilterSectionConfig,
   ListFilterSectionMode,
   ListFilterValues,
@@ -21,6 +22,7 @@ export {
 } from "./list-filter.utils";
 
 export { ClearableSearchInput } from "./ClearableSearchInput";
-export { LARGE_FILTER_SECTION_PILL_CAP, ListFilterPill, ListFilterSection } from "./ListFilterSection";
+export { LARGE_FILTER_SECTION_PILL_CAP, ListFilterSection } from "./ListFilterSection";
+export { ListFilterPill } from "./ListFilterPill";
 export { ListFiltersDialog } from "./ListFiltersDialog";
 export { ListSearchWithFilters } from "./ListSearchWithFilters";

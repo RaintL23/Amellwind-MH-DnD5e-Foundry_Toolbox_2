@@ -109,6 +109,7 @@ export function ListFiltersDialog({
               options={section.options}
               groups={section.groups}
               defaultExpanded={section.defaultExpanded}
+              presets={section.presets}
               selected={getSectionSelected(section, draft)}
               onChange={(selected) => handleSectionChange(section.id, selected)}
               searchQuery={debouncedSearch}

@@ -296,6 +296,7 @@ export function ShopSetupDialog({
               options={section.options}
               groups={section.groups}
               defaultExpanded={section.defaultExpanded}
+              presets={section.presets}
               selected={getSectionSelected(section, filterDraft)}
               onChange={(selected) =>
                 handleSectionChange(section.id, selected)

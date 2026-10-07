@@ -1,5 +1,4 @@
 import { memo, useCallback, useMemo, useState } from "react";
-import { cn } from "@/shared/utils/cn";
 import {
   Accordion,
   AccordionContent,
@@ -9,40 +8,18 @@ import {
 import type {
   ListFilterOption,
   ListFilterOptionGroup,
+  ListFilterPreset,
 } from "./list-filter.types";
 import {
   isFilterOptionSelected,
   optionFilterValues,
   toggleMultiFilterOption,
 } from "./list-filter.utils";
+import { ListFilterGroupBrowser } from "./ListFilterGroupBrowser";
+import { CountBadge, OptionPillRow } from "./ListFilterPill";
 
 /** Max pills rendered per large flat section when the dialog search is empty. */
 export const LARGE_FILTER_SECTION_PILL_CAP = 36;
-
-export const ListFilterPill = memo(function ListFilterPill({
-  label,
-  active,
-  onClick,
-}: {
-  label: string;
-  active: boolean;
-  onClick: () => void;
-}) {
-  return (
-    <button
-      type="button"
-      onClick={onClick}
-      className={cn(
-        "rounded-md border px-2.5 py-1 text-xs font-medium",
-        active
-          ? "border-primary/50 bg-primary/20 text-primary"
-          : "border-border bg-muted/30 text-muted-foreground hover:bg-muted/50 hover:text-foreground",
-      )}
-    >
-      {label}
-    </button>
-  );
-});
 
 function filterOptionsByQuery(
   options: ListFilterOption[],
@@ -87,30 +64,6 @@ function capOptions(
     ],
     hiddenCount: matched.length - selectedOptions.length - remainingSlots,
   };
-}
-
-function OptionPillRow({
-  options,
-  selectedSet,
-  onToggle,
-}: {
-  options: ListFilterOption[];
-  selectedSet: Set<string>;
-  onToggle: (option: ListFilterOption) => void;
-}) {
-  if (options.length === 0) return null;
-  return (
-    <div className="flex flex-wrap gap-1.5">
-      {options.map((option) => (
-        <ListFilterPill
-          key={option.value}
-          label={option.label}
-          active={isFilterOptionSelected(option, selectedSet)}
-          onClick={() => onToggle(option)}
-        />
-      ))}
-    </div>
-  );
 }
 
 const YearAccordionGroup = memo(function YearAccordionGroup({
@@ -181,98 +134,6 @@ const YearAccordionGroup = memo(function YearAccordionGroup({
   );
 });
 
-type MatchedFilterGroup = {
-  id: string;
-  label: string;
-  options: ListFilterOption[];
-  groups?: Array<{ id: string; label: string; options: ListFilterOption[] }>;
-};
-
-const KindAccordionGroup = memo(function KindAccordionGroup({
-  group,
-  selectedSet,
-  onToggle,
-  forceOpen,
-}: {
-  group: MatchedFilterGroup;
-  selectedSet: Set<string>;
-  onToggle: (option: ListFilterOption) => void;
-  forceOpen: boolean;
-}) {
-  const nested = group.groups && group.groups.length > 0;
-  const selectedInGroup = useMemo(
-    () =>
-      group.options.filter((option) =>
-        isFilterOptionSelected(option, selectedSet),
-      ),
-    [group.options, selectedSet],
-  );
-
-  const [manualOpen, setManualOpen] = useState(
-    // Official / first kind often holds the defaults — start open when nested.
-    nested ? group.id : "",
-  );
-  const value = forceOpen ? group.id : manualOpen || undefined;
-
-  if (!nested) {
-    return (
-      <YearAccordionGroup
-        group={group}
-        selectedSet={selectedSet}
-        onToggle={onToggle}
-        forceOpen={forceOpen}
-      />
-    );
-  }
-
-  return (
-    <Accordion
-      type="single"
-      collapsible
-      value={value}
-      onValueChange={(next) => {
-        if (!forceOpen) setManualOpen(next);
-      }}
-      className="w-full"
-    >
-      <AccordionItem value={group.id} className="border-border/60">
-        <AccordionTrigger className="py-2 text-xs font-semibold text-foreground hover:no-underline">
-          <span className="flex items-center gap-2">
-            {group.label}
-            {selectedInGroup.length > 0 && (
-              <span className="rounded-full bg-primary/15 px-1.5 py-0.5 text-[10px] font-normal text-primary">
-                {selectedInGroup.length}
-              </span>
-            )}
-          </span>
-        </AccordionTrigger>
-
-        {!forceOpen && !manualOpen && selectedInGroup.length > 0 && (
-          <div className="pb-2">
-            <OptionPillRow
-              options={selectedInGroup}
-              selectedSet={selectedSet}
-              onToggle={onToggle}
-            />
-          </div>
-        )}
-
-        <AccordionContent className="space-y-1 pb-2 pt-0 pl-1">
-          {(group.groups ?? []).map((yearGroup) => (
-            <YearAccordionGroup
-              key={yearGroup.id}
-              group={yearGroup}
-              selectedSet={selectedSet}
-              onToggle={onToggle}
-              forceOpen={forceOpen}
-            />
-          ))}
-        </AccordionContent>
-      </AccordionItem>
-    </Accordion>
-  );
-});
-
 export const ListFilterSection = memo(function ListFilterSection({
   title,
   options,
@@ -282,6 +143,7 @@ export const ListFilterSection = memo(function ListFilterSection({
   searchQuery,
   mode = "multi",
   defaultExpanded = false,
+  presets,
 }: {
   title: string;
   options: ListFilterOption[];
@@ -291,12 +153,16 @@ export const ListFilterSection = memo(function ListFilterSection({
   searchQuery: string;
   mode?: "multi" | "single";
   defaultExpanded?: boolean;
+  presets?: ListFilterPreset[];
 }) {
   const normalizedQuery = searchQuery.trim().toLowerCase();
   const selectedSet = useMemo(() => new Set(selected), [selected]);
   const sectionMatches =
     !normalizedQuery || title.toLowerCase().includes(normalizedQuery);
   const hasGroups = Boolean(groups && groups.length > 0);
+  const hasNestedGroups = Boolean(
+    groups?.some((group) => (group.groups?.length ?? 0) > 0),
+  );
   const forceOpenFromSearch = normalizedQuery.length > 0;
 
   const [sectionOpen, setSectionOpen] = useState(
@@ -328,16 +194,16 @@ export const ListFilterSection = memo(function ListFilterSection({
   }, [flatOnlyOptions, options, optionsFromGroups]);
 
   const matchedGroups = useMemo(() => {
-    if (!groups || groups.length === 0) return [] as MatchedFilterGroup[];
+    if (!groups || groups.length === 0) return [] as ListFilterOptionGroup[];
 
-    const result: MatchedFilterGroup[] = [];
+    const result: ListFilterOptionGroup[] = [];
 
     for (const group of groups) {
       const groupMatches =
         sectionMatches || group.label.toLowerCase().includes(normalizedQuery);
 
       if (group.groups && group.groups.length > 0) {
-        const nested: MatchedFilterGroup["groups"] = [];
+        const nested: ListFilterOptionGroup[] = [];
         for (const sub of group.groups) {
           const subMatches =
             groupMatches || sub.label.toLowerCase().includes(normalizedQuery);
@@ -458,6 +324,36 @@ export const ListFilterSection = memo(function ListFilterSection({
     </div>
   );
 
+  if (hasNestedGroups) {
+    return (
+      <section className="space-y-3 border-b border-border/60 pb-4 last:border-b-0 last:pb-0">
+        <div className="flex flex-wrap items-center justify-between gap-2">
+          <h3 className="flex items-center gap-2 text-sm font-semibold text-foreground">
+            {title}
+            <CountBadge count={selectedFlatOptions.length} />
+          </h3>
+          {headerActions}
+        </div>
+        {(flatVisible?.visibleOptions.length ?? 0) > 0 && (
+          <OptionPillRow
+            options={flatVisible?.visibleOptions ?? []}
+            selectedSet={selectedSet}
+            onToggle={toggle}
+          />
+        )}
+        <ListFilterGroupBrowser
+          groups={matchedGroups}
+          selected={selected}
+          selectedSet={selectedSet}
+          onChange={onChange}
+          onToggle={toggle}
+          presets={mode === "multi" ? presets : undefined}
+          searchActive={forceOpenFromSearch}
+        />
+      </section>
+    );
+  }
+
   if (hasGroups || useFlatAccordion) {
     const body = hasGroups ? (
       <div className="space-y-3">
@@ -471,7 +367,7 @@ export const ListFilterSection = memo(function ListFilterSection({
         {matchedGroups.length > 0 && (
           <div className="space-y-1">
             {matchedGroups.map((group) => (
-              <KindAccordionGroup
+              <YearAccordionGroup
                 key={group.id}
                 group={group}
                 selectedSet={selectedSet}

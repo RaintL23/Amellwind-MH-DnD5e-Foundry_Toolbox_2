@@ -45,6 +45,52 @@ export function toggleMultiFilterOption(
   return [...selectedSet];
 }
 
+export type FilterGroupSelectionState = "all" | "some" | "none";
+
+export function countSelectedOptions(
+  options: ListFilterOption[],
+  selectedSet: Set<string>,
+): number {
+  return options.filter((option) => isFilterOptionSelected(option, selectedSet))
+    .length;
+}
+
+export function filterGroupSelectionState(
+  options: ListFilterOption[],
+  selectedSet: Set<string>,
+): FilterGroupSelectionState {
+  const count = countSelectedOptions(options, selectedSet);
+  if (count === 0) return "none";
+  return count === options.length ? "all" : "some";
+}
+
+/** Add or remove every option (with aliases) of a group in one step. */
+export function setFilterOptionsSelected(
+  selected: string[],
+  options: ListFilterOption[],
+  on: boolean,
+): string[] {
+  const next = new Set(selected);
+  for (const option of options) {
+    for (const code of optionFilterValues(option)) {
+      if (on) next.add(code);
+      else next.delete(code);
+    }
+  }
+  return [...next];
+}
+
+/** Order-insensitive equality between a selection and a preset's values. */
+export function isSameFilterSelection(a: string[], b: string[]): boolean {
+  const setA = new Set(a);
+  const setB = new Set(b);
+  if (setA.size !== setB.size) return false;
+  for (const value of setA) {
+    if (!setB.has(value)) return false;
+  }
+  return true;
+}
+
 export function getSectionSelected(
   section: ListFilterSectionConfig,
   values: ListFilterValues,
