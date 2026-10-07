@@ -27,6 +27,8 @@ import {
   DropdownMenu,
   DropdownMenuContent,
   DropdownMenuItem,
+  DropdownMenuLabel,
+  DropdownMenuSeparator,
   DropdownMenuSub,
   DropdownMenuSubContent,
   DropdownMenuSubTrigger,
@@ -41,6 +43,7 @@ import {
 import { cn } from "@/shared/utils/cn";
 import { useCharacterBuilder } from "../../context/CharacterBuilderContext";
 import { useCharacterRandomizer } from "../../hooks/useCharacterRandomizer";
+import { pickRandomCharacterName } from "../../utils/randomizer/identity-randomizer.utils";
 import {
   formatAlignmentLabel,
   parseAlignmentAxes,
@@ -86,6 +89,26 @@ function FieldLabel({
   );
 }
 
+function ActionTooltipContent({
+  title,
+  description,
+}: {
+  title: string;
+  description: string;
+}) {
+  return (
+    <TooltipContent side="bottom" className="max-w-56 space-y-0.5">
+      <p className="text-xs font-semibold">{title}</p>
+      <p className="text-[11px] leading-snug text-muted-foreground">
+        {description}
+      </p>
+    </TooltipContent>
+  );
+}
+
+const MENU_LABEL_CLASS =
+  "px-2 py-1 text-[10px] font-semibold uppercase tracking-wide text-muted-foreground";
+
 type PendingConfirm =
   | { kind: "reset" }
   | { kind: "randomize" }
@@ -106,6 +129,7 @@ export function StatsPanel() {
     setMulticlassEnabled,
     featSelections,
     class: classSelection,
+    species,
   } = useCharacterBuilder();
   const { randomize, isRandomizing, canRandomize } = useCharacterRandomizer();
   const {
@@ -146,6 +170,18 @@ export function StatsPanel() {
     null,
   );
   const buildHasStarted = liveResult.hasStarted;
+  const [rollingName, setRollingName] = useState(false);
+
+  async function handleRandomName() {
+    setRollingName(true);
+    try {
+      setName(await pickRandomCharacterName(species?.name ?? null));
+    } catch {
+      toast.error("Could not generate a random name");
+    } finally {
+      setRollingName(false);
+    }
+  }
 
   function handleLevelChange(nextLevel: number) {
     if (multiclassEnabled) return;
@@ -320,20 +356,31 @@ export function StatsPanel() {
         action={
           <div className="ml-auto flex items-center gap-0.5">
             <DropdownMenu>
-              <DropdownMenuTrigger asChild>
-                <Button
-                  type="button"
-                  variant="ghost"
-                  size="icon"
-                  className={ICON_BUTTON_CLASS}
-                  disabled={exporting}
-                  aria-label="Download character"
-                  title="Download character"
-                >
-                  <Download className="h-3.5 w-3.5" aria-hidden />
-                </Button>
-              </DropdownMenuTrigger>
+              <Tooltip>
+                <TooltipTrigger asChild>
+                  <DropdownMenuTrigger asChild>
+                    <Button
+                      type="button"
+                      variant="ghost"
+                      size="icon"
+                      className={ICON_BUTTON_CLASS}
+                      disabled={exporting}
+                      aria-label="Download character"
+                    >
+                      <Download className="h-3.5 w-3.5" aria-hidden />
+                    </Button>
+                  </DropdownMenuTrigger>
+                </TooltipTrigger>
+                <ActionTooltipContent
+                  title="Download / save"
+                  description="Export this character as a printable PDF sheet or a JSON file you can load later, or send it to the Character Sheet."
+                />
+              </Tooltip>
               <DropdownMenuContent align="end" className="text-xs">
+                <DropdownMenuLabel className={MENU_LABEL_CLASS}>
+                  Save this character as…
+                </DropdownMenuLabel>
+                <DropdownMenuSeparator />
                 <DropdownMenuItem
                   className="gap-2 text-xs"
                   disabled={exporting}
@@ -387,20 +434,31 @@ export function StatsPanel() {
             </DropdownMenu>
 
             <DropdownMenu>
-              <DropdownMenuTrigger asChild>
-                <Button
-                  type="button"
-                  variant="ghost"
-                  size="icon"
-                  className={ICON_BUTTON_CLASS}
-                  disabled={importingBuilder}
-                  aria-label="Import character"
-                  title="Import character"
-                >
-                  <Upload className="h-3.5 w-3.5" aria-hidden />
-                </Button>
-              </DropdownMenuTrigger>
+              <Tooltip>
+                <TooltipTrigger asChild>
+                  <DropdownMenuTrigger asChild>
+                    <Button
+                      type="button"
+                      variant="ghost"
+                      size="icon"
+                      className={ICON_BUTTON_CLASS}
+                      disabled={importingBuilder}
+                      aria-label="Import character"
+                    >
+                      <Upload className="h-3.5 w-3.5" aria-hidden />
+                    </Button>
+                  </DropdownMenuTrigger>
+                </TooltipTrigger>
+                <ActionTooltipContent
+                  title="Import / load"
+                  description="Load a character you saved earlier as a Builder JSON file. It replaces the current build."
+                />
+              </Tooltip>
               <DropdownMenuContent align="end" className="text-xs">
+                <DropdownMenuLabel className={MENU_LABEL_CLASS}>
+                  Load or send a character
+                </DropdownMenuLabel>
+                <DropdownMenuSeparator />
                 <DropdownMenuItem
                   className="gap-2 text-xs"
                   disabled={importingBuilder}
@@ -468,7 +526,10 @@ export function StatsPanel() {
                   <RotateCcw className="h-3.5 w-3.5" aria-hidden />
                 </Button>
               </TooltipTrigger>
-              <TooltipContent side="bottom">Reset character</TooltipContent>
+              <ActionTooltipContent
+                title="Reset character"
+                description="Clear every choice and start a new character from scratch."
+              />
             </Tooltip>
             <Tooltip>
               <TooltipTrigger asChild>
@@ -497,7 +558,10 @@ export function StatsPanel() {
                   />
                 </Button>
               </TooltipTrigger>
-              <TooltipContent side="bottom">Randomize character</TooltipContent>
+              <ActionTooltipContent
+                title="Randomize character"
+                description="Generate a complete random build (species, class, background, stats, gear and name) at the current level."
+              />
             </Tooltip>
           </div>
         }
@@ -508,15 +572,42 @@ export function StatsPanel() {
             <SectionHeading>Identity</SectionHeading>
             <div className="space-y-1">
               <FieldLabel htmlFor="character-name">Name</FieldLabel>
-              <Input
-                id="character-name"
-                type="text"
-                value={character.name}
-                onChange={(e) => setName(e.target.value)}
-                placeholder="Character name"
-                className="h-8 text-xs"
-                aria-label="Character name"
-              />
+              <div className="flex items-center gap-1">
+                <Input
+                  id="character-name"
+                  type="text"
+                  value={character.name}
+                  onChange={(e) => setName(e.target.value)}
+                  placeholder="Character name"
+                  className="h-8 text-xs"
+                  aria-label="Character name"
+                />
+                <Tooltip>
+                  <TooltipTrigger asChild>
+                    <Button
+                      type="button"
+                      variant="outline"
+                      size="icon"
+                      className="h-8 w-8 shrink-0"
+                      disabled={rollingName}
+                      onClick={() => void handleRandomName()}
+                      aria-label="Random name"
+                    >
+                      <Dices
+                        className={cn(
+                          "h-3.5 w-3.5",
+                          rollingName && "animate-spin",
+                        )}
+                        aria-hidden
+                      />
+                    </Button>
+                  </TooltipTrigger>
+                  <ActionTooltipContent
+                    title="Random name"
+                    description="Roll a new name only, without touching the rest of the build. Uses the selected species' name list when available."
+                  />
+                </Tooltip>
+              </div>
             </div>
             <div className="grid grid-cols-2 gap-2">
               <div className="space-y-1">
