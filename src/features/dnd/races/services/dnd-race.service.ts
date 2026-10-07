@@ -41,7 +41,10 @@ const service = createEntityService<RawRaceEntry, DndRace>({
     ]);
 
     const rawRaces = Array.isArray(data.race) ? data.race : [];
-    const rawSubraces = Array.isArray(data.subrace) ? data.subrace : [];
+    // Nameless 5etools subraces (Dragonborn, Human, …) only hold `_versions`; the base race has the data.
+    const rawSubraces = (Array.isArray(data.subrace) ? data.subrace : []).filter(
+      (s) => typeof s.name === "string" && s.name !== "",
+    );
 
     let combined = [...rawRaces, ...rawSubraces] as (RawRaceEntry & {
       name: string;

@@ -1,4 +1,4 @@
-import { useEffect, useMemo, useState } from "react";
+import { useEffect, useMemo, useRef, useState } from "react";
 import { SourceVariantSwitcher } from "@/shared/components/SourceVariantSwitcher";
 import type { DndRace } from "@/shared/types";
 import { DND_RACE_KIND_LABELS } from "@/shared/types";
@@ -24,6 +24,8 @@ import { getDndSubracesForParent } from "../services/dnd-race.service";
 interface DndRaceDetailDialogProps {
   race: DndRace | null;
   variants?: DndRace[];
+  /** Subrace (by name) to preselect the first time the parent's subraces load. */
+  initialSubraceName?: string | null;
   open: boolean;
   onOpenChange: (open: boolean) => void;
 }
@@ -31,9 +33,11 @@ interface DndRaceDetailDialogProps {
 export function DndRaceDetailDialog({
   race: raceProp,
   variants: variantsProp,
+  initialSubraceName,
   open,
   onOpenChange,
 }: DndRaceDetailDialogProps) {
+  const pendingSubraceName = useRef(initialSubraceName ?? null);
   const [bookNames, setBookNames] = useState<BookSourceNameMap>({});
   const [activeId, setActiveId] = useState<string>("");
 
@@ -68,13 +72,19 @@ export function DndRaceDetailDialog({
     let cancelled = false;
     void getDndSubracesForParent(activeRace.name, activeRace.source).then(
       (list) => {
-        if (!cancelled) setSubraces(list);
+        if (cancelled) return;
+        setSubraces(list);
+        if (activeRace.id !== raceProp?.id) return;
+        const wanted = pendingSubraceName.current;
+        pendingSubraceName.current = null;
+        const match = wanted ? list.find((s) => s.name === wanted) : undefined;
+        if (match) setActiveSubraceId(match.id);
       },
     );
     return () => {
       cancelled = true;
     };
-  }, [activeRace]);
+  }, [activeRace, raceProp?.id]);
 
   if (!activeRace) return null;
 

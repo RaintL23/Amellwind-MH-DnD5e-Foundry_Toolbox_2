@@ -1,4 +1,4 @@
-import { useCallback, useDeferredValue, useMemo } from "react";
+import { useCallback, useDeferredValue, useMemo, useState } from "react";
 import type { DndRace } from "@/shared/types";
 import { DND_RACE_KIND_LABELS } from "@/shared/types";
 import { Users } from "lucide-react";
@@ -131,8 +131,35 @@ export function DndRaceList() {
     return result;
   }, [deferredList, deferredInput]);
 
+  const [initialSubraceName, setInitialSubraceName] = useState<string | null>(
+    null,
+  );
+
+  // A subrace row opens its parent species at the subrace's source, with the subrace preselected.
   const handleSelect = useCallback(
-    (race: DndRace) => dialog?.openItem(race),
+    async (race: DndRace) => {
+      if (!dialog) return;
+      if (!race.parentName) {
+        setInitialSubraceName(null);
+        dialog.openItem(race);
+        return;
+      }
+      const parents = (await getDndRacesByName(race.parentName)).filter(
+        (r) => !r.parentName,
+      );
+      const parent =
+        parents.find((r) => r.source === race.parentSource) ?? parents[0];
+      setInitialSubraceName(parent ? race.name : null);
+      dialog.openItem(parent ?? race);
+    },
+    [dialog],
+  );
+
+  const handleDialogOpenChange = useCallback(
+    (open: boolean) => {
+      if (!open) setInitialSubraceName(null);
+      dialog?.handleDialogOpenChange(open);
+    },
     [dialog],
   );
 
@@ -207,8 +234,9 @@ export function DndRaceList() {
           key={dialog.selected.id}
           race={dialog.selected}
           variants={dialog.selectedVariants}
+          initialSubraceName={initialSubraceName}
           open={dialog.dialogOpen}
-          onOpenChange={dialog.handleDialogOpenChange}
+          onOpenChange={handleDialogOpenChange}
         />
       )}
     </div>
