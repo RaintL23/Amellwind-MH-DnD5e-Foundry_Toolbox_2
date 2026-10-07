@@ -25,6 +25,8 @@ interface ClassSubclassSelectorProps {
   onSelect: (id: string) => void;
   subclassTitle?: string;
   bookNames: BookSourceNameMap;
+  /** Marks the subclass count as varying across class sources. */
+  countDiffers?: boolean;
 }
 
 type SubclassOptionMeta = {
@@ -63,6 +65,7 @@ export const ClassSubclassSelector = memo(function ClassSubclassSelector({
   onSelect,
   subclassTitle,
   bookNames,
+  countDiffers = false,
 }: ClassSubclassSelectorProps) {
   const catalog = useSourceCatalog();
 
@@ -123,8 +126,17 @@ export const ClassSubclassSelector = memo(function ClassSubclassSelector({
 
   return (
     <div className="space-y-1.5">
-      <p className="text-xs font-semibold uppercase tracking-wide text-muted-foreground">
+      <p className="flex items-baseline gap-1.5 text-xs font-semibold uppercase tracking-wide text-muted-foreground">
         {subclassTitle ?? "Subclass"}
+        <span
+          className={cn(
+            "text-[10px] font-normal normal-case",
+            countDiffers ? "text-amber-400" : "text-muted-foreground/80",
+          )}
+        >
+          · {subclasses.length} option{subclasses.length === 1 ? "" : "s"}
+          {countDiffers && " (varies)"}
+        </span>
       </p>
 
       <DropdownMenu>
@@ -132,7 +144,7 @@ export const ClassSubclassSelector = memo(function ClassSubclassSelector({
           <Button
             variant="outline"
             className={cn(
-              "h-auto w-full max-w-md justify-between gap-2 px-3 py-1.5 font-normal",
+              "h-auto min-h-10 w-full justify-between gap-2 px-3 py-1.5 font-normal",
               !active && "text-muted-foreground",
             )}
           >
@@ -156,7 +168,7 @@ export const ClassSubclassSelector = memo(function ClassSubclassSelector({
 
         <DropdownMenuContent
           align="start"
-          className="max-h-80 w-[var(--radix-dropdown-menu-trigger-width)] min-w-[20rem] overflow-y-auto"
+          className="max-h-[min(20rem,60dvh)] w-[var(--radix-dropdown-menu-trigger-width)] min-w-[min(20rem,calc(100vw-2rem))] max-w-[calc(100vw-2rem)] overflow-y-auto"
         >
           <DropdownMenuItem
             className="cursor-pointer py-2"

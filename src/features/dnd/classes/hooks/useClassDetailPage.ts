@@ -16,8 +16,7 @@ import {
 import { subclassesForClassVariant } from "../utils/class-subclass.utils";
 import {
   getAllFeatureUids,
-  nextFeatureSelection,
-  setAllFeatureUids,
+  toggleHiddenFeature,
 } from "../utils/class-feature-selection.utils";
 import {
   getFieldsThatVaryAcrossVariants,
@@ -57,7 +56,7 @@ export function useClassDetailPage(classId: string) {
 
   const [activeId, setActiveId] = useState("");
   const [activeSubclassId, setActiveSubclassId] = useState("");
-  const [enabledFeatureUids, setEnabledFeatureUids] = useState<Set<string>>(
+  const [hiddenFeatureUids, setHiddenFeatureUids] = useState<Set<string>>(
     () => new Set(),
   );
   const bookNames = useBookSourceNames();
@@ -242,17 +241,25 @@ export function useClassDetailPage(classId: string) {
   );
 
   useEffect(() => {
-    setEnabledFeatureUids(setAllFeatureUids(allFeatureUids));
+    setHiddenFeatureUids(new Set());
   }, [allFeatureUids]);
 
-  const toggleFeature = useCallback(
-    (uid: string) => {
-      setEnabledFeatureUids((prev) =>
-        nextFeatureSelection(prev, uid, allFeatureUids),
-      );
-    },
-    [allFeatureUids],
-  );
+  const toggleFeatureVisibility = useCallback((uid: string) => {
+    setHiddenFeatureUids((prev) => toggleHiddenFeature(prev, uid));
+  }, []);
+
+  const showFeature = useCallback((uid: string) => {
+    setHiddenFeatureUids((prev) => {
+      if (!prev.has(uid)) return prev;
+      const next = new Set(prev);
+      next.delete(uid);
+      return next;
+    });
+  }, []);
+
+  const showAllFeatures = useCallback(() => {
+    setHiddenFeatureUids(new Set());
+  }, []);
 
   const handleSourceSelect = useCallback(
     (id: string) => {
@@ -282,17 +289,17 @@ export function useClassDetailPage(classId: string) {
     return (field: ClassVariantField) => set.has(field);
   }, [varyingFields]);
 
-  const enabledFeatures = useMemo(() => {
+  const visibleFeatures = useMemo(() => {
     const features: ClassFeatureEntry[] = [];
     for (const row of mergedProgression) {
       for (const feature of row.features) {
-        if (enabledFeatureUids.has(feature.uid)) {
+        if (!hiddenFeatureUids.has(feature.uid)) {
           features.push(feature);
         }
       }
     }
     return features;
-  }, [mergedProgression, enabledFeatureUids]);
+  }, [mergedProgression, hiddenFeatureUids]);
 
   const optionalFeatureProgressions = useMemo(
     () => collectClassOptionalFeatureProgressions(active, activeSubclass),
@@ -311,12 +318,15 @@ export function useClassDetailPage(classId: string) {
     differs,
     mergedProgression,
     mergedTableGroups,
-    enabledFeatureUids,
-    enabledFeatures,
+    hiddenFeatureUids,
+    visibleFeatures,
+    totalFeatureCount: allFeatureUids.length,
     activeSubclass,
     optionalFeatureProgressions,
     activeSubclassId,
-    toggleFeature,
+    toggleFeatureVisibility,
+    showFeature,
+    showAllFeatures,
     handleSourceSelect,
     handleSubclassSelect,
   };

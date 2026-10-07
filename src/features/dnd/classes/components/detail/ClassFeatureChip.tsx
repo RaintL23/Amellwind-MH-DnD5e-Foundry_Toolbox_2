@@ -1,49 +1,85 @@
 import { memo, useCallback } from "react";
+import { Eye, EyeOff, GitBranch } from "lucide-react";
 import { ClassFeatureEntry } from "@/shared/types";
 import { cn } from "@/shared/utils/cn";
 
 interface ClassFeatureChipProps {
   feature: ClassFeatureEntry;
-  enabled: boolean;
-  onToggle: (uid: string) => void;
+  hidden: boolean;
+  /** Class source; the chip only shows its own source when it differs. */
+  classSource?: string;
+  onSelect: (uid: string) => void;
+  onToggleVisible: (uid: string) => void;
 }
 
 export const ClassFeatureChip = memo(function ClassFeatureChip({
   feature,
-  enabled,
-  onToggle,
+  hidden,
+  classSource,
+  onSelect,
+  onToggleVisible,
 }: ClassFeatureChipProps) {
-  const handleClick = useCallback(
-    () => onToggle(feature.uid),
-    [onToggle, feature.uid],
+  const handleSelect = useCallback(
+    () => onSelect(feature.uid),
+    [onSelect, feature.uid],
+  );
+  const handleToggle = useCallback(
+    () => onToggleVisible(feature.uid),
+    [onToggleVisible, feature.uid],
   );
 
   const isSubclass = Boolean(feature.isSubclassFeature);
+  const showSource =
+    Boolean(feature.source) &&
+    feature.source !== feature.name &&
+    feature.source !== classSource;
 
   return (
-    <button
-      type="button"
-      onClick={handleClick}
+    <span
       className={cn(
-        "inline-flex items-center gap-1 rounded border px-1.5 py-0.5 text-[11px] font-medium transition-colors text-left",
+        "group inline-flex max-w-full items-stretch overflow-hidden rounded border text-xs font-medium transition-colors @4xl/classdetail:text-[11px]",
         isSubclass
-          ? enabled
-            ? "border-emerald-500 bg-emerald-500/20 text-emerald-200"
-            : "border-emerald-700/60 bg-emerald-950/40 text-emerald-400/80 hover:bg-emerald-950/60"
-          : enabled
-            ? "border-sky-500 bg-sky-500/20 text-sky-200"
-            : "border-border bg-muted/30 text-muted-foreground hover:bg-muted/50",
+          ? "border-emerald-600/70 bg-emerald-500/15 text-emerald-200"
+          : "border-sky-600/70 bg-sky-500/15 text-sky-200",
+        hidden && "border-dashed border-border bg-transparent text-muted-foreground",
       )}
     >
-      {feature.displayName}
-      {isSubclass && (
-        <span className="text-[9px] opacity-70">SC</span>
-      )}
-      {feature.source !== feature.name && feature.source && (
-        <span className="text-[9px] opacity-50 font-normal">
-          {feature.source}
-        </span>
-      )}
-    </button>
+      <button
+        type="button"
+        onClick={handleSelect}
+        title={hidden ? "Show and jump to feature" : "Jump to feature"}
+        className={cn(
+          "inline-flex min-w-0 items-center gap-1 px-2 py-1.5 text-left hover:bg-foreground/5 focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-inset focus-visible:ring-ring @4xl/classdetail:px-1.5 @4xl/classdetail:py-0.5",
+          hidden && "line-through decoration-muted-foreground/60",
+        )}
+      >
+        {isSubclass && (
+          <GitBranch
+            className="h-3 w-3 shrink-0 opacity-70"
+            aria-label="Subclass feature"
+          />
+        )}
+        <span className="truncate">{feature.displayName}</span>
+        {showSource && (
+          <span className="shrink-0 text-[9px] font-normal opacity-60">
+            {feature.source}
+          </span>
+        )}
+      </button>
+      <button
+        type="button"
+        onClick={handleToggle}
+        aria-label={hidden ? `Show ${feature.displayName}` : `Hide ${feature.displayName}`}
+        title={hidden ? "Show in feature list" : "Hide from feature list"}
+        aria-pressed={hidden}
+        className="inline-flex shrink-0 items-center border-l border-foreground/10 px-1.5 opacity-60 transition-opacity hover:bg-foreground/5 hover:opacity-100 focus-visible:opacity-100 focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-inset focus-visible:ring-ring @4xl/classdetail:px-1 @4xl/classdetail:opacity-40 @4xl/classdetail:group-hover:opacity-100 @4xl/classdetail:focus-visible:opacity-100"
+      >
+        {hidden ? (
+          <EyeOff className="h-3 w-3" />
+        ) : (
+          <Eye className="h-3 w-3" />
+        )}
+      </button>
+    </span>
   );
 });

@@ -1,4 +1,5 @@
-import { memo, useCallback, useMemo, useState } from "react";
+import { Fragment, memo, useCallback, useMemo, useState } from "react";
+import { ChevronDown } from "lucide-react";
 import type {
   Class,
   ClassFeatureEntry,
@@ -6,6 +7,11 @@ import type {
   Subclass,
 } from "@/shared/types";
 import { Badge } from "@/components/ui/badge";
+import {
+  Collapsible,
+  CollapsibleContent,
+  CollapsibleTrigger,
+} from "@/components/ui/collapsible";
 import { StatBlockContentView } from "@/components/statblock/StatBlockContentView";
 import { DndRichText } from "@/shared/components/DndRichText";
 import { cn } from "@/shared/utils/cn";
@@ -26,6 +32,13 @@ interface ClassFeatureDetailPanelProps {
   onPhraseClick: (phraseId: string) => void;
   onTitleClick?: (progressionId: string) => void;
   titleProgressionId?: string | null;
+  anchorId?: string;
+  highlighted?: boolean;
+  hideSourceEqualTo?: string;
+  contentClassName?: string;
+  /** When set, the body is collapsible and controlled by `collapsed`. */
+  onToggleCollapsed?: (uid: string) => void;
+  collapsed?: boolean;
 }
 
 const ClassFeatureDetailPanel = memo(function ClassFeatureDetailPanel({
@@ -34,20 +47,80 @@ const ClassFeatureDetailPanel = memo(function ClassFeatureDetailPanel({
   onPhraseClick,
   onTitleClick,
   titleProgressionId,
+  anchorId,
+  highlighted = false,
+  hideSourceEqualTo,
+  contentClassName,
+  onToggleCollapsed,
+  collapsed = false,
 }: ClassFeatureDetailPanelProps) {
   const titleClickable = Boolean(titleProgressionId && onTitleClick);
   const grantsProficiency = entriesMentionProficiencyGrant(feature.description);
+  const collapsible = Boolean(onToggleCollapsed);
+  const showSource = !hideSourceEqualTo || feature.source !== hideSourceEqualTo;
+
+  const body =
+    feature.content.length > 0 ? (
+      <StatBlockContentView
+        content={feature.content}
+        phraseLinks={phraseLinks}
+        onPhraseClick={onPhraseClick}
+      />
+    ) : feature.description.length > 0 ? (
+      <div className="space-y-1.5">
+        {feature.description.map((line, i) => (
+          <p
+            key={i}
+            className="text-sm text-muted-foreground leading-relaxed"
+          >
+            <DndRichText
+              text={line}
+              phraseLinks={phraseLinks}
+              onPhraseClick={onPhraseClick}
+            />
+          </p>
+        ))}
+      </div>
+    ) : (
+      <p className="text-sm text-muted-foreground italic">
+        No description available.
+      </p>
+    );
 
   return (
-    <div
+    <Collapsible
+      open={!collapsed}
+      onOpenChange={() => onToggleCollapsed?.(feature.uid)}
+      id={anchorId}
       className={cn(
-        "rounded-md border p-3 space-y-2",
+        "rounded-md border p-3 space-y-2 transition-shadow duration-500",
+        anchorId && "scroll-mt-[calc(var(--class-nav-h,0px)+2.75rem)]",
         grantsProficiency
           ? "border-amber-500/40 bg-amber-500/5"
           : "border-border bg-muted/20",
+        highlighted &&
+          "ring-2 ring-sky-400/70 ring-offset-2 ring-offset-background",
+        collapsible && collapsed && "space-y-0",
       )}
     >
       <div className="flex items-center gap-2 flex-wrap">
+        {collapsible && (
+          <CollapsibleTrigger
+            className="-m-1 rounded p-1 text-muted-foreground hover:bg-muted hover:text-foreground focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring"
+            aria-label={
+              collapsed
+                ? `Expand ${feature.displayName}`
+                : `Collapse ${feature.displayName}`
+            }
+          >
+            <ChevronDown
+              className={cn(
+                "h-4 w-4 transition-transform",
+                collapsed && "-rotate-90",
+              )}
+            />
+          </CollapsibleTrigger>
+        )}
         {titleClickable ? (
           <button
             type="button"
@@ -71,37 +144,20 @@ const ClassFeatureDetailPanel = memo(function ClassFeatureDetailPanel({
             Subclass
           </Badge>
         )}
-        <Badge variant="secondary" className="text-[10px]">
-          {feature.source}
-        </Badge>
+        {showSource && (
+          <Badge variant="secondary" className="text-[10px]">
+            {feature.source}
+          </Badge>
+        )}
       </div>
-      {feature.content.length > 0 ? (
-        <StatBlockContentView
-          content={feature.content}
-          phraseLinks={phraseLinks}
-          onPhraseClick={onPhraseClick}
-        />
-      ) : feature.description.length > 0 ? (
-        <div className="space-y-1.5">
-          {feature.description.map((line, i) => (
-            <p
-              key={i}
-              className="text-sm text-muted-foreground leading-relaxed"
-            >
-              <DndRichText
-                text={line}
-                phraseLinks={phraseLinks}
-                onPhraseClick={onPhraseClick}
-              />
-            </p>
-          ))}
-        </div>
+      {collapsible ? (
+        <CollapsibleContent className={contentClassName}>
+          {body}
+        </CollapsibleContent>
       ) : (
-        <p className="text-sm text-muted-foreground italic">
-          No description available.
-        </p>
+        <div className={contentClassName}>{body}</div>
       )}
-    </div>
+    </Collapsible>
   );
 });
 
@@ -111,6 +167,17 @@ interface ClassFeatureDetailsPanelProps {
   subclass?: Subclass | null;
   progressions?: OptionalFeatureProgression[];
   className?: string;
+  /** Opt-in (wiki page): render a heading before each level group. */
+  groupByLevel?: boolean;
+  /** Opt-in: sets `id={anchorIdPrefix + uid}` on each card for scroll targets. */
+  anchorIdPrefix?: string;
+  highlightUid?: string | null;
+  hideSourceEqualTo?: string;
+  /** Applied to each card body (e.g. a readable max width). */
+  contentClassName?: string;
+  /** Opt-in: controlled collapse state; cards are collapsible when provided. */
+  collapsedUids?: Set<string>;
+  onToggleCollapsed?: (uid: string) => void;
 }
 
 export const ClassFeatureDetailsPanel = memo(function ClassFeatureDetailsPanel({
@@ -119,6 +186,13 @@ export const ClassFeatureDetailsPanel = memo(function ClassFeatureDetailsPanel({
   subclass = null,
   progressions = [],
   className,
+  groupByLevel = false,
+  anchorIdPrefix,
+  highlightUid = null,
+  hideSourceEqualTo,
+  contentClassName,
+  collapsedUids,
+  onToggleCollapsed,
 }: ClassFeatureDetailsPanelProps) {
   const [activeProgressionId, setActiveProgressionId] = useState<string | null>(
     null,
@@ -163,17 +237,31 @@ export const ClassFeatureDetailsPanel = memo(function ClassFeatureDetailsPanel({
   return (
     <>
       <div className={cn("space-y-3", className ?? "mt-4")}>
-        {features.map((feature) => (
-          <ClassFeatureDetailPanel
-            key={feature.uid}
-            feature={feature}
-            phraseLinks={phraseLinks}
-            onPhraseClick={handlePhraseClick}
-            onTitleClick={handlePhraseClick}
-            titleProgressionId={
-              titleProgressionByFeatureUid.get(feature.uid) ?? null
-            }
-          />
+        {features.map((feature, i) => (
+          <Fragment key={feature.uid}>
+            {groupByLevel && feature.level !== features[i - 1]?.level && (
+              <h3 className="sticky top-[var(--class-nav-h,0px)] z-[4] -mx-1 bg-background/95 px-1 pb-1.5 pt-3 text-xs font-semibold uppercase tracking-wide text-violet-400 backdrop-blur first:pt-0">
+                Level {feature.level}
+              </h3>
+            )}
+            <ClassFeatureDetailPanel
+              feature={feature}
+              phraseLinks={phraseLinks}
+              onPhraseClick={handlePhraseClick}
+              onTitleClick={handlePhraseClick}
+              titleProgressionId={
+                titleProgressionByFeatureUid.get(feature.uid) ?? null
+              }
+              anchorId={
+                anchorIdPrefix ? `${anchorIdPrefix}${feature.uid}` : undefined
+              }
+              highlighted={highlightUid === feature.uid}
+              hideSourceEqualTo={hideSourceEqualTo}
+              contentClassName={contentClassName}
+              onToggleCollapsed={onToggleCollapsed}
+              collapsed={collapsedUids?.has(feature.uid) ?? false}
+            />
+          </Fragment>
         ))}
       </div>
 
