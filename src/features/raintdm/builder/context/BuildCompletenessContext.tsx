@@ -28,6 +28,10 @@ import {
   type CompletenessStep,
 } from "../utils/build-completeness/group-completeness-steps.utils";
 import { persistBuilderExportGate } from "../storage/builder-export-gate.storage";
+import {
+  SECTION_TO_MOBILE_TAB,
+  useBuilderLayoutOptional,
+} from "./BuilderLayoutContext";
 
 interface BuildCompletenessContextValue {
   highlightActive: boolean;
@@ -86,6 +90,9 @@ export function BuildCompletenessProvider({
   const { species: speciesData } = useSelectedSpecies();
   const { dndBackground } = useSelectedDndBackground();
   const { spellcasting } = useSpellcastingContext();
+  const layout = useBuilderLayoutOptional();
+  const isMobileLayout = layout?.isMobileLayout ?? false;
+  const setActiveTab = layout?.setActiveTab;
 
   const input = useMemo(
     (): BuildCompletenessInput => ({
@@ -199,12 +206,20 @@ export function BuildCompletenessProvider({
   const goToSection = useCallback(
     (section: BuildCompletenessSection) => {
       setHighlightActive(true);
+      if (isMobileLayout && setActiveTab) {
+        // Mobile: reveal the owning tab, then wait one extra frame for it to mount.
+        setActiveTab(SECTION_TO_MOBILE_TAB[section]);
+        requestAnimationFrame(() =>
+          requestAnimationFrame(() => scrollToBuilderSection(section)),
+        );
+        return;
+      }
       // Defer scroll so accordion open / highlight paint can run first.
       requestAnimationFrame(() => {
         scrollToBuilderSection(section);
       });
     },
-    [],
+    [isMobileLayout, setActiveTab],
   );
 
   useEffect(() => {

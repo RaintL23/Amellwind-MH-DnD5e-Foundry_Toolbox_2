@@ -57,7 +57,7 @@ import type { BuildCompletenessIssue } from "../../utils/build-completeness.type
 // Set to true to re-enable Foundry VTT JSON export/import once the exporter is ready.
 const FOUNDRY_JSON_UI_ENABLED = false;
 
-const ICON_BUTTON_CLASS = "h-7 w-7 shrink-0";
+const ICON_BUTTON_CLASS = "h-9 w-9 shrink-0 lg:h-7 lg:w-7";
 const FOUNDRY_DISABLED_TITLE =
   "Temporarily unavailable while the Foundry exporter is being improved";
 

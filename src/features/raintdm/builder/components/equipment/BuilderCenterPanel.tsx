@@ -33,7 +33,7 @@ import {
   resolveOptionalFeatureProgressions,
 } from "../../utils/class-optional-features.utils";
 import { resolveEffectiveOriginFeatChooseTarget } from "../../utils/origin-feat.constants";
-import { useEffect, useMemo, useRef } from "react";
+import { useEffect, useMemo, useRef, type ReactNode } from "react";
 import { RuneAssignmentPanel } from "./RuneAssignmentPanel";
 import { IdentityGridPanel } from "./IdentityGridPanel";
 import { EquipmentGridPanel } from "./EquipmentGridPanel";
@@ -46,6 +46,14 @@ import { BackstoryNotesPanel } from "./BackstoryNotesPanel";
 import { FactionLibraryPanel } from "./library/FactionLibraryPanel";
 import { BuilderPanel } from "../shared/BuilderPanel";
 import { Button } from "@/components/ui/button";
+import {
+  Sheet,
+  SheetBody,
+  SheetContent,
+  SheetHeader,
+  SheetTitle,
+} from "@/components/ui/sheet";
+import { useBuilderLayoutOptional } from "../../context/BuilderLayoutContext";
 import { isOffHandSlotOccupied } from "@/features/amellwind/weapons/utils/weapon-hands.utils";
 import { useSpellcastingContext } from "../../context/SpellcastingContext";
 import { useSpellCatalog } from "../../hooks/useSpellCatalog";
@@ -123,6 +131,7 @@ export function BuilderCenterPanel() {
 
   const { selectedSlot, selectSlot, clearSelection } =
     useBuilderSlotSelection();
+  const isMobileLayout = useBuilderLayoutOptional()?.isMobileLayout ?? false;
   const contextualPanelRef = useRef<HTMLDivElement>(null);
   const contextualHeadingRef = useRef<HTMLHeadingElement>(null);
   const { classData } = useSelectedClass();
@@ -408,9 +417,9 @@ export function BuilderCenterPanel() {
     showLibrary ||
     showRunePanel;
 
-  // Auto-scroll + focus the contextual panel when the selected slot changes.
+  // Auto-scroll + focus the contextual panel when the selected slot changes (desktop inline only).
   useEffect(() => {
-    if (!selectedSlot || !showContextualPanel) return;
+    if (isMobileLayout || !selectedSlot || !showContextualPanel) return;
     const prefersReduced = window.matchMedia(
       "(prefers-reduced-motion: reduce)",
     ).matches;
@@ -424,7 +433,58 @@ export function BuilderCenterPanel() {
     requestAnimationFrame(() => {
       contextualHeadingRef.current?.focus();
     });
-  }, [selectedSlot, showContextualPanel]);
+  }, [isMobileLayout, selectedSlot, showContextualPanel]);
+
+  // Shared by the desktop inline editor and the mobile bottom sheet.
+  const contextualContent: ReactNode = selectedSlot ? (
+    <>
+      {showRunePanel && (
+        <RuneAssignmentPanel slot={selectedSlot} onClose={clearSelection} />
+      )}
+
+      {showBackstoryPanel && <BackstoryNotesPanel />}
+
+      {useAmellwindHomebrew && showFactionPanel && <FactionLibraryPanel />}
+
+      {showSpellLibrary && (
+        <SpellLibraryPanel
+          selectedSlot={selectedSlot}
+          className={
+            classSelection?.name ??
+            speciesSpellGrants.groupLabel ??
+            "Character"
+          }
+          speciesName={species?.name}
+          characterLevel={character.level}
+          spellcastingInfo={spellcastingInfo}
+          spellSelections={spellSelections}
+          allSpells={allSpells}
+          spellsLoading={spellsLoading}
+          spellLevelByName={spellLevelByName}
+          allowSpellPicks={allowSpellPicks}
+          onAddSpell={addSpell}
+          onRemoveSpell={removeSpell}
+        />
+      )}
+
+      {showOptionalFeatureLibrary &&
+        isOptionalFeatureSlot(selectedSlot) &&
+        classData && (
+          <OptionalFeatureLibraryPanel
+            selectedSlot={selectedSlot}
+            progressions={optionalProgressions}
+            classData={classData}
+            subclass={subclassData}
+            level={character.level}
+            selections={optionalFeatureSelections}
+            onSetSelections={setOptionalFeaturesForProgression}
+            weaponProficiencies={resolvedWeaponItems}
+          />
+        )}
+
+      {showLibrary && <BuilderLibraryPanel selectedSlot={selectedSlot} />}
+    </>
+  ) : null;
 
   return (
     <div className="flex min-w-0 flex-col gap-2.5">
@@ -582,78 +642,57 @@ export function BuilderCenterPanel() {
       )}
 
       {/* ─── Contextual panels (mutually driven by selectedSlot) ─── */}
-      {showContextualPanel && selectedSlot && (
-        <div
-          ref={contextualPanelRef}
-          className="scroll-mt-14 space-y-2.5 rounded-lg border border-border/60 bg-card/80 p-3"
+      {isMobileLayout ? (
+        <Sheet
+          open={!!showContextualPanel && !!selectedSlot}
+          onOpenChange={(open) => {
+            if (!open) clearSelection();
+          }}
         >
-          <div className="flex items-center justify-between gap-2">
-            <h2
-              ref={contextualHeadingRef}
-              tabIndex={-1}
-              className="text-[11px] font-semibold uppercase tracking-wider text-muted-foreground outline-none"
-            >
-              Editing: {formatBuilderSlotLabel(selectedSlot)}
-            </h2>
-            <Button
-              type="button"
-              variant="ghost"
-              size="sm"
-              className="h-7 gap-1 px-2 text-[11px]"
-              onClick={clearSelection}
-              aria-label="Close editor"
-            >
-              <X className="h-3.5 w-3.5" aria-hidden />
-              Close
-            </Button>
+          <SheetContent
+            className="h-[90dvh] max-h-[90dvh]"
+            aria-describedby={undefined}
+          >
+            <SheetHeader className="border-b border-border/60 pr-10">
+              <SheetTitle className="text-sm">
+                Editing: {selectedSlot ? formatBuilderSlotLabel(selectedSlot) : ""}
+              </SheetTitle>
+            </SheetHeader>
+            <SheetBody className="space-y-2.5 px-3 pt-3">
+              {selectedSlot && contextualContent}
+            </SheetBody>
+          </SheetContent>
+        </Sheet>
+      ) : (
+        showContextualPanel &&
+        selectedSlot && (
+          <div
+            ref={contextualPanelRef}
+            className="scroll-mt-2 space-y-2.5 rounded-lg border border-border/60 bg-card/80 p-3"
+          >
+            <div className="flex items-center justify-between gap-2">
+              <h2
+                ref={contextualHeadingRef}
+                tabIndex={-1}
+                className="text-[11px] font-semibold uppercase tracking-wider text-muted-foreground outline-none"
+              >
+                Editing: {formatBuilderSlotLabel(selectedSlot)}
+              </h2>
+              <Button
+                type="button"
+                variant="ghost"
+                size="sm"
+                className="h-7 gap-1 px-2 text-[11px]"
+                onClick={clearSelection}
+                aria-label="Close editor"
+              >
+                <X className="h-3.5 w-3.5" aria-hidden />
+                Close
+              </Button>
+            </div>
+            {contextualContent}
           </div>
-
-          {showRunePanel && (
-            <RuneAssignmentPanel slot={selectedSlot} onClose={clearSelection} />
-          )}
-
-          {showBackstoryPanel && <BackstoryNotesPanel />}
-
-          {useAmellwindHomebrew && showFactionPanel && <FactionLibraryPanel />}
-
-          {showSpellLibrary && (
-            <SpellLibraryPanel
-              selectedSlot={selectedSlot}
-              className={
-                classSelection?.name ??
-                speciesSpellGrants.groupLabel ??
-                "Character"
-              }
-              speciesName={species?.name}
-              characterLevel={character.level}
-              spellcastingInfo={spellcastingInfo}
-              spellSelections={spellSelections}
-              allSpells={allSpells}
-              spellsLoading={spellsLoading}
-              spellLevelByName={spellLevelByName}
-              allowSpellPicks={allowSpellPicks}
-              onAddSpell={addSpell}
-              onRemoveSpell={removeSpell}
-            />
-          )}
-
-          {showOptionalFeatureLibrary &&
-            isOptionalFeatureSlot(selectedSlot) &&
-            classData && (
-              <OptionalFeatureLibraryPanel
-                selectedSlot={selectedSlot}
-                progressions={optionalProgressions}
-                classData={classData}
-                subclass={subclassData}
-                level={character.level}
-                selections={optionalFeatureSelections}
-                onSetSelections={setOptionalFeaturesForProgression}
-                weaponProficiencies={resolvedWeaponItems}
-              />
-            )}
-
-          {showLibrary && <BuilderLibraryPanel selectedSlot={selectedSlot} />}
-        </div>
+        )
       )}
     </div>
   );

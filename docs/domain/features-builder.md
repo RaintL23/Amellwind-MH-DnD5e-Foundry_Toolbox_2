@@ -13,15 +13,31 @@ Herramienta experimental para equipar armas/armadura/runas y estimar **daño por
 
 #### Layout (`BuilderPage`)
 
-Grid de tres columnas en desktop (`xl:grid-cols-[280px_minmax(0,1fr)_260px]`):
+`BuilderLayoutProvider` (`context/BuilderLayoutContext.tsx`) elige **un solo árbol** según `(min-width: 1024px)` para no duplicar anclas `data-builder-section`:
 
-| Columna   | Componentes                                                                                                                                             |
-| --------- | ------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| Izquierda | `StatsPanel`, `BuilderImagePanel`, `BuilderSavingThrowsPanel`, `BuilderSkillChecksPanel`                                                                |
-| Centro    | `BuilderCenterPanel` (grids de identity/equipment/spells + panel contextual)                                                                              |
-| Derecha   | `BuilderDerivedPanel` (Combat Stats), `BuilderInventoryPanel`, `BuilderOtherProficienciesPanel`, `BuilderLanguagesPanel`, `BuilderDefensesPanel`       |
+**Desktop (`lg+`)**: columnas con **scroll independiente** (la progress bar queda fija arriba; el contenedor de página no scrollea).
 
-Cabecera: `HomebrewModeToggle` (Amellwind Homebrew **OFF** por defecto si no hay valor en `localStorage`) + botón **Tips** (`CharacterCreationTipsPanel`) que abre un dialog con workflow/gear según el modo homebrew. Encima del grid: **`BuilderProgressBar`** sticky (checklist en vivo con deep-links a slots/`data-builder-section`).
+| Breakpoint | Columnas |
+| --- | --- |
+| `lg` (1024–1279) | `[300px_1fr]`: izquierda = `StatsPanel`, `BuilderDerivedPanel`, `BuilderImagePanel`, saves, skills, inventario, profs, idiomas, defensas · centro = `BuilderCenterPanel` |
+| `xl` | `[280px_1fr_260px]`: izquierda = `StatsPanel`, `BuilderImagePanel`, `BuilderSavingThrowsPanel`, `BuilderSkillChecksPanel` · centro · derecha = `BuilderDerivedPanel`, `BuilderInventoryPanel`, `BuilderOtherProficienciesPanel`, `BuilderLanguagesPanel`, `BuilderDefensesPanel` |
+| `2xl` | `[320px_1fr_320px]`, `max-w-[1760px]` |
+
+**Móvil (`< lg`)**: una pestaña visible a la vez + `BuilderMobileTabBar` abajo (badge de issues pendientes por pestaña). Todas las pestañas permanecen montadas (`hidden`) para conservar estado local.
+
+| Pestaña | Paneles | Secciones de completeness |
+| --- | --- | --- |
+| Build | `BuilderCenterPanel` | identity, feats, optional-features, spells |
+| Character | `StatsPanel`, `BuilderImagePanel` | ability-scores |
+| Proficiencies | saves, skills, profs, idiomas, defensas | skills, tools, languages, defenses |
+| Gear & Stats | `BuilderDerivedPanel`, `BuilderInventoryPanel` | starting-equipment |
+
+- El editor contextual del slot (biblioteca/detalle/runas) se abre en un **bottom sheet** (`Sheet`) en móvil; cerrar el sheet limpia `selectedSlot`. En desktop sigue inline bajo los grids.
+- Seleccionar un slot cambia a la pestaña Build; `goToSection` cambia a la pestaña dueña (`SECTION_TO_MOBILE_TAB`) antes de hacer scroll.
+- La progress bar muestra en móvil una franja compacta HP/AC/Speed/Init/Prof (`useBuilderDerivedStats`, compartido con `BuilderDerivedPanel`).
+- Grids de slots: 3 → 4 (`sm`) → 5 (`lg`) columnas (`BUILDER_SLOT_GRID_CLASS`).
+
+Cabecera: `HomebrewModeToggle` (Amellwind Homebrew **OFF** por defecto si no hay valor en `localStorage`) + botón **Tips** (`CharacterCreationTipsPanel`) que abre un dialog con workflow/gear según el modo homebrew. Encima del grid: **`BuilderProgressBar`** fija (checklist en vivo con deep-links a slots/`data-builder-section`).
 
 `BuilderSlotSelectionProvider` eleva `selectedSlot` para que la progress bar y el centro compartan selección. `BuildCompletenessProvider` expone `liveResult` / `liveSteps` (evaluación diferida con `useDeferredValue`) además del highlight de export.
 

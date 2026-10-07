@@ -11,6 +11,9 @@ import {
   useBuildCompleteness,
 } from "../../context/BuildCompletenessContext";
 import { useBuilderSlotSelection } from "../../hooks/useBuilderSlotSelection";
+import { useBuilderLayoutOptional } from "../../context/BuilderLayoutContext";
+import { useBuilderDerivedStats } from "../../hooks/useBuilderDerivedStats";
+import { formatModifier } from "@/shared/utils/cr.utils";
 import type { BuildCompletenessIssue } from "../../utils/build-completeness.types";
 
 function goToIssue(
@@ -35,12 +38,18 @@ export function BuilderProgressBar() {
     activateHighlight,
   } = useBuildCompleteness();
   const { selectSlot } = useBuilderSlotSelection();
+  const isMobileLayout = useBuilderLayoutOptional()?.isMobileLayout ?? false;
 
   const pendingIssues = liveResult.issues;
   const hasStarted = liveResult.hasStarted;
 
   return (
-    <div className="sticky top-0 z-20 -mx-3 mb-3 border-b border-border/60 bg-background/95 px-3 py-2 backdrop-blur supports-[backdrop-filter]:bg-background/80 lg:-mx-4 lg:px-4">
+    <div
+      className={cn(
+        "z-20 border-b border-border/60 bg-background/95 px-3 py-2 backdrop-blur supports-[backdrop-filter]:bg-background/80",
+        isMobileLayout ? "shrink-0" : "shrink-0 rounded-t-lg px-4",
+      )}
+    >
       <div className="mx-auto flex w-full max-w-[1400px] items-center gap-3">
         <Popover>
           <PopoverTrigger asChild>
@@ -157,6 +166,37 @@ export function BuilderProgressBar() {
           </p>
         </div>
       </div>
+      {isMobileLayout && <CombatSummaryStrip />}
     </div>
+  );
+}
+
+/** Mobile-only: key combat stats visible from every tab. */
+function CombatSummaryStrip() {
+  const { hitPoints, armorClass, speed, initiative, proficiencyBonus } =
+    useBuilderDerivedStats();
+  const chips: { label: string; value: string }[] = [
+    { label: "HP", value: hitPoints ? String(hitPoints.max) : "—" },
+    { label: "AC", value: String(armorClass.total) },
+    { label: "Spd", value: speed.display },
+    { label: "Init", value: formatModifier(initiative) },
+    { label: "Prof", value: `+${proficiencyBonus}` },
+  ];
+  return (
+    <dl className="mt-2 grid grid-cols-5 gap-1" aria-label="Combat summary">
+      {chips.map((chip) => (
+        <div
+          key={chip.label}
+          className="flex min-w-0 flex-col items-center rounded-md border border-border/50 bg-muted/30 px-1 py-0.5"
+        >
+          <dt className="text-[9px] uppercase tracking-wide text-muted-foreground">
+            {chip.label}
+          </dt>
+          <dd className="w-full truncate text-center text-xs font-semibold text-foreground">
+            {chip.value}
+          </dd>
+        </div>
+      ))}
+    </dl>
   );
 }

@@ -43,7 +43,7 @@ export function HomebrewModeToggle() {
 
   return (
     <>
-      <div className="flex items-center gap-2.5 rounded-lg border border-border bg-background/60 px-3 py-2">
+      <div className="flex items-center gap-2 rounded-lg border border-border bg-background/60 px-2.5 py-1.5 sm:gap-2.5 sm:px-3 sm:py-2">
         <Switch
           id="homebrew-mode"
           checked={useAmellwindHomebrew}
@@ -54,9 +54,9 @@ export function HomebrewModeToggle() {
           className="flex flex-1 cursor-pointer flex-col gap-0.5"
         >
           <span className="text-xs font-medium text-foreground">
-            Amellwind Homebrew
+            <span className="hidden sm:inline">Amellwind </span>Homebrew
           </span>
-          <span className="text-[11px] font-normal text-muted-foreground">
+          <span className="hidden text-[11px] font-normal text-muted-foreground sm:block">
             {useAmellwindHomebrew
               ? "MH content, runes, trinkets, and rarities enabled"
               : "D&D 5e only — standard weapons and gear"}

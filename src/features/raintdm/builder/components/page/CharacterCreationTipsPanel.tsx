@@ -75,13 +75,14 @@ export function CharacterCreationTipsPanel() {
         type="button"
         variant="outline"
         size="sm"
-        className="h-auto shrink-0 gap-1.5 self-stretch px-3 py-2"
+        className="h-auto shrink-0 gap-1.5 self-stretch px-2.5 py-1.5 sm:px-3 sm:py-2"
         onClick={() => setOpen(true)}
         aria-haspopup="dialog"
         aria-expanded={open}
+        aria-label="Character creation tips"
       >
         <Lightbulb className="h-3.5 w-3.5 text-primary" />
-        Tips
+        <span className="hidden sm:inline">Tips</span>
       </Button>
 
       <Dialog open={open} onOpenChange={setOpen}>
