@@ -302,6 +302,7 @@ export const ListFilterSection = memo(function ListFilterSection({
   const [sectionOpen, setSectionOpen] = useState(
     defaultExpanded ? "section" : "",
   );
+  const [selectedListOpen, setSelectedListOpen] = useState(false);
 
   const optionsFromGroups = useMemo(() => {
     if (!groups || groups.length === 0) return [] as ListFilterOption[];
@@ -517,28 +518,35 @@ export const ListFilterSection = memo(function ListFilterSection({
 
             {selectedFlatOptions.length > 0 && (
               <div className="mb-2 space-y-1.5 rounded-md border border-border/60 bg-muted/20 p-2.5">
-                <p className="text-[11px] font-medium uppercase tracking-wide text-muted-foreground">
-                  Currently selected
-                  <span className="ml-1.5 rounded-full bg-primary/15 px-1.5 py-0.5 text-[10px] font-normal normal-case tracking-normal text-primary">
-                    {selectedFlatOptions.length}
-                  </span>
-                </p>
-                <OptionPillRow
-                  options={
-                    selectedFlatOptions.length > LARGE_FILTER_SECTION_PILL_CAP
-                      ? selectedFlatOptions.slice(
-                          0,
-                          LARGE_FILTER_SECTION_PILL_CAP,
-                        )
-                      : selectedFlatOptions
-                  }
-                  selectedSet={selectedSet}
-                  onToggle={toggle}
-                />
-                {selectedFlatOptions.length > LARGE_FILTER_SECTION_PILL_CAP && (
+                <div className="flex items-center justify-between gap-2">
+                  <p className="text-[11px] font-medium uppercase tracking-wide text-muted-foreground">
+                    Currently selected
+                    <span className="ml-1.5 rounded-full bg-primary/15 px-1.5 py-0.5 text-[10px] font-normal normal-case tracking-normal text-primary">
+                      {selectedFlatOptions.length}
+                    </span>
+                  </p>
+                  {selectedFlatOptions.length > LARGE_FILTER_SECTION_PILL_CAP && (
+                    <button
+                      type="button"
+                      onClick={() => setSelectedListOpen((prev) => !prev)}
+                      aria-expanded={selectedListOpen}
+                      className="text-[11px] text-muted-foreground hover:text-foreground"
+                    >
+                      {selectedListOpen ? "Hide list" : "Show list"}
+                    </button>
+                  )}
+                </div>
+                {selectedFlatOptions.length <= LARGE_FILTER_SECTION_PILL_CAP ||
+                selectedListOpen ? (
+                  <OptionPillRow
+                    options={selectedFlatOptions}
+                    selectedSet={selectedSet}
+                    onToggle={toggle}
+                  />
+                ) : (
                   <p className="text-[11px] text-muted-foreground">
-                    {selectedFlatOptions.length - LARGE_FILTER_SECTION_PILL_CAP}{" "}
-                    more — expand a year below or search to find them.
+                    Large selection (e.g. the defaults) — browse and toggle
+                    options by group below, or search to find one.
                   </p>
                 )}
               </div>
