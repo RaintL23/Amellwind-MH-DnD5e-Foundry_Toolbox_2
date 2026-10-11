@@ -12,66 +12,78 @@ It started at my table: I play with friends who care more about D&D than Monster
 
 ## Features
 
+The sidebar has three sections (same order as `src/shared/constants/nav-sections.ts`): **RaintDM**, **Amellwind Homebrew**, and the **D&D 5e Compendium**.
+
+### RaintDM
+
+Play and table tools, plus RaintDM variants on Amellwind’s 2014 Monster Hunter homebrew — house-rule tweaks for my tables and campaigns:
+
+| Group | Section | Route | Description |
+| --- | --- | --- | --- |
+| GM Tools | **Combat Tracker** | `/combat-tracker` | GM initiative order, HP (including multi-target damage), and death saves |
+| GM Tools | **Damage & Healing Calculator** | `/damage-calculator` | Expected damage or healing per turn for comparing builds (persisted) |
+| Character Tools | **Builder** _(ALPHA)_ | `/builder` | Character Builder — stats, equipment, runes, DPR, **Foundry VTT export/import** and character-sheet PDF export. Aggregates Amellwind, 5e, and RaintDM catalogs. |
+| Character Tools | **Character Sheet** _(ALPHA)_ | `/sheet`, `/sheet/:characterId` | In-session play sheet: HP, actions, spells, rests, inventory, conditions. Imports Builder JSON; optimized for phone and desktop |
+| Items | **Items Forge** | `/item-forge` | Curated RaintDM items and Combo List recipes (Dual Repeaters magazines, hunter traps) |
+| Items | **Weapon Forge** | `/weapon-forge` | Curated RaintDM hunter weapons plus custom weapons you create, edit, and export |
+
 ### Amellwind Homebrew
 
-| Section              | Route               | Description                                                                   |
-| -------------------- | ------------------- | ----------------------------------------------------------------------------- |
-| **Damage & Healing Calculator**| `/damage-calculator`| Expected damage or healing per turn for comparing builds (persisted) |
-| **Creation Guide**   | `/character-guide`  | Character creation guide from the manual (species, roles, skills, etc.)      |
-| **Monstie Sidekick** | `/monstie-sidekick` | Rules and creator for Monstie sidekicks                                         |
-| **Guardian Template** | `/guardian-template` | Rules to apply the MHMM Guardian monster template                               |
-| **NPC Generator**    | `/npc-generator`    | Humanoid NPC stat block generator                                 |
-| **Species**          | `/species`          | Species and subraces from the Hunting Guide                                        |
-| **Backgrounds**      | `/backgrounds`      | Hunter backgrounds from the manual                                              |
-| **Feats**            | `/feats`            | Feats from the manual                                                      |
-| **Monsters**         | `/monsters`         | MH bestiary with stat blocks, detail, and a dedicated page per monster          |
-| **Runes**            | `/runes`            | Monster materials and build planner (side drawer)              |
-| **Material Effects** | `/material-effects` | Monster material effects (armor/weapon) in a browsable list      |
-| **Conditions**       | `/conditions`       | Amellwind homebrew conditions                                            |
-| **Diseases**         | `/diseases`         | Amellwind homebrew diseases                                           |
-| **Weapons**          | `/weapons`          | Hunter Weapons and optional features                         |
-| **Items**            | `/items`            | Item catalog from the Hunting Guide                                          |
-| **Shops**            | `/shops`            | Shops with a shopping cart                                                 |
-| **Cooking**          | `/cooking`          | Artisan cooking system                                                    |
-| **Combo List**       | `/combo`            | Item crafting and combinations                                            |
-| **Environments**     | `/environments`     | Biomes and encounter/resource tables                                         |
-| **Resources**        | `/resources`        | Environment resources (plants, minerals, etc.)                                |
-| **Downtime**         | `/downtime`         | Downtime activities from the manual                                        |
-
-### Amellwind (RaintDM)
-
-RaintDM variants on Amellwind’s 2014 Monster Hunter homebrew — house-rule tweaks for my tables and campaigns:
-
-| Section         | Route           | Description                                                                 |
-| --------------- | --------------- | --------------------------------------------------------------------------- |
-| **Builder**      | `/builder`      | Character Builder — stats, equipment, runes, DPR, and **Foundry VTT export/import** _(ALPHA)_. Aggregates Amellwind, 5e, and RaintDM catalogs. |
-| **Damage & Healing Calculator** | `/damage-calculator` | Expected damage or healing per turn for comparing builds (also under Amellwind Homebrew) |
-| **Weapon Forge** | `/weapon-forge` | Curated RaintDM hunter weapons plus custom weapons you create and export |
-| **Items Forge**  | `/item-forge`   | Curated RaintDM items and Combo List recipes (Dual Repeaters magazines, hunter traps) |
+| Group | Section | Route | Description |
+| --- | --- | --- | --- |
+| Character | **Creation Guide** | `/character-guide` | Character creation guide from the manual (species, roles, skills, etc.) |
+| Character | **Lore** | `/lore` | Myths, history, gods, and peoples of the Old World (Chapter 1) |
+| Character | **Species** | `/species` | Species and subraces from the Hunting Guide |
+| Character | **Backgrounds** | `/backgrounds` | Hunter backgrounds from the manual |
+| Character | **Factions** | `/factions` | Guilds and organizations — membership, renown, and faction spells |
+| Character | **Feats** | `/feats` | Feats from the manual |
+| Bestiary and Rules | **Monsters** | `/monsters`, `/monsters/:monsterId` | MH bestiary with stat blocks, detail, and a dedicated page per monster |
+| Bestiary and Rules | **Conditions & Diseases** | `/conditions` | Blight conditions, afflictions, and infectious diseases (`/diseases` redirects here) |
+| Weapons, Runes, and Equipment | **Weapons** | `/weapons` | Hunter Weapons and optional features |
+| Weapons, Runes, and Equipment | **Runes** | `/runes` | Monster materials and Rune Planner build drawer |
+| Weapons, Runes, and Equipment | **Material Effects** | `/material-effects` | Monster material effects (armor/weapon) in a browsable list |
+| Weapons, Runes, and Equipment | **Items** | `/items` | Item catalog from the Hunting Guide |
+| Weapons, Runes, and Equipment | **Siege Weapons** | `/siege-weapons` | Dragonator, Dragonrazer, and other siege engines |
+| World and Exploration | **Hunt Planner** | `/hunt` | Plan and simulate a monster hunt with tracking rolls and resource tables |
+| World and Exploration | **Environments** | `/environments` | Biomes and encounter/resource tables |
+| World and Exploration | **Resources** | `/resources` | Environment resources (plants, minerals, etc.) |
+| World and Exploration | **Shops** | `/shops` | Shops with a shopping cart |
+| World and Exploration | **Cooking** | `/cooking` | Artisan cooking system |
+| World and Exploration | **Combo List** | `/combo` | Item crafting and combinations |
+| World and Exploration | **Downtime** | `/downtime` | Downtime activities from the manual |
+| NPCs and Companions | **Monstie Sidekick** | `/monstie-sidekick` | Rules and creator for Monstie sidekicks |
+| NPCs and Companions | **Guardian Template** | `/guardian-template` | Rules to apply the MHMM Guardian monster template |
+| NPCs and Companions | **NPC Generator** | `/npc-generator` | Humanoid NPC stat block generator |
 
 ### D&D 5e Compendium
 
 Official reference data loaded from [5etools](https://5e.tools) (not Amellwind homebrew):
 
-| Section         | Route                         | Description                                              |
-| --------------- | ---------------------------- | -------------------------------------------------------- |
-| **Spells**      | `/spells`                    | Spells with filters by class, level, and source           |
-| **Classes**     | `/classes`, `/classes/:id`   | Base classes with a detail page per variant           |
-| **Items**       | `/dnd-items`                 | Magic items and equipment from the PHB/DMG and other sources       |
-| **Bestiary**    | `/bestiary`, `/bestiary/:id` | Creatures from the MM and other sources, loaded on demand |
-| **Races**       | `/dnd-races`                 | Official 5e species, lineages, and subraces                |
-| **Backgrounds** | `/dnd-backgrounds`           | Official 5e backgrounds (2014 / 2024)                    |
-| **Feats**       | `/dnd-feats`                 | Official 5e feats                                       |
-| **Conditions & Diseases** | `/dnd-conditions` | Classic D&D conditions, statuses, and diseases (PHB / DMG / 2024) |
-| **Creation Guide** | `/dnd-character-guide` | Character creation walkthrough comparing PHB 2014 and PHB 2024 |
-| **Xanathar Backstory** | `/xanathar-backstory` | Random backstory generator using Xanathar’s tables (XGE) |
-| **Shop Generator** | `/shop-generator` | Procedural D&D 5e shops (theme, tier, editable CSV prices) |
+| Group | Section | Route | Description |
+| --- | --- | --- | --- |
+| Character Options | **Classes** | `/classes`, `/classes/:classId` | Base classes with a detail page per variant |
+| Character Options | **Races** | `/dnd-races` | Official 5e species, lineages, and subraces |
+| Character Options | **Backgrounds** | `/dnd-backgrounds` | Official 5e backgrounds (2014 / 2024) |
+| Character Options | **Feats** | `/dnd-feats` | Official 5e feats |
+| Character Options | **Multiclassing** | `/multiclass` | Multiclass rules, class prerequisites, and spell slot calculator |
+| Spells and Conditions | **Spells** | `/spells` | Spells with filters by class, level, and source |
+| Spells and Conditions | **Conditions & Diseases** | `/dnd-conditions` | Classic D&D conditions, statuses, and diseases (PHB / DMG / 2024) |
+| Bestiary | **Bestiary** | `/bestiary`, `/bestiary/:creatureId` | Creatures from the MM and other sources, loaded on demand |
+| Equipment | **Items** | `/dnd-items` | Magic items and equipment from the PHB/DMG and other sources |
+| Character Tools | **Creation Guide** | `/dnd-character-guide` | Character creation walkthrough comparing PHB 2014 and PHB 2024 |
+| Character Tools | **Encounter Calculator** | `/encounter-calculator` | DMG encounter difficulty: party XP budgets vs creature CR and count |
+| Character Tools | **Xanathar Backstory** | `/xanathar-backstory` | Random backstory generator using Xanathar’s tables (XGE) |
+| Character Tools | **Shop Generator** | `/shop-generator` | Procedural D&D 5e shops (theme, tier, editable CSV prices) |
 
 ### Foundry VTT integration
 
-The **Character Builder** can **export** the character as a **Foundry VTT (dnd5e v12)** `character` actor ready to import, and **import** a Foundry actor JSON back to rebuild the character inside the app. Export produces a single JSON file with class/subclass, species, background, feats, spells, weapons/armor/trinkets, advancements, and portrait/token; import _matches_ each entity against the app catalogs (classes, species, backgrounds, feats, spells, and equipment). Both flows live in `src/features/raintdm/builder/foundry-export/` and `foundry-import/`, with buttons on the builder’s `StatsPanel`.
+Target: Foundry core **12.331** with the **dnd5e 4.4.4** system (`src/shared/foundry/target.ts`).
 
-Export also **enriches items with Midi-QoL / DAE automation** (Active Effects with `midi-qol`/`dae` flags), mirroring what the **Plutonium** importer would add: the actor behaves as if it went through *Plutonium Addon: Automation*, as long as the destination world has **Midi QoL + DAE + Times Up** enabled. Automation overlays (`foundry-export/automation.data.ts`) are ported as reference data from [TheGiddyLimit](https://github.com/TheGiddyLimit) repos — see [Data sources](#data-sources).
+The **Character Builder** can **export** the character as a Foundry `character` actor ready to import, and **import** a Foundry actor JSON back to rebuild the character inside the app. Export produces a single JSON file with class/subclass, species, background, feats, spells, weapons/armor/trinkets, advancements, and portrait/token; import _matches_ each entity against the app catalogs (classes, species, backgrounds, feats, spells, and equipment). Both flows live in `src/features/raintdm/builder/foundry-export/` and `foundry-import/`, with buttons on the builder’s `StatsPanel`. Shared Foundry helpers (ids, effects, descriptions, module requirements) live in `src/shared/foundry/`.
+
+Export also **enriches items with Midi-QoL / DAE automation** (Active Effects with `midi-qol`/`dae` flags), mirroring what the **Plutonium** importer would add: the actor behaves as if it went through *Plutonium Addon: Automation*, as long as the destination world has the required modules enabled (**Midi QoL + Item Macro + DAE + Times Up**; the app shows a requirements notice). Automation overlays (`src/shared/foundry/weapons/automation.data.ts` and `feature-automation.data.ts`) are ported as reference data from [TheGiddyLimit](https://github.com/TheGiddyLimit) repos — see [Data sources](#data-sources).
+
+**Content module.** `pnpm build` also generates the Foundry module `Amellwind-MH-RaintDM-module` (`build:foundry-module`, sources in `public/data/foundry-module/`): the Monster Hunter homebrew content (weapons, runes, combo crafting, Items Forge, conditions & diseases, cooking, …) bundled into installable compendium packs. It additionally requires socketlib. See [`public/data/foundry-module/README.md`](./public/data/foundry-module/README.md) for requirements and layout.
 
 ## Tech stack
 
@@ -84,6 +96,8 @@ Export also **enriches items with Midi-QoL / DAE automation** (Active Effects wi
 | Tables         | TanStack Table                    |
 | Routing        | React Router v6 (lazy + Suspense) |
 | Storage | IndexedDB (`idb`)                 |
+| Other          | `pdf-lib` (sheet PDF export), `cmdk`, `embla-carousel-react`, `sonner` |
+| Tests          | Vitest                            |
 | Packages       | pnpm                              |
 
 The app is an **SPA** with no backend of its own. Amellwind data is synced and cached in the browser; the D&D 5e compendium is fetched on demand from the 5etools mirror.
@@ -103,7 +117,7 @@ cd Amellwind-MH-DnD5e-Foundry_Toolbox_2
 # Install dependencies
 pnpm install
 
-# Dev server
+# Dev server (first regenerates the RaintDM weapon/item manifest)
 pnpm dev
 
 # Production build
@@ -112,8 +126,11 @@ pnpm build
 # Preview the build
 pnpm preview
 
-# Lint
+# Lint (zero warnings allowed)
 pnpm lint
+
+# Unit tests (Builder completeness + utilities)
+pnpm test
 
 # Rebuild magic-item pricing lookup from scripts/data/magic-item-pricing.csv
 pnpm pricing:build
@@ -122,7 +139,7 @@ pnpm pricing:build
 pnpm build:analyze
 ```
 
-`pnpm build` also runs `build:gtmh-supplement` and `build:foundry-module` before the Vite production compile. Magic-item pricing stays separate: replace `scripts/data/magic-item-pricing.csv` (CSV export from the [Magic Item Pricing](https://dumpstatadventures.com/the-gm-is-always-right/pricing-magic-items-2024-dungeon-masters-guide) Dump Stat Adventures sheet — DMG 2024 tabs + XGTE/TCoE rows) and run `pnpm pricing:build`. The app attributes those prices to VaranSL / Dump Stat Adventures; they are not original calculations from this project.
+`pnpm build` first regenerates the RaintDM manifest, then runs `build:gtmh-supplement` and `build:foundry-module` (which validates MH tokens), then `tsc -b` and the Vite production compile. Magic-item pricing stays separate: replace `scripts/data/magic-item-pricing.csv` (CSV export from the [Magic Item Pricing](https://dumpstatadventures.com/the-gm-is-always-right/pricing-magic-items-2024-dungeon-masters-guide) Dump Stat Adventures sheet — DMG 2024 tabs + XGTE/TCoE rows) and run `pnpm pricing:build`. The app attributes those prices to VaranSL / Dump Stat Adventures; they are not original calculations from this project.
 
 The app stores all data in **IndexedDB**, its runtime **source of truth**. GitHub is only an *update feed* (offline-first): on startup, cached data is shown immediately and, if older than 24h, refreshed in the background; only the first launch (no data yet) waits for the download. If the network fails, the app keeps working with what is already in IndexedDB.
 
@@ -138,7 +155,7 @@ In production you **do not need** to commit `races.json`, `backgrounds.json`, `f
 
 **Do not set `VITE_5ETOOLS_DATA=local` on Vercel** — spells and classes need hundreds of files that are not in the repo.
 
-For offline development, copy JSON from `backup-jsons/5etools/` to `public/5etools/` and create `.env.local` from [`.env.example`](./.env.example). See comments in `src/shared/constants/api.constants.ts` for exact paths.
+For offline development, copy JSON from `backup-jsons/5etools/` (local-only, gitignored) to `public/5etools/` and create `.env.local` from [`.env.example`](./.env.example). See comments in `src/shared/constants/api.constants.ts` for exact paths.
 
 ### Deploy on Vercel
 
@@ -208,13 +225,13 @@ Playtest / Unearthed Arcana material comes from the [TheGiddyLimit/unearthed-arc
 
 ### Foundry automation (Midi-QoL / Plutonium)
 
-The automation export injects into items (Active Effects with `midi-qol`/`dae` flags, in `src/features/raintdm/builder/foundry-export/automation.data.ts` and `automation.builders.ts`) uses the following repositories as **reference information**, so that section of the code behaves like the Plutonium importer:
+The automation export injects into items (Active Effects with `midi-qol`/`dae` flags, in `src/shared/foundry/weapons/automation.data.ts`, `feature-automation.data.ts` and `automation.builders.ts`) uses the following repositories as **reference information**, so that section of the code behaves like the Plutonium importer:
 
 - [TheGiddyLimit/plutonium-addon-automation](https://github.com/TheGiddyLimit/plutonium-addon-automation) — automation overlay format and effect data per entity (feats, features, magic items, spells). _MIT License, © TheGiddyLimit._
 - [TheGiddyLimit/homebrew](https://github.com/TheGiddyLimit/homebrew) — reference 5etools homebrew format for name/source matching.
 - [tposney/midi-qol](https://github.com/tposney/midi-qol) and [DAE](https://foundryvtt.com/packages/dae) — flag keys (`flags.midi-qol.*`, `flags.dae.*`) and special duration semantics consumed by the generated Active Effects.
 
-The code **does not include** the module or its full dataset: it only reproduces the mechanical effects format for a curated set of entities, expandable by name. Requires Midi QoL + DAE + Times Up active in the destination world.
+The code **does not include** the module or its full dataset: it only reproduces the mechanical effects format for a curated set of entities, expandable by name. Requires Midi QoL + Item Macro + DAE + Times Up active in the destination world.
 
 ## Project structure
 
@@ -227,13 +244,15 @@ src/
 │   └── ui/                 # shadcn: button, dialog, input, badge, …
 ├── features/
 │   ├── home/               # Landing (mirrors the three Sidebar sections)
-│   ├── amellwind/          # Amellwind Homebrew (same groups as the Sidebar)
-│   ├── raintdm/            # RaintDM: Character Builder + Weapon/Items Forge
-│   └── dnd/                # D&D 5e Compendium (spells, classes, races, items, …)
+│   ├── amellwind/          # Amellwind Homebrew (monsters, runes, hunt, lore, factions, …)
+│   ├── raintdm/            # RaintDM: builder, character-sheet, combat-tracker, weapon/item forge
+│   └── dnd/                # D&D 5e Compendium (spells, classes, multiclass, encounter calc, …)
 └── shared/
     ├── constants/          # API URLs, IndexedDB, D&D constants (abilities, skills)
     ├── context/            # ThemeContext, SyncContext
     ├── db/                 # IndexedDB and sync
+    ├── foundry/            # Foundry VTT helpers: ids, effects, Midi/automation, module requirements
+    ├── theme/ hooks/ mappers/
     ├── types/              # Shared types
     ├── services/           # create-entity-service (service factory)
     ├── components/         # ItemRefText, DndKeywordText, StatBlockSection
@@ -247,12 +266,18 @@ Each feature follows a similar pattern: `components/`, `services/`, `hooks/`, `m
 
 [`docs/domain/`](./docs/domain/index.md) holds the detailed technical docs (split by topic for smaller reads): data architecture, domain entities, 5etools → Foundry mappings, business rules, and code conventions. [`instrucctions.md`](./instrucctions.md) is a short pointer to that folder.
 
+## License
+
+The **source code** of this project is released under the [MIT License](./LICENSE). Anyone may use it, clone it, modify it, and publish their own version, with no need to ask. The goal is for the app to be open to everyone.
+
+The MIT license covers only the code and original work in this repository. It does **not** cover the third-party content the app bundles or loads (Amellwind’s homebrew, 5etools / Wizards of the Coast material, Monster Hunter imagery, and more), which keeps its own rights and terms. See [`THIRD_PARTY.md`](./THIRD_PARTY.md) for the full list and attributions.
+
 ## Legal notice
 
-This project is a fan-made tool to make **Amellwind**’s homebrew (_Monster Hunter D&D 5e_) easier to use. All content, rules, and design of that homebrew are Amellwind’s work; this repository **does not create or modify** that material — it only organizes and presents information that is already **published on the internet** (for example on [5etools](https://5e.tools) and related sources).
+This project is a fan-made, non-commercial tool to make **Amellwind**’s homebrew (_Monster Hunter D&D 5e_) easier to use. All content, rules, and design of that homebrew are Amellwind’s work. The app presents it in an organized form: part is read from public feeds (such as the homebrew collection on [5etools](https://5e.tools)), and part is transcribed and restructured from Amellwind’s free Patreon PDFs so it can be searched and cross-referenced. That content is included to make the tool usable, not claimed as original work, and its rights remain with its author.
 
 The official source and the author’s full work are on Patreon: [patreon.com/cw/amellwind](https://www.patreon.com/cw/amellwind).
 
 **Monster Hunter** is owned by Capcom and **Dungeons & Dragons** is owned by Wizards of the Coast. This project is not affiliated with or endorsed by Capcom, Wizards of the Coast, Amellwind, or any other brand or author mentioned.
 
-Rights to homebrew content belong to their respective authors. See the original licenses on [5etools](https://5e.tools) and the source repositories.
+If you are a rights holder and want content credited differently, changed, or removed, please open an issue on the repository.
