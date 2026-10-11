@@ -36,6 +36,29 @@ export function persistUseAmellwindHomebrew(value: boolean): void {
   }
 }
 
+export type BuilderUiMode = "simple" | "advanced";
+
+const UI_MODE_STORAGE_KEY = "builder:uiMode";
+
+/** Simple (beginner) mode is the default when nothing is stored. */
+export function loadBuilderUiMode(): BuilderUiMode {
+  try {
+    return localStorage.getItem(UI_MODE_STORAGE_KEY) === "advanced"
+      ? "advanced"
+      : "simple";
+  } catch {
+    return "simple";
+  }
+}
+
+export function persistBuilderUiMode(mode: BuilderUiMode): void {
+  try {
+    localStorage.setItem(UI_MODE_STORAGE_KEY, mode);
+  } catch {
+    /* localStorage unavailable */
+  }
+}
+
 export function loadBuilderBackstoryNotes(): string {
   try {
     return localStorage.getItem(BACKSTORY_STORAGE_KEY) ?? "";

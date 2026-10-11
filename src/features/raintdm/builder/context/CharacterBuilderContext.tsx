@@ -14,6 +14,7 @@ import {
   ReactNode,
 } from "react";
 import {
+  loadBuilderUiMode,
   loadUseAmellwindHomebrew,
   persistUseAmellwindHomebrew,
 } from "../storage/builder.storage";
@@ -28,7 +29,10 @@ import {
 import { Character } from "../models/Character";
 import { getPrimaryClassLevel } from "../utils/multiclass.utils";
 import { computeEffectiveAbilityScores } from "../utils/effective-ability-scores";
-import type { AbilityScoreGenerationMethod } from "@/shared/utils/ability-scores";
+import {
+  defaultPointBuyScores,
+  type AbilityScoreGenerationMethod,
+} from "@/shared/utils/ability-scores";
 import { getDndBackgroundById } from "@/features/dnd/backgrounds/services/dnd-background.service";
 import { useBuilderInventory } from "./BuilderInventoryContext";
 import type { CharacterBuilderContextValue } from "./character-builder.types";
@@ -41,16 +45,31 @@ export type { CharacterBuilderContextValue } from "./character-builder.types";
 
 const CharacterBuilderContext = createContext<CharacterBuilderContextValue | null>(null);
 
+/**
+ * New builds in Simple mode start on Standard Array with every score unassigned
+ * (8s match the empty pool); Advanced keeps the manual 11s default.
+ */
+function initialAbilitySetup(): {
+  method: AbilityScoreGenerationMethod;
+  character: Character;
+} {
+  return loadBuilderUiMode() === "simple"
+    ? { method: "standard", character: new Character(1, defaultPointBuyScores()) }
+    : { method: "manual", character: new Character() };
+}
+
 export function CharacterBuilderProvider({ children }: Readonly<{ children: ReactNode }>) {
   const { clearInventory } = useBuilderInventory();
-  const [character, setCharacter] = useState<Character>(() => new Character());
+  const [character, setCharacter] = useState<Character>(
+    () => initialAbilitySetup().character,
+  );
   const [attacksPerTurnOverride, setAttacksPerTurnOverride] = useState<number | null>(null);
   const [useUnarmedStrike, setUseUnarmedStrike] = useState(false);
   const [useAmellwindHomebrew, setUseAmellwindHomebrewState] = useState(
     () => loadUseAmellwindHomebrew(),
   );
   const [abilityScoreMethod, setAbilityScoreMethod] =
-    useState<AbilityScoreGenerationMethod>("manual");
+    useState<AbilityScoreGenerationMethod>(() => initialAbilitySetup().method);
   const [portraitImage, setPortraitImage] = useState<string | null>(null);
   const [tokenImage, setTokenImage] = useState<string | null>(null);
   const prevHomebrewRef = useRef(useAmellwindHomebrew);
@@ -353,10 +372,11 @@ export function CharacterBuilderProvider({ children }: Readonly<{ children: Reac
   // ─── Reset + assembled context value ────────────────────────────────────────
 
   const resetBuild = useCallback(() => {
-    setCharacter(new Character());
+    const initial = initialAbilitySetup();
+    setCharacter(initial.character);
     setAttacksPerTurnOverride(null);
     setUseUnarmedStrike(false);
-    setAbilityScoreMethod("manual");
+    setAbilityScoreMethod(initial.method);
     setPortraitImage(null);
     setTokenImage(null);
     identity.resetIdentitySlice();

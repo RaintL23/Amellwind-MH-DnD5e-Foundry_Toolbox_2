@@ -37,6 +37,18 @@ Herramienta experimental para equipar armas/armadura/runas y estimar **daño por
 - La progress bar muestra en móvil una franja compacta HP/AC/Speed/Init/Prof (`useBuilderDerivedStats`, compartido con `BuilderDerivedPanel`).
 - Grids de slots: 3 → 4 (`sm`) → 5 (`lg`) columnas (`BUILDER_SLOT_GRID_CLASS`).
 
+**Modo Simple / Advanced** (`BuilderUiModeContext`, `localStorage` `builder:uiMode`, **Simple por defecto**; switch `BuilderUiModeToggle` en la cabecera). Simple oculta controles avanzados, pero **nunca uno en uso**:
+
+| Control | Oculto en Simple salvo que… |
+| --- | --- |
+| Multiclass (`StatsPanel`) | ya esté activo |
+| Métodos Manual / Dice (`GenerationMethodSelector`) | sea el método actual |
+| Filtro de fuentes/libros `src` (`BuilderLibraryPanel`) | difiera del default (los defaults oficiales siguen aplicándose; `onFiltersApply` fusiona valores para no perder secciones ocultas) |
+| `HomebrewModeToggle` | Homebrew esté activado |
+| Leyenda RPGBOT por letras | — se sustituye por una frase explicativa y badges con la palabra (Excellent/Good/…) |
+
+En Simple, un build nuevo (o `resetBuild`) arranca en **Standard Array con todo en 8 sin asignar**; en Advanced, Manual con 11. Import/autosave/randomizer siguen fijando su propio método.
+
 Cabecera: `HomebrewModeToggle` (Amellwind Homebrew **OFF** por defecto si no hay valor en `localStorage`) + botón **Tips** (`CharacterCreationTipsPanel`) que abre un dialog con workflow/gear según el modo homebrew. Encima del grid: **`BuilderProgressBar`** fija (checklist en vivo con deep-links a slots/`data-builder-section`).
 
 `BuilderSlotSelectionProvider` eleva `selectedSlot` para que la progress bar y el centro compartan selección. `BuildCompletenessProvider` expone `liveResult` / `liveSteps` / `nextStep` (evaluación diferida con `useDeferredValue`), `goToIssue` (abre el slot + scroll a la sección) además del highlight de export.

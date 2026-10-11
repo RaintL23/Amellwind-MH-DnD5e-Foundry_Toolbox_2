@@ -22,9 +22,11 @@ import { ScrollableWhenNeeded } from "../../shared/ScrollableWhenNeeded";
 import {
   ListSearchWithFilters,
   buildDefaultFilterValues,
+  isFilterSectionActive,
   type ListFilterSectionConfig,
   type ListFilterValues,
 } from "@/shared/components/list-filters";
+import { useBuilderUiMode } from "@/features/raintdm/builder/context/BuilderUiModeContext";
 import { ArmorLibraryPanel } from "./ArmorLibraryPanel";
 import { WeaponLibraryPanel } from "./WeaponLibraryPanel";
 import {
@@ -64,12 +66,16 @@ import {
 import { getClassFilterSourceCodes } from "@/features/dnd/classes/services/class.service";
 import { getDndFeatFilterSourceCodes } from "@/features/dnd/feats/services/dnd-feat.service";
 
+/** Book-source section id (see compendium-source-filter.utils). */
+const SOURCE_FILTER_SECTION_ID = "src";
+
 interface BuilderLibraryPanelProps {
   selectedSlot: BuilderSlotSelection;
 }
 
 export function BuilderLibraryPanel({ selectedSlot }: BuilderLibraryPanelProps) {
   const { search, setSearch, q } = useLibrarySearch(selectedSlot);
+  const { isSimple } = useBuilderUiMode();
   const [showAsiPanel, setShowAsiPanel] = useState(false);
   const [librarySearchHidden, setLibrarySearchHidden] = useState(false);
   const [filterValues, setFilterValues] = useState<ListFilterValues>({});
@@ -249,7 +255,9 @@ export function BuilderLibraryPanel({ selectedSlot }: BuilderLibraryPanelProps) 
   // Without this, the first reset stores {} while catalog is still empty and
   // the Filters dialog never shows the official-source selection.
   const sourceSectionDefaultsKey = useMemo(() => {
-    const src = filterSections.find((section) => section.id === "src");
+    const src = filterSections.find(
+      (section) => section.id === SOURCE_FILTER_SECTION_ID,
+    );
     if (!src?.defaultValues?.length) return "0";
     return `${src.defaultValues.length}:${src.options.length}`;
   }, [filterSections]);
@@ -333,6 +341,20 @@ export function BuilderLibraryPanel({ selectedSlot }: BuilderLibraryPanelProps) 
     showWeaponDetail ||
     librarySearchHidden;
 
+  // Simple mode hides the book-source filter (official sources stay applied
+  // by default) unless the user already narrowed it in Advanced mode.
+  const visibleFilterSections = useMemo(
+    () =>
+      isSimple
+        ? filterSections.filter(
+            (section) =>
+              section.id !== SOURCE_FILTER_SECTION_ID ||
+              isFilterSectionActive(section, filterValues),
+          )
+        : filterSections,
+    [isSimple, filterSections, filterValues],
+  );
+
   const showRpgbotLegend =
     !!rpgbotClassSlug &&
     !hideSearch &&
@@ -396,9 +418,12 @@ export function BuilderLibraryPanel({ selectedSlot }: BuilderLibraryPanelProps) 
                 searchValue={search}
                 onSearchChange={setSearch}
                 searchPlaceholder="Search..."
-                sections={filterSections}
+                sections={visibleFilterSections}
                 filterValues={filterValues}
-                onFiltersApply={setFilterValues}
+                // Merge so values of sections hidden in Simple mode survive.
+                onFiltersApply={(values) =>
+                  setFilterValues((prev) => ({ ...prev, ...values }))
+                }
                 dialogTitle={dialogTitle}
                 dialogDescription="Narrow the library list. Changes apply when you save."
               />
@@ -409,7 +434,7 @@ export function BuilderLibraryPanel({ selectedSlot }: BuilderLibraryPanelProps) 
             {showRpgbotLegend && (
               <>
                 {!rpgbotReady && <RpgbotLoadingHint />}
-                <RpgbotLegend />
+                <RpgbotLegend simple={isSimple} />
               </>
             )}
             <WeaponLibraryPanel

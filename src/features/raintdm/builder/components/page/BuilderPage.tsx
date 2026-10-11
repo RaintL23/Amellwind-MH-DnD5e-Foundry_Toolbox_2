@@ -16,6 +16,12 @@ import {
   builderMobileTabPanelId,
 } from "./BuilderMobileTabBar";
 import { HomebrewModeToggle } from "../shared/HomebrewModeToggle";
+import { BuilderUiModeToggle } from "../shared/BuilderUiModeToggle";
+import {
+  BuilderUiModeProvider,
+  useBuilderUiMode,
+} from "../../context/BuilderUiModeContext";
+import { useCharacterBuilder } from "../../context/CharacterBuilderContext";
 import { BuildCompletenessProvider } from "../../context/BuildCompletenessContext";
 import { BuilderSlotSelectionProvider } from "../../context/BuilderSlotSelectionContext";
 import {
@@ -31,17 +37,19 @@ import { BuilderGrantSync } from "../BuilderGrantSync";
 
 export function BuilderPage() {
   return (
-    <BuilderLayoutProvider>
-      <BuilderSlotSelectionProvider>
-        <BuildCompletenessProvider>
-          <RpgbotRatingsProvider>
-            <XanatharBackstoryProvider>
-              <BuilderPageContent />
-            </XanatharBackstoryProvider>
-          </RpgbotRatingsProvider>
-        </BuildCompletenessProvider>
-      </BuilderSlotSelectionProvider>
-    </BuilderLayoutProvider>
+    <BuilderUiModeProvider>
+      <BuilderLayoutProvider>
+        <BuilderSlotSelectionProvider>
+          <BuildCompletenessProvider>
+            <RpgbotRatingsProvider>
+              <XanatharBackstoryProvider>
+                <BuilderPageContent />
+              </XanatharBackstoryProvider>
+            </RpgbotRatingsProvider>
+          </BuildCompletenessProvider>
+        </BuilderSlotSelectionProvider>
+      </BuilderLayoutProvider>
+    </BuilderUiModeProvider>
   );
 }
 
@@ -57,6 +65,11 @@ function BuilderPageContent() {
 }
 
 function BuilderHeader() {
+  const { isSimple } = useBuilderUiMode();
+  const { useAmellwindHomebrew } = useCharacterBuilder();
+  // Homebrew changes catalogs and slots; keep it visible while it is on.
+  const showHomebrewToggle = !isSimple || useAmellwindHomebrew;
+
   return (
     <div className="shrink-0 border-b border-border bg-card/50 px-3 py-2 sm:px-4 sm:py-3 lg:px-6 lg:py-4">
       <div className="flex items-center justify-between gap-2 sm:items-start sm:gap-3">
@@ -70,7 +83,8 @@ function BuilderHeader() {
           </p>
         </div>
         <div className="flex shrink-0 items-stretch gap-2">
-          <HomebrewModeToggle />
+          <BuilderUiModeToggle />
+          {showHomebrewToggle && <HomebrewModeToggle />}
           <CharacterCreationTipsPanel />
         </div>
       </div>

@@ -4,6 +4,7 @@ import {
   RPGBOT_RATING_LABELS,
   RPGBOT_RATING_SHORT,
 } from "@/features/raintdm/builder/data/rpgbot-ratings.utils";
+import { useBuilderUiMode } from "@/features/raintdm/builder/context/BuilderUiModeContext";
 
 const RATING_STYLES = {
   blue: "bg-sky-500 text-white shadow-sm shadow-sky-500/30",
@@ -19,6 +20,7 @@ export function RpgbotRatingBadge({
   rating: RpgbotRatingLookupEntry;
   className?: string;
 }) {
+  const { isSimple } = useBuilderUiMode();
   const label = RPGBOT_RATING_LABELS[rating.rating];
   const short = RPGBOT_RATING_SHORT[rating.rating];
   const tooltip = `RPGBOT · ${label}\n${rating.summary}`;
@@ -26,14 +28,16 @@ export function RpgbotRatingBadge({
   return (
     <span
       className={cn(
-        "inline-flex h-4 min-w-[1.1rem] shrink-0 items-center justify-center rounded px-1 text-[9px] font-bold leading-none",
+        "inline-flex h-4 shrink-0 items-center justify-center rounded px-1 font-bold leading-none",
+        // Simple mode spells the grade out so it needs no legend.
+        isSimple ? "text-[10px]" : "min-w-[1.1rem] text-[9px]",
         RATING_STYLES[rating.rating],
         className,
       )}
       title={tooltip}
       aria-label={`RPGBOT: ${label}`}
     >
-      {short}
+      {isSimple ? label : short}
     </span>
   );
 }

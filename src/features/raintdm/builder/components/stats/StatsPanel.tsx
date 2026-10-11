@@ -41,6 +41,7 @@ import {
 } from "@/components/ui/tooltip";
 import { cn } from "@/shared/utils/cn";
 import { useCharacterBuilder } from "../../context/CharacterBuilderContext";
+import { useBuilderUiMode } from "../../context/BuilderUiModeContext";
 import { useCharacterRandomizer } from "../../hooks/useCharacterRandomizer";
 import { pickRandomCharacterName } from "../../utils/randomizer/identity-randomizer.utils";
 import {
@@ -131,6 +132,7 @@ export function StatsPanel() {
     species,
   } = useCharacterBuilder();
   const { randomize, isRandomizing, canRandomize } = useCharacterRandomizer();
+  const { isSimple } = useBuilderUiMode();
   const {
     exportSheet,
     exporting,
@@ -693,34 +695,37 @@ export function StatsPanel() {
             </div>
           </section>
 
-          {/* ─── Class progression ─── */}
-          <section className="space-y-2">
-            <SectionHeading>Class progression</SectionHeading>
-            <div className="flex items-start gap-2 rounded-md border border-border/60 bg-muted/20 px-2.5 py-2">
-              <Checkbox
-                id="multiclass-toggle"
-                checked={multiclassEnabled}
-                onCheckedChange={(checked) =>
-                  handleMulticlassToggle(checked === true)
-                }
-                className="mt-0.5 h-3.5 w-3.5"
-                aria-label="Activate multiclass"
-              />
-              <div className="min-w-0 space-y-0.5">
-                <Label
-                  htmlFor="multiclass-toggle"
-                  className="cursor-pointer text-xs font-medium text-foreground"
-                >
-                  Multiclass
-                </Label>
-                <p className="text-[10px] leading-snug text-muted-foreground">
-                  Split your total level across two or more classes (D&amp;D 5e
-                  rules).
-                </p>
+          {/* ─── Class progression (advanced; always shown while in use) ─── */}
+          {(!isSimple || multiclassEnabled) && (
+            <section className="space-y-2">
+              <SectionHeading>Class progression</SectionHeading>
+              <div className="flex items-start gap-2 rounded-md border border-border/60 bg-muted/20 px-2.5 py-2">
+                <Checkbox
+                  id="multiclass-toggle"
+                  checked={multiclassEnabled}
+                  onCheckedChange={(checked) =>
+                    handleMulticlassToggle(checked === true)
+                  }
+                  className="mt-0.5 h-3.5 w-3.5"
+                  aria-label="Activate multiclass"
+                />
+                <div className="min-w-0 space-y-0.5">
+                  <Label
+                    htmlFor="multiclass-toggle"
+                    className="cursor-pointer text-xs font-medium text-foreground"
+                  >
+                    Multiclass
+                  </Label>
+                  <p className="text-[10px] leading-snug text-muted-foreground">
+                    Split your total level across two or more classes (D&amp;D
+                    5e rules). An advanced option — most first characters use
+                    a single class.
+                  </p>
+                </div>
               </div>
-            </div>
-            <MulticlassPanel />
-          </section>
+              <MulticlassPanel />
+            </section>
+          )}
 
           {(highlightActive && issues.length > 0) ||
           exportError ||

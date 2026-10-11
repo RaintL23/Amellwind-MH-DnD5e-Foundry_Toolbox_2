@@ -8,6 +8,7 @@ import {
   useSelectedSubclass,
 } from "../../../hooks/useBuilderSelections";
 import { resolveClassAbilityPriority } from "../../../utils/randomizer/class-ability-priority.utils";
+import { useBuilderUiMode } from "../../../context/BuilderUiModeContext";
 import {
   useBuildCompleteness,
   useSectionCompletenessHighlight,
@@ -61,6 +62,7 @@ export function AbilityScoresSection({
     null,
   );
   const [confirmRecommended, setConfirmRecommended] = useState(false);
+  const { isSimple } = useBuilderUiMode();
   const { classData } = useSelectedClass();
   const subclassData = useSelectedSubclass();
   const abilityPriority = useMemo(
@@ -80,7 +82,9 @@ export function AbilityScoresSection({
       : null;
 
   function hasAssignedScores(): boolean {
-    if (method === "standard" || method === "dice") {
+    if (method === "standard") return Object.keys(assignments).length > 0;
+    if (method === "dice") {
+      // An unassigned roll is still worth confirming before it is discarded.
       return Object.keys(assignments).length > 0 || pool.length > 0;
     }
     return !areBaseAbilitiesUntouched(character.abilities);
@@ -130,6 +134,7 @@ export function AbilityScoresSection({
           compact={compact}
           method={method}
           onMethodChange={onMethodChange}
+          simple={isSimple}
         />
         {classData ? (
           <div className="flex items-center gap-2 rounded-md border border-border/60 bg-muted/20 px-2 py-1.5">

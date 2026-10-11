@@ -11,8 +11,27 @@ const RATING_COLORS: Record<RpgbotRating, string> = {
   red: "bg-rose-500",
 };
 
-export function RpgbotLegend({ compact = false }: { compact?: boolean }) {
+export function RpgbotLegend({
+  compact = false,
+  simple = false,
+}: {
+  compact?: boolean;
+  /** Plain-language explanation instead of the letter-grade key. */
+  simple?: boolean;
+}) {
   const items: RpgbotRating[] = ["blue", "green", "orange", "red"];
+
+  if (simple) {
+    return (
+      <p className="mb-2 rounded-md border border-border/60 bg-muted/20 px-2 py-1.5 text-[11px] leading-snug text-muted-foreground">
+        Best picks for your class are listed first. Labels like{" "}
+        <span className="font-medium text-foreground">Excellent</span> or{" "}
+        <span className="font-medium text-foreground">Good</span> come from
+        RPGBOT, a popular D&amp;D character-optimization guide — any option is
+        still a valid choice.
+      </p>
+    );
+  }
 
   return (
     <div
