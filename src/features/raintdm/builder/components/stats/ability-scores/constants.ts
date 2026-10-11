@@ -6,6 +6,16 @@ export const ABILITIES: { key: AbilityKey; label: string }[] = ABILITY_KEYS.map(
   (key) => ({ key, label: ABILITY_ABBREVIATIONS[key] }),
 );
 
+/** Short, beginner-facing summary of what each ability drives. */
+export const ABILITY_SHORT_DESCRIPTIONS: Record<AbilityKey, string> = {
+  str: "Melee & carrying",
+  dex: "Ranged, AC, initiative",
+  con: "Hit points",
+  int: "Knowledge & lore",
+  wis: "Perception & insight",
+  cha: "Social & presence",
+};
+
 export type GenerationMethod = AbilityScoreGenerationMethod;
 
 export const ABILITY_CARD_CLASS =

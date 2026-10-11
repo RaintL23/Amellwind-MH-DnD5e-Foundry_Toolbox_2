@@ -14,6 +14,7 @@ import {
   poolAssignmentsToScores,
   poolStateFromScores,
 } from "@/shared/utils/ability-scores";
+import { assignValuesByPriority } from "../../../utils/randomizer/ability-randomizer.utils";
 import type { GenerationMethod } from "./constants";
 
 export function useAbilityGenerationState() {
@@ -120,6 +121,29 @@ export function useAbilityGenerationState() {
     setAbilityScore(key, next);
   };
 
+  // Values to distribute by class priority: the standard array (also a full
+  // 27-point point-buy spread), or the complete dice roll once rolled.
+  const rolledValues = [
+    ...Object.values(assignments).filter((v): v is number => v !== undefined),
+    ...pool,
+  ];
+  const recommendationValues: readonly number[] | null =
+    method === "dice"
+      ? rolledValues.length === ABILITY_KEYS.length
+        ? rolledValues
+        : null
+      : STANDARD_ARRAY;
+
+  const applyRecommendedScores = (priority: AbilityKey[]) => {
+    if (!recommendationValues) return;
+    const next = assignValuesByPriority(recommendationValues, priority);
+    if (method === "standard" || method === "dice") {
+      setAssignments(next);
+      setPool([]);
+    }
+    setAbilityScores(poolAssignmentsToScores(next));
+  };
+
   const adjustManual = (key: AbilityKey, delta: number) => {
     const next = character.abilities[key] + delta;
     if (next < 1 || next > 30) return;
@@ -142,6 +166,8 @@ export function useAbilityGenerationState() {
     rollDice,
     adjustPointBuy,
     adjustManual,
+    applyRecommendedScores,
+    canApplyRecommended: recommendationValues !== null,
     initPointBuy,
     pointsRemaining,
     pointsSpent,

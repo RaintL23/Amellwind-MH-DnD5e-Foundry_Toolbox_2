@@ -1,6 +1,13 @@
-import { useState } from "react";
-import { ArrowRight } from "lucide-react";
+import { useMemo, useState } from "react";
+import { ArrowRight, Wand2 } from "lucide-react";
+import { Button } from "@/components/ui/button";
+import { ABILITY_ABBREVIATIONS } from "@/shared/constants/dnd";
 import { cn } from "@/shared/utils/cn";
+import {
+  useSelectedClass,
+  useSelectedSubclass,
+} from "../../../hooks/useBuilderSelections";
+import { resolveClassAbilityPriority } from "../../../utils/randomizer/class-ability-priority.utils";
 import {
   useBuildCompleteness,
   useSectionCompletenessHighlight,
@@ -15,6 +22,9 @@ import { useAbilityScoreBreakdowns } from "./useAbilityScoreBreakdowns";
 import { useAbilityGenerationState } from "./useAbilityGenerationState";
 import { ConfirmActionDialog } from "../../shared/ConfirmActionDialog";
 import type { GenerationMethod } from "./constants";
+
+/** How many top-priority abilities are marked "Key" for the class. */
+const KEY_ABILITY_COUNT = 2;
 
 export function AbilityScoresSection({
   compact = false,
@@ -33,6 +43,8 @@ export function AbilityScoresSection({
     rollDice,
     adjustPointBuy,
     adjustManual,
+    applyRecommendedScores,
+    canApplyRecommended,
     initPointBuy,
     pointsRemaining,
     pointsSpent,
@@ -45,6 +57,14 @@ export function AbilityScoresSection({
   const [pendingMethod, setPendingMethod] = useState<GenerationMethod | null>(
     null,
   );
+  const [confirmRecommended, setConfirmRecommended] = useState(false);
+  const { classData } = useSelectedClass();
+  const subclassData = useSelectedSubclass();
+  const abilityPriority = useMemo(
+    () => (classData ? resolveClassAbilityPriority(classData, subclassData) : []),
+    [classData, subclassData],
+  );
+  const keyAbilities = abilityPriority.slice(0, KEY_ABILITY_COUNT);
   const { nextStep } = useBuildCompleteness();
   const { highlighted, issues: baseIssues } = useSectionCompletenessHighlight(
     "ability-scores",
@@ -72,6 +92,18 @@ export function AbilityScoresSection({
     handleMethodChange(next);
   }
 
+  function onUseRecommended() {
+    const picked =
+      method === "standard" || method === "dice"
+        ? Object.keys(assignments).length > 0
+        : Object.values(character.abilities).some((v) => v !== 8 && v !== 10);
+    if (picked) {
+      setConfirmRecommended(true);
+      return;
+    }
+    applyRecommendedScores(abilityPriority);
+  }
+
   return (
     <div className="space-y-2">
       <OriginBonusesPanel compact={compact} />
@@ -96,6 +128,38 @@ export function AbilityScoresSection({
           method={method}
           onMethodChange={onMethodChange}
         />
+        {classData ? (
+          <div className="flex items-center gap-2 rounded-md border border-border/60 bg-muted/20 px-2 py-1.5">
+            <p className="min-w-0 flex-1 text-[11px] leading-snug text-muted-foreground">
+              {canApplyRecommended ? (
+                <>
+                  Key abilities for {classData.name}:{" "}
+                  <span className="font-medium text-foreground">
+                    {keyAbilities.map((k) => ABILITY_ABBREVIATIONS[k]).join(", ")}
+                  </span>
+                </>
+              ) : (
+                "Roll your scores first, then place them for your class."
+              )}
+            </p>
+            <Button
+              type="button"
+              size="sm"
+              variant="outline"
+              className="h-7 shrink-0 gap-1 px-2 text-[11px]"
+              disabled={!canApplyRecommended}
+              onClick={onUseRecommended}
+              aria-label={`Use recommended ability scores for ${classData.name}`}
+            >
+              <Wand2 className="h-3 w-3" aria-hidden />
+              Use recommended
+            </Button>
+          </div>
+        ) : (
+          <p className="text-[11px] text-muted-foreground">
+            Choose a class to see which abilities matter most for it.
+          </p>
+        )}
         <MethodHintPanels
           method={method}
           poolLabel={poolLabel}
@@ -118,6 +182,7 @@ export function AbilityScoresSection({
           handlePoolAssign={handlePoolAssign}
           adjustPointBuy={adjustPointBuy}
           adjustManual={adjustManual}
+          keyAbilities={keyAbilities}
         />
         <MethodHintPanels
           method={method}
@@ -144,6 +209,14 @@ export function AbilityScoresSection({
         onConfirm={() => {
           if (pendingMethod) handleMethodChange(pendingMethod);
         }}
+      />
+      <ConfirmActionDialog
+        open={confirmRecommended}
+        onOpenChange={setConfirmRecommended}
+        title="Replace your ability scores?"
+        description={`Your current scores will be rearranged so the highest values go to ${classData?.name ?? "your class"}'s key abilities.`}
+        confirmLabel="Use recommended"
+        onConfirm={() => applyRecommendedScores(abilityPriority)}
       />
     </div>
   );

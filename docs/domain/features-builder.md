@@ -87,6 +87,8 @@ Fuente de verdad: `evaluateBuildCompleteness` (`builder/utils/build-completeness
 
 Clase, especie y trasfondo se exigen siempre que el build haya empezado (no solo cuando ya se eligió otro de ellos). Las puntuaciones base también se validan (`base-abilities`): Standard Array con los 6 valores asignados, Point Buy con los 27 puntos gastados, Manual/Dice mientras todas sigan en 8 o 10.
 
+**Ability Scores guiadas:** con una clase elegida, `AbilityScoresSection` muestra las 2 características clave (`resolveClassAbilityPriority`, marcadas **Key** en cada tarjeta junto a una descripción corta) y el botón **Use recommended**. Este reparte por prioridad de clase (`assignValuesByPriority`) el Standard Array (válido también como point-buy de 27) o la tirada completa en Dice (deshabilitado hasta tirar). Pide confirmación si ya había puntuaciones asignadas.
+
 #### Componentes
 
 | Componente                                                                          | Rol                                                                                                                                                                                                                                                                                                                                                                                                                      |

@@ -15,7 +15,11 @@ import {
 import { AbilityScoreValue } from "../AbilityScoreValue";
 import { AbilityStatCard, AbilityStatRow } from "./AbilityStatLayouts";
 import { HintTooltip } from "@/shared/components/HintTooltip";
-import { ABILITIES, type GenerationMethod } from "./constants";
+import {
+  ABILITIES,
+  ABILITY_SHORT_DESCRIPTIONS,
+  type GenerationMethod,
+} from "./constants";
 import type { useAbilityScoreBreakdowns } from "./useAbilityScoreBreakdowns";
 import type { useAbilityGenerationState } from "./useAbilityGenerationState";
 
@@ -34,6 +38,8 @@ type AbilityScoreGridProps = {
     typeof useAbilityGenerationState
   >["adjustPointBuy"];
   adjustManual: ReturnType<typeof useAbilityGenerationState>["adjustManual"];
+  /** Abilities the selected class relies on most (marked as "Key"). */
+  keyAbilities: AbilityKey[];
 };
 
 export function AbilityScoreGrid({
@@ -47,6 +53,7 @@ export function AbilityScoreGrid({
   handlePoolAssign,
   adjustPointBuy,
   adjustManual,
+  keyAbilities,
 }: AbilityScoreGridProps) {
   return (
     <div
@@ -66,12 +73,19 @@ export function AbilityScoreGrid({
           isPoolMethod && poolScore === undefined
             ? "—"
             : formatModifier(effectiveModifier(baseScore, breakdown.bonus));
+        const layoutProps = {
+          label,
+          modifier,
+          description: ABILITY_SHORT_DESCRIPTIONS[key],
+          isKey: keyAbilities.includes(key),
+        };
 
         const poolSelect = (
           <div className="flex items-center gap-1">
             <Select
               value={assignments[key] ?? ""}
               onChange={(e) => handlePoolAssign(key, e.target.value)}
+              aria-label={`${label} score`}
               className={
                 compact
                   ? "h-7 w-full max-w-[4.5rem] px-1 text-sm text-center"
@@ -153,7 +167,7 @@ export function AbilityScoreGrid({
         if (compact) {
           if (method === "manual") {
             return (
-              <AbilityStatCard key={key} label={label} modifier={modifier}>
+              <AbilityStatCard key={key} {...layoutProps}>
                 {manualControls}
               </AbilityStatCard>
             );
@@ -161,14 +175,14 @@ export function AbilityScoreGrid({
 
           if (isPoolMethod) {
             return (
-              <AbilityStatCard key={key} label={label} modifier={modifier}>
+              <AbilityStatCard key={key} {...layoutProps}>
                 {poolSelect}
               </AbilityStatCard>
             );
           }
 
           return (
-            <AbilityStatCard key={key} label={label} modifier={modifier}>
+            <AbilityStatCard key={key} {...layoutProps}>
               {pointBuyControls}
             </AbilityStatCard>
           );
@@ -176,7 +190,7 @@ export function AbilityScoreGrid({
 
         if (isPoolMethod) {
           return (
-            <AbilityStatRow key={key} label={label} modifier={modifier}>
+            <AbilityStatRow key={key} {...layoutProps}>
               {poolSelect}
             </AbilityStatRow>
           );
@@ -184,14 +198,14 @@ export function AbilityScoreGrid({
 
         if (method === "pointbuy") {
           return (
-            <AbilityStatRow key={key} label={label} modifier={modifier}>
+            <AbilityStatRow key={key} {...layoutProps}>
               {pointBuyControls}
             </AbilityStatRow>
           );
         }
 
         return (
-          <AbilityStatRow key={key} label={label} modifier={modifier}>
+          <AbilityStatRow key={key} {...layoutProps}>
             <div className="flex items-center gap-1">
               <Input
                 type="number"
@@ -202,6 +216,7 @@ export function AbilityScoreGrid({
                   setAbilityScore(key, parseInt(e.target.value, 10) || 10)
                 }
                 className="h-8 w-14 text-center"
+                aria-label={`${label} score`}
               />
               {breakdown.bonus > 0 && (
                 <HintTooltip
