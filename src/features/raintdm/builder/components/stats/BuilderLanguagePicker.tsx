@@ -1,3 +1,5 @@
+import { Check, X } from "lucide-react";
+import { cn } from "@/shared/utils/cn";
 import {
   Accordion,
   AccordionContent,
@@ -70,9 +72,27 @@ export function BuilderLanguagePicker({
   );
   const pickerColor = badgeStyleForSource(pickerSourceType);
 
-  const defaultOpen = DEFAULT_OPEN_LANGUAGE_SOURCES.filter((code) =>
-    sourceGroups.some((g) => g.sourceCode === code),
+  // Primary sources (e.g. PHB 2024) are always visible; the rest are merged into
+  // one collapsible, with names already listed above removed (Elvish, Orc, …).
+  const primaryGroups = sourceGroups.filter((g) =>
+    DEFAULT_OPEN_LANGUAGE_SOURCES.includes(g.sourceCode),
   );
+  const seen = new Set(
+    primaryGroups.flatMap((g) => g.languages.map((l) => l.toLowerCase())),
+  );
+  const otherGroups = sourceGroups
+    .filter((g) => !DEFAULT_OPEN_LANGUAGE_SOURCES.includes(g.sourceCode))
+    .map((g) => ({
+      ...g,
+      languages: g.languages.filter((l) => {
+        const key = l.toLowerCase();
+        if (seen.has(key)) return false;
+        seen.add(key);
+        return true;
+      }),
+    }))
+    .filter((g) => g.languages.length > 0);
+  const otherCount = otherGroups.reduce((n, g) => n + g.languages.length, 0);
 
   function handleToggle(
     item: string,
@@ -88,42 +108,78 @@ export function BuilderLanguagePicker({
     }
   }
 
+  function renderPill(item: string, key: string) {
+    const isChosen = chosen.includes(item);
+    const grantedBy = grantedSources(item);
+    const coveredByHigher = !!grantedBy?.length && !isChosen;
+    const isDisabled = coveredByHigher || isChosen;
+    const badgeColor = coveredByHigher
+      ? badgeStyleForSource(dominantSourceType(grantedBy!))
+      : isChosen
+        ? pickerColor
+        : undefined;
+    const tooltip = coveredByHigher
+      ? `Already granted from ${SOURCE_LABELS[dominantSourceType(grantedBy!)]} (${grantedBy!.map((s) => s.name).join(", ")})`
+      : isChosen
+        ? `Your ${SOURCE_LABELS[pickerSourceType]} choice`
+        : undefined;
+
+    return (
+      <button
+        key={key}
+        type="button"
+        disabled={isDisabled && !isChosen}
+        title={tooltip}
+        onClick={() => handleToggle(item, isChosen, coveredByHigher)}
+        className={pickerPillClassName({
+          badgeColor,
+          isDisabled,
+          cursorDefault: coveredByHigher,
+        })}
+      >
+        {item}
+      </button>
+    );
+  }
+
+  const done = remainingPicks === 0;
+
   return (
     <div className={PICKER_CONTAINER_CLASS}>
-      <p className="mb-1.5 text-[10px] font-medium uppercase tracking-wide text-muted-foreground">
-        {label ?? grantSourceName} — choose {totalCount}
-        {remainingPicks > 0 && (
-          <span className="normal-case text-muted-foreground/80">
-            {" "}
-            ({remainingPicks} of {totalCount} remaining)
-          </span>
-        )}
-        {remainingPicks === 0 && chosen.length >= totalCount && (
-          <span className="normal-case text-muted-foreground/80"> (done)</span>
-        )}
-      </p>
+      <div className="mb-2 flex items-center justify-between gap-2">
+        <p className="text-[10px] font-medium uppercase tracking-wide text-muted-foreground">
+          {label ?? grantSourceName}
+        </p>
+        <span
+          className={cn(
+            "inline-flex shrink-0 items-center gap-1 rounded-full px-2 py-0.5 text-[10px] font-semibold",
+            done
+              ? "bg-primary/15 text-primary"
+              : "bg-amber-500/20 text-amber-700 dark:text-amber-300",
+          )}
+        >
+          {done && <Check className="h-3 w-3" aria-hidden />}
+          {Math.min(effectiveChosen.length, totalCount)}/{totalCount} chosen
+        </span>
+      </div>
 
       {chosen.length > 0 && (
-        <div className="mb-2">
-          <p className="mb-1 text-[9px] font-medium uppercase tracking-wide text-muted-foreground/80">
-            Selected
-          </p>
-          <div className="flex flex-wrap gap-1">
-            {chosen.map((item) => (
-              <button
-                key={item}
-                type="button"
-                title={`Remove ${item}`}
-                onClick={() => onChange(chosen.filter((s) => s !== item))}
-                className={pickerPillClassName({
-                  badgeColor: pickerColor,
-                  isDisabled: false,
-                })}
-              >
-                {item}
-              </button>
-            ))}
-          </div>
+        <div className="mb-2 flex flex-wrap gap-1">
+          {chosen.map((item) => (
+            <button
+              key={item}
+              type="button"
+              title={`Remove ${item}`}
+              onClick={() => onChange(chosen.filter((s) => s !== item))}
+              className={cn(
+                pickerPillClassName({ badgeColor: pickerColor, isDisabled: false }),
+                "inline-flex items-center gap-1",
+              )}
+            >
+              {item}
+              <X className="h-3 w-3 opacity-70" aria-hidden />
+            </button>
+          ))}
         </div>
       )}
 
@@ -133,69 +189,53 @@ export function BuilderLanguagePicker({
             No languages available to choose.
           </p>
         ) : (
-          <Accordion
-            type="multiple"
-            defaultValue={[...defaultOpen]}
-            className="rounded-md border border-border/40 bg-background/50"
-          >
-            {sourceGroups.map((group) => (
-              <AccordionItem
-                key={group.sourceCode}
-                value={group.sourceCode}
-                className="border-border/40 px-2 last:border-b-0"
-              >
-                <AccordionTrigger className="gap-2 py-2 text-[10px] font-medium normal-case tracking-normal text-foreground hover:no-underline">
-                  <span className="flex min-w-0 flex-1 items-center gap-2 text-left">
-                    <span className="truncate">{group.label}</span>
-                    <span className="shrink-0 rounded-full bg-muted px-1.5 py-0.5 text-[9px] font-normal text-muted-foreground">
-                      {group.languages.length}
-                    </span>
-                  </span>
-                </AccordionTrigger>
-                <AccordionContent className="pb-2 pt-0">
-                  <div className="flex flex-wrap gap-1">
-                    {group.languages.map((item) => {
-                      const isChosen = chosen.includes(item);
-                      const grantedBy = grantedSources(item);
-                      const coveredByHigher =
-                        !!grantedBy?.length && !isChosen;
-                      const isDisabled = coveredByHigher || isChosen;
-                      const badgeColor = coveredByHigher
-                        ? badgeStyleForSource(dominantSourceType(grantedBy!))
-                        : isChosen
-                          ? pickerColor
-                          : undefined;
-
-                      const tooltip = coveredByHigher
-                        ? `Already granted from ${SOURCE_LABELS[dominantSourceType(grantedBy!)]} (${grantedBy!.map((s) => s.name).join(", ")})`
-                        : isChosen
-                          ? `Your ${SOURCE_LABELS[pickerSourceType]} choice`
-                          : undefined;
-
-                      return (
-                        <button
-                          key={`${group.sourceCode}-${item}`}
-                          type="button"
-                          disabled={isDisabled && !isChosen}
-                          title={tooltip}
-                          onClick={() =>
-                            handleToggle(item, isChosen, coveredByHigher)
-                          }
-                          className={pickerPillClassName({
-                            badgeColor,
-                            isDisabled,
-                            cursorDefault: coveredByHigher,
-                          })}
-                        >
-                          {item}
-                        </button>
-                      );
-                    })}
-                  </div>
-                </AccordionContent>
-              </AccordionItem>
+          <div className="space-y-2.5 rounded-md border border-border/40 bg-background/50 p-2">
+            {primaryGroups.map((group) => (
+              <div key={group.sourceCode}>
+                <p className="mb-1 text-[9px] font-medium uppercase tracking-wide text-muted-foreground/80">
+                  {group.label}
+                </p>
+                <div className="flex flex-wrap gap-1">
+                  {group.languages.map((item) =>
+                    renderPill(item, `${group.sourceCode}-${item}`),
+                  )}
+                </div>
+              </div>
             ))}
-          </Accordion>
+
+            {otherGroups.length > 0 && (
+              <Accordion
+                type="single"
+                collapsible
+                defaultValue={primaryGroups.length === 0 ? "more" : undefined}
+              >
+                <AccordionItem value="more" className="border-0">
+                  <AccordionTrigger className="gap-2 py-1 text-[10px] font-medium normal-case tracking-normal text-muted-foreground hover:no-underline">
+                    <span className="flex items-center gap-2">
+                      {primaryGroups.length === 0 ? "Languages" : "More sources"}
+                      <span className="rounded-full bg-muted px-1.5 py-0.5 text-[9px] font-normal">
+                        {otherCount}
+                      </span>
+                    </span>
+                  </AccordionTrigger>
+                  <AccordionContent className="space-y-2.5 pb-0 pt-1.5">
+                    {otherGroups.map((group) => (
+                      <div key={group.sourceCode}>
+                        <p className="mb-1 text-[9px] font-medium uppercase tracking-wide text-muted-foreground/80">
+                          {group.label}
+                        </p>
+                        <div className="flex flex-wrap gap-1">
+                          {group.languages.map((item) =>
+                            renderPill(item, `${group.sourceCode}-${item}`),
+                          )}
+                        </div>
+                      </div>
+                    ))}
+                  </AccordionContent>
+                </AccordionItem>
+              </Accordion>
+            )}
+          </div>
         ))}
     </div>
   );
