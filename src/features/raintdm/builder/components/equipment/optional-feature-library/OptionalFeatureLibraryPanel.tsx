@@ -134,7 +134,7 @@ export function OptionalFeatureLibraryPanel({
         ) : isWeaponMastery ? (
           <span className="text-muted-foreground/80">
             {" "}
-            · click a weapon badge under each mastery property
+            · pick a mastery property, then choose one of its weapons
           </span>
         ) : isFightingStyle ? (
           <span className="text-muted-foreground/80">
@@ -192,6 +192,7 @@ export function OptionalFeatureLibraryPanel({
             weaponProficiencies={weaponProficiencies}
             meleeOnlyWeaponMastery={meleeOnlyWeaponMastery}
             atCapacity={atCapacity}
+            isSearching={search.trim().length > 0}
             isPicked={isPicked}
             canAdd={canAdd}
             onToggle={handleToggle}
