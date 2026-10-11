@@ -26,7 +26,19 @@ export function evaluateIdentityCompleteness(
 ): BuildCompletenessIssue[] {
   const issues: BuildCompletenessIssue[] = [];
 
-  if (input.classSelection && !input.species) {
+  // Core picks are always required; evaluateBuildCompleteness drops every
+  // issue until the build has started, so a blank builder stays quiet.
+  if (!input.classSelection) {
+    issues.push({
+      id: "identity-class",
+      section: "identity",
+      message: "Choose a class",
+      slot: "class",
+      highlightKey: "class",
+    });
+  }
+
+  if (!input.species) {
     issues.push({
       id: "identity-species",
       section: "identity",
@@ -36,23 +48,13 @@ export function evaluateIdentityCompleteness(
     });
   }
 
-  if (input.classSelection && !input.background) {
+  if (!input.background) {
     issues.push({
       id: "identity-background",
       section: "identity",
       message: "Choose a background",
       slot: "background",
       highlightKey: "background",
-    });
-  }
-
-  if (!input.classSelection && (input.species || input.background)) {
-    issues.push({
-      id: "identity-class",
-      section: "identity",
-      message: "Choose a class",
-      slot: "class",
-      highlightKey: "class",
     });
   }
 

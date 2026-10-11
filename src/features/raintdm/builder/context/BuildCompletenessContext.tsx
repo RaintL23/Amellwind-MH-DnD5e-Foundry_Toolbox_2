@@ -24,10 +24,14 @@ import type {
 } from "../utils/build-completeness.types";
 import {
   countCompletenessProgress,
+  getNextStep,
   groupCompletenessSteps,
   type CompletenessStep,
+  type NextCompletenessStep,
 } from "../utils/build-completeness/group-completeness-steps.utils";
+import { getFeatSlotLevels } from "../utils/builder-class.utils";
 import { persistBuilderExportGate } from "../storage/builder-export-gate.storage";
+import { useBuilderSlotSelection } from "../hooks/useBuilderSlotSelection";
 import {
   SECTION_TO_MOBILE_TAB,
   useBuilderLayoutOptional,
@@ -40,11 +44,15 @@ interface BuildCompletenessContextValue {
   liveResult: BuildCompletenessResult;
   liveSteps: CompletenessStep[];
   liveProgress: { completed: number; total: number; percent: number };
+  /** First pending step in canonical order (null when done or not started). */
+  nextStep: NextCompletenessStep | null;
   evaluate: () => BuildCompletenessResult;
   activateHighlight: () => void;
   clearHighlight: () => void;
   /** Scroll to a builder section and optionally activate highlight. */
   goToSection: (section: BuildCompletenessSection) => void;
+  /** Highlight, open the issue's slot editor and scroll to its section. */
+  goToIssue: (issue: BuildCompletenessIssue) => void;
 }
 
 const BuildCompletenessContext =
@@ -93,6 +101,7 @@ export function BuildCompletenessProvider({
   const layout = useBuilderLayoutOptional();
   const isMobileLayout = layout?.isMobileLayout ?? false;
   const setActiveTab = layout?.setActiveTab;
+  const { selectSlot } = useBuilderSlotSelection();
 
   const input = useMemo(
     (): BuildCompletenessInput => ({
@@ -101,6 +110,8 @@ export function BuildCompletenessProvider({
       classSelection: builder.class,
       subclass: builder.subclass,
       level: builder.character.level,
+      abilityScoreMethod: builder.abilityScoreMethod,
+      baseAbilities: builder.character.abilities,
       classData,
       subclassData,
       speciesData,
@@ -164,18 +175,28 @@ export function BuildCompletenessProvider({
     [deferredInput],
   );
 
+  const deferredClassName = deferredInput.classSelection?.name ?? null;
+  const hasFeatSlots =
+    deferredInput.featSelections.length > 0 ||
+    (deferredClassName !== null &&
+      getFeatSlotLevels(deferredClassName, deferredInput.level).length > 0);
+
   const liveSteps = useMemo(
     () =>
       groupCompletenessSteps(liveResult, {
         isSpellcaster: spellcasting?.isSpellcaster ?? false,
+        hasClass: deferredClassName !== null,
+        hasFeatSlots,
       }),
-    [liveResult, spellcasting?.isSpellcaster],
+    [liveResult, spellcasting?.isSpellcaster, deferredClassName, hasFeatSlots],
   );
 
   const liveProgress = useMemo(
     () => countCompletenessProgress(liveSteps),
     [liveSteps],
   );
+
+  const nextStep = useMemo(() => getNextStep(liveSteps), [liveSteps]);
 
   const computeResult = useCallback(
     () => evaluateBuildCompleteness(input),
@@ -222,6 +243,14 @@ export function BuildCompletenessProvider({
     [isMobileLayout, setActiveTab],
   );
 
+  const goToIssue = useCallback(
+    (issue: BuildCompletenessIssue) => {
+      if (issue.slot) selectSlot(issue.slot);
+      goToSection(issue.section);
+    },
+    [selectSlot, goToSection],
+  );
+
   useEffect(() => {
     if (highlightActive && currentResult && currentResult.issues.length === 0) {
       setHighlightActive(false);
@@ -245,10 +274,12 @@ export function BuildCompletenessProvider({
       liveResult,
       liveSteps,
       liveProgress,
+      nextStep,
       evaluate,
       activateHighlight,
       clearHighlight,
       goToSection,
+      goToIssue,
     }),
     [
       highlightActive,
@@ -256,10 +287,12 @@ export function BuildCompletenessProvider({
       liveResult,
       liveSteps,
       liveProgress,
+      nextStep,
       evaluate,
       activateHighlight,
       clearHighlight,
       goToSection,
+      goToIssue,
     ],
   );
 
@@ -302,13 +335,19 @@ export function useSectionCompletenessHighlight(
 }
 
 export function useSlotCompletenessHighlight(highlightKey: string) {
-  const { highlightActive, issues } = useBuildCompleteness();
+  const { highlightActive, issues, nextStep } = useBuildCompleteness();
   const matchedIssues = issues.filter(
     (issue) => issue.highlightKey === highlightKey,
   );
+  const highlighted = highlightActive && matchedIssues.length > 0;
 
   return {
-    highlighted: highlightActive && matchedIssues.length > 0,
+    highlighted,
+    // Guide the user to the next slot-driven choice before any export attempt.
+    isNext:
+      !highlighted &&
+      !!nextStep?.issue.slot &&
+      nextStep.issue.highlightKey === highlightKey,
     issues: matchedIssues,
   };
 }

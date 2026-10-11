@@ -40,16 +40,16 @@ export const DND_BUILDER_WORKFLOW_STEPS: BuilderWorkflowStep[] = [
   },
   {
     step: 2,
-    title: "Set Level & Ability Scores",
-    description:
-      "Set your level and assign ability scores. For levels above 1, consult the XPHB starting equipment table.",
-  },
-  {
-    step: 3,
     title: "Species & Background",
     description:
       "Choose a species and background. Use RPGBOT ratings when available for stronger builds.",
     link: { to: "/dnd-races", label: "Browse Races" },
+  },
+  {
+    step: 3,
+    title: "Set Level & Ability Scores",
+    description:
+      "Set your level and assign ability scores, highest in your class's key ability. For levels above 1, consult the XPHB starting equipment table.",
   },
   {
     step: 4,

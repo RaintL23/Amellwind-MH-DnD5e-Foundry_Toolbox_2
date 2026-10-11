@@ -9,6 +9,7 @@ import {
 } from "./completeness-input.fixture";
 import {
   countCompletenessProgress,
+  getNextStep,
   groupCompletenessSteps,
 } from "./group-completeness-steps.utils";
 
@@ -292,8 +293,91 @@ describe("evaluateBuildCompleteness", () => {
   });
 });
 
+describe("evaluateBuildCompleteness — base ability scores", () => {
+  const started = {
+    classSelection: { id: "fighter|xphb", name: "Fighter" },
+    classData: minimalClass(),
+    species: { id: "human|xphb", name: "Human" },
+    background: { id: "soldier|xphb", name: "Soldier" },
+  };
+
+  it("flags untouched manual scores", () => {
+    const result = evaluateBuildCompleteness(
+      createEmptyCompletenessInput(started),
+    );
+    expect(hasIssueId(result.issues, "base-abilities")).toBe(true);
+  });
+
+  it("accepts assigned manual scores", () => {
+    const result = evaluateBuildCompleteness(
+      createEmptyCompletenessInput({
+        ...started,
+        baseAbilities: { str: 16, dex: 12, con: 14, int: 8, wis: 10, cha: 10 },
+      }),
+    );
+    expect(hasIssueId(result.issues, "base-abilities")).toBe(false);
+  });
+
+  it("requires every standard array value to be assigned", () => {
+    const partial = evaluateBuildCompleteness(
+      createEmptyCompletenessInput({
+        ...started,
+        abilityScoreMethod: "standard",
+        baseAbilities: { str: 15, dex: 14, con: 8, int: 8, wis: 8, cha: 8 },
+      }),
+    );
+    expect(hasIssueId(partial.issues, "base-abilities")).toBe(true);
+
+    const full = evaluateBuildCompleteness(
+      createEmptyCompletenessInput({
+        ...started,
+        abilityScoreMethod: "standard",
+        baseAbilities: { str: 15, dex: 13, con: 14, int: 8, wis: 12, cha: 10 },
+      }),
+    );
+    expect(hasIssueId(full.issues, "base-abilities")).toBe(false);
+  });
+
+  it("requires the full point-buy budget to be spent", () => {
+    const unspent = evaluateBuildCompleteness(
+      createEmptyCompletenessInput({
+        ...started,
+        abilityScoreMethod: "pointbuy",
+        baseAbilities: { str: 8, dex: 8, con: 8, int: 8, wis: 8, cha: 8 },
+      }),
+    );
+    expect(
+      unspent.issues.find((issue) => issue.id === "base-abilities")?.message,
+    ).toMatch(/27/);
+
+    const spent = evaluateBuildCompleteness(
+      createEmptyCompletenessInput({
+        ...started,
+        abilityScoreMethod: "pointbuy",
+        baseAbilities: { str: 15, dex: 14, con: 13, int: 12, wis: 10, cha: 8 },
+      }),
+    );
+    expect(hasIssueId(spent.issues, "base-abilities")).toBe(false);
+  });
+});
+
 describe("groupCompletenessSteps", () => {
-  it("groups identity class issues under Class & Feats and species under Origin", () => {
+  it("orders steps class → origin → ability scores", () => {
+    const result = evaluateBuildCompleteness(
+      createEmptyCompletenessInput({
+        species: { id: "human|xphb", name: "Human" },
+      }),
+    );
+    const steps = groupCompletenessSteps(result, { hasClass: false });
+    expect(steps.slice(0, 3).map((s) => s.id)).toEqual([
+      "class",
+      "origin",
+      "ability-scores",
+    ]);
+    expect(steps[0]?.issues.some((i) => i.id === "identity-class")).toBe(true);
+  });
+
+  it("keeps species and background under origin once a class is chosen", () => {
     const result = evaluateBuildCompleteness(
       createEmptyCompletenessInput({
         classSelection: { id: "fighter|xphb", name: "Fighter" },
@@ -303,16 +387,44 @@ describe("groupCompletenessSteps", () => {
     const steps = groupCompletenessSteps(result);
 
     const origin = steps.find((s) => s.id === "origin");
-    const classFeats = steps.find((s) => s.id === "class-feats");
+    const classStep = steps.find((s) => s.id === "class");
     expect(origin?.complete).toBe(false);
     expect(origin?.issues.some((i) => i.id === "identity-species")).toBe(true);
-    expect(classFeats?.issues.some((i) => i.id === "identity-class")).toBe(
-      false,
-    );
-    // Class is already chosen — no identity-class issue; species/background pending in origin
     expect(origin?.issues.some((i) => i.id === "identity-background")).toBe(
       true,
     );
+    expect(classStep?.complete).toBe(true);
+  });
+
+  it("locks class-dependent steps instead of marking them complete", () => {
+    const result = evaluateBuildCompleteness(
+      createEmptyCompletenessInput({
+        species: { id: "human|xphb", name: "Human" },
+      }),
+    );
+    const steps = groupCompletenessSteps(result, { hasClass: false });
+    const equipment = steps.find((s) => s.id === "equipment");
+    expect(equipment?.status).toBe("locked");
+    expect(equipment?.complete).toBe(false);
+    expect(countCompletenessProgress(steps).completed).toBe(0);
+  });
+
+  it("files origin feats under origin and level feats under feats", () => {
+    const result = evaluateBuildCompleteness(
+      createEmptyCompletenessInput({
+        level: 4,
+        classSelection: { id: "fighter|xphb", name: "Fighter" },
+        classData: minimalClass(),
+        species: { id: "palico|agmh", name: "Palico" },
+        background: { id: "hunters-initiate|agmh", name: "Hunter's Initiate" },
+        backgroundOriginFeatGrant: AMELLWIND_BACKGROUND_ORIGIN_FEAT_GRANT,
+      }),
+    );
+    const steps = groupCompletenessSteps(result, { hasFeatSlots: true });
+    const origin = steps.find((s) => s.id === "origin");
+    const feats = steps.find((s) => s.id === "feats");
+    expect(origin?.issues.some((i) => i.id === "origin-feat")).toBe(true);
+    expect(feats?.issues.some((i) => i.id === "feat-slot-0")).toBe(true);
   });
 
   it("omits spells step when not a caster and no spell issues", () => {
@@ -347,5 +459,46 @@ describe("groupCompletenessSteps", () => {
     const progress = countCompletenessProgress(steps);
     expect(progress.total).toBeGreaterThan(0);
     expect(progress.completed).toBeLessThanOrEqual(progress.total);
+  });
+});
+
+describe("getNextStep", () => {
+  it("points at the class first", () => {
+    const result = evaluateBuildCompleteness(
+      createEmptyCompletenessInput({
+        species: { id: "human|xphb", name: "Human" },
+      }),
+    );
+    const next = getNextStep(groupCompletenessSteps(result, { hasClass: false }));
+    expect(next?.step.id).toBe("class");
+    expect(next?.position).toBe(1);
+    expect(next?.issue.slot).toBe("class");
+  });
+
+  it("moves on to ability scores once class and origin are done", () => {
+    const result = evaluateBuildCompleteness(
+      createEmptyCompletenessInput({
+        classSelection: { id: "fighter|xphb", name: "Fighter" },
+        classData: minimalClass(),
+        species: { id: "human|xphb", name: "Human" },
+        background: { id: "soldier|xphb", name: "Soldier" },
+      }),
+    );
+    const next = getNextStep(groupCompletenessSteps(result));
+    expect(next?.step.id).toBe("ability-scores");
+    expect(next?.issue.id).toBe("base-abilities");
+  });
+
+  it("returns null when every step is complete", () => {
+    const result = evaluateBuildCompleteness(
+      createEmptyCompletenessInput({
+        classSelection: { id: "fighter|xphb", name: "Fighter" },
+        classData: minimalClass(),
+        species: { id: "human|xphb", name: "Human" },
+        background: { id: "soldier|xphb", name: "Soldier" },
+        baseAbilities: { str: 15, dex: 13, con: 14, int: 8, wis: 12, cha: 10 },
+      }),
+    );
+    expect(getNextStep(groupCompletenessSteps(result))).toBeNull();
   });
 });

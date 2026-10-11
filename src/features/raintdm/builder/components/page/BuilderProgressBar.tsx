@@ -1,4 +1,5 @@
-import { CheckCircle2, Circle, ListChecks } from "lucide-react";
+import { CheckCircle2, Circle, ListChecks, Lock } from "lucide-react";
+import { useState } from "react";
 import { Progress } from "@/components/ui/progress";
 import {
   Popover,
@@ -14,31 +15,32 @@ import { useBuilderSlotSelection } from "../../hooks/useBuilderSlotSelection";
 import { useBuilderLayoutOptional } from "../../context/BuilderLayoutContext";
 import { useBuilderDerivedStats } from "../../hooks/useBuilderDerivedStats";
 import { formatModifier } from "@/shared/utils/cr.utils";
-import type { BuildCompletenessIssue } from "../../utils/build-completeness.types";
+import type { CompletenessStep } from "../../utils/build-completeness/group-completeness-steps.utils";
 
-function goToIssue(
-  issue: BuildCompletenessIssue,
-  selectSlot: (slot: NonNullable<BuildCompletenessIssue["slot"]>) => void,
-  goToSection: (section: BuildCompletenessIssue["section"]) => void,
-  activateHighlight: () => void,
-) {
-  activateHighlight();
-  if (issue.slot) {
-    selectSlot(issue.slot);
+function StepStatusIcon({ status }: Readonly<{ status: CompletenessStep["status"] }>) {
+  if (status === "complete") {
+    return (
+      <CheckCircle2 className="h-3.5 w-3.5 shrink-0 text-emerald-500" aria-hidden />
+    );
   }
-  goToSection(issue.section);
+  if (status === "locked") {
+    return <Lock className="h-3 w-3 shrink-0 text-muted-foreground" aria-hidden />;
+  }
+  return <Circle className="h-3 w-3 shrink-0 text-amber-500" aria-hidden />;
 }
 
+const STEP_STATUS_LABEL: Record<CompletenessStep["status"], string> = {
+  complete: "done",
+  pending: "to do",
+  locked: "unlocks after choosing a class",
+};
+
 export function BuilderProgressBar() {
-  const {
-    liveResult,
-    liveSteps,
-    liveProgress,
-    goToSection,
-    activateHighlight,
-  } = useBuildCompleteness();
+  const { liveResult, liveSteps, liveProgress, goToSection, goToIssue } =
+    useBuildCompleteness();
   const { selectSlot } = useBuilderSlotSelection();
   const isMobileLayout = useBuilderLayoutOptional()?.isMobileLayout ?? false;
+  const [open, setOpen] = useState(false);
 
   const pendingIssues = liveResult.issues;
   const hasStarted = liveResult.hasStarted;
@@ -51,7 +53,7 @@ export function BuilderProgressBar() {
       )}
     >
       <div className="mx-auto flex w-full max-w-[1400px] items-center gap-3">
-        <Popover>
+        <Popover open={open} onOpenChange={setOpen}>
           <PopoverTrigger asChild>
             <Button
               type="button"
@@ -70,73 +72,89 @@ export function BuilderProgressBar() {
               )}
             </Button>
           </PopoverTrigger>
-          <PopoverContent align="start" className="w-80 p-3">
+          <PopoverContent
+            align="start"
+            className="max-h-[70vh] w-80 overflow-y-auto p-3"
+          >
             {!hasStarted ? (
               <div className="space-y-2">
                 <p className="text-sm font-medium text-foreground">
                   Start your character
                 </p>
                 <p className="text-xs text-muted-foreground">
-                  Pick a species, background, and class to begin. The checklist
-                  will track remaining choices as you build.
+                  Start with your class: it decides which ability scores,
+                  skills and spells matter. The checklist then tracks every
+                  remaining choice.
                 </p>
                 <Button
                   type="button"
                   size="sm"
                   className="h-8 w-full text-xs"
                   onClick={() => {
-                    selectSlot("species");
+                    setOpen(false);
+                    selectSlot("class");
                     goToSection("identity");
                   }}
                 >
-                  Choose species
+                  Choose a class
                 </Button>
-              </div>
-            ) : pendingIssues.length === 0 ? (
-              <div className="flex items-center gap-2 text-sm text-emerald-600 dark:text-emerald-400">
-                <CheckCircle2 className="h-4 w-4 shrink-0" aria-hidden />
-                Build complete — ready to export
               </div>
             ) : (
               <div className="space-y-3">
+                {pendingIssues.length === 0 && (
+                  <div className="flex items-center gap-2 text-sm text-emerald-600 dark:text-emerald-400">
+                    <CheckCircle2 className="h-4 w-4 shrink-0" aria-hidden />
+                    Build complete — ready to export
+                  </div>
+                )}
                 <p className="text-xs font-semibold uppercase tracking-wide text-muted-foreground">
-                  Pending steps
+                  Creation checklist
                 </p>
-                <ul className="space-y-2">
-                  {liveSteps
-                    .filter((step) => !step.complete)
-                    .map((step) => (
-                      <li key={step.id} className="space-y-1">
-                        <div className="flex items-center gap-1.5 text-xs font-medium text-foreground">
-                          <Circle
-                            className="h-3 w-3 shrink-0 text-amber-500"
-                            aria-hidden
-                          />
-                          {step.label}
-                        </div>
-                        <ul className="ml-4 space-y-0.5">
+                <ol className="space-y-2">
+                  {liveSteps.map((step, index) => (
+                    <li key={step.id} className="space-y-1">
+                      <div
+                        className={cn(
+                          "flex items-center gap-1.5 text-xs font-medium",
+                          step.status === "pending"
+                            ? "text-foreground"
+                            : "text-muted-foreground",
+                        )}
+                      >
+                        <StepStatusIcon status={step.status} />
+                        <span>
+                          {index + 1}. {step.label}
+                        </span>
+                        <span className="sr-only">
+                          ({STEP_STATUS_LABEL[step.status]})
+                        </span>
+                        {step.status === "locked" && (
+                          <span className="ml-auto text-[11px] font-normal">
+                            Needs a class
+                          </span>
+                        )}
+                      </div>
+                      {step.issues.length > 0 && (
+                        <ul className="ml-5 space-y-0.5">
                           {step.issues.map((issue) => (
                             <li key={issue.id}>
                               <button
                                 type="button"
                                 className="text-left text-[11px] text-muted-foreground underline-offset-2 hover:text-foreground hover:underline"
-                                onClick={() =>
-                                  goToIssue(
-                                    issue,
-                                    selectSlot,
-                                    goToSection,
-                                    activateHighlight,
-                                  )
-                                }
+                                onClick={() => {
+                                  setOpen(false);
+                                  goToIssue(issue);
+                                }}
                               >
                                 {issue.message}
                               </button>
                             </li>
                           ))}
                         </ul>
-                      </li>
-                    ))}
-                </ul>
+                      )}
+                    </li>
+                  ))}
+                </ol>
               </div>
             )}
           </PopoverContent>
@@ -159,7 +177,7 @@ export function BuilderProgressBar() {
             )}
           >
             {!hasStarted
-              ? "Start by picking a species, background, and class"
+              ? "Start by choosing a class"
               : pendingIssues.length === 0
                 ? "All required steps complete"
                 : `${pendingIssues.length} pending choice${pendingIssues.length === 1 ? "" : "s"}`}

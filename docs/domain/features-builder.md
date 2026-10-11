@@ -39,7 +39,9 @@ Herramienta experimental para equipar armas/armadura/runas y estimar **daño por
 
 Cabecera: `HomebrewModeToggle` (Amellwind Homebrew **OFF** por defecto si no hay valor en `localStorage`) + botón **Tips** (`CharacterCreationTipsPanel`) que abre un dialog con workflow/gear según el modo homebrew. Encima del grid: **`BuilderProgressBar`** fija (checklist en vivo con deep-links a slots/`data-builder-section`).
 
-`BuilderSlotSelectionProvider` eleva `selectedSlot` para que la progress bar y el centro compartan selección. `BuildCompletenessProvider` expone `liveResult` / `liveSteps` (evaluación diferida con `useDeferredValue`) además del highlight de export.
+`BuilderSlotSelectionProvider` eleva `selectedSlot` para que la progress bar y el centro compartan selección. `BuildCompletenessProvider` expone `liveResult` / `liveSteps` / `nextStep` (evaluación diferida con `useDeferredValue`), `goToIssue` (abre el slot + scroll a la sección) además del highlight de export.
+
+**Guía para novatos (orden canónico):** `groupCompletenessSteps` define el orden único **Class → Species & Background → Ability Scores → Feats → Skills & Proficiencies → Spells → Starting Equipment** (PHB 2024: clase, origen, puntuaciones). Lo usan la progress bar, la rejilla de identidad (Class/Subclass primero, Backstory al final) y el workflow de Tips D&D. Los pasos que dependen de la clase quedan `locked` (no cuentan como completos) hasta elegirla. `NextStepCard` (arriba del panel central) muestra: bienvenida antes de empezar (paso a paso / randomizer / cargar JSON) → el primer issue pendiente (`getNextStep`) con un botón que hace `goToIssue` → "Your character is ready". El slot del siguiente issue se marca con el badge **Next** (`GridElementSlot.isNext`), más suave que el ámbar del highlight de export. Si el export está bloqueado, `StatsPanel` salta al primer issue y lo nombra en el toast.
 
 Acciones destructivas (reset, randomize, homebrew OFF, clear inventory, bajar nivel, cambiar método ASI, desactivar multiclass) pasan por `ConfirmActionDialog` + toast Sonner.
 
@@ -81,7 +83,11 @@ Los slots de dote de nivel (`buildFeatSelectionsForLevel`) solo eligen dotes **G
 
 #### Completeness / tests
 
-Fuente de verdad: `evaluateBuildCompleteness` (`builder/utils/build-completeness*`), consumida por `BuildCompletenessContext` (highlights + bloqueo de export). Tests Vitest en `build-completeness.test.ts` (`pnpm test`). Checklist agente: `.agents/skills/builder-validation/`.#### Componentes
+Fuente de verdad: `evaluateBuildCompleteness` (`builder/utils/build-completeness*`), consumida por `BuildCompletenessContext` (highlights + bloqueo de export). Tests Vitest en `build-completeness.test.ts` (`pnpm test`). Checklist agente: `.agents/skills/builder-validation/`.
+
+Clase, especie y trasfondo se exigen siempre que el build haya empezado (no solo cuando ya se eligió otro de ellos). Las puntuaciones base también se validan (`base-abilities`): Standard Array con los 6 valores asignados, Point Buy con los 27 puntos gastados, Manual/Dice mientras todas sigan en 8 o 10.
+
+#### Componentes
 
 | Componente                                                                          | Rol                                                                                                                                                                                                                                                                                                                                                                                                                      |
 | ----------------------------------------------------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------ |

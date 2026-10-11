@@ -23,6 +23,8 @@ interface GridElementSlotProps {
   accent?: SlotAccent;
   emptyTitle?: string;
   highlighted?: boolean;
+  /** Suggested next choice from the creation checklist (softer than `highlighted`). */
+  isNext?: boolean;
 }
 
 const ACCENT_CLASS: Record<SlotAccent, string> = {
@@ -30,6 +32,21 @@ const ACCENT_CLASS: Record<SlotAccent, string> = {
   weapon: "border-violet-400/50 hover:border-violet-400/80",
   armor: "border-sky-400/50 hover:border-sky-400/80",
 };
+
+const NEXT_SLOT_CLASS =
+  "border-primary/70 bg-primary/10 text-foreground ring-2 ring-primary/40 hover:border-primary";
+
+function NextBadge() {
+  return (
+    <span className="pointer-events-none absolute -left-1 -top-1.5 flex items-center gap-1 rounded-full bg-primary px-1.5 py-0.5 text-[10px] font-semibold uppercase leading-none tracking-wide text-primary-foreground shadow-sm">
+      <span
+        className="h-1.5 w-1.5 rounded-full bg-primary-foreground motion-safe:animate-pulse"
+        aria-hidden
+      />
+      Next
+    </span>
+  );
+}
 
 export function GridElementSlot({
   label,
@@ -44,7 +61,9 @@ export function GridElementSlot({
   accent = "default",
   emptyTitle,
   highlighted = false,
+  isNext = false,
 }: Readonly<GridElementSlotProps>) {
+  const showNext = isNext && !highlighted;
   if (disabled) {
     return (
       <div
@@ -64,21 +83,27 @@ export function GridElementSlot({
 
   if (!equipped) {
     return (
-      <button
-        type="button"
-        onClick={onClickEquip}
-        title={emptyTitle ?? `Equip ${label}`}
-        className={cn(
-          "flex min-h-[72px] w-full flex-col items-center justify-center gap-1 rounded-md border border-dashed p-2 text-[11px] text-muted-foreground transition-all hover:text-foreground",
-          highlighted
-            ? "border-amber-500/70 bg-amber-500/10 ring-1 ring-amber-500/40 hover:border-amber-500 hover:bg-amber-500/15"
-            : "border-border/70 bg-muted/20 hover:border-border hover:bg-muted/40",
-          ACCENT_CLASS[accent],
-        )}
-      >
-        <Plus className="h-5 w-5" />
-        <span>{label}</span>
-      </button>
+      <div className="relative w-full">
+        <button
+          type="button"
+          onClick={onClickEquip}
+          title={emptyTitle ?? `Equip ${label}`}
+          aria-label={showNext ? `${label} (suggested next step)` : undefined}
+          className={cn(
+            "flex min-h-[72px] w-full flex-col items-center justify-center gap-1 rounded-md border border-dashed p-2 text-[11px] text-muted-foreground transition-all hover:text-foreground",
+            highlighted
+              ? "border-amber-500/70 bg-amber-500/10 ring-1 ring-amber-500/40 hover:border-amber-500 hover:bg-amber-500/15"
+              : showNext
+                ? NEXT_SLOT_CLASS
+                : "border-border/70 bg-muted/20 hover:border-border hover:bg-muted/40",
+            !showNext && ACCENT_CLASS[accent],
+          )}
+        >
+          <Plus className="h-5 w-5" />
+          <span>{label}</span>
+        </button>
+        {showNext && <NextBadge />}
+      </div>
     );
   }
 
@@ -93,9 +118,11 @@ export function GridElementSlot({
             "flex min-h-[72px] w-full flex-col items-center justify-center gap-0.5 rounded-md border border-solid p-2 text-center transition-all",
             highlighted
               ? "border-amber-500/70 bg-amber-500/10 ring-1 ring-amber-500/40 hover:border-amber-500"
-              : "border-border/70 bg-card hover:border-primary/40",
+              : showNext
+                ? NEXT_SLOT_CLASS
+                : "border-border/70 bg-card hover:border-primary/40",
             isSelected && "border-primary bg-primary/10 ring-1 ring-primary/30",
-            ACCENT_CLASS[accent],
+            !showNext && ACCENT_CLASS[accent],
           )}
         >
           {icon}
@@ -126,6 +153,7 @@ export function GridElementSlot({
             <TooltipContent side="top">Remove {label}</TooltipContent>
           </Tooltip>
         )}
+        {showNext && <NextBadge />}
       </div>
     </TooltipProvider>
   );

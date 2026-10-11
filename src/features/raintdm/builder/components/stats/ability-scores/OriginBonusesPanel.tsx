@@ -16,6 +16,7 @@ import {
   getSpeciesChooseSlots,
   getWeightedDistributionBonus,
 } from "../../../utils/species-ability-bonuses";
+import { BASE_ABILITIES_HIGHLIGHT_KEY } from "../../../utils/build-completeness/evaluate-ability-scores.utils";
 import { ABILITIES } from "./constants";
 
 function BackgroundAsiPanel({ compact }: { compact: boolean }) {
@@ -167,8 +168,13 @@ export function OriginBonusesPanel({ compact }: { compact: boolean }) {
         : [],
     [species, useTashaOrigin, hasBackgroundAsi],
   );
-  const { highlighted, issues: abilityIssues } =
+  const { highlighted: sectionHighlighted, issues: sectionIssues } =
     useSectionCompletenessHighlight("ability-scores");
+  // Base score issues are surfaced next to the score grid, not here.
+  const abilityIssues = sectionIssues.filter(
+    (issue) => issue.highlightKey !== BASE_ABILITIES_HIGHLIGHT_KEY,
+  );
+  const highlighted = sectionHighlighted && abilityIssues.length > 0;
 
   const abilityOptions = (exclude: AbilityKey[]) =>
     ABILITIES.filter(({ key }) => !exclude.includes(key));

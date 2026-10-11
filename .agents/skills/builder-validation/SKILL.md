@@ -32,6 +32,7 @@ These map to `BuildCompletenessSection` / issue ids:
 | Origin feat (D&D choose grant **or** Amellwind background) | `feats` | `origin-feat` |
 | Level feat / ASI slots | `feats` | `feat-slot-*`, `feat-asi-*`, `feat-ability-*` |
 | Optional features (fighting styles, invocations, …) | `optional-features` | progression shortfalls |
+| Base ability scores (Standard Array, Point Buy, Manual/Dice) | `ability-scores` | `base-abilities` |
 | Ability choices (species choose, background ASI, Tasha) | `ability-scores` | ability / ASI issues |
 | Skills / expertise | `skills` | skill picker incomplete |
 | Tools / languages / defenses | `tools`, `languages`, `defenses` | named / defense pickers |

@@ -16,7 +16,6 @@ import { useBuilderCharacterImport } from "../../hooks/useBuilderCharacterImport
 import { useSendToPlaySheet } from "@/features/raintdm/character-sheet/hooks/useSendToPlaySheet";
 import { useConfirmDialog } from "@/features/raintdm/character-sheet/hooks/useConfirmDialog";
 import { useBuildCompleteness } from "../../context/BuildCompletenessContext";
-import { useBuilderSlotSelection } from "../../hooks/useBuilderSlotSelection";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Checkbox } from "@/components/ui/checkbox";
@@ -160,10 +159,9 @@ export function StatsPanel() {
     clearHighlight,
     highlightActive,
     issues,
-    goToSection,
+    goToIssue,
     liveResult,
   } = useBuildCompleteness();
-  const { selectSlot } = useBuilderSlotSelection();
   const { lawChaos, goodEvil } = parseAlignmentAxes(character.alignment);
   const alignmentLabel = formatAlignmentLabel(lawChaos, goodEvil);
   const [pendingConfirm, setPendingConfirm] = useState<PendingConfirm | null>(
@@ -247,16 +245,23 @@ export function StatsPanel() {
     }
   }
 
-  function handleIssueClick(issue: BuildCompletenessIssue) {
+  /** Jump to the first pending choice and name it, instead of only counting. */
+  function showBlockingIssues(issues: BuildCompletenessIssue[], action: string) {
     activateHighlight();
-    if (issue.slot) selectSlot(issue.slot);
-    goToSection(issue.section);
+    const [first] = issues;
+    if (!first) return;
+    goToIssue(first);
+    const left =
+      issues.length === 1 ? "1 choice left" : `${issues.length} choices left`;
+    toast.error(`Finish your character before ${action}`, {
+      description: `${left}. Next: ${first.message}`,
+    });
   }
 
   async function handleExportPdf() {
     const result = evaluate();
     if (result.shouldBlockExport) {
-      activateHighlight();
+      showBlockingIssues(result.issues, "downloading the PDF");
       return;
     }
     clearHighlight();
@@ -270,12 +275,7 @@ export function StatsPanel() {
       return false;
     }
     if (result.shouldBlockExport) {
-      activateHighlight();
-      toast.error(
-        result.issues.length === 1
-          ? "Finish the pending creation check before sending"
-          : `Finish ${result.issues.length} pending creation checks before sending`,
-      );
+      showBlockingIssues(result.issues, "sending it to the Character Sheet");
       return false;
     }
     clearHighlight();
@@ -732,7 +732,7 @@ export function StatsPanel() {
               {highlightActive && issues.length > 0 && (
                 <CompletenessHighlightBanner
                   issues={issues}
-                  onIssueClick={handleIssueClick}
+                  onIssueClick={goToIssue}
                 />
               )}
               {exportError && (

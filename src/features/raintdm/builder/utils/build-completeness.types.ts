@@ -1,6 +1,7 @@
 import type { BuilderSlotSelection } from "../hooks/useBuilderSlotSelection";
 import type {
   AbilityKey,
+  AbilityScores,
   BackgroundAsiMode,
   BuilderFeatSelection,
   BuilderOptionalFeatureSelections,
@@ -18,6 +19,7 @@ import type {
   NamedProficiencyGrant,
   SkillProficiencyGrant,
 } from "@/shared/types/proficiency.types";
+import type { AbilityScoreGenerationMethod } from "@/shared/utils/ability-scores";
 import type { OriginFeatGrant } from "@/shared/utils/origin-feat-grant.parser";
 import type { OptionalFeatureOriginFeatSlot } from "./optional-feature-feat-grants.utils";
 import type { SpellcastingInfo } from "../hooks/useSpellcasting";
@@ -54,6 +56,9 @@ export interface BuildCompletenessInput {
   classSelection: { id: string; name: string } | null;
   subclass: { id: string; name: string } | null;
   level: number;
+  abilityScoreMethod: AbilityScoreGenerationMethod;
+  /** Base scores before species/background/feat bonuses. */
+  baseAbilities: AbilityScores;
   classData: Class | null;
   subclassData: Subclass | null;
   speciesData: Species | null;

@@ -1,13 +1,66 @@
 import {
+  ABILITY_KEYS,
+  STANDARD_ARRAY,
+  pointBuyRemaining,
+} from "@/shared/utils/ability-scores";
+import {
   getSpeciesChooseSlots,
   hasBackgroundAsi,
 } from "../species-ability-bonuses";
 import type { BuildCompletenessInput, BuildCompletenessIssue } from "../build-completeness.types";
 
+export const BASE_ABILITIES_HIGHLIGHT_KEY = "base-abilities";
+
+/**
+ * Base scores must be assigned before export. Manual and dice builds are only
+ * flagged while every score still sits at a reset default (8 or 10), matching
+ * the "has assigned scores" heuristic used by the method selector.
+ */
+function evaluateBaseAbilityScores(
+  input: BuildCompletenessInput,
+): BuildCompletenessIssue | null {
+  const scores = ABILITY_KEYS.map((key) => input.baseAbilities[key]);
+  let message: string | null = null;
+
+  switch (input.abilityScoreMethod) {
+    case "standard": {
+      const sorted = [...scores].sort((a, b) => b - a);
+      if (sorted.some((score, index) => score !== STANDARD_ARRAY[index])) {
+        message = "Assign every Standard Array value (15, 14, 13, 12, 10, 8)";
+      }
+      break;
+    }
+    case "pointbuy": {
+      const remaining = pointBuyRemaining(input.baseAbilities);
+      if (remaining > 0) {
+        message = `Spend ${remaining} more point-buy point${remaining === 1 ? "" : "s"}`;
+      }
+      break;
+    }
+    case "manual":
+    case "dice":
+      if (scores.every((score) => score === 8 || score === 10)) {
+        message = "Assign your ability scores";
+      }
+      break;
+  }
+
+  if (!message) return null;
+  return {
+    id: "base-abilities",
+    section: "ability-scores",
+    message,
+    highlightKey: BASE_ABILITIES_HIGHLIGHT_KEY,
+  };
+}
+
 export function evaluateAbilityScoresCompleteness(
   input: BuildCompletenessInput,
 ): BuildCompletenessIssue[] {
   const issues: BuildCompletenessIssue[] = [];
+
+  const baseIssue = evaluateBaseAbilityScores(input);
+  if (baseIssue) issues.push(baseIssue);
 
   if (input.speciesData) {
     const chooseSlots = getSpeciesChooseSlots(input.speciesData.abilityBonuses ?? []);

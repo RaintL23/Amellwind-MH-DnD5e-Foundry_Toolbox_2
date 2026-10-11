@@ -100,7 +100,7 @@ function OptionalFeatureGridSlot({
   const detail = pickedNames ? `${countDetail} — ${pickedNames}` : countDetail;
   const isSelected =
     isOptionalFeatureSlot(selectedSlot) && selectedSlot === slot;
-  const { highlighted } = useSlotCompletenessHighlight(slot);
+  const { highlighted, isNext } = useSlotCompletenessHighlight(slot);
 
   return (
     <GridElementSlot
@@ -127,6 +127,7 @@ function OptionalFeatureGridSlot({
       }
       isSelected={isSelected}
       highlighted={highlighted}
+      isNext={isNext}
       emptyTitle={`Choose ${progression.name} (${countDetail})`}
     />
   );

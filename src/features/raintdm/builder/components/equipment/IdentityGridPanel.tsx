@@ -46,8 +46,10 @@ function HighlightedGridSlot({
   highlightKey,
   ...props
 }: ComponentProps<typeof GridElementSlot> & { highlightKey: string }) {
-  const { highlighted } = useSlotCompletenessHighlight(highlightKey);
-  return <GridElementSlot {...props} highlighted={highlighted} />;
+  const { highlighted, isNext } = useSlotCompletenessHighlight(highlightKey);
+  return (
+    <GridElementSlot {...props} highlighted={highlighted} isNext={isNext} />
+  );
 }
 
 interface IdentityGridPanelProps {
@@ -173,63 +175,9 @@ export function IdentityGridPanel({
     primaryClassLevel,
   );
 
+  // Slot order follows the creation checklist: class → origin → feats.
   return (
     <BuilderSlotGrid>
-      <HighlightedGridSlot
-        highlightKey="species"
-        label="Species"
-        icon={<Users className="h-5 w-5 text-sky-400" />}
-        equipped={
-          species
-            ? {
-                name: species.subraceName
-                  ? `${species.name} (${species.subraceName})`
-                  : species.name,
-              }
-            : null
-        }
-        onClickEquip={() => onSelectSlot("species")}
-        onClickDetails={() => onSelectSlot("species")}
-        onUnequip={species ? () => onUnequipSlot("species") : undefined}
-        isSelected={selectedSlot === "species"}
-      />
-      <HighlightedGridSlot
-        highlightKey="background"
-        label="Background"
-        icon={<ScrollText className="h-5 w-5 text-violet-400" />}
-        equipped={
-          background ? { name: "Background: " + background.name } : null
-        }
-        onClickEquip={() => onSelectSlot("background")}
-        onClickDetails={() => onSelectSlot("background")}
-        onUnequip={background ? () => onUnequipSlot("background") : undefined}
-        isSelected={selectedSlot === "background"}
-      />
-      {showFaction && (
-        <GridElementSlot
-          label="Faction"
-          icon={<Shield className="h-5 w-5 text-emerald-400" />}
-          equipped={
-            faction
-              ? { name: "Faction: " + BACKGROUND_FACTION_LABELS[faction] }
-              : null
-          }
-          onClickEquip={() => onSelectSlot("faction")}
-          onClickDetails={() => onSelectSlot("faction")}
-          onUnequip={faction ? () => onUnequipSlot("faction") : undefined}
-          isSelected={selectedSlot === "faction"}
-          emptyTitle="Choose Amellwind faction"
-        />
-      )}
-      <GridElementSlot
-        label="Backstory"
-        icon={<Book className="h-5 w-5 text-blue-400" />}
-        equipped={hasBackstory ? { name: "Backstory" } : null}
-        onClickEquip={() => onSelectSlot("backstory")}
-        onClickDetails={() => onSelectSlot("backstory")}
-        isSelected={selectedSlot === "backstory"}
-        emptyTitle="Write backstory"
-      />
       <HighlightedGridSlot
         highlightKey="class"
         label={multiclassEnabled ? "Class 1" : "Class"}
@@ -322,6 +270,52 @@ export function IdentityGridPanel({
         onSelectSlot={onSelectSlot}
         onUnequipSlot={onUnequipSlot}
       />
+      <HighlightedGridSlot
+        highlightKey="species"
+        label="Species"
+        icon={<Users className="h-5 w-5 text-sky-400" />}
+        equipped={
+          species
+            ? {
+                name: species.subraceName
+                  ? `${species.name} (${species.subraceName})`
+                  : species.name,
+              }
+            : null
+        }
+        onClickEquip={() => onSelectSlot("species")}
+        onClickDetails={() => onSelectSlot("species")}
+        onUnequip={species ? () => onUnequipSlot("species") : undefined}
+        isSelected={selectedSlot === "species"}
+      />
+      <HighlightedGridSlot
+        highlightKey="background"
+        label="Background"
+        icon={<ScrollText className="h-5 w-5 text-violet-400" />}
+        equipped={
+          background ? { name: "Background: " + background.name } : null
+        }
+        onClickEquip={() => onSelectSlot("background")}
+        onClickDetails={() => onSelectSlot("background")}
+        onUnequip={background ? () => onUnequipSlot("background") : undefined}
+        isSelected={selectedSlot === "background"}
+      />
+      {showFaction && (
+        <GridElementSlot
+          label="Faction"
+          icon={<Shield className="h-5 w-5 text-emerald-400" />}
+          equipped={
+            faction
+              ? { name: "Faction: " + BACKGROUND_FACTION_LABELS[faction] }
+              : null
+          }
+          onClickEquip={() => onSelectSlot("faction")}
+          onClickDetails={() => onSelectSlot("faction")}
+          onUnequip={faction ? () => onUnequipSlot("faction") : undefined}
+          isSelected={selectedSlot === "faction"}
+          emptyTitle="Choose Amellwind faction"
+        />
+      )}
       {showOriginFeat && (
         <HighlightedGridSlot
           highlightKey="origin-feat"
@@ -406,6 +400,15 @@ export function IdentityGridPanel({
           />
         );
       })}
+      <GridElementSlot
+        label="Backstory"
+        icon={<Book className="h-5 w-5 text-blue-400" />}
+        equipped={hasBackstory ? { name: "Backstory" } : null}
+        onClickEquip={() => onSelectSlot("backstory")}
+        onClickDetails={() => onSelectSlot("backstory")}
+        isSelected={selectedSlot === "backstory"}
+        emptyTitle="Write backstory"
+      />
     </BuilderSlotGrid>
   );
 }

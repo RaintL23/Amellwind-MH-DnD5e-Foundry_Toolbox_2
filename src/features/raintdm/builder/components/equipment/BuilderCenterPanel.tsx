@@ -45,6 +45,7 @@ import { BuilderLibraryPanel } from "./library/BuilderLibraryPanel";
 import { BackstoryNotesPanel } from "./BackstoryNotesPanel";
 import { FactionLibraryPanel } from "./library/FactionLibraryPanel";
 import { BuilderPanel } from "../shared/BuilderPanel";
+import { NextStepCard } from "../page/NextStepCard";
 import { Button } from "@/components/ui/button";
 import {
   Sheet,
@@ -488,6 +489,8 @@ export function BuilderCenterPanel() {
 
   return (
     <div className="flex min-w-0 flex-col gap-2.5">
+      <NextStepCard />
+
       {/* ─── Always-visible grids ─── */}
       <BuilderPanel
         sectionId="identity"
