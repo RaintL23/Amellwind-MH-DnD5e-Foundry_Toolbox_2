@@ -11,7 +11,8 @@ export function createEmptyCompletenessInput(
     subclass: null,
     level: 1,
     abilityScoreMethod: "manual",
-    baseAbilities: { str: 10, dex: 10, con: 10, int: 10, wis: 10, cha: 10 },
+    // New-character defaults (Character model).
+    baseAbilities: { str: 11, dex: 11, con: 11, int: 11, wis: 11, cha: 11 },
     classData: null,
     subclassData: null,
     speciesData: null,

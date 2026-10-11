@@ -85,7 +85,7 @@ Los slots de dote de nivel (`buildFeatSelectionsForLevel`) solo eligen dotes **G
 
 Fuente de verdad: `evaluateBuildCompleteness` (`builder/utils/build-completeness*`), consumida por `BuildCompletenessContext` (highlights + bloqueo de export). Tests Vitest en `build-completeness.test.ts` (`pnpm test`). Checklist agente: `.agents/skills/builder-validation/`.
 
-Clase, especie y trasfondo se exigen siempre que el build haya empezado (no solo cuando ya se eligió otro de ellos). Las puntuaciones base también se validan (`base-abilities`): Standard Array con los 6 valores asignados, Point Buy con los 27 puntos gastados, Manual/Dice mientras todas sigan en 8 o 10.
+Clase, especie y trasfondo se exigen siempre que el build haya empezado (no solo cuando ya se eligió otro de ellos). Las puntuaciones base también se validan (`base-abilities`): Standard Array con los 6 valores asignados, Point Buy con los 27 puntos gastados, Manual/Dice mientras las seis sigan iguales (11 en un personaje nuevo, 8 tras cambiar de método).
 
 **Ability Scores guiadas:** con una clase elegida, `AbilityScoresSection` muestra las 2 características clave (`resolveClassAbilityPriority`, marcadas **Key** en cada tarjeta junto a una descripción corta) y el botón **Use recommended**. Este reparte por prioridad de clase (`assignValuesByPriority`) el Standard Array (válido también como point-buy de 27) o la tirada completa en Dice (deshabilitado hasta tirar). Pide confirmación si ya había puntuaciones asignadas.
 

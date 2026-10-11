@@ -3,6 +3,7 @@ import {
   STANDARD_ARRAY,
   pointBuyRemaining,
 } from "@/shared/utils/ability-scores";
+import type { AbilityScores } from "@/shared/types";
 import {
   getSpeciesChooseSlots,
   hasBackgroundAsi,
@@ -12,9 +13,17 @@ import type { BuildCompletenessInput, BuildCompletenessIssue } from "../build-co
 export const BASE_ABILITIES_HIGHLIGHT_KEY = "base-abilities";
 
 /**
+ * True while all six base scores are identical: the new-character default
+ * (11s) or a method reset (8s) that nobody has assigned yet.
+ */
+export function areBaseAbilitiesUntouched(abilities: AbilityScores): boolean {
+  const [first, ...rest] = ABILITY_KEYS.map((key) => abilities[key]);
+  return rest.every((score) => score === first);
+}
+
+/**
  * Base scores must be assigned before export. Manual and dice builds are only
- * flagged while every score still sits at a reset default (8 or 10), matching
- * the "has assigned scores" heuristic used by the method selector.
+ * flagged while the scores are still untouched (see areBaseAbilitiesUntouched).
  */
 function evaluateBaseAbilityScores(
   input: BuildCompletenessInput,
@@ -39,7 +48,7 @@ function evaluateBaseAbilityScores(
     }
     case "manual":
     case "dice":
-      if (scores.every((score) => score === 8 || score === 10)) {
+      if (areBaseAbilitiesUntouched(input.baseAbilities)) {
         message = "Assign your ability scores";
       }
       break;

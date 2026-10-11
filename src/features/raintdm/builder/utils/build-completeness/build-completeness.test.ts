@@ -301,9 +301,20 @@ describe("evaluateBuildCompleteness — base ability scores", () => {
     background: { id: "soldier|xphb", name: "Soldier" },
   };
 
-  it("flags untouched manual scores", () => {
+  it("flags untouched manual scores (new-character 11s)", () => {
     const result = evaluateBuildCompleteness(
       createEmptyCompletenessInput(started),
+    );
+    expect(hasIssueId(result.issues, "base-abilities")).toBe(true);
+  });
+
+  it("flags dice scores still at the post-reset 8s", () => {
+    const result = evaluateBuildCompleteness(
+      createEmptyCompletenessInput({
+        ...started,
+        abilityScoreMethod: "dice",
+        baseAbilities: { str: 8, dex: 8, con: 8, int: 8, wis: 8, cha: 8 },
+      }),
     );
     expect(hasIssueId(result.issues, "base-abilities")).toBe(true);
   });

@@ -12,7 +12,10 @@ import {
   useBuildCompleteness,
   useSectionCompletenessHighlight,
 } from "../../../context/BuildCompletenessContext";
-import { BASE_ABILITIES_HIGHLIGHT_KEY } from "../../../utils/build-completeness/evaluate-ability-scores.utils";
+import {
+  BASE_ABILITIES_HIGHLIGHT_KEY,
+  areBaseAbilitiesUntouched,
+} from "../../../utils/build-completeness/evaluate-ability-scores.utils";
 import { CompletenessHighlightBanner } from "../../shared/CompletenessHighlightBanner";
 import { OriginBonusesPanel } from "./OriginBonusesPanel";
 import { GenerationMethodSelector } from "./GenerationMethodSelector";
@@ -80,7 +83,7 @@ export function AbilityScoresSection({
     if (method === "standard" || method === "dice") {
       return Object.keys(assignments).length > 0 || pool.length > 0;
     }
-    return Object.values(character.abilities).some((v) => v !== 8 && v !== 10);
+    return !areBaseAbilitiesUntouched(character.abilities);
   }
 
   function onMethodChange(next: GenerationMethod) {
@@ -96,7 +99,7 @@ export function AbilityScoresSection({
     const picked =
       method === "standard" || method === "dice"
         ? Object.keys(assignments).length > 0
-        : Object.values(character.abilities).some((v) => v !== 8 && v !== 10);
+        : !areBaseAbilitiesUntouched(character.abilities);
     if (picked) {
       setConfirmRecommended(true);
       return;
