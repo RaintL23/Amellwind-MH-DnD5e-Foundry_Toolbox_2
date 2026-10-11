@@ -153,14 +153,29 @@ export function loadBuilderAutosave(): BuilderAutosaveState | null {
   };
 }
 
+const autosaveListeners = new Set<(savedAt: number) => void>();
+
+/** Notifies on every successful autosave write (drives the "Saved" indicator). */
+export function subscribeBuilderAutosave(
+  listener: (savedAt: number) => void,
+): () => void {
+  autosaveListeners.add(listener);
+  return () => {
+    autosaveListeners.delete(listener);
+  };
+}
+
 export function persistBuilderAutosave(
   state: Omit<BuilderAutosaveState, "version" | "snapshotVersion">,
 ): void {
-  writeJson(STORAGE_KEY, {
+  const saved = writeJson(STORAGE_KEY, {
     version: BUILDER_AUTOSAVE_VERSION,
     snapshotVersion: BUILDER_SNAPSHOT_VERSION,
     ...state,
   } satisfies BuilderAutosaveState);
+  if (!saved) return;
+  const savedAt = Date.now();
+  autosaveListeners.forEach((listener) => listener(savedAt));
 }
 
 export function clearBuilderAutosave(): void {

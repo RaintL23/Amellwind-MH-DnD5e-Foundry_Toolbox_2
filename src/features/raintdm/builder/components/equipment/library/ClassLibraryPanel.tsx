@@ -8,6 +8,7 @@ import {
 } from "@/features/dnd/classes/services/class.service";
 import { subclassesForClassVariant } from "@/features/dnd/classes/utils/class-subclass.utils";
 import { useCharacterBuilder } from "@/features/raintdm/builder/context/CharacterBuilderContext";
+import { useBuilderUndo } from "@/features/raintdm/builder/context/BuilderUndoContext";
 import { useClassVariants } from "@/features/raintdm/builder/hooks/useClassVariants";
 import { useSelectedClass } from "@/features/raintdm/builder/hooks/useBuilderSelections";
 import type { BuilderSlotSelection } from "@/features/raintdm/builder/hooks/useBuilderSlotSelection";
@@ -78,6 +79,7 @@ export function ClassLibraryPanel({
     setMulticlassEntrySubclass,
     reloadClassData,
   } = useCharacterBuilder();
+  const { changeIdentity } = useBuilderUndo();
 
   const { classData, loading: classDetailLoading } = useSelectedClass();
   const effectiveAbilityScores = useEffectiveAbilityScores();
@@ -371,16 +373,21 @@ export function ClassLibraryPanel({
     onSearchHiddenChange,
   ]);
 
+  function selectClass(ref: { id: string; name: string }) {
+    changeIdentity("class", ref, () => {
+      setClass(ref);
+      setSubclass(null);
+    });
+  }
+
   function handleSelectClass(id: string, name: string) {
-    setClass({ id, name });
-    setSubclass(null);
+    selectClass({ id, name });
   }
 
   function handleClassSourceSelect(id: string) {
     const variant = classVariants.find((v) => v.id === id);
     if (!variant) return;
-    setClass({ id: variant.id, name: variant.name });
-    setSubclass(null);
+    selectClass({ id: variant.id, name: variant.name });
   }
 
   function handleSelectSubclass(id: string, name: string) {

@@ -59,6 +59,10 @@ Cabecera: `HomebrewModeToggle` (Amellwind Homebrew **OFF** por defecto si no hay
 
 Acciones destructivas (reset, randomize, homebrew OFF, clear inventory, bajar nivel, cambiar método ASI, desactivar multiclass) pasan por `ConfirmActionDialog` + toast Sonner.
 
+**Cambios de clase / especie / trasfondo → Undo** (`BuilderUndoContext`, montado en `BuilderPage` para sobrevivir al desmontaje del panel de librería). `changeIdentity(change, next, apply)` calcula con `describeCascadeLoss` qué elecciones borra el setter (subclase, dotes, hechizos, picks de proficiencias, bonus, origin feat…; mismo trasfondo = sin cambios, misma especie conserva la origin feat). Si no se pierde nada aplica directo; si no, guarda `buildBuilderPersistPayload` + arte y muestra un toast "Cleared: …" con **Undo** (10 s) que restaura vía `replaceBuilderBuild` (la misma ruta que el import de Builder JSON). Puntos conectados: `ClassLibraryPanel` (clase y variante), `IdentityLibraryPanel` (selección y variante de fuente) y quitar slot en `BuilderCenterPanel`.
+
+**Indicador "Saved"**: `persistBuilderAutosave` notifica a `subscribeBuilderAutosave` solo si la escritura en `localStorage` tuvo éxito (`writeJson` devuelve boolean); `AutosaveIndicator` lo muestra en la progress bar.
+
 #### Inventario del builder (`BuilderInventoryContext`)
 
 - **Fuente de verdad**: líneas del **`CartContext`** (ítems comprados/añadidos en Shops/Items). Purchase pasa por `CartPurchaseBridge` (`CartPurchaseContext`); `CartDrawer` no importa el Builder.

@@ -22,6 +22,7 @@ import {
   useBuilderUiMode,
 } from "../../context/BuilderUiModeContext";
 import { useCharacterBuilder } from "../../context/CharacterBuilderContext";
+import { BuilderUndoProvider } from "../../context/BuilderUndoContext";
 import { BuildCompletenessProvider } from "../../context/BuildCompletenessContext";
 import { BuilderSlotSelectionProvider } from "../../context/BuilderSlotSelectionContext";
 import {
@@ -38,17 +39,19 @@ import { BuilderGrantSync } from "../BuilderGrantSync";
 export function BuilderPage() {
   return (
     <BuilderUiModeProvider>
-      <BuilderLayoutProvider>
-        <BuilderSlotSelectionProvider>
-          <BuildCompletenessProvider>
-            <RpgbotRatingsProvider>
-              <XanatharBackstoryProvider>
-                <BuilderPageContent />
-              </XanatharBackstoryProvider>
-            </RpgbotRatingsProvider>
-          </BuildCompletenessProvider>
-        </BuilderSlotSelectionProvider>
-      </BuilderLayoutProvider>
+      <BuilderUndoProvider>
+        <BuilderLayoutProvider>
+          <BuilderSlotSelectionProvider>
+            <BuildCompletenessProvider>
+              <RpgbotRatingsProvider>
+                <XanatharBackstoryProvider>
+                  <BuilderPageContent />
+                </XanatharBackstoryProvider>
+              </RpgbotRatingsProvider>
+            </BuildCompletenessProvider>
+          </BuilderSlotSelectionProvider>
+        </BuilderLayoutProvider>
+      </BuilderUndoProvider>
     </BuilderUiModeProvider>
   );
 }

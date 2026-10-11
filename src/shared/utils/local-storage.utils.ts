@@ -16,11 +16,14 @@ export function readJson<T>(key: string, fallback: T): T {
 }
 
 /** JSON-serializes and writes a value, swallowing storage errors. */
-export function writeJson(key: string, value: unknown): void {
+/** Returns false when storage is unavailable or full. */
+export function writeJson(key: string, value: unknown): boolean {
   try {
     localStorage.setItem(key, JSON.stringify(value));
+    return true;
   } catch {
     /* localStorage unavailable or quota exceeded */
+    return false;
   }
 }
 

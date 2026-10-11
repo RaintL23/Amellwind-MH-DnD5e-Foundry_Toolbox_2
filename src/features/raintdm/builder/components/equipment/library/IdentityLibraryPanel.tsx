@@ -21,6 +21,7 @@ import {
   getListDndBackgrounds,
 } from "@/features/dnd/backgrounds/services/dnd-background.service";
 import { useCharacterBuilder } from "@/features/raintdm/builder/context/CharacterBuilderContext";
+import { useBuilderUndo } from "@/features/raintdm/builder/context/BuilderUndoContext";
 import type { BuilderSlotSelection } from "@/features/raintdm/builder/hooks/useBuilderSlotSelection";
 import { useLibraryVariants } from "@/features/raintdm/builder/hooks/useLibraryVariants";
 import { resolveSpeciesParts } from "@/features/raintdm/builder/utils/species-resolution.utils";
@@ -113,6 +114,7 @@ export function IdentityLibraryPanel({
     speciesTraitChoices,
     setSpeciesTraitChoice,
   } = useCharacterBuilder();
+  const { changeIdentity } = useBuilderUndo();
 
   const isSpeciesSlot = selectedSlot === "species";
   const isBackgroundSlot = selectedSlot === "background";
@@ -358,8 +360,10 @@ export function IdentityLibraryPanel({
       subraceId: null,
       subraceName: null,
     };
-    if (isSpeciesSlot) setSpecies(ref);
-    else if (isBackgroundSlot) setBackground(ref);
+    if (isSpeciesSlot) changeIdentity("species", ref, () => setSpecies(ref));
+    else if (isBackgroundSlot) {
+      changeIdentity("background", ref, () => setBackground(ref));
+    }
   }
 
   function handleDndIdentitySourceSelect(id: string) {
@@ -368,19 +372,21 @@ export function IdentityLibraryPanel({
     if (isSpeciesSlot) {
       const variant = dndRaceSourceVariants.find((v) => v.id === id);
       if (!variant) return;
-      setSpecies({
+      const ref = {
         id: variant.id,
         name: variant.name,
         subraceId: null,
         subraceName: null,
-      });
+      };
+      changeIdentity("species", ref, () => setSpecies(ref));
       return;
     }
 
     if (isBackgroundSlot) {
       const variant = dndBackgroundSourceVariants.find((v) => v.id === id);
       if (!variant) return;
-      setBackground({ id: variant.id, name: variant.name });
+      const ref = { id: variant.id, name: variant.name };
+      changeIdentity("background", ref, () => setBackground(ref));
     }
   }
 

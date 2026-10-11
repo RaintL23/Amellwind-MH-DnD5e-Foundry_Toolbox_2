@@ -7,6 +7,7 @@
  */
 import { Sparkles, Sword, Users, X } from "lucide-react";
 import { useCharacterBuilder } from "../../context/CharacterBuilderContext";
+import { useBuilderUndo } from "../../context/BuilderUndoContext";
 import {
   useBuilderSlotSelection,
   type BuilderSlotSelection,
@@ -129,6 +130,7 @@ export function BuilderCenterPanel() {
     useAmellwindHomebrew,
     resolvedWeaponItems,
   } = useCharacterBuilder();
+  const { changeIdentity } = useBuilderUndo();
   const effectiveScores = useEffectiveAbilityScores();
 
   const { selectedSlot, selectSlot, clearSelection } =
@@ -314,16 +316,16 @@ export function BuilderCenterPanel() {
         unequipTrinket(slot);
         break;
       case "species":
-        setSpecies(null);
+        changeIdentity("species", null, () => setSpecies(null));
         break;
       case "background":
-        setBackground(null);
+        changeIdentity("background", null, () => setBackground(null));
         break;
       case "faction":
         setFaction(null);
         break;
       case "class":
-        setClass(null);
+        changeIdentity("class", null, () => setClass(null));
         break;
       case "subclass":
         setSubclass(null);

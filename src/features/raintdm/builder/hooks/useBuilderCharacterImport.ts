@@ -1,14 +1,8 @@
 import { useCallback, useRef, useState } from "react";
-import { flushSync } from "react-dom";
 import { useCharacterBuilder } from "../context/CharacterBuilderContext";
 import { useBuilderInventory } from "../context/BuilderInventoryContext";
 import { parseBuilderCharacter } from "../builder-json";
-import { rehydrateBuilderState } from "../storage/builder-persist";
-import {
-  BUILDER_AUTOSAVE_VERSION,
-  type BuilderAutosaveState,
-} from "../storage/builder-autosave.storage";
-import { BUILDER_SNAPSHOT_VERSION } from "../foundry-export/builder-snapshot";
+import { replaceBuilderBuild } from "../storage/builder-persist";
 
 export interface BuilderCharacterImportSummary {
   name: string;
@@ -54,28 +48,18 @@ export function useBuilderCharacterImport() {
 
       const { data } = result;
 
-      // Commit the reset (and homebrew toggle) before restoring. Identity
-      // loaders are keyed by class/species/background id, so batching the
-      // reset with the restore would skip reloading catalog data and grants
-      // whenever the imported character shares an id with the current build.
-      flushSync(() => {
-        builderRef.current.resetBuild();
-        builderRef.current.setUseAmellwindHomebrew(
-          data.snapshot.useAmellwindHomebrew,
-        );
-      });
-
-      const autosaveState: BuilderAutosaveState = {
-        version: BUILDER_AUTOSAVE_VERSION,
-        snapshotVersion: BUILDER_SNAPSHOT_VERSION,
-        identity: data.identity,
-        core: data.core,
-        multiclass: data.multiclass,
-        snapshot: data.snapshot,
-      };
+      replaceBuilderBuild(
+        () => builderRef.current,
+        () => inventoryRef.current,
+        {
+          identity: data.identity,
+          core: data.core,
+          multiclass: data.multiclass,
+          snapshot: data.snapshot,
+        },
+      );
 
       const liveBuilder = builderRef.current;
-      rehydrateBuilderState(liveBuilder, inventoryRef.current, autosaveState);
       if (data.art) {
         liveBuilder.setPortraitImage(data.art.portrait);
         liveBuilder.setTokenImage(data.art.token);

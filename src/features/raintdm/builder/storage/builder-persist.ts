@@ -6,6 +6,7 @@
  * Flow: buildBuilderPersistPayload → persist/download
  *       load/parse → rehydrateBuilderState
  */
+import { flushSync } from "react-dom";
 import type { CartEntry } from "@/shared/types";
 import type { CharacterBuilderContextValue } from "../context/character-builder.types";
 import {
@@ -13,8 +14,12 @@ import {
   gatherBuilderSnapshot,
   type ApplyBuilderSnapshotInventory,
 } from "../foundry-export";
+import { BUILDER_SNAPSHOT_VERSION } from "../foundry-export/builder-snapshot";
 import { parseAlignmentAxes } from "../utils/alignment.utils";
-import type { BuilderAutosaveState } from "./builder-autosave.storage";
+import {
+  BUILDER_AUTOSAVE_VERSION,
+  type BuilderAutosaveState,
+} from "./builder-autosave.storage";
 
 export type BuilderPersistPayload = Omit<
   BuilderAutosaveState,
@@ -118,4 +123,28 @@ export function rehydrateBuilderState(
 
   // Optional choices + exact equipment + loose inventory.
   applyBuilderSnapshot(builder, inventory, saved.snapshot);
+}
+
+/**
+ * Replaces the live build with a saved one (Builder JSON import, Undo).
+ * Commits the reset (and homebrew toggle) before restoring: identity loaders
+ * are keyed by class/species/background id, so batching the reset with the
+ * restore would skip reloading catalog data and grants whenever the saved build
+ * shares an id with the current one. Getters return the setters bound to the
+ * post-reset render.
+ */
+export function replaceBuilderBuild(
+  getBuilder: () => CharacterBuilderContextValue,
+  getInventory: () => ApplyBuilderSnapshotInventory,
+  payload: BuilderPersistPayload,
+): void {
+  flushSync(() => {
+    getBuilder().resetBuild();
+    getBuilder().setUseAmellwindHomebrew(payload.snapshot.useAmellwindHomebrew);
+  });
+  rehydrateBuilderState(getBuilder(), getInventory(), {
+    version: BUILDER_AUTOSAVE_VERSION,
+    snapshotVersion: BUILDER_SNAPSHOT_VERSION,
+    ...payload,
+  });
 }

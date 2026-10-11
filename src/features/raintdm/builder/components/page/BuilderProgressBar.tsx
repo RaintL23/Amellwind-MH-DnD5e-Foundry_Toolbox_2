@@ -16,6 +16,7 @@ import { useBuilderLayoutOptional } from "../../context/BuilderLayoutContext";
 import { useBuilderDerivedStats } from "../../hooks/useBuilderDerivedStats";
 import { formatModifier } from "@/shared/utils/cr.utils";
 import type { CompletenessStep } from "../../utils/build-completeness/group-completeness-steps.utils";
+import { AutosaveIndicator } from "./AutosaveIndicator";
 
 function StepStatusIcon({ status }: Readonly<{ status: CompletenessStep["status"] }>) {
   if (status === "complete") {
@@ -183,6 +184,7 @@ export function BuilderProgressBar() {
                 : `${pendingIssues.length} pending choice${pendingIssues.length === 1 ? "" : "s"}`}
           </p>
         </div>
+        <AutosaveIndicator />
       </div>
       {isMobileLayout && <CombatSummaryStrip />}
     </div>
