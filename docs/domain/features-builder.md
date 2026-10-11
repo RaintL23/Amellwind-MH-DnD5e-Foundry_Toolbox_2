@@ -30,7 +30,7 @@ Herramienta experimental para equipar armas/armadura/runas y estimar **daño por
 | Build | `BuilderCenterPanel` | identity, feats, optional-features, spells |
 | Character | `StatsPanel`, `BuilderImagePanel` | ability-scores |
 | Proficiencies | saves, skills, profs, idiomas, defensas | skills, tools, languages, defenses |
-| Gear & Stats | `BuilderDerivedPanel`, `BuilderInventoryPanel` | starting-equipment |
+| Stats & Gear | `BuilderDerivedPanel`, `BuilderInventoryPanel` | starting-equipment |
 
 - El editor contextual del slot (biblioteca/detalle/runas) se abre en un **bottom sheet** (`Sheet`) en móvil; cerrar el sheet limpia `selectedSlot`. En desktop sigue inline bajo los grids.
 - Seleccionar un slot cambia a la pestaña Build; `goToSection` cambia a la pestaña dueña (`SECTION_TO_MOBILE_TAB`) antes de hacer scroll.
@@ -46,6 +46,8 @@ Herramienta experimental para equipar armas/armadura/runas y estimar **daño por
 | Filtro de fuentes/libros `src` (`BuilderLibraryPanel`) | difiera del default (los defaults oficiales siguen aplicándose; `onFiltersApply` fusiona valores para no perder secciones ocultas) |
 | `HomebrewModeToggle` | Homebrew esté activado |
 | Leyenda RPGBOT por letras | — se sustituye por una frase explicativa y badges con la palabra (Excellent/Good/…) |
+
+**Glosario:** `GlossaryHint` (Popover, funciona con toque y teclado; no usar tooltips solo-hover para explicar términos) lee `data/builder-glossary.ts` (resúmenes en lenguaje llano, sin reglas nuevas). Se usa en las filas de `BuilderDerivedPanel`, en Prepared/Known y "always prepared" del panel de hechizos, en ASI/Origin Feat del título de la librería y en Tasha's origin. Los mensajes de pendientes de proficiencias usan `formatPickMessage` ("Pick 2 skills from your Fighter class (0/2)").
 
 En Simple, un build nuevo (o `resetBuild`) arranca en **Standard Array con todo en 8 sin asignar**; en Advanced, Manual con 11. Import/autosave/randomizer siguen fijando su propio método.
 

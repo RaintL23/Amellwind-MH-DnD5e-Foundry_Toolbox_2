@@ -179,9 +179,10 @@ export function StartingEquipmentPicker({
         </p>
       </div>
 
-      <p className="mb-2 text-[10px] text-muted-foreground/80">
-        Click on each item to add it to your inventory. The options marked with
-        letters are mutually exclusive.
+      <p className="mb-2 text-[11px] leading-snug text-muted-foreground">
+        Click each item to add it to your inventory. Options marked (a), (b)…
+        are alternatives — pick one. To switch, first unmark the items of the
+        option you already chose.
       </p>
 
       <div className="space-y-3">

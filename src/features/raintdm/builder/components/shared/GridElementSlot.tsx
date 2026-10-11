@@ -145,7 +145,8 @@ export function GridElementSlot({
                   onUnequip();
                 }}
                 aria-label={`Remove ${label}`}
-                className="absolute -right-1.5 -top-1.5 flex h-6 w-6 items-center justify-center rounded-full bg-destructive text-destructive-foreground shadow-sm transition-opacity hover:opacity-90"
+                // after: widens the touch target to ~36px without enlarging the icon.
+                className="absolute -right-1.5 -top-1.5 flex h-6 w-6 items-center justify-center rounded-full bg-destructive text-destructive-foreground shadow-sm transition-opacity after:absolute after:-inset-1.5 after:content-[''] hover:opacity-90"
               >
                 <X className="h-3 w-3" strokeWidth={3} />
               </button>

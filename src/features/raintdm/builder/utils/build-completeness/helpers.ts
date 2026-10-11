@@ -24,15 +24,38 @@ export function scopedStartingItemId(
   return `${source.type}:${source.id}:${itemId}`;
 }
 
+export interface PickerProgress {
+  done: number;
+  total: number;
+}
+
+/** Picks made (ignoring skills already granted elsewhere) vs picks required. */
+export function skillPickerProgress(
+  grants: PendingSkillGrant[],
+  chosen: SkillKey[],
+  alreadyGranted: Partial<Record<SkillKey, ProficiencySource[]>>,
+): PickerProgress {
+  const total = grants.reduce((acc, grant) => acc + grant.count, 0);
+  const effectiveChosen = chosen.filter((skill) => !alreadyGranted[skill]?.length);
+  return { done: Math.min(effectiveChosen.length, total), total };
+}
+
 export function isSkillPickerComplete(
   grants: PendingSkillGrant[],
   chosen: SkillKey[],
   alreadyGranted: Partial<Record<SkillKey, ProficiencySource[]>>,
 ): boolean {
   if (!grants.length) return true;
-  const totalCount = grants.reduce((acc, grant) => acc + grant.count, 0);
-  const effectiveChosen = chosen.filter((skill) => !alreadyGranted[skill]?.length);
-  return effectiveChosen.length >= totalCount;
+  const { done, total } = skillPickerProgress(grants, chosen, alreadyGranted);
+  return done >= total;
+}
+
+export function namedPickerProgress(
+  grants: ReturnType<typeof getPendingNamedChoiceGrants>,
+  chosen: string[],
+): PickerProgress {
+  const total = grants.reduce((acc, grant) => acc + grant.count, 0);
+  return { done: Math.min(chosen.length, total), total };
 }
 
 export function isNamedPickerComplete(
@@ -40,8 +63,22 @@ export function isNamedPickerComplete(
   chosen: string[],
 ): boolean {
   if (!grants.length) return true;
-  const totalCount = grants.reduce((acc, grant) => acc + grant.count, 0);
-  return chosen.length >= totalCount;
+  const { done, total } = namedPickerProgress(grants, chosen);
+  return done >= total;
+}
+
+/**
+ * Beginner-friendly pending-pick message, e.g.
+ * "Pick 2 skills from your Fighter class (0/2)".
+ */
+export function formatPickMessage(
+  progress: PickerProgress,
+  noun: { one: string; many: string },
+  from: string,
+): string {
+  const left = progress.total - progress.done;
+  const word = left === 1 ? noun.one : noun.many;
+  return `Pick ${left} ${word} ${from} (${progress.done}/${progress.total})`;
 }
 
 export function isDefensePickerComplete(

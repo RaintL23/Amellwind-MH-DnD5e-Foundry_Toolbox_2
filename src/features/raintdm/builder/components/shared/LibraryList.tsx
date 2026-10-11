@@ -52,20 +52,23 @@ function LibraryListRow({
         isSelected
           ? "border-violet-400/40 bg-violet-400/5"
           : "border-border/60",
-        disabledReason && !expanded && "opacity-40",
+        disabledReason && !expanded && "opacity-60",
         !disabledReason && !expanded && "hover:bg-muted/50",
       )}
     >
       <div className="flex items-center justify-between">
         <button
           type="button"
-          disabled={!!disabledReason}
-          title={disabledReason ?? undefined}
-          onClick={() => onSelect(option.id, option.name)}
+          // aria-disabled (not disabled) keeps the row focusable so the
+          // visible reason below is announced by screen readers.
+          aria-disabled={!!disabledReason}
+          onClick={() => {
+            if (!disabledReason) onSelect(option.id, option.name);
+          }}
           className={cn(
             "min-w-0 flex-1 text-left",
             disabledReason ? "cursor-not-allowed" : "cursor-pointer",
-            disabledReason && expanded && "opacity-40",
+            disabledReason && expanded && "opacity-60",
           )}
         >
           <div className="flex items-center gap-1 font-medium text-foreground">

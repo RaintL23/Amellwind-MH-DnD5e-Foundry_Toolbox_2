@@ -16,7 +16,7 @@ export const BUILDER_MOBILE_TABS: {
   { id: "build", label: "Build", icon: Hammer },
   { id: "character", label: "Character", icon: User },
   { id: "proficiencies", label: "Proficiencies", icon: ListChecks },
-  { id: "gear", label: "Gear & Stats", icon: Backpack },
+  { id: "gear", label: "Stats & Gear", icon: Backpack },
 ];
 
 export function builderMobileTabPanelId(tab: BuilderMobileTab): string {

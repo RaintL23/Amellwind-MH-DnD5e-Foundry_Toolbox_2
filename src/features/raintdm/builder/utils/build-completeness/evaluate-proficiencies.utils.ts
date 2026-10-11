@@ -12,15 +12,38 @@ import {
 import { skillsFromHigherPriority } from "../skill-choice-hierarchy.utils";
 import type { BuildCompletenessInput, BuildCompletenessIssue } from "../build-completeness.types";
 import {
+  formatPickMessage,
   isDefensePickerComplete,
   isNamedPickerComplete,
   isSkillPickerComplete,
+  namedPickerProgress,
+  skillPickerProgress,
 } from "./helpers";
+
+const SKILL_NOUN = { one: "skill", many: "skills" };
+const TOOL_NOUN = { one: "tool proficiency", many: "tool proficiencies" };
+const WEAPON_NOUN = { one: "weapon proficiency", many: "weapon proficiencies" };
+const LANGUAGE_NOUN = { one: "language", many: "languages" };
+
+function fromSource(
+  kind: "class" | "species" | "background",
+  name: string | undefined,
+): string {
+  return name ? `from your ${name} ${kind}` : `from your ${kind}`;
+}
+
+/** Disambiguates classes that grant several separate pick groups. */
+function withGroup(from: string, index: number, groupCount: number): string {
+  return groupCount > 1 ? `${from} (set ${index + 1} of ${groupCount})` : from;
+}
 
 export function evaluateProficienciesCompleteness(
   input: BuildCompletenessInput,
 ): BuildCompletenessIssue[] {
   const issues: BuildCompletenessIssue[] = [];
+  const fromSpecies = fromSource("species", input.species?.name);
+  const fromBackground = fromSource("background", input.background?.name);
+  const fromClass = fromSource("class", input.classSelection?.name);
 
   const speciesGrantList = input.allSkillGrants.filter(
     (grant) => grant.source.type === "species",
@@ -101,7 +124,11 @@ export function evaluateProficienciesCompleteness(
     issues.push({
       id: "skills-species",
       section: "skills",
-      message: "Complete species skill choices",
+      message: formatPickMessage(
+        skillPickerProgress(speciesGrants, input.speciesSkillChoices, higherThanSpecies),
+        SKILL_NOUN,
+        fromSpecies,
+      ),
       highlightKey: "species",
     });
   }
@@ -117,7 +144,11 @@ export function evaluateProficienciesCompleteness(
     issues.push({
       id: "skills-background",
       section: "skills",
-      message: "Complete background skill choices",
+      message: formatPickMessage(
+        skillPickerProgress(bgGrants, input.backgroundSkillChoices, higherThanBackground),
+        SKILL_NOUN,
+        fromBackground,
+      ),
       highlightKey: "background",
     });
   }
@@ -131,10 +162,15 @@ export function evaluateProficienciesCompleteness(
     issues.push({
       id: `skills-class-${grantIndex}`,
       section: "skills",
-      message:
-        classGrants.length > 1
-          ? `Complete class skill choices (${grantIndex + 1}/${classGrants.length})`
-          : "Complete class skill choices",
+      message: formatPickMessage(
+        skillPickerProgress(
+          [grant],
+          input.classSkillChoices[grantIndex] ?? [],
+          higherThanClass,
+        ),
+        SKILL_NOUN,
+        withGroup(fromClass, grantIndex, classGrants.length),
+      ),
       highlightKey: `class-${grantIndex}`,
     });
   });
@@ -150,7 +186,11 @@ export function evaluateProficienciesCompleteness(
     issues.push({
       id: "skills-origin-feat",
       section: "skills",
-      message: "Complete origin feat skill choices",
+      message: formatPickMessage(
+        skillPickerProgress(originFeatGrants, input.originFeatSkillChoices, higherThanFeat),
+        SKILL_NOUN,
+        "from your origin feat",
+      ),
       highlightKey: "origin-feat",
     });
   }
@@ -169,7 +209,11 @@ export function evaluateProficienciesCompleteness(
     issues.push({
       id: `skills-opt-origin-feat-${slotMeta.slotIndex}`,
       section: "skills",
-      message: `Complete skill choices for ${sourceName}`,
+      message: formatPickMessage(
+        skillPickerProgress(grants, chosen, higherThanFeat),
+        SKILL_NOUN,
+        `from ${sourceName}`,
+      ),
       highlightKey: sourceName,
     });
   });
@@ -187,7 +231,11 @@ export function evaluateProficienciesCompleteness(
     issues.push({
       id: `skills-feat-${index}`,
       section: "skills",
-      message: `Complete skill choices for feat: ${grant.source.name}`,
+      message: formatPickMessage(
+        skillPickerProgress([grant], input.featSkillChoices[index] ?? [], higherThanFeat),
+        SKILL_NOUN,
+        `from the ${grant.source.name} feat`,
+      ),
       highlightKey: `feat-${index}`,
     });
   });
@@ -218,7 +266,11 @@ export function evaluateProficienciesCompleteness(
     issues.push({
       id: "tools-species",
       section: "tools",
-      message: "Complete species tool proficiencies",
+      message: formatPickMessage(
+        namedPickerProgress(pendingToolBySource.species, input.speciesToolChoices),
+        TOOL_NOUN,
+        fromSpecies,
+      ),
       highlightKey: "species",
     });
   }
@@ -230,7 +282,11 @@ export function evaluateProficienciesCompleteness(
     issues.push({
       id: "tools-background",
       section: "tools",
-      message: "Complete background tool proficiencies",
+      message: formatPickMessage(
+        namedPickerProgress(pendingToolBySource.background, input.backgroundToolChoices),
+        TOOL_NOUN,
+        fromBackground,
+      ),
       highlightKey: "background",
     });
   }
@@ -243,7 +299,11 @@ export function evaluateProficienciesCompleteness(
     issues.push({
       id: `tools-feat-${grantIndex}`,
       section: "tools",
-      message: `Complete tool proficiencies for ${grant.source.name}`,
+      message: formatPickMessage(
+        namedPickerProgress([grant], input.featToolChoices[grantIndex] ?? []),
+        TOOL_NOUN,
+        `from ${grant.source.name}`,
+      ),
       highlightKey: `feat-tool-${grantIndex}`,
     });
   });
@@ -266,7 +326,11 @@ export function evaluateProficienciesCompleteness(
     issues.push({
       id: "weapons-species",
       section: "tools",
-      message: "Complete species weapon proficiencies",
+      message: formatPickMessage(
+        namedPickerProgress(speciesWeaponGrants, input.speciesWeaponChoices),
+        WEAPON_NOUN,
+        fromSpecies,
+      ),
       highlightKey: "species-weapons",
     });
   }
@@ -280,10 +344,11 @@ export function evaluateProficienciesCompleteness(
     issues.push({
       id: `weapons-class-${grantIndex}`,
       section: "tools",
-      message:
-        classWeaponGrants.length > 1
-          ? `Complete class weapon proficiencies (${grantIndex + 1}/${classWeaponGrants.length})`
-          : "Complete class weapon proficiencies",
+      message: formatPickMessage(
+        namedPickerProgress([grant], input.classWeaponChoices[grantIndex] ?? []),
+        WEAPON_NOUN,
+        withGroup(fromClass, grantIndex, classWeaponGrants.length),
+      ),
       highlightKey: `class-weapon-${grantIndex}`,
     });
   });
@@ -297,7 +362,11 @@ export function evaluateProficienciesCompleteness(
     issues.push({
       id: `weapons-feat-${grantIndex}`,
       section: "tools",
-      message: `Complete weapon proficiencies for ${grant.source.name}`,
+      message: formatPickMessage(
+        namedPickerProgress([grant], input.featWeaponChoices[grantIndex] ?? []),
+        WEAPON_NOUN,
+        `from ${grant.source.name}`,
+      ),
       highlightKey: `feat-weapon-${grantIndex}`,
     });
   });
@@ -311,10 +380,11 @@ export function evaluateProficienciesCompleteness(
     issues.push({
       id: `tools-class-${grantIndex}`,
       section: "tools",
-      message:
-        pendingToolBySource.class.length > 1
-          ? `Complete class tool proficiencies (${grantIndex + 1}/${pendingToolBySource.class.length})`
-          : "Complete class tool proficiencies",
+      message: formatPickMessage(
+        namedPickerProgress([grant], input.classToolChoices[grantIndex] ?? []),
+        TOOL_NOUN,
+        withGroup(fromClass, grantIndex, pendingToolBySource.class.length),
+      ),
       highlightKey: `class-${grantIndex}`,
     });
   });
@@ -336,7 +406,11 @@ export function evaluateProficienciesCompleteness(
     issues.push({
       id: "languages-species",
       section: "languages",
-      message: "Complete species language choices",
+      message: formatPickMessage(
+        namedPickerProgress(pendingLanguageBySource.species, input.speciesLanguageChoices),
+        LANGUAGE_NOUN,
+        fromSpecies,
+      ),
       highlightKey: "species",
     });
   }
@@ -351,7 +425,14 @@ export function evaluateProficienciesCompleteness(
     issues.push({
       id: "languages-background",
       section: "languages",
-      message: "Complete background language choices",
+      message: formatPickMessage(
+        namedPickerProgress(
+          pendingLanguageBySource.background,
+          input.backgroundLanguageChoices,
+        ),
+        LANGUAGE_NOUN,
+        fromBackground,
+      ),
       highlightKey: "background",
     });
   }
@@ -365,10 +446,11 @@ export function evaluateProficienciesCompleteness(
     issues.push({
       id: `languages-class-${grantIndex}`,
       section: "languages",
-      message:
-        pendingLanguageBySource.class.length > 1
-          ? `Complete class language choices (${grantIndex + 1}/${pendingLanguageBySource.class.length})`
-          : "Complete class language choices",
+      message: formatPickMessage(
+        namedPickerProgress([grant], input.classLanguageChoices[grantIndex] ?? []),
+        LANGUAGE_NOUN,
+        withGroup(fromClass, grantIndex, pendingLanguageBySource.class.length),
+      ),
       highlightKey: `class-${grantIndex}`,
     });
   });
@@ -380,7 +462,7 @@ export function evaluateProficienciesCompleteness(
       issues.push({
         id: `defenses-${grantIndex}`,
         section: "defenses",
-        message: `Complete species ${grant.defenseKind} choices`,
+        message: `Pick ${grant.count - Math.min(chosen.length, grant.count)} damage type${grant.count - Math.min(chosen.length, grant.count) === 1 ? "" : "s"} for your species ${grant.defenseKind} (${Math.min(chosen.length, grant.count)}/${grant.count})`,
         highlightKey: `defense-${grantIndex}`,
       });
     },

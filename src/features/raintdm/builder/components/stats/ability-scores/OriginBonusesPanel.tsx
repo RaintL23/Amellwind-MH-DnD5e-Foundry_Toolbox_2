@@ -7,7 +7,7 @@ import { Label } from "@/components/ui/label";
 import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
 import { useSectionCompletenessHighlight } from "../../../context/BuildCompletenessContext";
 import { CompletenessHighlightBanner } from "../../shared/CompletenessHighlightBanner";
-import { HintTooltip } from "@/shared/components/HintTooltip";
+import { GlossaryHint } from "../../shared/GlossaryHint";
 import { useCharacterBuilder } from "../../../context/CharacterBuilderContext";
 import { useSelectedSpecies } from "../../../hooks/useBuilderSelections";
 import { useSelectedDndBackground } from "../../../hooks/useSelectedDndBackground";
@@ -215,18 +215,12 @@ export function OriginBonusesPanel({ compact }: { compact: boolean }) {
         />
         <Label
           htmlFor="tasha-origin"
-          className="text-[10px] font-normal leading-snug text-muted-foreground"
+          className="text-[11px] font-medium leading-snug text-foreground"
         >
-          <HintTooltip
-            content="Ignore the bonuses of your species and assign +2 and +1 to the attributes you choose (not the same attribute)."
-            align="start"
-            className="text-left font-normal"
-          >
-            <span className="cursor-help font-medium text-foreground">
-              Customizing Your Origin (Tasha's Cauldron)
-            </span>
-          </HintTooltip>
+          Customizing Your Origin (Tasha's Cauldron)
         </Label>
+        {/* Outside the label so opening the hint never toggles the checkbox. */}
+        <GlossaryHint term="tasha-origin" className="mt-px shrink-0" />
       </div>
 
       {useTashaOrigin && (

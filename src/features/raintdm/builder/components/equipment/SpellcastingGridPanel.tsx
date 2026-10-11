@@ -177,7 +177,7 @@ function getCantripEquipped(
     );
   }
   if (subclassCount > 0) {
-    summaryParts.push(`${subclassCount} subclase`);
+    summaryParts.push(`${subclassCount} granted`);
   }
   const subclassNames = [
     ...alwaysPreparedGrants,
@@ -234,12 +234,12 @@ function getPactPoolEquipped(
   if (selected.length > 0) {
     summaryParts.push(
       `${selected.length}/${spellcastingInfo.maxPreparedOrKnown} ${
-        spellcastingInfo.isPreparedCaster ? "prep." : "conoc."
+        spellcastingInfo.isPreparedCaster ? "prepared" : "known"
       }`,
     );
   }
   if (subclassCount > 0) {
-    summaryParts.push(`${subclassCount} subclase/feature`);
+    summaryParts.push(`${subclassCount} granted`);
   }
   if (
     spellcastingInfo.pactSlotCount > 0 &&

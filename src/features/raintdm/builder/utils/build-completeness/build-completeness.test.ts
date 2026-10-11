@@ -293,6 +293,33 @@ describe("evaluateBuildCompleteness", () => {
   });
 });
 
+describe("evaluateBuildCompleteness — pick messages", () => {
+  it("says how many picks are left and where they come from", () => {
+    const result = evaluateBuildCompleteness(
+      createEmptyCompletenessInput({
+        classSelection: { id: "wizard|xphb", name: "Wizard" },
+        classData: minimalClass({ id: "wizard|xphb", name: "Wizard" }),
+        species: { id: "human|xphb", name: "Human" },
+        background: { id: "sage|xphb", name: "Sage" },
+        allLanguageGrants: [
+          {
+            kind: "any",
+            count: 2,
+            label: "Language",
+            options: ["Elvish", "Dwarvish", "Draconic"],
+            source: { type: "background", name: "Sage" },
+          },
+        ],
+        backgroundLanguageChoices: ["Elvish"],
+      }),
+    );
+    expect(
+      result.issues.find((issue) => issue.id === "languages-background")
+        ?.message,
+    ).toBe("Pick 1 language from your Sage background (1/2)");
+  });
+});
+
 describe("evaluateBuildCompleteness — base ability scores", () => {
   const started = {
     classSelection: { id: "fighter|xphb", name: "Fighter" },

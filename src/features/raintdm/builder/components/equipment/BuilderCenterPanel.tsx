@@ -46,6 +46,7 @@ import { BackstoryNotesPanel } from "./BackstoryNotesPanel";
 import { FactionLibraryPanel } from "./library/FactionLibraryPanel";
 import { BuilderPanel } from "../shared/BuilderPanel";
 import { NextStepCard } from "../page/NextStepCard";
+import { GlossaryHint } from "../shared/GlossaryHint";
 import { Button } from "@/components/ui/button";
 import {
   Sheet,
@@ -502,7 +503,7 @@ export function BuilderCenterPanel() {
         }
         action={
           <span className="text-[11px] text-muted-foreground">
-            Select a slot to edit
+            Click a slot to choose or change it
           </span>
         }
       >
@@ -543,11 +544,6 @@ export function BuilderCenterPanel() {
             Equipment
           </>
         }
-        action={
-          <span className="text-[11px] text-muted-foreground">
-            Select a slot to edit
-          </span>
-        }
       >
         <EquipmentGridPanel
           showTrinkets={useAmellwindHomebrew}
@@ -585,15 +581,17 @@ export function BuilderCenterPanel() {
                   className={
                     spellcastingInfo.selectedSpellCount >=
                     spellcastingInfo.maxPreparedOrKnown
-                      ? "text-rose-400"
+                      ? "text-muted-foreground"
                       : "text-emerald-400"
                   }
                 >
-                  {spellcastingInfo.isPreparedCaster
-                    ? "Prepared"
-                    : spellcastingInfo.usesUnifiedPactPool
-                      ? "Pact known"
-                      : "Known"}{" "}
+                  <GlossaryHint term="prepared-known">
+                    {spellcastingInfo.isPreparedCaster
+                      ? "Prepared"
+                      : spellcastingInfo.usesUnifiedPactPool
+                        ? "Pact known"
+                        : "Known"}
+                  </GlossaryHint>{" "}
                   {spellcastingInfo.selectedSpellCount}/
                   {spellcastingInfo.maxPreparedOrKnown}
                   {spellcastingInfo.selectedSpellCount >=
@@ -614,16 +612,14 @@ export function BuilderCenterPanel() {
                 </span>
                 {spellcastingInfo.subclassAlwaysPrepared.length > 0 && (
                   <span className="text-emerald-400/80">
-                    + {spellcastingInfo.subclassAlwaysPrepared.length} always
-                    prepared
+                    + {spellcastingInfo.subclassAlwaysPrepared.length}{" "}
+                    <GlossaryHint term="always-prepared">
+                      always prepared
+                    </GlossaryHint>
                   </span>
                 )}
               </span>
-            ) : (
-              <span className="text-[11px] text-muted-foreground">
-                Select a slot to edit
-              </span>
-            )
+            ) : undefined
           }
         >
           {showSpellGrid && (

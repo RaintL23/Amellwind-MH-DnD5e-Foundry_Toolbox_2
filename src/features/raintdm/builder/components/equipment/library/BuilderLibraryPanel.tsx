@@ -44,6 +44,7 @@ import { EmptyState } from "./shared/LibraryUi";
 import { useLibrarySearch } from "./hooks/useLibrarySearch";
 import { toRpgbotClassSlug } from "@/features/raintdm/builder/data/rpgbot-ratings.utils";
 import { RpgbotLegend } from "../../shared/RpgbotLegend";
+import { GlossaryHint } from "../../shared/GlossaryHint";
 import { RpgbotLoadingHint } from "../../shared/RpgbotLoadingHint";
 import { useRpgbotRatingsContext } from "@/features/raintdm/builder/context/RpgbotRatingsContext";
 import { useBookSourceNames } from "@/shared/hooks/useBookSourceNames";
@@ -391,11 +392,24 @@ export function BuilderLibraryPanel({ selectedSlot }: BuilderLibraryPanelProps) 
     useAmellwindHomebrew,
   ]);
 
-  const panelTitle = selectedSlot
+  const panelTitleText = selectedSlot
     ? showAsiPanel
-      ? "ASI"
+      ? "Ability Score Improvement"
       : `Library — ${slotLabel}`
     : "Library";
+  const panelTitleTerm = showAsiPanel || isFeatSlot
+    ? "asi"
+    : isAnyOriginFeatSlotSelected
+      ? "origin-feat"
+      : null;
+  const panelTitle = (
+    <>
+      {panelTitleText}
+      {panelTitleTerm && (
+        <GlossaryHint term={panelTitleTerm} className="normal-case" />
+      )}
+    </>
+  );
 
   const dialogTitle = isWeaponSlot
     ? "Weapon Filters"
@@ -408,7 +422,7 @@ export function BuilderLibraryPanel({ selectedSlot }: BuilderLibraryPanelProps) 
   return (
     <BuilderPanel title={panelTitle}>
       {!selectedSlot ? (
-        <EmptyState text="Click on an equipment slot to see the available options." />
+        <EmptyState text="Click a slot to see the available options." />
       ) : (
         <>
           {!hideSearch && (
