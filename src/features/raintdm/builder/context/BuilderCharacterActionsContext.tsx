@@ -84,7 +84,6 @@ export function BuilderCharacterActionsProvider({
     importFromFile,
     importing,
     error: importError,
-    summary: importSummary,
   } = useBuilderCharacterImport();
   const { evaluate, activateHighlight, clearHighlight, goToIssue, liveResult } =
     useBuildCompleteness();
@@ -102,13 +101,6 @@ export function BuilderCharacterActionsProvider({
   useEffect(() => {
     if (importError) toast.error(importError);
   }, [importError]);
-  useEffect(() => {
-    if (importSummary) {
-      toast.message(
-        `Loaded ${importSummary.name}${importSummary.className ? ` · ${importSummary.className}` : ""} · Lv ${importSummary.level}`,
-      );
-    }
-  }, [importSummary]);
 
   /** Jump to the first pending choice and name it, instead of only counting. */
   function showBlockingIssues(issues: BuildCompletenessIssue[], action: string) {
