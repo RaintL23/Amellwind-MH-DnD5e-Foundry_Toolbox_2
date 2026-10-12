@@ -38,7 +38,9 @@ function findTableRow(table: { rows: string[][] }, bracket: string) {
 }
 
 /** Tips button + dialog; content switches with Amellwind Homebrew on/off. */
-export function CharacterCreationTipsPanel() {
+export function CharacterCreationTipsPanel({
+  showLabel = false,
+}: Readonly<{ showLabel?: boolean }>) {
   const { character, useAmellwindHomebrew } = useCharacterBuilder();
   const [open, setOpen] = useState(false);
   const levelBracket = getLevelBracket(character.level);
@@ -82,7 +84,7 @@ export function CharacterCreationTipsPanel() {
         aria-label="Character creation tips"
       >
         <Lightbulb className="h-3.5 w-3.5 text-primary" />
-        <span className="hidden sm:inline">Tips</span>
+        <span className={showLabel ? undefined : "hidden sm:inline"}>Tips</span>
       </Button>
 
       <Dialog open={open} onOpenChange={setOpen}>

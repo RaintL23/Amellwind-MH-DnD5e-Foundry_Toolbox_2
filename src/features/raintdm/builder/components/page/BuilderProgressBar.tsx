@@ -1,4 +1,10 @@
-import { CheckCircle2, Circle, ListChecks, Lock } from "lucide-react";
+import {
+  ArrowRight,
+  CheckCircle2,
+  Circle,
+  ListChecks,
+  Lock,
+} from "lucide-react";
 import { useState } from "react";
 import { Progress } from "@/components/ui/progress";
 import {
@@ -17,6 +23,7 @@ import { useBuilderDerivedStats } from "../../hooks/useBuilderDerivedStats";
 import { formatModifier } from "@/shared/utils/cr.utils";
 import type { CompletenessStep } from "../../utils/build-completeness/group-completeness-steps.utils";
 import { AutosaveIndicator } from "./AutosaveIndicator";
+import { BuilderMobileSettingsMenu } from "./BuilderMobileSettingsMenu";
 
 function StepStatusIcon({ status }: Readonly<{ status: CompletenessStep["status"] }>) {
   if (status === "complete") {
@@ -37,8 +44,14 @@ const STEP_STATUS_LABEL: Record<CompletenessStep["status"], string> = {
 };
 
 export function BuilderProgressBar() {
-  const { liveResult, liveSteps, liveProgress, goToSection, goToIssue } =
-    useBuildCompleteness();
+  const {
+    liveResult,
+    liveSteps,
+    liveProgress,
+    nextStep,
+    goToSection,
+    goToIssue,
+  } = useBuildCompleteness();
   const { selectSlot } = useBuilderSlotSelection();
   const isMobileLayout = useBuilderLayoutOptional()?.isMobileLayout ?? false;
   const [open, setOpen] = useState(false);
@@ -171,22 +184,36 @@ export function BuilderProgressBar() {
                 : "Build not started"
             }
           />
-          <p
-            className={cn(
-              "truncate text-[11px] text-muted-foreground",
-              !hasStarted && "italic",
-            )}
-          >
-            {!hasStarted
-              ? "Start by choosing a class"
-              : pendingIssues.length === 0
-                ? "All required steps complete"
-                : `${pendingIssues.length} pending choice${pendingIssues.length === 1 ? "" : "s"}`}
-          </p>
+          {/* Mobile: NextStepCard lives in the Build tab, so surface the next
+              choice here where every tab can reach it. */}
+          {isMobileLayout && hasStarted && nextStep ? (
+            <button
+              type="button"
+              className="flex w-full min-w-0 items-center gap-1 text-left text-[11px] font-medium text-primary"
+              onClick={() => goToIssue(nextStep.issue)}
+            >
+              <span className="truncate">Next: {nextStep.issue.message}</span>
+              <ArrowRight className="h-3 w-3 shrink-0" aria-hidden />
+            </button>
+          ) : (
+            <p
+              className={cn(
+                "truncate text-[11px] text-muted-foreground",
+                !hasStarted && "italic",
+              )}
+            >
+              {!hasStarted
+                ? "Start by choosing a class"
+                : pendingIssues.length === 0
+                  ? "All required steps complete"
+                  : `${pendingIssues.length} pending choice${pendingIssues.length === 1 ? "" : "s"}`}
+            </p>
+          )}
         </div>
         <AutosaveIndicator />
+        {isMobileLayout && <BuilderMobileSettingsMenu />}
       </div>
-      {isMobileLayout && <CombatSummaryStrip />}
+      {isMobileLayout && hasStarted && <CombatSummaryStrip />}
     </div>
   );
 }

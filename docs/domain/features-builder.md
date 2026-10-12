@@ -34,7 +34,10 @@ Herramienta experimental para equipar armas/armadura/runas y estimar **daño por
 
 - El editor contextual del slot (biblioteca/detalle/runas) se abre en un **bottom sheet** (`Sheet`) en móvil; cerrar el sheet limpia `selectedSlot`. En desktop sigue inline bajo los grids.
 - Seleccionar un slot cambia a la pestaña Build; `goToSection` cambia a la pestaña dueña (`SECTION_TO_MOBILE_TAB`) antes de hacer scroll.
-- La progress bar muestra en móvil una franja compacta HP/AC/Speed/Init/Prof (`useBuilderDerivedStats`, compartido con `BuilderDerivedPanel`).
+- La progress bar muestra en móvil una franja compacta HP/AC/Speed/Init/Prof (`useBuilderDerivedStats`, compartido con `BuilderDerivedPanel`), solo cuando el build ya empezó (`hasStarted`).
+- En móvil no hay cabecera de página: Simple mode, Homebrew y Tips viven en el menú "⋯" de la progress bar (`BuilderMobileSettingsMenu`; la regla de visibilidad de Homebrew es `useShowHomebrewToggle`, compartida con la cabecera desktop).
+- En móvil la línea bajo la barra muestra `Next: <issue>` (el `nextStep` de `BuildCompletenessContext`) y llama a `goToIssue`, porque `NextStepCard` solo vive en la pestaña Build.
+- El título del sheet usa `formatBuilderSlotLabel(slot, progressionNames)`: los slots `opt-<progressionId>` muestran el nombre de la progresión (p. ej. "Weapon Mastery").
 - Grids de slots: 3 → 4 (`sm`) → 5 (`lg`) columnas (`BUILDER_SLOT_GRID_CLASS`).
 
 **Modo Simple / Advanced** (`BuilderUiModeContext`, `localStorage` `builder:uiMode`, **Simple por defecto**; switch `BuilderUiModeToggle` en la cabecera). Simple oculta controles avanzados, pero **nunca uno en uso**:

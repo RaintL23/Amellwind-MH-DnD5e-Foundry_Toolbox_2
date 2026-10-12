@@ -17,11 +17,8 @@ import {
 } from "./BuilderMobileTabBar";
 import { HomebrewModeToggle } from "../shared/HomebrewModeToggle";
 import { BuilderUiModeToggle } from "../shared/BuilderUiModeToggle";
-import {
-  BuilderUiModeProvider,
-  useBuilderUiMode,
-} from "../../context/BuilderUiModeContext";
-import { useCharacterBuilder } from "../../context/CharacterBuilderContext";
+import { useShowHomebrewToggle } from "./BuilderMobileSettingsMenu";
+import { BuilderUiModeProvider } from "../../context/BuilderUiModeContext";
 import { BuilderUndoProvider } from "../../context/BuilderUndoContext";
 import { BuildCompletenessProvider } from "../../context/BuildCompletenessContext";
 import { BuilderSlotSelectionProvider } from "../../context/BuilderSlotSelectionContext";
@@ -61,17 +58,15 @@ function BuilderPageContent() {
   return (
     <div className="flex h-full min-h-0 flex-col">
       <BuilderGrantSync />
-      <BuilderHeader />
+      {/* Mobile folds these controls into the progress bar's settings menu. */}
+      {!isMobileLayout && <BuilderHeader />}
       {isMobileLayout ? <BuilderMobileLayout /> : <BuilderDesktopLayout />}
     </div>
   );
 }
 
 function BuilderHeader() {
-  const { isSimple } = useBuilderUiMode();
-  const { useAmellwindHomebrew } = useCharacterBuilder();
-  // Homebrew changes catalogs and slots; keep it visible while it is on.
-  const showHomebrewToggle = !isSimple || useAmellwindHomebrew;
+  const showHomebrewToggle = useShowHomebrewToggle();
 
   return (
     <div className="shrink-0 border-b border-border bg-card/50 px-3 py-2 sm:px-4 sm:py-3 lg:px-6 lg:py-4">
