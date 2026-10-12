@@ -1,15 +1,28 @@
-export {
-  sanitizeTextForPdf,
-  estimatePdfFontSize,
-} from "./pdf-text.utils";
+export { sanitizeTextForPdf } from "./pdf-text.utils";
 
 export {
-  PDF_ALIGNMENT_CHECKBOX,
+  wrapTextLines,
+  fitTextToBox,
+  fitSingleLine,
+  formatSectionText,
+  layoutSectionsIntoBoxes,
+  pdfLineHeight,
+  linesThatFit,
+  type PdfTextMeasurer,
+  type PdfTextBox,
+  type ExportTextSection,
+  type WrappedLine,
+  type FitTextResult,
+  type SectionLayoutOptions,
+  type SectionLayoutResult,
+} from "./pdf-text-layout.utils";
+
+export {
   PDF_ARMOR_TRAINING_CHECKBOXES,
+  PDF_SPELL_ROWS,
   type ArmorTrainingCategory,
+  type PdfSpellRow,
   getArmorTrainingProficiencies,
-  resolveAlignmentCode,
-  getAlignmentCheckboxField,
 } from "./pdf-field-mappings";
 
 export {
@@ -23,6 +36,8 @@ export {
 
 export { buildWeaponsAndCantripsExport } from "./pdf-weapons-export.utils";
 
+export { buildSpellListExport } from "./pdf-spell-list.utils";
+
 export { getSpellSlotTotals } from "./pdf-spell-slots.utils";
 
 export {
@@ -35,7 +50,7 @@ export {
   collectFeatExportLines,
   formatFeatExportBody,
   buildFeatExportDescLookup,
-  formatFeatExportLine,
+  formatFeatExportSection,
   loadFeatExportLookups,
   type FeatExportDescLookup,
   type FeatExportLookups,

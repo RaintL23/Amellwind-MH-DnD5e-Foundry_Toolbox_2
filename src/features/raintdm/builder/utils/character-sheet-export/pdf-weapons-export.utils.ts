@@ -243,5 +243,5 @@ export function buildWeaponsAndCantripsExport(options: {
     );
   }
 
-  return entries.slice(0, 6);
+  return entries;
 }

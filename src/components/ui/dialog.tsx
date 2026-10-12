@@ -5,6 +5,7 @@ import { clearStaleBodyPointerLock } from "@/shared/utils/clear-stale-body-point
 
 export const Dialog = RadixDialog.Root;
 export const DialogTrigger = RadixDialog.Trigger;
+export const DialogClose = RadixDialog.Close;
 
 export function DialogContent({
   className,

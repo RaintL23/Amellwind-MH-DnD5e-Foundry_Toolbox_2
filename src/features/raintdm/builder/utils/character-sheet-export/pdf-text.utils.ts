@@ -25,34 +25,3 @@ export function sanitizeTextForPdf(text: string): string {
   }
   return sanitized.replace(/[^\t\n\r\u0020-\u007E\u00A0-\u00FF]/g, "");
 }
-
-/** Pick the largest font size that fits inside a PDF text field box. */
-export function estimatePdfFontSize(
-  text: string,
-  widthPt: number,
-  heightPt: number,
-  multiline: boolean,
-  maxSize: number,
-  minSize: number,
-): number {
-  if (!text.trim()) return maxSize;
-
-  for (let size = maxSize; size >= minSize; size -= 0.5) {
-    const charWidth = size * 0.48;
-    const lineHeight = size * 1.15;
-    const charsPerLine = Math.max(1, Math.floor(widthPt / charWidth));
-
-    if (multiline) {
-      const totalLines = text.split("\n").reduce((count, line) => {
-        const trimmed = line.trim();
-        if (!trimmed) return count + 1;
-        return count + Math.max(1, Math.ceil(trimmed.length / charsPerLine));
-      }, 0);
-      if (totalLines * lineHeight <= heightPt) return size;
-    } else if (text.length * charWidth <= widthPt) {
-      return size;
-    }
-  }
-
-  return minSize;
-}

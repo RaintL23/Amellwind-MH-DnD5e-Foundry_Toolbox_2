@@ -11,6 +11,7 @@ import {
   resolveTraitChoiceSelection,
 } from "@/shared/utils/species-trait-choice.utils";
 import { shouldOmitClassFeatureForChoices } from "@/features/raintdm/builder/utils/feature-choice-description.utils";
+import type { ExportTextSection } from "./pdf-text-layout.utils";
 
 /**
  * Features whose content is handled elsewhere (spell list, spell slots) and
@@ -25,16 +26,9 @@ function isOmittedFeature(name: string): boolean {
   return OMITTED_FEATURE_NAMES.has(name.toLowerCase().trim());
 }
 
-function formatFeatureEntry(name: string, description: string[]): string {
-  const desc = description.join("\n").trim();
-  return desc ? `${name}\n${desc}` : name;
+function formatFeatureEntry(name: string, description: string[]): ExportTextSection {
+  return { title: name, body: description.join("\n").trim() };
 }
-
-/**
- * Approximate character capacity for one CLASS FEATURES field at font size 7.
- * Used to decide where to cascade text from field 1 into field 2.
- */
-const FIELD_CHAR_CAPACITY = 1200;
 
 /**
  * Lookup map: optional feature / feat id → description lines.
@@ -69,14 +63,14 @@ function buildProgressionHandledNames(
 }
 
 /**
- * Formats the user's selections for a single progression into a PDF-ready
- * string. Returns null when no selections are available.
+ * Formats the user's selections for a single progression into a PDF section.
+ * Returns null when no selections are available.
  */
 function formatProgressionSelections(
   progression: OptionalFeatureProgression,
   selections: BuilderOptionalFeatureSelections,
   descMap: OptionalFeatureDescMap,
-): string | null {
+): ExportTextSection | null {
   const picks = (selections[progression.id] ?? []).filter(
     (s): s is NonNullable<typeof s> => s !== null,
   );
@@ -87,7 +81,7 @@ function formatProgressionSelections(
 
   if (progression.catalog === "feature-choice") {
     // For feature-choice progressions (Weapon Mastery, patron sub-type, etc.)
-    // build a compact list: "Label\nOption1 (desc), Option2 (desc), ..."
+    // build a compact list: "Label. Option1 (desc), Option2 (desc), ..."
     const optionMap = new Map(
       (progression.choiceOptions ?? []).map((o) => [o.id, o]),
     );
@@ -96,22 +90,21 @@ function formatProgressionSelections(
       const desc = opt?.entries[0] ?? "";
       return desc ? `${pick.name} (${desc})` : pick.name;
     });
-    return picks.length === 1
-      ? `${label}: ${parts[0]}`
-      : `${label}\n${parts.join(", ")}`;
+    return { title: label, body: parts.join(", ") };
   }
 
   // Optional-feature / feat selections (Fighting Style, Eldritch Invocations, etc.)
-  const selectionLines = picks.map((pick) => {
-    const desc = descMap.get(pick.id) ?? [];
-    // Truncate description to first two lines to keep the PDF compact.
-    const shortDesc = desc.slice(0, 2).join(" ").trim();
-    return shortDesc ? `${pick.name}: ${shortDesc}` : pick.name;
-  });
+  // Full descriptions: anything that does not fit goes to the continuation page.
+  const describe = (id: string) => (descMap.get(id) ?? []).join(" ").trim();
 
-  return picks.length === 1
-    ? `${label}: ${selectionLines[0]}`
-    : `${label}\n${selectionLines.join("\n")}`;
+  if (picks.length === 1) {
+    return { title: `${label}: ${picks[0].name}`, body: describe(picks[0].id) };
+  }
+  const selectionLines = picks.map((pick) => {
+    const desc = describe(pick.id);
+    return desc ? `${pick.name}: ${desc}` : pick.name;
+  });
+  return { title: label, body: selectionLines.join("\n") };
 }
 
 export function getClassFeaturesExport(
@@ -120,8 +113,8 @@ export function getClassFeaturesExport(
   level: number,
   optionalFeatureSelections?: BuilderOptionalFeatureSelections,
   descMap?: OptionalFeatureDescMap,
-): { line1: string; line2: string } {
-  const entries: string[] = [];
+): ExportTextSection[] {
+  const entries: ExportTextSection[] = [];
 
   const allProgressions: OptionalFeatureProgression[] = [
     ...(classData?.optionalFeatureProgressions ?? []),
@@ -195,51 +188,18 @@ export function getClassFeaturesExport(
     }
   }
 
-  if (entries.length === 0) {
-    return { line1: classData?.name ?? "", line2: "" };
-  }
-
-  const combined = entries.join("\n\n");
-
-  if (combined.length <= FIELD_CHAR_CAPACITY) {
-    return { line1: combined, line2: "" };
-  }
-
-  // Prefer splitting at a feature boundary (double newline) near the capacity limit.
-  const searchFrom = Math.max(0, FIELD_CHAR_CAPACITY - 300);
-  const featureBoundary = combined.indexOf("\n\n", searchFrom);
-  if (featureBoundary !== -1 && featureBoundary <= FIELD_CHAR_CAPACITY + 300) {
-    return {
-      line1: combined.slice(0, featureBoundary).trim(),
-      line2: combined.slice(featureBoundary).trim(),
-    };
-  }
-
-  // A single feature is longer than the field: cascade at the nearest word boundary.
-  let splitIdx = FIELD_CHAR_CAPACITY;
-  while (splitIdx > 0 && combined[splitIdx] !== " " && combined[splitIdx] !== "\n") {
-    splitIdx--;
-  }
-  if (splitIdx <= 0) splitIdx = FIELD_CHAR_CAPACITY;
-
-  return {
-    line1: combined.slice(0, splitIdx).trim(),
-    line2: combined.slice(splitIdx).trim(),
-  };
+  return entries;
 }
 
 export function getSpeciesTraitsExport(
   speciesData: Species | null,
   speciesTraitChoices: Record<string, string> = {},
-): string {
-  if (!speciesData?.traits.length) return speciesData?.name ?? "";
-  return speciesData.traits
-    .map((trait) => {
-      const selected = resolveTraitChoiceSelection(trait, speciesTraitChoices);
-      const entries = resolveSpeciesTraitEntries(trait, selected, {
-        showAllWhenUnselected: false,
-      });
-      return formatFeatureEntry(trait.name, entries);
-    })
-    .join("\n\n");
+): ExportTextSection[] {
+  return (speciesData?.traits ?? []).map((trait) => {
+    const selected = resolveTraitChoiceSelection(trait, speciesTraitChoices);
+    const entries = resolveSpeciesTraitEntries(trait, selected, {
+      showAllWhenUnselected: false,
+    });
+    return formatFeatureEntry(trait.name, entries);
+  });
 }

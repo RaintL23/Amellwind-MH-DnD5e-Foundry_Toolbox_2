@@ -5,7 +5,7 @@ import {
   ChevronRight,
   Compass,
   Dices,
-  FileDown,
+  Eye,
   FileJson,
   ScrollText,
   Upload,
@@ -107,12 +107,13 @@ function BuildReadyCard() {
           <Button
             type="button"
             size="sm"
-            className="h-8 gap-1.5 text-xs"
-            disabled={actions.exporting}
-            onClick={actions.exportPdf}
+            variant="outline"
+            className="h-8 gap-1.5 border-emerald-500/40 bg-transparent text-xs hover:bg-emerald-500/15"
+            disabled={actions.previewing}
+            onClick={actions.previewPdf}
           >
-            <FileDown className="h-3.5 w-3.5" aria-hidden />
-            Sheet PDF
+            <Eye className="h-3.5 w-3.5" aria-hidden />
+            Preview PDF
           </Button>
           <Button
             type="button"
@@ -128,12 +129,13 @@ function BuildReadyCard() {
           <Button
             type="button"
             size="sm"
-            variant="ghost"
-            className="col-span-2 h-8 gap-1.5 text-xs text-muted-foreground sm:col-span-1"
+            variant="outline"
+            className="h-8 gap-1.5 border-emerald-500/40 bg-transparent text-xs hover:bg-emerald-500/15"
             onClick={actions.exportJson}
+            aria-label="Save as Builder JSON"
           >
             <FileJson className="h-3.5 w-3.5" aria-hidden />
-            Save as Builder JSON
+            Save JSON
           </Button>
         </div>
       </div>

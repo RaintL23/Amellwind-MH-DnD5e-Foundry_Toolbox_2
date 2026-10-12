@@ -11,7 +11,6 @@ import { useEffectiveAbilityScores } from "./useEffectiveAbilityScores";
 import { useSpellcastingContext } from "../context/SpellcastingContext";
 import { useSelectedClass, useSelectedSubclass } from "./useBuilderSelections";
 import { useSpellCatalog } from "./useSpellCatalog";
-import { getAttunementInfo } from "../utils/attunement.utils";
 import { computeSpellcastingAttackStats } from "../utils/spellcasting-stats.utils";
 import {
   downloadPdf,
@@ -21,10 +20,10 @@ import type { CharacterSheetExportData } from "../utils/character-sheet-export.t
 import {
   buildFeatExportDescLookup,
   buildEquipmentExport,
+  buildSpellListExport,
   buildWeaponsAndCantripsExport,
-  formatFeatExportLine,
+  formatFeatExportSection,
   formatGoldPiecesForPdf,
-  getAlignmentCheckboxField,
   getArmorTrainingProficiencies,
   getClassFeaturesExport,
   getSpeciesTraitsExport,
@@ -33,10 +32,18 @@ import {
   hasShieldEquipped,
   loadFeatExportLookups,
   sumInventoryGoldGp,
+  type ExportTextSection,
   type OptionalFeatureDescMap,
 } from "../utils/character-sheet-export.utils";
 import { BACKGROUND_FACTION_LABELS } from "@/shared/types";
 import { downloadCharacterImages } from "../utils/image-download.utils";
+import { formatAlignmentLabel, parseAlignmentAxes } from "../utils/alignment.utils";
+
+/** Generated sheet bytes plus the base name used for the PDF and images. */
+export interface CharacterSheetPdfFile {
+  bytes: Uint8Array;
+  filenameBase: string;
+}
 
 function formatAbilityExport(scores: AbilityScores, key: AbilityKey) {
   return {
@@ -57,6 +64,8 @@ export function useCharacterSheetExport() {
   const { spellcasting } = useSpellcastingContext();
   const effectiveScores = useEffectiveAbilityScores();
   const [exporting, setExporting] = useState(false);
+  const [previewing, setPreviewing] = useState(false);
+  const [preview, setPreview] = useState<CharacterSheetPdfFile | null>(null);
   const [error, setError] = useState<string | null>(null);
 
   const buildExportData = useCallback(
@@ -66,7 +75,6 @@ export function useCharacterSheetExport() {
     ): CharacterSheetExportData => {
     const { character } = builder;
     const exportCharacter = character.withUpdates({ abilities: effectiveScores });
-    const attunement = getAttunementInfo(builder.class?.name, character.level);
 
     const prof = character.getProficiencyBonus();
     const {
@@ -100,30 +108,18 @@ export function useCharacterSheetExport() {
       combatMainHandBreakdown: builder.useUnarmedStrike ? combatMainHand : null,
     });
 
-    const spellList = Object.values(builder.spellSelections ?? {})
-      .flat()
-      .map((selection) => {
-        const spell = allSpells.find((s) => s.id === selection.id);
-        const material = spell?.components.m ?? null;
-        const hasCostlyMaterial =
-          material !== null && /\d+\s*(?:gp|sp|cp|pp)/i.test(material);
-        return {
-          name: selection.name,
-          level: selection.level,
-          range: spell?.range,
-          castingTime: spell?.castingTime,
-          isConcentration: spell?.isConcentration ?? false,
-          isRitual: spell?.isRitual ?? false,
-          hasMaterial: material !== null,
-          materialNotes: hasCostlyMaterial ? material : undefined,
-        };
-      });
+    const spellList = buildSpellListExport({
+      spellSelections: builder.spellSelections ?? {},
+      spellcasting,
+      allSpells,
+      characterLevel: character.level,
+    });
 
     function formatSkillChoices(keys: SkillKey[]): string {
       return keys.map((k) => SKILL_LABELS[k] ?? k).join(", ");
     }
 
-    const featLines: string[] = [];
+    const featLines: ExportTextSection[] = [];
 
     const originSkillText =
       builder.originFeatSkillChoices.length > 0
@@ -134,8 +130,8 @@ export function useCharacterSheetExport() {
       featName: string,
       featId: string,
       suffix: string,
-    ): string {
-      return formatFeatExportLine(featName, featId, suffix, featDescLookup);
+    ): ExportTextSection {
+      return formatFeatExportSection(featName, featId, suffix, featDescLookup);
     }
 
     if (builder.speciesOriginFeat) {
@@ -245,9 +241,8 @@ export function useCharacterSheetExport() {
         builder.resolvedArmorItems,
       ),
       toolProficiencies: builder.resolvedToolItems.join(", "),
-      feats: featLines.join("\n"),
-      classFeatures: classFeatures.line1,
-      classFeatures2: classFeatures.line2,
+      feats: featLines,
+      classFeatures,
       speciesTraits: getSpeciesTraitsExport(
         builder.speciesData,
         builder.speciesTraitChoices ?? {},
@@ -261,10 +256,6 @@ export function useCharacterSheetExport() {
         trinket1Name: builder.trinket1?.name,
         trinket2Name: builder.trinket2?.name,
       }),
-      attunementSlots: Array.from(
-        { length: attunement.attunementSlots },
-        (_, i) => `Slot ${i + 1}`,
-      ),
       weapons,
       spells: spellList,
       spellcastingAbility: spellcasting.spellcastingAbility ?? undefined,
@@ -281,7 +272,10 @@ export function useCharacterSheetExport() {
         equippedShield: builder.equippedShield,
         mainHand: builder.mainHand,
       }),
-      alignmentCheckbox: getAlignmentCheckboxField(character.alignment),
+      alignment: (() => {
+        const axes = parseAlignmentAxes(character.alignment);
+        return formatAlignmentLabel(axes.lawChaos, axes.goodEvil);
+      })(),
       goldPieces: formatGoldPiecesForPdf(sumInventoryGoldGp(inventory.items)),
       personality: {
         ...builder.personality,
@@ -305,36 +299,80 @@ export function useCharacterSheetExport() {
     speed.display,
   ]);
 
+  const generatePdf = useCallback(async (): Promise<CharacterSheetPdfFile> => {
+    // Load catalogs needed to enrich descriptions in the PDF.
+    const { optDescMap, featDescLookup } = await loadFeatExportLookups();
+
+    const data = buildExportData(optDescMap, featDescLookup);
+    const bytes = await exportCharacterSheetPdf(data);
+    const sanitize = (s: string) =>
+      s
+        .trim()
+        .replace(/[\s/\\:*?"<>|]+/g, "_")
+        .replace(/^_+|_+$/g, "");
+    const filenameParts = [
+      sanitize(data.name) || "Character",
+      sanitize(data.species ?? ""),
+      sanitize(data.className ?? ""),
+      sanitize(data.subclass ?? ""),
+      `Level${data.level}`,
+    ].filter(Boolean);
+    return { bytes, filenameBase: filenameParts.join("_") };
+  }, [buildExportData]);
+
+  const downloadFile = useCallback(
+    (file: CharacterSheetPdfFile) => {
+      downloadPdf(file.bytes, `${file.filenameBase}.pdf`);
+      downloadCharacterImages(file.filenameBase, builder.portraitImage, builder.tokenImage);
+    },
+    [builder.portraitImage, builder.tokenImage],
+  );
+
   const exportSheet = useCallback(async () => {
     setExporting(true);
     setError(null);
     try {
-      // Load catalogs needed to enrich descriptions in the PDF.
-      const { optDescMap, featDescLookup } = await loadFeatExportLookups();
-
-      const data = buildExportData(optDescMap, featDescLookup);
-      const bytes = await exportCharacterSheetPdf(data);
-      const sanitize = (s: string) =>
-        s
-          .trim()
-          .replace(/[\s/\\:*?"<>|]+/g, "_")
-          .replace(/^_+|_+$/g, "");
-      const filenameParts = [
-        sanitize(data.name) || "Character",
-        sanitize(data.species ?? ""),
-        sanitize(data.className ?? ""),
-        sanitize(data.subclass ?? ""),
-        `Level${data.level}`,
-      ].filter(Boolean);
-      const filenameBase = filenameParts.join("_");
-      downloadPdf(bytes, `${filenameBase}.pdf`);
-      downloadCharacterImages(filenameBase, builder.portraitImage, builder.tokenImage);
+      downloadFile(await generatePdf());
     } catch (err) {
       setError(err instanceof Error ? err.message : "Export failed");
     } finally {
       setExporting(false);
     }
-  }, [buildExportData]);
+  }, [downloadFile, generatePdf]);
 
-  return { exportSheet, exporting, error };
+  /**
+   * Generates the same PDF as `exportSheet` and keeps it for the preview
+   * dialog. Resolves to false when generation failed (error is set).
+   */
+  const previewSheet = useCallback(async (): Promise<boolean> => {
+    setPreviewing(true);
+    setError(null);
+    try {
+      setPreview(await generatePdf());
+      return true;
+    } catch (err) {
+      setError(err instanceof Error ? err.message : "Preview failed");
+      return false;
+    } finally {
+      setPreviewing(false);
+    }
+  }, [generatePdf]);
+
+  /** Downloads the previewed file as-is (no regeneration). */
+  const downloadPreview = useCallback(() => {
+    if (preview) downloadFile(preview);
+  }, [downloadFile, preview]);
+
+  const closePreview = useCallback(() => setPreview(null), []);
+
+  return {
+    exportSheet,
+    exporting,
+    previewSheet,
+    previewing,
+    preview,
+    downloadPreview,
+    closePreview,
+    error,
+  };
 }

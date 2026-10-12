@@ -1,6 +1,7 @@
 import type { BuilderPersonality } from "@/features/raintdm/builder/storage/builder.storage";
 import type { SkillKey, AbilityKey } from "@/shared/types";
 import type { ArmorTrainingCategory } from "./pdf-field-mappings";
+import type { ExportTextSection } from "./pdf-text-layout.utils";
 
 export interface CharacterSheetWeaponExport {
   name: string;
@@ -17,8 +18,8 @@ export interface CharacterSheetSpellExport {
   isConcentration?: boolean;
   isRitual?: boolean;
   hasMaterial?: boolean;
-  /** Populated only when the material component has a monetary cost. */
-  materialNotes?: string;
+  /** Costly material component, or a short tag such as "Always prepared". */
+  notes?: string;
 }
 
 export interface CharacterSheetExportData {
@@ -51,12 +52,11 @@ export interface CharacterSheetExportData {
   weaponProficiencies: string;
   armorTrainingProficiencies?: Partial<Record<ArmorTrainingCategory, boolean>>;
   toolProficiencies: string;
-  feats: string;
-  classFeatures: string;
-  classFeatures2?: string;
-  speciesTraits: string;
-  equipment: string;
-  attunementSlots: string[];
+  feats: ExportTextSection[];
+  classFeatures: ExportTextSection[];
+  speciesTraits: ExportTextSection[];
+  /** One inventory line per entry (equipped items first). */
+  equipment: string[];
   weapons: CharacterSheetWeaponExport[];
   spells: CharacterSheetSpellExport[];
   spellcastingAbility?: string;
@@ -65,7 +65,8 @@ export interface CharacterSheetExportData {
   spellAttackBonus?: string;
   spellSlotTotals?: Record<number, number>;
   hasShield?: boolean;
-  alignmentCheckbox?: string;
+  /** Human-readable alignment; the 2024 sheet has no field, so it opens Personality. */
+  alignment?: string;
   goldPieces?: string;
   personality: BuilderPersonality & { notes: string };
   skillProficiencies?: Partial<Record<SkillKey, boolean>>;

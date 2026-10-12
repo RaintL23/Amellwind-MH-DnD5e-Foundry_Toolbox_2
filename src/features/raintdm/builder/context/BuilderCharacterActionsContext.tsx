@@ -5,6 +5,8 @@
  */
 import {
   createContext,
+  lazy,
+  Suspense,
   useContext,
   useEffect,
   useRef,
@@ -24,17 +26,26 @@ import { useCharacterBuilder } from "./CharacterBuilderContext";
 import { ConfirmActionDialog } from "../components/shared/ConfirmActionDialog";
 import type { BuildCompletenessIssue } from "../utils/build-completeness.types";
 
+// pdf.js is heavy: load the preview (and its viewer) only when first opened.
+const CharacterSheetPreviewDialog = lazy(() =>
+  import("../components/page/CharacterSheetPreviewDialog").then((module) => ({
+    default: module.CharacterSheetPreviewDialog,
+  })),
+);
+
 type PendingConfirm = { kind: "reset" } | { kind: "randomize" } | { kind: "import"; file: File };
 
 interface BuilderCharacterActions {
   buildHasStarted: boolean;
   exporting: boolean;
+  previewing: boolean;
   sendingToSheet: boolean;
   importing: boolean;
   isRandomizing: boolean;
   canRandomize: boolean;
   linkedId: string | null;
   exportPdf: () => void;
+  previewPdf: () => void;
   exportJson: () => void;
   sendToSheet: () => void;
   updateLinkedSheet: () => void;
@@ -51,7 +62,16 @@ export function BuilderCharacterActionsProvider({
 }: Readonly<{ children: ReactNode }>) {
   const { resetBuild } = useCharacterBuilder();
   const { randomize, isRandomizing, canRandomize } = useCharacterRandomizer();
-  const { exportSheet, exporting, error: pdfError } = useCharacterSheetExport();
+  const {
+    exportSheet,
+    exporting,
+    previewSheet,
+    previewing,
+    preview,
+    downloadPreview,
+    closePreview,
+    error: pdfError,
+  } = useCharacterSheetExport();
   const { exportCharacter, error: jsonError } = useBuilderCharacterExport();
   const { confirm, confirmDialog } = useConfirmDialog();
   const {
@@ -70,6 +90,7 @@ export function BuilderCharacterActionsProvider({
     useBuildCompleteness();
   const fileInputRef = useRef<HTMLInputElement>(null);
   const [pending, setPending] = useState<PendingConfirm | null>(null);
+  const [previewOpen, setPreviewOpen] = useState(false);
   const buildHasStarted = liveResult.hasStarted;
 
   useEffect(() => {
@@ -129,6 +150,32 @@ export function BuilderCharacterActionsProvider({
     void importFromFile(file);
   }
 
+  /** Preview works mid-build (the dialog flags pending choices). */
+  function openPreview() {
+    if (!liveResult.hasStarted) {
+      toast.error("Build a character before previewing the sheet");
+      return;
+    }
+    setPreviewOpen(true);
+    void previewSheet().then((ok) => {
+      if (!ok) setPreviewOpen(false);
+    });
+  }
+
+  function closePreviewDialog() {
+    setPreviewOpen(false);
+    closePreview();
+  }
+
+  function downloadFromPreview() {
+    if (!ensureReady("downloading the PDF")) {
+      // The gate jumps to the pending choice: get the dialog out of the way.
+      closePreviewDialog();
+      return;
+    }
+    downloadPreview();
+  }
+
   function runPending() {
     if (!pending) return;
     clearHighlight();
@@ -149,6 +196,7 @@ export function BuilderCharacterActionsProvider({
   const value: BuilderCharacterActions = {
     buildHasStarted,
     exporting,
+    previewing,
     sendingToSheet,
     importing,
     isRandomizing,
@@ -157,6 +205,7 @@ export function BuilderCharacterActionsProvider({
     exportPdf: () => {
       if (ensureReady("downloading the PDF")) void exportSheet();
     },
+    previewPdf: openPreview,
     exportJson: () => exportCharacter(),
     sendToSheet: () => {
       if (ensureReady("sending it to the Character Sheet")) void sendNew();
@@ -228,6 +277,19 @@ export function BuilderCharacterActionsProvider({
         />
       )}
       {confirmDialog}
+      {previewOpen && (
+        <Suspense fallback={null}>
+          <CharacterSheetPreviewDialog
+            open={previewOpen}
+            onOpenChange={(open) => {
+              if (!open) closePreviewDialog();
+            }}
+            file={preview}
+            pendingCount={liveResult.shouldBlockExport ? liveResult.issues.length : 0}
+            onDownload={downloadFromPreview}
+          />
+        </Suspense>
+      )}
     </BuilderCharacterActionsContext.Provider>
   );
 }

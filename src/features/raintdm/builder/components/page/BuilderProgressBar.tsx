@@ -3,7 +3,7 @@ import {
   ChevronDown,
   Circle,
   Dices,
-  FileDown,
+  Eye,
   FileJson,
   ListChecks,
   Lock,
@@ -100,10 +100,10 @@ function CharacterActionsSection({ onDone }: Readonly<{ onDone: () => void }>) {
         Character
       </p>
       <ActionRow
-        icon={FileDown}
-        label="Download Character Sheet PDF"
-        disabled={a.exporting}
-        onSelect={run(a.exportPdf)}
+        icon={Eye}
+        label="Preview Character Sheet PDF"
+        disabled={a.previewing || !a.buildHasStarted}
+        onSelect={run(a.previewPdf)}
       />
       <ActionRow
         icon={ScrollText}

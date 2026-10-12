@@ -1,26 +1,30 @@
-import type { PDFDocument } from "pdf-lib";
+import type { PDFDocument, PDFFont, PDFTextField } from "pdf-lib";
 import type { CharacterSheetExportData } from "../utils/character-sheet-export.types";
 import {
-  estimatePdfFontSize,
+  fitSingleLine,
+  fitTextToBox,
+  layoutSectionsIntoBoxes,
   PDF_ARMOR_TRAINING_CHECKBOXES,
+  PDF_SPELL_ROWS,
   sanitizeTextForPdf,
   type ArmorTrainingCategory,
+  type ExportTextSection,
+  type PdfTextBox,
 } from "../utils/character-sheet-export.utils";
+import {
+  appendContinuationPages,
+  type ContinuationGroup,
+} from "./character-sheet-continuation";
 
 const TEMPLATE_URL = "/character-sheet/dnd-2024-character-sheet.pdf";
 
-type SetTextOptions = {
-  fontSize?: number;
-  autoFit?: { maxSize: number; minSize: number };
-  disableScroll?: boolean;
-  /** When true, writes an empty string to clear template placeholder values. */
-  allowEmpty?: boolean;
-};
+/** Smallest size used for long text on the sheet; the rest moves to page 3. */
+const MIN_READABLE_SIZE = 5.5;
+const CONTINUED_NOTE = "(continued on page 3)";
 
-function applyFieldFontSize(
-  field: ReturnType<ReturnType<PDFDocument["getForm"]>["getTextField"]>,
-  fontSize: number,
-) {
+type PdfForm = ReturnType<PDFDocument["getForm"]>;
+
+function applyFieldFontSize(field: PDFTextField, fontSize: number) {
   field.setFontSize(fontSize);
   for (const widget of field.acroField.getWidgets()) {
     const da = widget.getDefaultAppearance();
@@ -31,53 +35,131 @@ function applyFieldFontSize(
   }
 }
 
-function setText(
-  form: ReturnType<PDFDocument["getForm"]>,
-  fieldName: string,
-  value: string | number | undefined | null,
-  options?: number | SetTextOptions,
-) {
-  if (value === undefined || value === null) return;
-
-  const opts: SetTextOptions =
-    typeof options === "number" ? { fontSize: options } : (options ?? {});
-  const text = sanitizeTextForPdf(String(value));
-  if (!text && !opts.allowEmpty) return;
-
+function getTextField(form: PdfForm, fieldName: string): PDFTextField | null {
   try {
-    const field = form.getTextField(fieldName);
-
-    if (opts.disableScroll && field.isMultiline() && field.isScrollable()) {
-      field.disableScrolling();
-    }
-
-    let fontSize = opts.fontSize;
-    if (opts.autoFit && text) {
-      const widget = field.acroField.getWidgets()[0];
-      const rect = widget?.getRectangle();
-      if (rect) {
-        fontSize = estimatePdfFontSize(
-          text,
-          rect.width,
-          rect.height,
-          field.isMultiline(),
-          opts.autoFit.maxSize,
-          opts.autoFit.minSize,
-        );
-      }
-    }
-
-    if (fontSize !== undefined) {
-      applyFieldFontSize(field, fontSize);
-    }
-
-    field.setText(text);
+    return form.getTextField(fieldName);
   } catch {
-    /* field may not exist on all template revisions */
+    return null; // field may not exist on all template revisions
   }
 }
 
-function clearWeaponRows(form: ReturnType<PDFDocument["getForm"]>) {
+/**
+ * Viewers render the non-embedded Helvetica with metric-compatible fonts that
+ * can run slightly wider than its AFM widths; wrap a bit early so lines that
+ * measure "just fits" never get clipped at the field edge.
+ */
+const WRAP_WIDTH_SAFETY = 0.97;
+
+/** Text area pdf-lib draws into: widget rect minus border and 1pt padding. */
+function getInnerBox(field: PDFTextField): PdfTextBox | null {
+  const widget = field.acroField.getWidgets()[0];
+  if (!widget) return null;
+  const rect = widget.getRectangle();
+  const inset = (widget.getBorderStyle()?.getWidth() ?? 0) + 1;
+  return {
+    width: (rect.width - inset * 2) * WRAP_WIDTH_SAFETY,
+    height: rect.height - inset * 2,
+  };
+}
+
+function setText(
+  form: PdfForm,
+  fieldName: string,
+  value: string | number | undefined | null,
+  options?: { fontSize?: number; allowEmpty?: boolean },
+) {
+  if (value === undefined || value === null) return;
+  const text = sanitizeTextForPdf(String(value));
+  if (!text && !options?.allowEmpty) return;
+  const field = getTextField(form, fieldName);
+  if (!field) return;
+  if (field.isMultiline() && field.isScrollable()) field.disableScrolling();
+  if (options?.fontSize !== undefined) applyFieldFontSize(field, options.fontSize);
+  field.setText(text);
+}
+
+/** Multiline field: largest size in range that fits, wrapped with real metrics. */
+function setFittedText(
+  form: PdfForm,
+  font: PDFFont,
+  fieldName: string,
+  value: string,
+  range: { maxSize: number; minSize: number },
+) {
+  const text = sanitizeTextForPdf(value);
+  if (!text) return;
+  const field = getTextField(form, fieldName);
+  const box = field && getInnerBox(field);
+  if (!box) return;
+  const fitted = fitTextToBox(text, font, box, range);
+  setText(form, fieldName, fitted.text, { fontSize: fitted.fontSize });
+}
+
+/** Single-line field: largest size in range whose width fits the box. */
+function setSingleLineText(
+  form: PdfForm,
+  font: PDFFont,
+  fieldName: string,
+  value: string | undefined,
+  range: { maxSize: number; minSize: number },
+) {
+  const text = sanitizeTextForPdf(value ?? "");
+  if (!text) return;
+  const field = getTextField(form, fieldName);
+  const box = field && getInnerBox(field);
+  if (!box) return;
+  setText(form, fieldName, text, { fontSize: fitSingleLine(text, font, box.width, range) });
+}
+
+/**
+ * Lays sections out across one or more multiline fields and returns what did
+ * not fit (for the continuation page).
+ */
+function setSections(
+  form: PdfForm,
+  font: PDFFont,
+  fieldNames: string[],
+  sections: ExportTextSection[],
+  options: { maxSize: number; minSize?: number; sectionGap?: boolean },
+): ExportTextSection[] {
+  const clean = sections
+    .map((section) => ({
+      title: sanitizeTextForPdf(section.title),
+      body: sanitizeTextForPdf(section.body),
+    }))
+    .filter((section) => section.title.trim() || section.body.trim());
+  if (clean.length === 0) return [];
+
+  const fields = fieldNames
+    .map((name) => {
+      const field = getTextField(form, name);
+      const box = field && getInnerBox(field);
+      return field && box ? { name, box } : null;
+    })
+    .filter((entry): entry is { name: string; box: PdfTextBox } => entry !== null);
+  if (fields.length === 0) return clean;
+
+  const layout = layoutSectionsIntoBoxes(
+    clean,
+    fields.map((entry) => entry.box),
+    font,
+    {
+      maxSize: options.maxSize,
+      minSize: options.minSize ?? MIN_READABLE_SIZE,
+      sectionGap: options.sectionGap,
+      continuationNote: CONTINUED_NOTE,
+    },
+  );
+  fields.forEach((entry, idx) => {
+    setText(form, entry.name, layout.texts[idx] ?? "", {
+      fontSize: layout.fontSize,
+      allowEmpty: true,
+    });
+  });
+  return layout.overflow;
+}
+
+function clearWeaponRows(form: PdfForm) {
   for (let n = 1; n <= 6; n++) {
     for (const suffix of ["NAME", "BONUS/DC", "DAMAGE/TYPE", "NOTES"]) {
       setText(form, `${suffix} - WEAPON ${n}`, "", { allowEmpty: true });
@@ -85,11 +167,7 @@ function clearWeaponRows(form: ReturnType<PDFDocument["getForm"]>) {
   }
 }
 
-function setCheckbox(
-  form: ReturnType<PDFDocument["getForm"]>,
-  fieldName: string,
-  checked: boolean | undefined,
-) {
+function setCheckbox(form: PdfForm, fieldName: string, checked: boolean | undefined) {
   if (!checked) return;
   try {
     form.getCheckBox(fieldName).check();
@@ -118,7 +196,7 @@ function decodeDataUrl(
 /** Places the character portrait into the sheet's "Character Portrait" button field. */
 async function setPortrait(
   pdfDoc: PDFDocument,
-  form: ReturnType<PDFDocument["getForm"]>,
+  form: PdfForm,
   portraitImage: string | null | undefined,
 ) {
   if (!portraitImage) return;
@@ -134,6 +212,79 @@ async function setPortrait(
   }
 }
 
+function capitalize(value: string): string {
+  return value.charAt(0).toUpperCase() + value.slice(1);
+}
+
+/** The casting-time column is ~29pt wide: shorten the long common values. */
+function abbreviateCastingTime(value: string | undefined): string | undefined {
+  if (!value) return value;
+  return capitalize(
+    value
+      .replace(/^1\s+(?=(?:bonus\s+)?action|reaction)/i, "")
+      .replace(/\bbonus action\b/i, "Bonus")
+      .replace(/\bminutes?\b/i, "min")
+      .replace(/\bhours?\b/i, "hr"),
+  );
+}
+
+/** The range column is ~41pt wide: "Self (15-foot cone)" → "Self (15-ft cone)". */
+function abbreviateRange(value: string | undefined): string | undefined {
+  return value?.replace(/-foot\b/gi, "-ft").replace(/\bfeet\b/gi, "ft");
+}
+
+/**
+ * Equipment as one item per line; when the list is too long for the box it
+ * falls back to a comma-separated paragraph before using the continuation page.
+ */
+function setEquipment(form: PdfForm, font: PDFFont, lines: string[]): ExportTextSection[] {
+  if (lines.length === 0) return [];
+  const field = getTextField(form, "EQUIPMENT");
+  const box = field && getInnerBox(field);
+  if (!box) return [];
+  const asList = lines.map((line) => ({ title: sanitizeTextForPdf(line), body: "" }));
+  const listLayout = layoutSectionsIntoBoxes(asList, [box], font, {
+    maxSize: 9,
+    minSize: 6,
+    sectionGap: false,
+  });
+  if (listLayout.overflow.length === 0) {
+    setText(form, "EQUIPMENT", listLayout.texts[0], {
+      fontSize: listLayout.fontSize,
+      allowEmpty: true,
+    });
+    return [];
+  }
+  const overflow = setSections(
+    form,
+    font,
+    ["EQUIPMENT"],
+    [{ title: "", body: lines.join(", ") }],
+    { maxSize: 8, minSize: 6 },
+  );
+  return overflow.map((section) => ({ ...section, title: "Equipment (continued)" }));
+}
+
+function spellLevelLabel(level: number): string {
+  return level === 0 ? "Cantrip" : `Level ${level}`;
+}
+
+function buildPersonalitySections(data: CharacterSheetExportData): ExportTextSection[] {
+  const { personality } = data;
+  const sections: ExportTextSection[] = [
+    { title: "Alignment:", body: data.alignment ?? "" },
+    { title: "Trait:", body: personality.trait1 },
+    { title: "Trait:", body: personality.trait2 },
+    { title: "Ideal:", body: personality.ideal },
+    { title: "Bond:", body: personality.bond },
+    { title: "Flaw:", body: personality.flaw },
+  ].filter((section) => section.body?.trim());
+  if (personality.notes?.trim()) {
+    sections.push({ title: "Backstory:", body: personality.notes });
+  }
+  return sections;
+}
+
 export async function exportCharacterSheetPdf(
   data: CharacterSheetExportData,
 ): Promise<Uint8Array> {
@@ -146,6 +297,8 @@ export async function exportCharacterSheetPdf(
   const { PDFDocument, StandardFonts } = await import("pdf-lib");
   const pdfDoc = await PDFDocument.load(templateBytes);
   const form = pdfDoc.getForm();
+  const font = await pdfDoc.embedFont(StandardFonts.Helvetica);
+  const continuation: ContinuationGroup[] = [];
 
   setText(form, "Name", data.name);
   setText(form, "Species", data.species);
@@ -238,8 +391,9 @@ export async function exportCharacterSheetPdf(
     }
   }
 
-  setText(form, "LANGUAGES", data.languages, 12);
-  setText(form, "WEAPON PROF", data.weaponProficiencies);
+  setFittedText(form, font, "LANGUAGES", data.languages, { maxSize: 10, minSize: 6 });
+  setFittedText(form, font, "WEAPON PROF", data.weaponProficiencies, { maxSize: 10, minSize: 6 });
+  setFittedText(form, font, "TOOL PROF", data.toolProficiencies, { maxSize: 10, minSize: 6 });
   if (data.armorTrainingProficiencies) {
     for (const [category, checked] of Object.entries(data.armorTrainingProficiencies)) {
       const cbName =
@@ -247,88 +401,57 @@ export async function exportCharacterSheetPdf(
       if (cbName) setCheckbox(form, cbName, checked);
     }
   }
-  setText(form, "TOOL PROF", data.toolProficiencies);
-  setText(form, "FEATS", data.feats, {
-    autoFit: { maxSize: 7, minSize: 4 },
-    disableScroll: true,
+
+  const classOverflow = setSections(
+    form,
+    font,
+    ["CLASS FEATURES 1", "CLASS FEATURES 2"],
+    data.classFeatures,
+    { maxSize: 7 },
+  );
+  const speciesOverflow = setSections(form, font, ["SPECIES TRAITS"], data.speciesTraits, {
+    maxSize: 7,
   });
-  setText(form, "CLASS FEATURES 1", data.classFeatures, {
-    autoFit: { maxSize: 7, minSize: 4 },
-    disableScroll: true,
-  });
-  setText(form, "CLASS FEATURES 2", data.classFeatures2, {
-    autoFit: { maxSize: 7, minSize: 4 },
-    disableScroll: true,
-  });
-  setText(form, "SPECIES TRAITS", data.speciesTraits, {
-    autoFit: { maxSize: 7, minSize: 4 },
-    disableScroll: true,
-  });
-  setText(form, "EQUIPMENT", data.equipment, {
-    autoFit: { maxSize: 12, minSize: 6 },
-    disableScroll: true,
-  });
+  const featOverflow = setSections(form, font, ["FEATS"], data.feats, { maxSize: 7 });
+  const equipmentOverflow = setEquipment(form, font, data.equipment);
+  const personalityOverflow = setSections(
+    form,
+    font,
+    ["PERSONALITY"],
+    buildPersonalitySections(data),
+    { maxSize: 8, sectionGap: false },
+  );
+
   setCheckbox(form, "shield chk", data.hasShield);
-  setCheckbox(form, data.alignmentCheckbox ?? "", true);
   setText(form, "GP", data.goldPieces);
 
-  data.attunementSlots.forEach((slot, index) => {
-    setText(form, `ATTUNMENT ${index + 1}`, slot);
-  });
-
   clearWeaponRows(form);
-
   data.weapons.slice(0, 6).forEach((weapon, index) => {
     const n = index + 1;
-    setText(form, `NAME - WEAPON ${n}`, weapon.name, {
-      autoFit: { maxSize: 8, minSize: 5 },
-    });
-    setText(form, `BONUS/DC - WEAPON ${n}`, weapon.attackBonus, {
-      autoFit: { maxSize: 8, minSize: 5 },
-    });
-    setText(form, `DAMAGE/TYPE - WEAPON ${n}`, weapon.damage, {
-      autoFit: { maxSize: 8, minSize: 5 },
-    });
-    setText(form, `NOTES - WEAPON ${n}`, weapon.notes, {
-      autoFit: { maxSize: 8, minSize: 5 },
-    });
+    const range = { maxSize: 8, minSize: 5 };
+    setSingleLineText(form, font, `NAME - WEAPON ${n}`, weapon.name, range);
+    setSingleLineText(form, font, `BONUS/DC - WEAPON ${n}`, weapon.attackBonus, range);
+    setSingleLineText(form, font, `DAMAGE/TYPE - WEAPON ${n}`, weapon.damage, range);
+    setSingleLineText(form, font, `NOTES - WEAPON ${n}`, weapon.notes, range);
   });
 
-  // C / R / M checkboxes per spell row, ordered top-to-bottom (index 0–28).
-  const SPELL_C_CHECKBOXES = [
-    "Check Box0",   "Check Box64",  "Check Box67",  "Check Box70",  "Check Box73",
-    "Check Box76",  "Check Box79",  "Check Box85",  "Check Box82",  "Check Box88",
-    "Check Box91",  "Check Box94",  "Check Box97",  "Check Box100", "Check Box103",
-    "Check Box106", "Check Box109", "Check Box112", "Check Box115", "Check Box118",
-    "Check Box121", "Check Box124", "Check Box127", "Check Box130", "Check Box133",
-    "Check Box136", "Check Box139", "Check Box142", "Check Box145",
-  ] as const;
-  const SPELL_R_CHECKBOXES = [
-    "Check Box59",  "Check Box65",  "Check Box68",  "Check Box71",  "Check Box74",
-    "Check Box77",  "Check Box80",  "Check Box86",  "Check Box83",  "Check Box89",
-    "Check Box92",  "Check Box95",  "Check Box98",  "Check Box101", "Check Box104",
-    "Check Box107", "Check Box110", "Check Box113", "Check Box116", "Check Box119",
-    "Check Box122", "Check Box125", "Check Box128", "Check Box131", "Check Box134",
-    "Check Box137", "Check Box140", "Check Box143", "Check Box146",
-  ] as const;
-  const SPELL_M_CHECKBOXES = [
-    "Check Box60",  "Check Box66",  "Check Box69",  "Check Box72",  "Check Box75",
-    "Check Box78",  "Check Box81",  "Check Box87",  "Check Box84",  "Check Box90",
-    "Check Box93",  "Check Box96",  "Check Box99",  "Check Box102", "Check Box105",
-    "Check Box108", "Check Box111", "Check Box114", "Check Box117", "Check Box120",
-    "Check Box123", "Check Box126", "Check Box129", "Check Box132", "Check Box135",
-    "Check Box138", "Check Box141", "Check Box144", "Check Box147",
-  ] as const;
-
-  data.spells.slice(0, 29).forEach((spell, index) => {
-    setText(form, `SPELL NAME${index}`, spell.name);
-    setText(form, `SPELL LEVEL${index}`, spell.level);
-    setText(form, `RANGE${index}`, spell.range);
-    setText(form, `CASTING TIME${index}`, spell.castingTime);
-    setText(form, `SPELL NOTES${index}`, spell.materialNotes);
-    setCheckbox(form, SPELL_C_CHECKBOXES[index], spell.isConcentration);
-    setCheckbox(form, SPELL_R_CHECKBOXES[index], spell.isRitual);
-    setCheckbox(form, SPELL_M_CHECKBOXES[index], spell.hasMaterial);
+  data.spells.slice(0, PDF_SPELL_ROWS.length).forEach((spell, index) => {
+    const row = PDF_SPELL_ROWS[index];
+    const range = { maxSize: 8, minSize: 4 };
+    setSingleLineText(form, font, `SPELL NAME${row.fieldIndex}`, spell.name, range);
+    setSingleLineText(form, font, `SPELL LEVEL${row.fieldIndex}`, String(spell.level), range);
+    setSingleLineText(form, font, `RANGE${row.fieldIndex}`, abbreviateRange(spell.range), range);
+    setSingleLineText(
+      form,
+      font,
+      `CASTING TIME${row.fieldIndex}`,
+      abbreviateCastingTime(spell.castingTime),
+      range,
+    );
+    setSingleLineText(form, font, `SPELL NOTES${row.fieldIndex}`, spell.notes, range);
+    setCheckbox(form, row.c, spell.isConcentration);
+    setCheckbox(form, row.r, spell.isRitual);
+    setCheckbox(form, row.m, spell.hasMaterial);
   });
 
   if (data.spellcastingAbility) {
@@ -345,29 +468,54 @@ export async function exportCharacterSheetPdf(
     }
   }
 
-  const personalityLines = [
-    data.personality.trait1 && `Trait 1: ${data.personality.trait1}`,
-    data.personality.trait2 && `Trait 2: ${data.personality.trait2}`,
-    data.personality.ideal && `Ideal: ${data.personality.ideal}`,
-    data.personality.bond && `Bond: ${data.personality.bond}`,
-    data.personality.flaw && `Flaw: ${data.personality.flaw}`,
-    data.personality.notes,
-  ]
-    .filter(Boolean)
-    .join("\n");
-  setText(form, "PERSONALITY", personalityLines, {
-    autoFit: { maxSize: 8, minSize: 5 },
-    disableScroll: true,
-  });
+  // ─── Continuation page content ───
+  continuation.push(
+    { heading: "Class Features", sections: classOverflow },
+    { heading: "Species Traits", sections: speciesOverflow },
+    { heading: "Feats", sections: featOverflow },
+    {
+      heading: "Weapons & Damage Cantrips",
+      sections: data.weapons.slice(6).map((weapon) => ({
+        title: weapon.name,
+        body: [weapon.attackBonus, weapon.damage, weapon.notes]
+          .filter(Boolean)
+          .join(" | "),
+      })),
+    },
+    {
+      heading: "Spells",
+      sections: data.spells.slice(PDF_SPELL_ROWS.length).map((spell) => ({
+        title: `${spell.name} (${spellLevelLabel(spell.level)})`,
+        body: [
+          spell.castingTime,
+          spell.range,
+          spell.isConcentration && "Concentration",
+          spell.isRitual && "Ritual",
+          spell.hasMaterial && "Material",
+          spell.notes,
+        ]
+          .filter(Boolean)
+          .join(" | "),
+      })),
+    },
+    { heading: "Equipment", sections: equipmentOverflow },
+    { heading: "Personality & Backstory", sections: personalityOverflow },
+  );
 
   // Regenerate appearance streams so viewers show the same text when focused
   // and unfocused (avoids "blank field on click" with long multiline content).
-  const font = await pdfDoc.embedFont(StandardFonts.Helvetica);
   form.updateFieldAppearances(font);
 
   // Set the portrait after appearance regeneration so the button image is not
   // overwritten by the text appearance provider.
   await setPortrait(pdfDoc, form, data.portraitImage);
+
+  await appendContinuationPages(pdfDoc, {
+    characterName: data.name,
+    groups: continuation,
+    regular: font,
+    bold: await pdfDoc.embedFont(StandardFonts.HelveticaBold),
+  });
 
   return pdfDoc.save();
 }
@@ -380,5 +528,6 @@ export function downloadPdf(bytes: Uint8Array, filename: string) {
   anchor.href = url;
   anchor.download = filename;
   anchor.click();
-  URL.revokeObjectURL(url);
+  // Revoking synchronously can cancel the download in some mobile browsers.
+  setTimeout(() => URL.revokeObjectURL(url), 1000);
 }

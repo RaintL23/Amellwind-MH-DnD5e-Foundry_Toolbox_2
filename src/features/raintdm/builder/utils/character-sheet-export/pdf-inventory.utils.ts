@@ -42,7 +42,7 @@ export function buildEquipmentExport(options: {
   shieldName?: string | null;
   trinket1Name?: string | null;
   trinket2Name?: string | null;
-}): string {
+}): string[] {
   const {
     items,
     mainHandName,
@@ -84,7 +84,7 @@ export function buildEquipmentExport(options: {
     pushLine(label);
   }
 
-  return lines.join("\n");
+  return lines;
 }
 
 export function hasShieldEquipped(options: {

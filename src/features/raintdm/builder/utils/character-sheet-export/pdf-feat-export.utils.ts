@@ -2,6 +2,7 @@ import type { DndFeat } from "@/shared/types";
 import { getAllDndFeats } from "@/features/dnd/feats/services/dnd-feat.service";
 import { getAllDndOptionalFeatures } from "@/features/dnd/optionalfeatures/services/dnd-optionalfeature.service";
 import type { OptionalFeatureDescMap } from "./pdf-class-features-export.utils";
+import type { ExportTextSection } from "./pdf-text-layout.utils";
 
 const GENERIC_FEAT_INTRO = /^you gain the following benefits\.?$/i;
 
@@ -70,19 +71,17 @@ export function buildFeatExportDescLookup(feats: DndFeat[]): FeatExportDescLooku
   return { byId, byName };
 }
 
-export function formatFeatExportLine(
+export function formatFeatExportSection(
   featName: string,
   featId: string,
   suffix: string,
   lookup: FeatExportDescLookup,
-): string {
+): ExportTextSection {
   const lines =
     lookup.byId.get(featId) ??
     lookup.byName.get(featName.toLowerCase()) ??
     [];
-  const headline = `${featName}${suffix}`;
-  const body = formatFeatExportBody(lines);
-  return body ? `${headline}\n${body}` : headline;
+  return { title: `${featName}${suffix}`, body: formatFeatExportBody(lines) };
 }
 
 /** Description lookups needed by the character-sheet and Foundry exports. */
