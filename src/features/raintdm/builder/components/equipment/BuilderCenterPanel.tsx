@@ -664,6 +664,12 @@ export function BuilderCenterPanel() {
           <SheetContent
             className="h-[90dvh] max-h-[90dvh]"
             aria-describedby={undefined}
+            // Focus the sheet itself, not its search box: auto-focusing an
+            // input pops the on-screen keyboard over half the list.
+            onOpenAutoFocus={(event) => {
+              event.preventDefault();
+              (event.currentTarget as HTMLElement | null)?.focus();
+            }}
           >
             <SheetHeader className="border-b border-border/60 pr-10">
               <SheetTitle className="text-sm">

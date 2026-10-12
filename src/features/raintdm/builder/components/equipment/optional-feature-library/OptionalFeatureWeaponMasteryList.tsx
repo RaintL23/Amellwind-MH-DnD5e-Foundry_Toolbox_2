@@ -142,7 +142,13 @@ export function OptionalFeatureWeaponMasteryList({
                   )}
                 </span>
               </CollapsibleTrigger>
-              <p className="mt-1 pl-5 text-[10px] leading-relaxed text-muted-foreground">
+              <p
+                className={cn(
+                  "mt-1 pl-5 text-[10px] leading-relaxed text-muted-foreground",
+                  // Collapsed groups preview the rule; opening shows it in full.
+                  !open && "line-clamp-2",
+                )}
+              >
                 {group.description}
               </p>
               <CollapsibleContent id={panelId}>
