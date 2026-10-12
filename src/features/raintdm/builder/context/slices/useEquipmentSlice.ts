@@ -3,7 +3,7 @@
  * derived AC / DPT. Enforces two-handed / dual-grip / integrated-shield rules
  * from Amellwind weapon utils.
  */
-import { useState, useCallback, useMemo } from "react";
+import { useState, useCallback, useMemo, useRef, type SetStateAction } from "react";
 import type {
   EquippedWeapon,
   EquippedArmor,
@@ -75,7 +75,16 @@ export function useEquipmentSlice({
 }: EquipmentSliceInput) {
   // ─── Equipped slots ─────────────────────────────────────────────────────────
 
-  const [mainHand, setMainHand] = useState<EquippedWeapon | null>(null);
+  const [mainHand, setMainHandState] = useState<EquippedWeapon | null>(null);
+  // Latest queued main-hand value: setters called in the same tick (snapshot
+  // restore runs equipWeapon → setWeaponMode → off-hand/shield) must see it,
+  // not the value captured by the render that created them.
+  const mainHandRef = useRef<EquippedWeapon | null>(null);
+  const setMainHand = useCallback((next: SetStateAction<EquippedWeapon | null>) => {
+    const value = typeof next === "function" ? next(mainHandRef.current) : next;
+    mainHandRef.current = value;
+    setMainHandState(value);
+  }, []);
   const [offHand, setOffHand] = useState<EquippedWeapon | null>(null);
   const [equippedShield, setEquippedShield] =
     useState<StandaloneShieldItem | null>(null);
@@ -99,15 +108,15 @@ export function useEquipmentSlice({
           setEquippedShield(null);
         }
       } else if (
-        !hasActiveIntegratedShield(mainHand) &&
-        !blocksOffHand(mainHand) &&
+        !hasActiveIntegratedShield(mainHandRef.current) &&
+        !blocksOffHand(mainHandRef.current) &&
         canEquipInOffHand(weapon)
       ) {
         setEquippedShield(null);
         setOffHand(equipped);
       }
     },
-    [mainHand],
+    [setMainHand],
   );
 
   const unequipWeapon = useCallback((slot: "mainHand" | "offHand") => {
@@ -116,7 +125,7 @@ export function useEquipmentSlice({
       setOffHand(null);
       setEquippedShield(null);
     }
-  }, []);
+  }, [setMainHand]);
 
   const setWeaponRarity = useCallback((slot: "mainHand" | "offHand", rarity: string) => {
     const setter = slot === "mainHand" ? setMainHand : setOffHand;
@@ -124,37 +133,34 @@ export function useEquipmentSlice({
       if (!prev) return prev;
       return { ...prev, ...resizeRunesForRarity(prev.runes, rarity) };
     });
-  }, []);
+  }, [setMainHand]);
 
   const setWeaponMode = useCallback(
     (slot: "mainHand" | "offHand", modeIndex: number) => {
-      const current = slot === "mainHand" ? mainHand : offHand;
+      if (slot === "offHand") {
+        setOffHand((prev) => (prev ? { ...prev, activeModeIndex: modeIndex } : prev));
+        return;
+      }
+      const current = mainHandRef.current;
       if (!current) return;
 
       const mode = getWeaponGripModeDefinition(current.weapon)?.modes[modeIndex];
-      const setter = slot === "mainHand" ? setMainHand : setOffHand;
-      setter({ ...current, activeModeIndex: modeIndex });
+      setMainHand({ ...current, activeModeIndex: modeIndex });
 
-      if (
-        slot === "mainHand" &&
-        mode &&
-        (mode.isTwoHanded || mode.blocksOffHand)
-      ) {
+      if (mode && (mode.isTwoHanded || mode.blocksOffHand)) {
         setOffHand(null);
         setEquippedShield(null);
       }
     },
-    [mainHand, offHand],
+    [setMainHand],
   );
 
-  const equipShield = useCallback(
-    (shield: StandaloneShieldItem) => {
-      if (hasActiveIntegratedShield(mainHand) || blocksOffHand(mainHand)) return;
-      setOffHand(null);
-      setEquippedShield(shield);
-    },
-    [mainHand],
-  );
+  const equipShield = useCallback((shield: StandaloneShieldItem) => {
+    const current = mainHandRef.current;
+    if (hasActiveIntegratedShield(current) || blocksOffHand(current)) return;
+    setOffHand(null);
+    setEquippedShield(shield);
+  }, []);
 
   const unequipShield = useCallback(() => setEquippedShield(null), []);
 
@@ -192,7 +198,7 @@ export function useEquipmentSlice({
     setArmor(null);
     setTrinket1(null);
     setTrinket2(null);
-  }, []);
+  }, [setMainHand]);
 
   // ─── Rune assignment ────────────────────────────────────────────────────────
 

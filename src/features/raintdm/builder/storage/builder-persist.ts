@@ -20,6 +20,7 @@ import {
   BUILDER_AUTOSAVE_VERSION,
   type BuilderAutosaveState,
 } from "./builder-autosave.storage";
+import { scheduleOriginFeatRestore } from "./origin-feat-restore";
 
 export type BuilderPersistPayload = Omit<
   BuilderAutosaveState,
@@ -131,13 +132,15 @@ export function rehydrateBuilderState(
  * are keyed by class/species/background id, so batching the reset with the
  * restore would skip reloading catalog data and grants whenever the saved build
  * shares an id with the current one. Getters return the setters bound to the
- * post-reset render.
+ * post-reset render. The origin feat is also scheduled for re-apply after the
+ * async grant loaders settle (see origin-feat-restore.ts).
  */
 export function replaceBuilderBuild(
   getBuilder: () => CharacterBuilderContextValue,
   getInventory: () => ApplyBuilderSnapshotInventory,
   payload: BuilderPersistPayload,
 ): void {
+  scheduleOriginFeatRestore(payload.snapshot);
   flushSync(() => {
     getBuilder().resetBuild();
     getBuilder().setUseAmellwindHomebrew(payload.snapshot.useAmellwindHomebrew);

@@ -1,5 +1,4 @@
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
-import type { BuilderFeatSelection } from "@/shared/types";
 import { useDebouncedValue } from "@/shared/hooks/useDebouncedValue";
 import { useCharacterBuilder } from "../context/CharacterBuilderContext";
 import { useBuilderInventory } from "../context/BuilderInventoryContext";
@@ -13,6 +12,12 @@ import {
   loadBuilderAutosave,
   persistBuilderAutosave,
 } from "../storage/builder-autosave.storage";
+import { consumeBuilderArtHandoff } from "../storage/builder-art-handoff";
+import {
+  clearPendingOriginFeatRestore,
+  getPendingOriginFeatRestore,
+  scheduleOriginFeatRestore,
+} from "../storage/origin-feat-restore";
 
 function originFeatPersistKey(payload: BuilderPersistPayload): string {
   return JSON.stringify({
@@ -22,9 +27,11 @@ function originFeatPersistKey(payload: BuilderPersistPayload): string {
   });
 }
 
-interface PendingOriginFeatRestore {
-  species: BuilderFeatSelection | null;
-  background: BuilderFeatSelection | null;
+/** True while a restored origin feat is pending and the live slot is empty. */
+function blocksEmptyOriginFeatWrite(payload: BuilderPersistPayload): boolean {
+  const pending = getPendingOriginFeatRestore();
+  if (!pending) return false;
+  return !payload.snapshot.speciesOriginFeat && !payload.snapshot.backgroundOriginFeat;
 }
 
 /**
@@ -37,9 +44,6 @@ export function BuilderAutosaveSync() {
   const inventory = useBuilderInventory();
   const hydratedRef = useRef(false);
   const lastWrittenRef = useRef<string | null>(null);
-  const pendingOriginFeatRestoreRef = useRef<PendingOriginFeatRestore | null>(
-    null,
-  );
   const [hydrationSettled, setHydrationSettled] = useState(false);
 
   useEffect(() => {
@@ -47,14 +51,17 @@ export function BuilderAutosaveSync() {
     hydratedRef.current = true;
     const saved = loadBuilderAutosave();
     if (saved) {
-      // Keep a copy so we can re-apply after async origin-feat grant loaders
-      // finish — those loaders historically raced rehydrate and wiped the pick,
-      // then autosave persisted the empty slot.
-      pendingOriginFeatRestoreRef.current = {
-        species: saved.snapshot.speciesOriginFeat,
-        background: saved.snapshot.backgroundOriginFeat,
-      };
+      // Re-applied after async origin-feat grant loaders finish — those
+      // loaders historically raced rehydrate and wiped the pick, then autosave
+      // persisted the empty slot. Import and Undo schedule the same restore.
+      scheduleOriginFeatRestore(saved.snapshot);
       rehydrateBuilderState(builder, inventory, saved);
+      // Art is not autosaved; Edit in Builder hands it off in memory.
+      const art = consumeBuilderArtHandoff();
+      if (art) {
+        builder.setPortraitImage(art.portrait);
+        builder.setTokenImage(art.token);
+      }
       lastWrittenRef.current = JSON.stringify({
         identity: saved.identity,
         core: saved.core,
@@ -67,21 +74,30 @@ export function BuilderAutosaveSync() {
     setHydrationSettled(true);
   }, [builder, inventory]);
 
-  // Re-apply saved origin feats once grants settle (covers loader races on remount).
+  // Re-apply restored origin feats until a grant-loader cycle settles with the
+  // pick in place (autosave remount, Builder JSON import, Undo).
   useEffect(() => {
     if (!hydrationSettled) return;
-    if (!builder.originFeatGrantsReady) return;
-
-    const pending = pendingOriginFeatRestoreRef.current;
+    const pending = getPendingOriginFeatRestore();
     if (!pending) return;
-    pendingOriginFeatRestoreRef.current = null;
-
-    const pendingFeat = pending.species ?? pending.background;
-    if (!pendingFeat) return;
+    if (!builder.originFeatGrantsReady) {
+      pending.sawLoading = true;
+      return;
+    }
 
     const alreadyPresent =
       !!builder.speciesOriginFeat || !!builder.backgroundOriginFeat;
-    if (alreadyPresent) return;
+    if (alreadyPresent) {
+      // A "ready" flag seen before any loading is stale (loaders flip it off
+      // after this child effect runs): keep watching until a cycle completes.
+      if (pending.sawLoading) clearPendingOriginFeatRestore();
+      return;
+    }
+    if (pending.attemptsLeft <= 0) {
+      clearPendingOriginFeatRestore();
+      return;
+    }
+    pending.attemptsLeft -= 1;
 
     if (pending.species) {
       builder.setSpeciesOriginFeat(pending.species);
@@ -108,16 +124,9 @@ export function BuilderAutosaveSync() {
     const latest = payloadRef.current;
     if (!hasBuildContent(latest)) return;
 
-    // While a remount restore is pending, do not persist an empty origin-feat
-    // slot (grant loaders may have raced). Other fields can still wait for the
-    // restore effect; the on-disk autosave still holds the good snapshot.
-    const pending = pendingOriginFeatRestoreRef.current;
-    if (pending && (pending.species || pending.background)) {
-      const liveHasOriginFeat =
-        !!latest.snapshot.speciesOriginFeat ||
-        !!latest.snapshot.backgroundOriginFeat;
-      if (!liveHasOriginFeat) return;
-    }
+    // While a restore is pending, do not persist an empty origin-feat slot
+    // (grant loaders may have raced). The on-disk autosave keeps the good one.
+    if (blocksEmptyOriginFeatWrite(latest)) return;
 
     const serialized = JSON.stringify(latest);
     if (serialized === lastWrittenRef.current) return;
@@ -132,13 +141,7 @@ export function BuilderAutosaveSync() {
     if (!hydrationSettled) return;
     if (!hasBuildContent(debounced)) return;
 
-    const pending = pendingOriginFeatRestoreRef.current;
-    if (pending && (pending.species || pending.background)) {
-      const liveHasOriginFeat =
-        !!debounced.snapshot.speciesOriginFeat ||
-        !!debounced.snapshot.backgroundOriginFeat;
-      if (!liveHasOriginFeat) return;
-    }
+    if (blocksEmptyOriginFeatWrite(debounced)) return;
 
     const serialized = JSON.stringify(debounced);
     if (serialized === lastWrittenRef.current) return;
