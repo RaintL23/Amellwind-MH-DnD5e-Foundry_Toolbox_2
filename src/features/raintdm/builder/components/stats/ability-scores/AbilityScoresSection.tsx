@@ -17,7 +17,6 @@ import {
   BASE_ABILITIES_HIGHLIGHT_KEY,
   areBaseAbilitiesUntouched,
 } from "../../../utils/build-completeness/evaluate-ability-scores.utils";
-import { CompletenessHighlightBanner } from "../../shared/CompletenessHighlightBanner";
 import { OriginBonusesPanel } from "./OriginBonusesPanel";
 import { GenerationMethodSelector } from "./GenerationMethodSelector";
 import { MethodHintPanels } from "./MethodHintPanels";
@@ -71,7 +70,7 @@ export function AbilityScoresSection({
   );
   const keyAbilities = abilityPriority.slice(0, KEY_ABILITY_COUNT);
   const { nextStep } = useBuildCompleteness();
-  const { highlighted, issues: baseIssues } = useSectionCompletenessHighlight(
+  const { highlighted } = useSectionCompletenessHighlight(
     "ability-scores",
     BASE_ABILITIES_HIGHLIGHT_KEY,
   );
@@ -123,7 +122,6 @@ export function AbilityScoresSection({
           nextBaseIssue && "border-primary/50 bg-primary/5 ring-1 ring-primary/30",
         )}
       >
-        {highlighted && <CompletenessHighlightBanner issues={baseIssues} />}
         {nextBaseIssue && (
           <p className="flex items-center gap-1 text-[11px] font-medium text-primary">
             <ArrowRight className="h-3 w-3 shrink-0" aria-hidden />
@@ -154,7 +152,7 @@ export function AbilityScoresSection({
               type="button"
               size="sm"
               variant="outline"
-              className="h-7 shrink-0 gap-1 px-2 text-[11px]"
+              className="h-7 shrink-0 gap-1 px-2 text-[11px] coarse:h-9"
               disabled={!canApplyRecommended}
               onClick={onUseRecommended}
               aria-label={`Use recommended ability scores for ${classData.name}`}

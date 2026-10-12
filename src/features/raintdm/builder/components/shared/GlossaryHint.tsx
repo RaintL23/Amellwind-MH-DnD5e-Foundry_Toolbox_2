@@ -37,7 +37,8 @@ export function GlossaryHint({
             "rounded-sm text-left focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring",
             children
               ? "cursor-help underline decoration-dotted decoration-muted-foreground/60 underline-offset-2 hover:decoration-foreground"
-              : "inline-flex h-4 w-4 items-center justify-center text-muted-foreground hover:text-foreground",
+              : // Touch: 32px hit area, negative margin keeps the 16px footprint.
+                "inline-flex h-4 w-4 items-center justify-center text-muted-foreground hover:text-foreground coarse:-m-2 coarse:h-8 coarse:w-8",
             className,
           )}
         >

@@ -2,7 +2,6 @@ import { Sparkles } from "lucide-react";
 import { cn } from "@/shared/utils/cn";
 import type { BuilderSpellSelections, Spell } from "@/shared/types";
 import { useSectionCompletenessHighlight } from "../../context/BuildCompletenessContext";
-import { CompletenessHighlightBanner } from "../shared/CompletenessHighlightBanner";
 import { formatSpellNameWithMeta } from "./SpellMetaBadges";
 import type { SpellcastingInfo } from "../../hooks/useSpellcasting";
 import { countClassCantripSelections } from "../../utils/cantrip-pools.utils";
@@ -360,7 +359,7 @@ export function SpellcastingGridPanel({
   onSelectSlot,
 }: SpellcastingGridPanelProps) {
   const { availableSpellLevels, usesUnifiedPactPool } = spellcastingInfo;
-  const { highlighted, issues: spellIssues } =
+  const { highlighted } =
     useSectionCompletenessHighlight("spells");
   const speciesSpellLevels = collectSpeciesSpellLevels(spellSelections);
   const hasSpeciesCantrips = speciesSpellLevels.includes(0);
@@ -422,7 +421,6 @@ export function SpellcastingGridPanel({
           "rounded-md border border-amber-500/60 bg-amber-500/10 p-2 ring-1 ring-amber-500/30",
       )}
     >
-      {highlighted && <CompletenessHighlightBanner issues={spellIssues} />}
       <BuilderSlotGrid>
         {gridSlots.map((entry) => {
           if (entry.kind === "class-cantrip") {

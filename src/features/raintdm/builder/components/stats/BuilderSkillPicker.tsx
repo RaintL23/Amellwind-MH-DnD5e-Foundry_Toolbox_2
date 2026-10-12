@@ -13,6 +13,7 @@ import {
   type AnyGrant,
   type ChooseGrant,
 } from "./picker-shared";
+import { PickerPillHint } from "./PickerPillHint";
 
 interface SkillPickerProps {
   /** Grants that require player input (kind = choose | any). */
@@ -131,23 +132,30 @@ export function BuilderSkillPicker({
                 ? `Your ${SOURCE_LABELS[pickerSourceType]} choice`
                 : undefined;
 
+          const blockedReason =
+            isDisabled && (coveredByHigher || pickedElsewhere)
+              ? tooltip
+              : undefined;
+
           return (
-            <button
-              key={skill}
-              type="button"
-              disabled={isDisabled}
-              title={tooltip}
-              onClick={() =>
-                handleClick(skill, isChosen, coveredByHigher, pickedElsewhere)
-              }
-              className={pickerPillClassName({
-                badgeColor,
-                isDisabled,
-                cursorDefault: coveredByHigher && !isChosen,
-              })}
-            >
-              {SKILL_LABELS[skill]}
-            </button>
+            <PickerPillHint key={skill} reason={blockedReason}>
+              <button
+                type="button"
+                disabled={isDisabled && !blockedReason}
+                aria-disabled={isDisabled || undefined}
+                title={blockedReason ? undefined : tooltip}
+                onClick={() =>
+                  handleClick(skill, isChosen, coveredByHigher, pickedElsewhere)
+                }
+                className={pickerPillClassName({
+                  badgeColor,
+                  isDisabled,
+                  cursorDefault: coveredByHigher && !isChosen,
+                })}
+              >
+                {SKILL_LABELS[skill]}
+              </button>
+            </PickerPillHint>
           );
         })}
       </div>

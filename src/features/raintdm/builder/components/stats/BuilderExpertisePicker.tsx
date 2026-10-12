@@ -89,7 +89,7 @@ export function BuilderExpertisePicker({
                       title={tooltip}
                       onClick={() => toggle(skill)}
                       className={cn(
-                        "rounded-full border px-2 py-0.5 text-[10px] font-medium transition-colors",
+                        "rounded-full border px-2 py-0.5 text-[10px] font-medium transition-colors coarse:px-3 coarse:py-1.5 coarse:text-xs",
                         isChosen &&
                           "border-violet-500 bg-violet-500/15 text-violet-600 dark:text-violet-400",
                         !isChosen && !isDisabled &&

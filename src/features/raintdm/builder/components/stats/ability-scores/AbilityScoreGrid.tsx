@@ -23,6 +23,9 @@ import {
 import type { useAbilityScoreBreakdowns } from "./useAbilityScoreBreakdowns";
 import type { useAbilityGenerationState } from "./useAbilityGenerationState";
 
+/** Touch devices get ~36px steppers; desktop keeps the dense size. */
+const STEPPER_TOUCH_CLASS = "coarse:h-9 coarse:w-9";
+
 type AbilityScoreGridProps = {
   compact: boolean;
   method: GenerationMethod;
@@ -88,8 +91,8 @@ export function AbilityScoreGrid({
               aria-label={`${label} score`}
               className={
                 compact
-                  ? "h-7 w-full max-w-[4.5rem] px-1 text-sm text-center"
-                  : "h-8 w-14 px-1 text-sm text-center"
+                  ? "h-7 w-full max-w-[4.5rem] px-1 text-sm text-center coarse:h-9"
+                  : "h-8 w-14 px-1 text-sm text-center coarse:h-9"
               }
               disabled={
                 method === "dice" &&
@@ -128,7 +131,7 @@ export function AbilityScoreGrid({
               type="button"
               variant="outline"
               size="icon"
-              className={`text-xs shrink-0 ${compact ? "h-6 w-6" : "h-7 w-7"}`}
+              className={`text-xs shrink-0 ${compact ? "h-6 w-6" : "h-7 w-7"} ${STEPPER_TOUCH_CLASS}`}
               disabled={!canDecrease}
               onClick={onDecrease}
               aria-label={`Lower ${label}`}
@@ -140,7 +143,7 @@ export function AbilityScoreGrid({
               type="button"
               variant="outline"
               size="icon"
-              className={`text-xs shrink-0 ${compact ? "h-6 w-6" : "h-7 w-7"}`}
+              className={`text-xs shrink-0 ${compact ? "h-6 w-6" : "h-7 w-7"} ${STEPPER_TOUCH_CLASS}`}
               disabled={!canIncrease}
               onClick={onIncrease}
               aria-label={`Raise ${label}`}

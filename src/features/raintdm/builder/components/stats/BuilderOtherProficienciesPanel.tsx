@@ -2,7 +2,6 @@ import { Shield, Sword, Wrench } from "lucide-react";
 import { useEffect, useState } from "react";
 import { cn } from "@/shared/utils/cn";
 import { useSectionCompletenessHighlight } from "../../context/BuildCompletenessContext";
-import { CompletenessHighlightBanner } from "../shared/CompletenessHighlightBanner";
 import {
   Accordion,
   AccordionContent,
@@ -125,7 +124,7 @@ export function BuilderOtherProficienciesPanel() {
   const showWeapons = !!selectedClass || hasWeaponPickers;
   const showTools = fixedToolItems.length > 0 || hasToolPickers;
   const hasAnyContent = showArmor || showWeapons || showTools;
-  const { highlighted, hasPending, issues: toolIssues } =
+  const { highlighted, hasPending } =
     useSectionCompletenessHighlight("tools");
   const [accordionValue, setAccordionValue] = useState<string | undefined>();
 
@@ -170,7 +169,6 @@ export function BuilderOtherProficienciesPanel() {
             </span>
           </AccordionTrigger>
           <AccordionContent className="px-3.5 pb-3.5">
-            {highlighted && <CompletenessHighlightBanner issues={toolIssues} />}
 
             {hasPickers && <BuilderSourceLegend />}
 

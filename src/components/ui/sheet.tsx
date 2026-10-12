@@ -13,6 +13,7 @@ export function SheetContent({
   children,
   side = "bottom",
   onCloseAutoFocus,
+  onInteractOutside,
   ...props
 }: RadixDialog.DialogContentProps & { side?: "bottom" | "right" }) {
   return (
@@ -28,6 +29,16 @@ export function SheetContent({
           className,
         )}
         {...props}
+        onInteractOutside={(e) => {
+          onInteractOutside?.(e);
+          // Tapping a toast (e.g. its Undo action) must not dismiss the sheet.
+          if (
+            e.target instanceof Element &&
+            e.target.closest("[data-sonner-toaster]")
+          ) {
+            e.preventDefault();
+          }
+        }}
         onCloseAutoFocus={(e) => {
           onCloseAutoFocus?.(e);
           e.preventDefault();
@@ -36,7 +47,7 @@ export function SheetContent({
       >
         <div className="mx-auto mt-2 mb-1 h-1.5 w-10 shrink-0 rounded-full bg-muted-foreground/30 md:hidden" />
         {children}
-        <RadixDialog.Close className="absolute right-3 top-3 rounded-sm opacity-70 hover:opacity-100 z-10">
+        <RadixDialog.Close className="absolute right-3 top-3 rounded-sm opacity-70 hover:opacity-100 z-10 coarse:right-1.5 coarse:top-1.5 coarse:p-2.5">
           <X className="h-4 w-4" />
           <span className="sr-only">Close</span>
         </RadixDialog.Close>

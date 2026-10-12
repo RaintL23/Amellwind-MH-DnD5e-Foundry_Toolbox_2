@@ -6,7 +6,6 @@ import { Checkbox } from "@/components/ui/checkbox";
 import { Label } from "@/components/ui/label";
 import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
 import { useSectionCompletenessHighlight } from "../../../context/BuildCompletenessContext";
-import { CompletenessHighlightBanner } from "../../shared/CompletenessHighlightBanner";
 import { GlossaryHint } from "../../shared/GlossaryHint";
 import { useCharacterBuilder } from "../../../context/CharacterBuilderContext";
 import { useSelectedSpecies } from "../../../hooks/useBuilderSelections";
@@ -187,7 +186,6 @@ export function OriginBonusesPanel({ compact }: { compact: boolean }) {
   if (hasBackgroundAsi) {
     return (
       <div className={highlightWrapperClass}>
-        {highlighted && <CompletenessHighlightBanner issues={abilityIssues} />}
         <BackgroundAsiPanel compact={compact} />
       </div>
     );
@@ -205,7 +203,6 @@ export function OriginBonusesPanel({ compact }: { compact: boolean }) {
           "border-amber-500/60 bg-amber-500/10 ring-1 ring-amber-500/30",
       )}
     >
-      {highlighted && <CompletenessHighlightBanner issues={abilityIssues} />}
       <div className="flex items-start gap-2">
         <Checkbox
           id="tasha-origin"

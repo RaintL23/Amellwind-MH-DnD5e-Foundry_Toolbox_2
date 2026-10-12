@@ -2,7 +2,6 @@ import { ShieldHalf } from "lucide-react";
 import { useEffect, useState } from "react";
 import { cn } from "@/shared/utils/cn";
 import { useSectionCompletenessHighlight } from "../../context/BuildCompletenessContext";
-import { CompletenessHighlightBanner } from "../shared/CompletenessHighlightBanner";
 import {
   Accordion,
   AccordionContent,
@@ -29,7 +28,7 @@ export function BuilderDefensesPanel() {
 
   const pending = getPendingDefenseChoiceGrants(allDefenseGrants);
   const totalCount = resolvedResistances.length + resolvedImmunities.length;
-  const { highlighted, hasPending, issues: defenseIssues } =
+  const { highlighted, hasPending } =
     useSectionCompletenessHighlight("defenses");
   const [accordionValue, setAccordionValue] = useState<string | undefined>();
 
@@ -74,7 +73,6 @@ export function BuilderDefensesPanel() {
             </span>
           </AccordionTrigger>
           <AccordionContent className="px-3.5 pb-3.5">
-            {highlighted && <CompletenessHighlightBanner issues={defenseIssues} />}
             {pending.length > 0 && <BuilderSourceLegend />}
 
             {pending.map((grant, grantIndex) => (

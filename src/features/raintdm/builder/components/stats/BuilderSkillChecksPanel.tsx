@@ -7,7 +7,6 @@ import {
   SKILL_ORDER,
 } from "@/shared/constants/dnd";
 import { useSectionCompletenessHighlight } from "../../context/BuildCompletenessContext";
-import { CompletenessHighlightBanner } from "../shared/CompletenessHighlightBanner";
 import { BuilderPanel } from "../shared/BuilderPanel";
 import { BuilderStatRow } from "./BuilderStatRow";
 import { BuilderSkillPicker } from "./BuilderSkillPicker";
@@ -139,7 +138,7 @@ export function BuilderSkillChecksPanel() {
   };
 
   const pendingExpertise = getPendingExpertiseGrants(allExpertiseGrants);
-  const { highlighted, issues: skillIssues } =
+  const { highlighted } =
     useSectionCompletenessHighlight("skills");
 
   const advantageSkills = new Set<SkillKey>(
@@ -187,7 +186,6 @@ export function BuilderSkillChecksPanel() {
         </>
       }
     >
-      {highlighted && <CompletenessHighlightBanner issues={skillIssues} />}
       {hasPickers && (
         <div className="mb-2 flex flex-wrap gap-2 text-[9px] text-muted-foreground">
           {(["species", "background", "class", "feat"] as const).map((type) => (

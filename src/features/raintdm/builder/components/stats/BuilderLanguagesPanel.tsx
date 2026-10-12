@@ -2,7 +2,6 @@ import { Languages } from "lucide-react";
 import { useEffect, useState } from "react";
 import { cn } from "@/shared/utils/cn";
 import { useSectionCompletenessHighlight } from "../../context/BuildCompletenessContext";
-import { CompletenessHighlightBanner } from "../shared/CompletenessHighlightBanner";
 import {
   Accordion,
   AccordionContent,
@@ -101,7 +100,7 @@ export function BuilderLanguagesPanel() {
   const bgGrants = pending.filter((g) => g.source.type === "background");
   const classGrants = pending.filter((g) => g.source.type === "class");
   const hasPickers = pending.length > 0;
-  const { highlighted, hasPending, issues: languageIssues } =
+  const { highlighted, hasPending } =
     useSectionCompletenessHighlight("languages");
   const [accordionValue, setAccordionValue] = useState<string | undefined>();
 
@@ -161,7 +160,6 @@ export function BuilderLanguagesPanel() {
             </span>
           </AccordionTrigger>
           <AccordionContent className="px-3.5 pb-3.5">
-            {highlighted && <CompletenessHighlightBanner issues={languageIssues} />}
             {hasPickers && <BuilderSourceLegend />}
 
             {speciesGrants.length > 0 && (

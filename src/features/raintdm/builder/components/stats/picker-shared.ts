@@ -54,7 +54,7 @@ export const PICKER_CONTAINER_CLASS =
   "mt-2 rounded-md border border-border/50 bg-muted/30 p-2";
 
 const PICKER_PILL_BASE =
-  "rounded-full border px-2 py-0.5 text-[10px] font-medium transition-colors";
+  "rounded-full border px-2 py-0.5 text-[10px] font-medium transition-colors coarse:px-3 coarse:py-1.5 coarse:text-xs";
 
 /**
  * Styling for a selectable option pill, shared across the pickers.

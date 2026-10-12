@@ -46,7 +46,6 @@ import { BuilderLibraryPanel } from "./library/BuilderLibraryPanel";
 import { BackstoryNotesPanel } from "./BackstoryNotesPanel";
 import { FactionLibraryPanel } from "./library/FactionLibraryPanel";
 import { BuilderPanel } from "../shared/BuilderPanel";
-import { NextStepCard } from "../page/NextStepCard";
 import { GlossaryHint } from "../shared/GlossaryHint";
 import { Button } from "@/components/ui/button";
 import {
@@ -200,6 +199,17 @@ export function BuilderCenterPanel() {
       ),
     [classData, subclassData, primaryClassLevel],
   );
+  const progressionNames = useMemo(
+    () =>
+      Object.fromEntries(
+        optionalProgressions.map(({ progression }) => [
+          progression.id,
+          progression.name,
+        ]),
+      ),
+    [optionalProgressions],
+  );
+  const editingSlotLabel = formatBuilderSlotLabel(selectedSlot, progressionNames);
 
   // Drop subclass if level no longer qualifies (e.g. after level-down).
   useEffect(() => {
@@ -492,8 +502,6 @@ export function BuilderCenterPanel() {
 
   return (
     <div className="flex min-w-0 flex-col gap-2.5">
-      <NextStepCard />
-
       {/* ─── Always-visible grids ─── */}
       <BuilderPanel
         sectionId="identity"
@@ -653,10 +661,16 @@ export function BuilderCenterPanel() {
           <SheetContent
             className="h-[90dvh] max-h-[90dvh]"
             aria-describedby={undefined}
+            // Focus the sheet itself, not its search box: auto-focusing an
+            // input pops the on-screen keyboard over half the list.
+            onOpenAutoFocus={(event) => {
+              event.preventDefault();
+              (event.currentTarget as HTMLElement | null)?.focus();
+            }}
           >
             <SheetHeader className="border-b border-border/60 pr-10">
               <SheetTitle className="text-sm">
-                Editing: {selectedSlot ? formatBuilderSlotLabel(selectedSlot) : ""}
+                Editing: {selectedSlot ? editingSlotLabel : ""}
               </SheetTitle>
             </SheetHeader>
             <SheetBody className="space-y-2.5 px-3 pt-3">
@@ -677,7 +691,7 @@ export function BuilderCenterPanel() {
                 tabIndex={-1}
                 className="text-[11px] font-semibold uppercase tracking-wider text-muted-foreground outline-none"
               >
-                Editing: {formatBuilderSlotLabel(selectedSlot)}
+                Editing: {editingSlotLabel}
               </h2>
               <Button
                 type="button"

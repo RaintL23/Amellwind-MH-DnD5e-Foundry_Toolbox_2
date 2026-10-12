@@ -1,38 +1,12 @@
-import { useRef, useState, type ChangeEvent, type ReactNode } from "react";
-import {
-  Dices,
-  Download,
-  FileDown,
-  FileJson,
-  RotateCcw,
-  ScrollText,
-  Upload,
-  User,
-} from "lucide-react";
+import { useState, type ReactNode } from "react";
+import { Dices, User } from "lucide-react";
 import { toast } from "sonner";
-import { useCharacterSheetExport } from "../../hooks/useCharacterSheetExport";
-import { useBuilderCharacterExport } from "../../hooks/useBuilderCharacterExport";
-import { useBuilderCharacterImport } from "../../hooks/useBuilderCharacterImport";
-import { useSendToPlaySheet } from "@/features/raintdm/character-sheet/hooks/useSendToPlaySheet";
-import { useConfirmDialog } from "@/features/raintdm/character-sheet/hooks/useConfirmDialog";
-import { useBuildCompleteness } from "../../context/BuildCompletenessContext";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Checkbox } from "@/components/ui/checkbox";
 import { Label } from "@/components/ui/label";
 import { Select } from "@/components/ui/select";
 import { Separator } from "@/components/ui/separator";
-import {
-  DropdownMenu,
-  DropdownMenuContent,
-  DropdownMenuItem,
-  DropdownMenuLabel,
-  DropdownMenuSeparator,
-  DropdownMenuSub,
-  DropdownMenuSubContent,
-  DropdownMenuSubTrigger,
-  DropdownMenuTrigger,
-} from "@/components/ui/dropdown-menu";
 import {
   Tooltip,
   TooltipContent,
@@ -42,27 +16,33 @@ import {
 import { cn } from "@/shared/utils/cn";
 import { useCharacterBuilder } from "../../context/CharacterBuilderContext";
 import { useBuilderUiMode } from "../../context/BuilderUiModeContext";
-import { useCharacterRandomizer } from "../../hooks/useCharacterRandomizer";
 import { pickRandomCharacterName } from "../../utils/randomizer/identity-randomizer.utils";
 import {
-  formatAlignmentLabel,
   parseAlignmentAxes,
 } from "../../utils/alignment.utils";
 import { getFeatSlotLevels } from "../../utils/builder-class.utils";
 import { AbilityScoresSection } from "./ability-scores/AbilityScoresSection";
 import { BuilderPanel } from "../shared/BuilderPanel";
-import { CompletenessHighlightBanner } from "../shared/CompletenessHighlightBanner";
 import { ConfirmActionDialog } from "../shared/ConfirmActionDialog";
 import { MulticlassPanel } from "./MulticlassPanel";
 import { NumberStepper } from "../shared";
-import type { BuildCompletenessIssue } from "../../utils/build-completeness.types";
 
-// Set to true to re-enable Foundry VTT JSON export/import once the exporter is ready.
-const FOUNDRY_JSON_UI_ENABLED = false;
-
-const ICON_BUTTON_CLASS = "h-9 w-9 shrink-0 lg:h-7 lg:w-7";
-const FOUNDRY_DISABLED_TITLE =
-  "Temporarily unavailable while the Foundry exporter is being improved";
+function ActionTooltipContent({
+  title,
+  description,
+}: {
+  title: string;
+  description: string;
+}) {
+  return (
+    <TooltipContent side="bottom" className="max-w-56 space-y-0.5">
+      <p className="text-xs font-semibold">{title}</p>
+      <p className="text-[11px] leading-snug text-muted-foreground">
+        {description}
+      </p>
+    </TooltipContent>
+  );
+}
 
 function SectionHeading({ children }: { children: ReactNode }) {
   return (
@@ -89,32 +69,9 @@ function FieldLabel({
   );
 }
 
-function ActionTooltipContent({
-  title,
-  description,
-}: {
-  title: string;
-  description: string;
-}) {
-  return (
-    <TooltipContent side="bottom" className="max-w-56 space-y-0.5">
-      <p className="text-xs font-semibold">{title}</p>
-      <p className="text-[11px] leading-snug text-muted-foreground">
-        {description}
-      </p>
-    </TooltipContent>
-  );
-}
-
-const MENU_LABEL_CLASS =
-  "px-2 py-1 text-[10px] font-semibold uppercase tracking-wide text-muted-foreground";
-
 type PendingConfirm =
-  | { kind: "reset" }
-  | { kind: "randomize" }
   | { kind: "level"; nextLevel: number; lostFeatSlots: number }
-  | { kind: "multiclass-off" }
-  | { kind: "import"; file: File };
+  | { kind: "multiclass-off" };
 
 export function StatsPanel() {
   const {
@@ -124,52 +81,17 @@ export function StatsPanel() {
     setLawChaosAlignment,
     setGoodEvilAlignment,
     setLevel,
-    resetBuild,
     multiclassEnabled,
     setMulticlassEnabled,
     featSelections,
     class: classSelection,
     species,
   } = useCharacterBuilder();
-  const { randomize, isRandomizing, canRandomize } = useCharacterRandomizer();
   const { isSimple } = useBuilderUiMode();
-  const {
-    exportSheet,
-    exporting,
-    error: exportError,
-  } = useCharacterSheetExport();
-  const { exportCharacter, error: builderExportError } =
-    useBuilderCharacterExport();
-  const { confirm, confirmDialog } = useConfirmDialog();
-  const {
-    busy: sendingToSheet,
-    sendNew,
-    updateExisting,
-    linkedId,
-  } = useSendToPlaySheet(confirm);
-  const {
-    importFromFile: importBuilderFromFile,
-    importing: importingBuilder,
-    error: builderImportError,
-    summary: builderImportSummary,
-    clearResult: clearBuilderImport,
-  } = useBuilderCharacterImport();
-  const builderFileInputRef = useRef<HTMLInputElement>(null);
-  const {
-    evaluate,
-    activateHighlight,
-    clearHighlight,
-    highlightActive,
-    issues,
-    goToIssue,
-    liveResult,
-  } = useBuildCompleteness();
   const { lawChaos, goodEvil } = parseAlignmentAxes(character.alignment);
-  const alignmentLabel = formatAlignmentLabel(lawChaos, goodEvil);
   const [pendingConfirm, setPendingConfirm] = useState<PendingConfirm | null>(
     null,
   );
-  const buildHasStarted = liveResult.hasStarted;
   const [rollingName, setRollingName] = useState(false);
 
   async function handleRandomName() {
@@ -219,15 +141,6 @@ export function StatsPanel() {
   function runPendingConfirm() {
     if (!pendingConfirm) return;
     switch (pendingConfirm.kind) {
-      case "reset":
-        clearHighlight();
-        resetBuild();
-        toast.message("Build reset");
-        break;
-      case "randomize":
-        clearHighlight();
-        void randomize().then(() => toast.message("Character randomized"));
-        break;
       case "level":
         setLevel(pendingConfirm.nextLevel);
         toast.message(
@@ -240,88 +153,11 @@ export function StatsPanel() {
         setMulticlassEnabled(false);
         toast.message("Multiclass disabled");
         break;
-      case "import":
-        clearHighlight();
-        void importBuilderFromFile(pendingConfirm.file);
-        break;
     }
-  }
-
-  /** Jump to the first pending choice and name it, instead of only counting. */
-  function showBlockingIssues(issues: BuildCompletenessIssue[], action: string) {
-    activateHighlight();
-    const [first] = issues;
-    if (!first) return;
-    goToIssue(first);
-    const left =
-      issues.length === 1 ? "1 choice left" : `${issues.length} choices left`;
-    toast.error(`Finish your character before ${action}`, {
-      description: `${left}. Next: ${first.message}`,
-    });
-  }
-
-  async function handleExportPdf() {
-    const result = evaluate();
-    if (result.shouldBlockExport) {
-      showBlockingIssues(result.issues, "downloading the PDF");
-      return;
-    }
-    clearHighlight();
-    await exportSheet();
-  }
-
-  function ensureBuildReadyToSend(): boolean {
-    const result = evaluate();
-    if (!result.hasStarted) {
-      toast.error("Build a character before sending to Character Sheet");
-      return false;
-    }
-    if (result.shouldBlockExport) {
-      showBlockingIssues(result.issues, "sending it to the Character Sheet");
-      return false;
-    }
-    clearHighlight();
-    return true;
-  }
-
-  function handleSendToSheet() {
-    if (!ensureBuildReadyToSend()) return;
-    void sendNew();
-  }
-
-  function handleUpdateLinkedSheet() {
-    if (!ensureBuildReadyToSend()) return;
-    void updateExisting();
-  }
-
-  function handleBuilderFileSelected(event: ChangeEvent<HTMLInputElement>) {
-    const file = event.target.files?.[0];
-    event.target.value = "";
-    if (!file) return;
-    if (buildHasStarted) {
-      setPendingConfirm({ kind: "import", file });
-      return;
-    }
-    clearHighlight();
-    void importBuilderFromFile(file);
   }
 
   const confirmCopy =
-    pendingConfirm?.kind === "reset"
-      ? {
-          title: "Reset character?",
-          description:
-            "This clears the entire build and cannot be undone. Autosave will be wiped.",
-          confirmLabel: "Reset build",
-        }
-      : pendingConfirm?.kind === "randomize"
-        ? {
-            title: "Randomize character?",
-            description:
-              "This replaces your current choices with a randomized build at the same level.",
-            confirmLabel: "Randomize",
-          }
-        : pendingConfirm?.kind === "level"
+    pendingConfirm?.kind === "level"
           ? {
               title: `Lower level to ${pendingConfirm.nextLevel}?`,
               description:
@@ -338,12 +174,6 @@ export function StatsPanel() {
                   "Additional class entries will be cleared and total level stays on your primary class.",
                 confirmLabel: "Disable multiclass",
               }
-            : pendingConfirm?.kind === "import"
-              ? {
-                  title: "Replace current character?",
-                  description: `Loading "${pendingConfirm.file.name}" replaces the entire current build. Download it as Builder JSON first if you want to keep it.`,
-                  confirmLabel: "Load character",
-                }
               : null;
 
   return (
@@ -355,223 +185,10 @@ export function StatsPanel() {
             <User className="h-3.5 w-3.5" aria-hidden /> Character
           </>
         }
-        action={
-          <div className="ml-auto flex items-center gap-0.5">
-            <DropdownMenu>
-              <Tooltip>
-                <TooltipTrigger asChild>
-                  <DropdownMenuTrigger asChild>
-                    <Button
-                      type="button"
-                      variant="ghost"
-                      size="icon"
-                      className={ICON_BUTTON_CLASS}
-                      disabled={exporting}
-                      aria-label="Download character"
-                    >
-                      <Download className="h-3.5 w-3.5" aria-hidden />
-                    </Button>
-                  </DropdownMenuTrigger>
-                </TooltipTrigger>
-                <ActionTooltipContent
-                  title="Download / save"
-                  description="Export this character as a printable PDF sheet or a JSON file you can load later, or send it to the Character Sheet."
-                />
-              </Tooltip>
-              <DropdownMenuContent align="end" className="text-xs">
-                <DropdownMenuLabel className={MENU_LABEL_CLASS}>
-                  Save this character as…
-                </DropdownMenuLabel>
-                <DropdownMenuSeparator />
-                <DropdownMenuItem
-                  className="gap-2 text-xs"
-                  disabled={exporting}
-                  onSelect={() => void handleExportPdf()}
-                >
-                  <FileDown className="h-3.5 w-3.5 shrink-0" aria-hidden />
-                  D&amp;D Character Sheet PDF
-                </DropdownMenuItem>
-                <DropdownMenuSub>
-                  <DropdownMenuSubTrigger className="gap-2 text-xs">
-                    <FileJson className="h-3.5 w-3.5 shrink-0" aria-hidden />
-                    JSON
-                  </DropdownMenuSubTrigger>
-                  <DropdownMenuSubContent className="text-xs">
-                    <DropdownMenuItem
-                      className="gap-2 text-xs"
-                      onSelect={() => exportCharacter()}
-                    >
-                      <FileDown className="h-3.5 w-3.5 shrink-0" aria-hidden />
-                      Download Builder JSON
-                    </DropdownMenuItem>
-                    <DropdownMenuItem
-                      className="gap-2 text-xs"
-                      disabled={sendingToSheet}
-                      onSelect={handleSendToSheet}
-                    >
-                      <ScrollText className="h-3.5 w-3.5 shrink-0" aria-hidden />
-                      Send to Character Sheet
-                    </DropdownMenuItem>
-                    {linkedId ? (
-                      <DropdownMenuItem
-                        className="gap-2 text-xs"
-                        disabled={sendingToSheet}
-                        onSelect={handleUpdateLinkedSheet}
-                      >
-                        <ScrollText className="h-3.5 w-3.5 shrink-0" aria-hidden />
-                        Update linked Sheet
-                      </DropdownMenuItem>
-                    ) : null}
-                    <DropdownMenuItem
-                      className="gap-2 text-xs text-muted-foreground"
-                      disabled={!FOUNDRY_JSON_UI_ENABLED}
-                      title={FOUNDRY_DISABLED_TITLE}
-                    >
-                      <FileDown className="h-3.5 w-3.5 shrink-0" aria-hidden />
-                      Download Foundry VTT JSON
-                    </DropdownMenuItem>
-                  </DropdownMenuSubContent>
-                </DropdownMenuSub>
-              </DropdownMenuContent>
-            </DropdownMenu>
-
-            <DropdownMenu>
-              <Tooltip>
-                <TooltipTrigger asChild>
-                  <DropdownMenuTrigger asChild>
-                    <Button
-                      type="button"
-                      variant="ghost"
-                      size="icon"
-                      className={ICON_BUTTON_CLASS}
-                      disabled={importingBuilder}
-                      aria-label="Import character"
-                    >
-                      <Upload className="h-3.5 w-3.5" aria-hidden />
-                    </Button>
-                  </DropdownMenuTrigger>
-                </TooltipTrigger>
-                <ActionTooltipContent
-                  title="Import / load"
-                  description="Load a character you saved earlier as a Builder JSON file. It replaces the current build."
-                />
-              </Tooltip>
-              <DropdownMenuContent align="end" className="text-xs">
-                <DropdownMenuLabel className={MENU_LABEL_CLASS}>
-                  Load or send a character
-                </DropdownMenuLabel>
-                <DropdownMenuSeparator />
-                <DropdownMenuItem
-                  className="gap-2 text-xs"
-                  disabled={importingBuilder}
-                  onSelect={() => builderFileInputRef.current?.click()}
-                >
-                  <FileJson className="h-3.5 w-3.5 shrink-0" aria-hidden />
-                  Builder JSON
-                </DropdownMenuItem>
-                <DropdownMenuItem
-                  className="gap-2 text-xs"
-                  disabled={sendingToSheet}
-                  onSelect={handleSendToSheet}
-                >
-                  <ScrollText className="h-3.5 w-3.5 shrink-0" aria-hidden />
-                  Send to Character Sheet
-                </DropdownMenuItem>
-                {linkedId ? (
-                  <DropdownMenuItem
-                    className="gap-2 text-xs"
-                    disabled={sendingToSheet}
-                    onSelect={handleUpdateLinkedSheet}
-                  >
-                    <ScrollText className="h-3.5 w-3.5 shrink-0" aria-hidden />
-                    Update linked Sheet
-                  </DropdownMenuItem>
-                ) : null}
-                <DropdownMenuItem
-                  className="gap-2 text-xs text-muted-foreground"
-                  disabled={!FOUNDRY_JSON_UI_ENABLED}
-                  title={FOUNDRY_DISABLED_TITLE}
-                >
-                  <FileJson className="h-3.5 w-3.5 shrink-0" aria-hidden />
-                  Foundry VTT JSON
-                </DropdownMenuItem>
-              </DropdownMenuContent>
-            </DropdownMenu>
-
-            <input
-              ref={builderFileInputRef}
-              type="file"
-              accept="application/json,.json"
-              className="hidden"
-              onChange={handleBuilderFileSelected}
-              aria-hidden
-            />
-
-            <Separator orientation="vertical" className="mx-0.5 h-4" />
-
-            <Tooltip>
-              <TooltipTrigger asChild>
-                <Button
-                  type="button"
-                  variant="ghost"
-                  size="icon"
-                  className={ICON_BUTTON_CLASS}
-                  onClick={() => {
-                    if (buildHasStarted) setPendingConfirm({ kind: "reset" });
-                    else {
-                      clearHighlight();
-                      resetBuild();
-                    }
-                  }}
-                  aria-label="Reset character"
-                >
-                  <RotateCcw className="h-3.5 w-3.5" aria-hidden />
-                </Button>
-              </TooltipTrigger>
-              <ActionTooltipContent
-                title="Reset character"
-                description="Clear every choice and start a new character from scratch."
-              />
-            </Tooltip>
-            <Tooltip>
-              <TooltipTrigger asChild>
-                <Button
-                  type="button"
-                  variant="ghost"
-                  size="icon"
-                  className={ICON_BUTTON_CLASS}
-                  disabled={!canRandomize || isRandomizing}
-                  onClick={() => {
-                    if (buildHasStarted)
-                      setPendingConfirm({ kind: "randomize" });
-                    else {
-                      clearHighlight();
-                      void randomize();
-                    }
-                  }}
-                  aria-label="Randomize character"
-                >
-                  <Dices
-                    className={cn(
-                      "h-3.5 w-3.5",
-                      isRandomizing && "animate-spin",
-                    )}
-                    aria-hidden
-                  />
-                </Button>
-              </TooltipTrigger>
-              <ActionTooltipContent
-                title="Randomize character"
-                description="Generate a complete random build (species, class, background, stats, gear and name) at the current level."
-              />
-            </Tooltip>
-          </div>
-        }
       >
         <div className="space-y-4">
           {/* ─── Identity ─── */}
           <section className="space-y-2.5">
-            <SectionHeading>Identity</SectionHeading>
             <div className="space-y-1">
               <FieldLabel htmlFor="character-name">Name</FieldLabel>
               <div className="flex items-center gap-1">
@@ -645,17 +262,6 @@ export function StatsPanel() {
                   />
                 </div>
               </div>
-            </div>
-          </section>
-
-          <AbilityScoresSection compact />
-
-          <Separator className="my-4" />
-
-          {/* ─── Alignment ─── */}
-          <section className="space-y-2">
-            <SectionHeading>Alignment: {alignmentLabel}</SectionHeading>
-            <div className="grid grid-cols-2 gap-2">
               <div className="space-y-1">
                 <FieldLabel htmlFor="alignment-law-chaos">
                   Law / Chaos
@@ -695,6 +301,10 @@ export function StatsPanel() {
             </div>
           </section>
 
+          <Separator />
+
+          <AbilityScoresSection compact />
+
           {/* ─── Class progression (advanced; always shown while in use) ─── */}
           {(!isSimple || multiclassEnabled) && (
             <section className="space-y-2">
@@ -726,62 +336,6 @@ export function StatsPanel() {
               <MulticlassPanel />
             </section>
           )}
-
-          {(highlightActive && issues.length > 0) ||
-          exportError ||
-          builderExportError ||
-          importingBuilder ||
-          builderImportError ||
-          builderImportSummary ? (
-            <div className="space-y-1.5">
-              {highlightActive && issues.length > 0 && (
-                <CompletenessHighlightBanner
-                  issues={issues}
-                  onIssueClick={goToIssue}
-                />
-              )}
-              {exportError && (
-                <p className="text-[11px] text-destructive">{exportError}</p>
-              )}
-              {builderExportError && (
-                <p className="text-[11px] text-destructive">
-                  {builderExportError}
-                </p>
-              )}
-              {importingBuilder && (
-                <p className="text-[11px] text-muted-foreground">
-                  Importing Builder JSON…
-                </p>
-              )}
-              {builderImportError && (
-                <p className="text-[11px] text-destructive">
-                  {builderImportError}
-                </p>
-              )}
-              {builderImportSummary && (
-                <div className="space-y-1 rounded border border-border bg-muted/40 p-2 text-[11px]">
-                  <div className="flex items-center justify-between gap-2">
-                    <span className="font-medium text-foreground">
-                      Loaded: {builderImportSummary.name}
-                      {builderImportSummary.className &&
-                        ` · ${builderImportSummary.className}`}
-                      {builderImportSummary.speciesName &&
-                        ` · ${builderImportSummary.speciesName}`}
-                      {` · Lv ${builderImportSummary.level}`}
-                      {builderImportSummary.restoredArt && " · portrait/token"}
-                    </span>
-                    <button
-                      type="button"
-                      className="text-muted-foreground underline-offset-2 hover:underline"
-                      onClick={clearBuilderImport}
-                    >
-                      Close
-                    </button>
-                  </div>
-                </div>
-              )}
-            </div>
-          ) : null}
         </div>
       </BuilderPanel>
 
@@ -800,7 +354,6 @@ export function StatsPanel() {
           onConfirm={runPendingConfirm}
         />
       )}
-      {confirmDialog}
     </TooltipProvider>
   );
 }

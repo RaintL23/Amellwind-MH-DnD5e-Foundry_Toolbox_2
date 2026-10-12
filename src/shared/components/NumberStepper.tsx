@@ -21,7 +21,8 @@ export function NumberStepper({
   title?: string;
   disabled?: boolean;
 }) {
-  const buttonClass = size === "sm" ? "h-6 w-6 text-xs" : "h-7 w-7 text-xs";
+  // Touch devices get ~36px buttons; desktop keeps the dense size.
+  const buttonClass = `${size === "sm" ? "h-6 w-6" : "h-7 w-7"} text-xs coarse:h-9 coarse:w-9`;
   const valueClass =
     size === "sm"
       ? "w-6 text-center text-base font-medium text-foreground tabular-nums"
