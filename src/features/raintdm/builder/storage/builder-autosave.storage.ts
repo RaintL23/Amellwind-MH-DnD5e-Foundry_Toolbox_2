@@ -87,17 +87,36 @@ const ABILITY_KEYS = ["str", "dex", "con", "int", "wis", "cha"] as const;
 /**
  * Validates identity/core/multiclass/snapshot of a persisted build and fills
  * defaults for missing optional pieces. Returns null when the shape is not a
- * restorable build (wrong snapshot version, missing sections).
+ * restorable build (wrong snapshot version, missing sections). Repairs are
+ * described in `warnings` when provided.
  */
 export function normalizeBuilderPersistedBuild(
   raw: UnknownRecord,
+  warnings?: string[],
 ): BuilderPersistedBuild | null {
-  const snapshot = normalizeBuilderSnapshot(raw.snapshot);
+  const snapshot = normalizeBuilderSnapshot(raw.snapshot, warnings);
   if (!snapshot) return null;
   if (!isRecord(raw.identity) || !isRecord(raw.core)) return null;
 
+  const warn = (message: string) => warnings?.push(message);
+  const ref = (value: unknown, label: string) => {
+    const normalized = normalizeSelectionRef(value);
+    if (!normalized && value !== null && value !== undefined) {
+      warn(`${label}: invalid reference (needs "id" and "name") was dropped.`);
+    }
+    return normalized;
+  };
   const identity = raw.identity;
   const core = raw.core;
+  for (const key of ABILITY_KEYS) {
+    const value = isRecord(core.abilities) ? core.abilities[key] : undefined;
+    if (typeof value !== "number" || value < 1 || value > 30) {
+      warn(`Ability score ${key.toUpperCase()}: invalid value ${JSON.stringify(value) ?? "missing"}, adjusted.`);
+    }
+  }
+  if (typeof core.level !== "number" || core.level < 1 || core.level > 20) {
+    warn(`Level: invalid value ${JSON.stringify(core.level) ?? "missing"}, adjusted.`);
+  }
   const multiclass = isRecord(raw.multiclass) ? raw.multiclass : {};
   const rawAbilities = isRecord(core.abilities) ? core.abilities : {};
 
@@ -107,18 +126,18 @@ export function normalizeBuilderPersistedBuild(
 
   const entries: BuilderMulticlassEntry[] = Array.isArray(multiclass.entries)
     ? multiclass.entries.filter(isRecord).map((entry) => ({
-        classRef: normalizeSelectionRef(entry.classRef),
-        subclass: normalizeSelectionRef(entry.subclass),
+        classRef: ref(entry.classRef, "Multiclass class"),
+        subclass: ref(entry.subclass, "Multiclass subclass"),
         level: clampInt(entry.level, 0, 19, 1),
       }))
     : [];
 
   return {
     identity: {
-      class: normalizeSelectionRef(identity.class),
-      subclass: normalizeSelectionRef(identity.subclass),
-      species: normalizeSelectionRef(identity.species),
-      background: normalizeSelectionRef(identity.background),
+      class: ref(identity.class, "Class"),
+      subclass: ref(identity.subclass, "Subclass"),
+      species: ref(identity.species, "Species"),
+      background: ref(identity.background, "Background"),
     },
     core: {
       name: typeof core.name === "string" ? core.name : "Hunter",

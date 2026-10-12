@@ -32,6 +32,7 @@ import { RpgbotRatingsProvider } from "../../context/RpgbotRatingsContext";
 import { XanatharBackstoryProvider } from "@/features/dnd/xanathar-backstory/context/XanatharBackstoryContext";
 import { useMediaQuery } from "@/shared/hooks/useMediaQuery";
 import { BuilderGrantSync } from "../BuilderGrantSync";
+import { BuilderExportCacheSync } from "../BuilderExportCacheSync";
 
 export function BuilderPage() {
   return (
@@ -58,6 +59,7 @@ function BuilderPageContent() {
   return (
     <div className="flex h-full min-h-0 flex-col">
       <BuilderGrantSync />
+      <BuilderExportCacheSync />
       {/* Mobile folds these controls into the progress bar's settings menu. */}
       {!isMobileLayout && <BuilderHeader />}
       {isMobileLayout ? <BuilderMobileLayout /> : <BuilderDesktopLayout />}

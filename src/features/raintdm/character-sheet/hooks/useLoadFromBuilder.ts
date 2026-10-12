@@ -8,6 +8,7 @@ import {
   loadBuilderExportGate,
 } from "@/features/raintdm/builder/storage/builder-export-gate.storage";
 import { hasBuildContent } from "@/features/raintdm/builder/storage/builder-persist";
+import { loadBuilderExportCache } from "@/features/raintdm/builder/storage/builder-export-cache.storage";
 import { createPlayCharacterRecord } from "../compile/compile-play-character";
 import { savePlayCharacter } from "../services/play-character.service";
 import { setLinkedSheetId } from "../utils/linked-sheet.storage";
@@ -40,11 +41,30 @@ export function useLoadFromBuilder() {
 
     setBusy(true);
     try {
-      const json = builderCharacterJsonFromPersistedBuild(saved);
+      // Provenance/derived come from the Builder's export cache when it matches
+      // this autosave; without them the sheet lacks languages and proficiencies.
+      const cache = loadBuilderExportCache(saved);
+      const json = builderCharacterJsonFromPersistedBuild(
+        saved,
+        cache
+          ? {
+              provenance: cache.provenance,
+              derived: cache.derived,
+              completeness: cache.meta,
+            }
+          : undefined,
+      );
       const record = await createPlayCharacterRecord(json);
       await savePlayCharacter(record);
       setLinkedSheetId(record.id);
-      toast.success(`Loaded ${record.compiled.name} from Builder`);
+      if (cache) {
+        toast.success(`Loaded ${record.compiled.name} from Builder`);
+      } else {
+        toast.warning(`Loaded ${record.compiled.name} from Builder`, {
+          description:
+            "Some details (languages, proficiencies, final scores) may be missing. Open the Builder and use Send to Character Sheet for a complete sheet.",
+        });
+      }
       navigate(`/sheet/${record.id}`);
     } catch (e) {
       toast.error(

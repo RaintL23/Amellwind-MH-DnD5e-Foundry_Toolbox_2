@@ -1,0 +1,103 @@
+{
+  "kind": "amellwind-builder-character",
+  "version": 1,
+  "snapshotVersion": 1,
+  "exportedAt": "2026-05-01T10:00:00.000Z",
+  "identity": {
+    "class": { "id": "XPHB::Fighter", "name": "Fighter", "subraceId": null, "subraceName": null },
+    "subclass": { "id": "XPHB::Champion", "name": "Champion", "subraceId": null, "subraceName": null },
+    "species": { "id": "Human::XPHB", "name": "Human", "subraceId": null, "subraceName": null },
+    "background": { "id": "Soldier::XPHB", "name": "Soldier", "subraceId": null, "subraceName": null }
+  },
+  "core": {
+    "name": "Aria",
+    "size": "M",
+    "alignment": ["L", "G"],
+    "level": 5,
+    "abilities": { "str": 15, "dex": 14, "con": 13, "int": 8, "wis": 12, "cha": 10 }
+  },
+  "multiclass": { "enabled": false, "entries": [], "primaryClassLevel": 5 },
+  "snapshot": {
+    "version": 1,
+    "useAmellwindHomebrew": false,
+    "abilityScoreMethod": "standard",
+    "useUnarmedStrike": false,
+    "attacksPerTurnOverride": null,
+    "faction": null,
+    "personality": { "trait1": "Stubborn", "trait2": "", "ideal": "", "bond": "", "flaw": "" },
+    "backstoryNotes": "Veteran of the border wars.",
+    "featSelections": [
+      { "id": "Great Weapon Master::XPHB", "name": "Great Weapon Master", "source": "dnd2024" }
+    ],
+    "speciesOriginFeat": null,
+    "backgroundOriginFeat": { "id": "Savage Attacker::XPHB", "name": "Savage Attacker", "source": "dnd2024" },
+    "optionalFeatureOriginFeats": [],
+    "originFeatSkillChoices": [],
+    "optionalFeatureOriginFeatSkillChoices": {},
+    "optionalFeatureSelections": {
+      "class_XPHB__Fighter_FS": [
+        { "id": "Defense::XPHB", "name": "Defense", "source": "XPHB", "progressionId": "class_XPHB__Fighter_FS", "featureTypes": ["FS:F"] }
+      ]
+    },
+    "speciesSpellGroupChoice": null,
+    "speciesTraitChoices": {},
+    "useTashaOrigin": false,
+    "tashaPlus2": null,
+    "tashaPlus1": null,
+    "speciesAbilityChoices": [],
+    "backgroundAsiMode": "plus2plus1",
+    "backgroundAsiPlus2": "str",
+    "backgroundAsiPlus1": "con",
+    "classSkillChoices": { "0": ["ath", "prc"] },
+    "backgroundSkillChoices": [],
+    "speciesSkillChoices": ["ins"],
+    "featSkillChoices": {},
+    "expertiseChoices": {},
+    "classToolChoices": {},
+    "backgroundToolChoices": [],
+    "speciesToolChoices": [],
+    "speciesWeaponChoices": [],
+    "classWeaponChoices": {},
+    "featWeaponChoices": {},
+    "featToolChoices": {},
+    "classLanguageChoices": {},
+    "backgroundLanguageChoices": ["Dwarvish"],
+    "speciesLanguageChoices": [],
+    "speciesDefenseChoices": {},
+    "spellSelections": {},
+    "equipment": {
+      "mainHand": null,
+      "offHand": null,
+      "armor": null,
+      "shield": null,
+      "trinket1": null,
+      "trinket2": null,
+      "inventory": [{ "name": "Rope (50 feet)", "cost": "1 gp", "weight": "10 lb.", "quantity": 1 }]
+    }
+  },
+  "provenance": {
+    "summary": "Human · Fighter 5 (Champion) · Soldier",
+    "totalLevel": 5,
+    "classes": [{ "name": "Fighter", "subclass": "Champion", "level": 5, "primary": true, "features": [] }],
+    "species": { "name": "Human", "traits": ["Resourceful"], "spellGroupChoice": null },
+    "background": { "name": "Soldier", "faction": null },
+    "abilityScores": {
+      "method": "standard",
+      "base": { "str": 15, "dex": 14, "con": 13, "int": 8, "wis": 12, "cha": 10 },
+      "final": { "str": 17, "dex": 14, "con": 14, "int": 8, "wis": 12, "cha": 10 },
+      "originBonuses": ["Background: STR +2", "Background: CON +1"]
+    },
+    "feats": [],
+    "optionalFeatures": [{ "name": "Defense", "grantedBy": ["Fighter: Fighting Style"] }],
+    "savingThrows": ["str", "con"],
+    "skills": [{ "skill": "ath", "name": "Athletics", "grantedBy": ["Background: Soldier"], "expertise": null }],
+    "tools": [],
+    "languages": [{ "name": "Common", "grantedBy": ["Species: Human"] }],
+    "armor": [],
+    "weapons": [],
+    "defenses": [],
+    "spells": [],
+    "grantedSpells": [],
+    "equipment": [{ "slot": "Armor", "name": "Chain Mail", "rarity": "Standard", "runes": [] }]
+  }
+}

@@ -150,12 +150,38 @@ Clase, especie y trasfondo se exigen siempre que el build haya empezado (no solo
 
 #### Builder JSON (export / import nativo)
 
-Menú JSON del `StatsPanel` → **Download Builder JSON** / **Import → Builder JSON** (`builder-json/`, hooks `useBuilderCharacterExport` / `useBuilderCharacterImport`). Pensado para guardar y recargar player characters sin pérdida.
+Menú JSON del `StatsPanel` → **Download Builder JSON** / **Import → Builder JSON** (`builder-json/`, hooks `useBuilderCharacterExport` / `useBuilderCharacterImport`; el sobre completo lo arma `useBuilderCharacterJson`, compartido con Send to Character Sheet y el cache de Load from Builder). Pensado para guardar y recargar player characters sin pérdida, y para que otras herramientas lo procesen sin la lógica del Builder.
 
-- **Sobre** (`BuilderCharacterJson`, `kind: "amellwind-builder-character"`, `version` 1, `snapshotVersion` 1): `identity` (refs class/subclass/species/background) + `core` (nombre, tamaño, alineamiento, nivel total, ability scores base) + `multiclass` + `snapshot` (`BuilderChoiceSnapshot`, el mismo que usan el autosave y el flag Foundry) + `art` opcional (retrato/token data URL) + `exportedAt`.
-- **Snapshot**: todas las decisiones — homebrew, método ASI, facción, personalidad, **backstory**, feats (con `asiChoices` / `abilityIncreaseChoices` / `spellListClassChoice`), origin feats, optional features por progresión, Tasha / species / background ASI, skills / expertise / tools / **armas de especie** / idiomas / defensas elegidas, hechizos por pool, equipo exacto (rareza, modo de arma, runas) e inventario.
-- **`provenance`** (solo lectura, se regenera en cada export y se **ignora** al importar): explica por qué el personaje tiene cada cosa — clases con features por nivel (`from` clase/subclase), feats con su slot (`Level 4 … feat slot`, `Origin feat from background (…)`, `Origin feat granted by <optional feature>`), optional features (`Fighter: Fighting Style`), skills/tools/idiomas/armaduras/armas/defensas con sus fuentes (`Class: Fighter`, `Species: Elf`, …), saves, hechizos con su pool (clase, pacto, linaje de especie, pool de dote), hechizos otorgados, bonos de origen, scores base vs finales y equipo.
-- **Import**: `parseBuilderCharacter` valida `kind`/versiones y **normaliza** (`normalizeBuilderPersistedBuild` + `normalizeBuilderSnapshot`): campos ausentes de exports antiguos toman defaults vacíos; `backstoryNotes` ausente no pisa las notas locales; `art` solo acepta `data:image/…`. Si el build actual ya empezó, pide confirmación (`ConfirmActionDialog`).
+- **Sobre v2** (`BuilderCharacterJson`, `kind: "amellwind-builder-character"`, `version` 2, `snapshotVersion` 1). Orden de claves fijo: `kind, version, snapshotVersion, meta, identity, core, multiclass, snapshot, provenance, derived, art` (el base64 de `art` va al final).
+  - **Restaurable**: `identity` (refs class/subclass/species/background), `core` (nombre, tamaño, alineamiento, nivel total, ability scores **base**), `multiclass` y `snapshot` (`BuilderChoiceSnapshot`, el mismo que usan el autosave y el flag Foundry).
+  - **Solo lectura** (se regeneran en cada export y el Builder los **ignora** al importar; la Character Sheet sí los lee):
+    - `meta`: `exportedAt`, `app`, `sources` (códigos de libro / UA / brew de los que depende el build, sacados de los ids), `complete` y `pendingChoices` (estado de completeness al exportar).
+    - `provenance`: explica por qué el personaje tiene cada cosa — clases con features por nivel, feats con su slot, optional features, skills/tools/idiomas/armaduras/armas/defensas con sus fuentes, saves, hechizos con su pool, hechizos otorgados, bonos de origen, scores base vs **finales** y equipo. En v2 lleva ids de catálogo (`classes[].id` / `subclassId`, `feats[].id`, `optionalFeatures[].id` + `progressionId`, `spells[].id`) y `equipment[].ref {id, name, source}` + `runeRefs {name, monster}`.
+    - `derived`: stats calculados por el Builder (`proficiencyBonus`, `hitPoints {max, hitDice}`, `armorClass`, `initiative`, `speed` por tipo, `passivePerception`, `spellcasting {ability, saveDc, attackBonus}`, `attunement`).
+  - `art` opcional (retrato/token data URL).
+- **Snapshot**: todas las decisiones — homebrew, método ASI, facción, personalidad, **backstory**, feats (con `asiChoices` / `abilityIncreaseChoices` / `spellListClassChoice` / `damageTypeChoice`), origin feats, optional features por progresión, Tasha / species / background ASI, skills / expertise / tools / armas de especie / idiomas / defensas elegidas, hechizos por pool, equipo exacto (objeto de catálogo embebido + rareza, modo de arma, runas) e inventario.
+- **Claves del snapshot** (para quien procese el JSON): muchas son **posicionales**, no ids.
+  - `classSkillChoices` / `classToolChoices` / `classWeaponChoices` / `classLanguageChoices` / `featSkillChoices` / `featWeaponChoices` / `featToolChoices` / `speciesDefenseChoices`: el índice de la grant de elección pendiente, en el orden en que el Builder las deriva del catálogo.
+  - `expertiseChoices`: `${grant.source.name}-${i}`.
+  - `featSelections[i]`: el i-ésimo slot ASI/feat por nivel.
+  - `optionalFeatureSelections`: `progressionId` → picks por slot.
+  - `spellSelections`: `0` = cantrips, `1–9` = picks por nivel, `-1` = Pact Magic, `-100…` = cantrips extra, `-200…` = pools de hechizos de dotes.
+
+  Cambiar estas claves a ids semánticos queda pendiente: tocaría los resolvers de competencias.
+- **Pipeline de import** (Builder y roster de la Character Sheet):
+  1. `parseBuilderCharacter` detecta el formato (rechaza actores Foundry) y migra con `migrateBuilderCharacterJson`. Cada versión tiene un paso; v1 → v2 mueve `exportedAt` a `meta`. Una versión mayor que la actual da el error "newer version".
+  2. Normaliza en profundidad (`normalizeBuilderPersistedBuild` + `normalizeBuilderSnapshot` con `builder-snapshot-validators.ts`). Las entradas inválidas (feat sin id, skill desconocida, hechizo sin nivel, ref sin id/name, inventario sin nombre…) se descartan, o pasan a `null` en listas posicionales, y cada reparación queda como **warning**.
+  3. Sanea `meta` / `provenance` / `derived` (`normalize-builder-character-summary.ts`). Si `provenance.abilityScores.final` es inválido, usa los scores base.
+  4. `prepareBuilderCharacterImport` (async, sin contexto):
+     - carga las fuentes UA/brew de los ids (`ensure*UaSourcesLoaded`);
+     - re-vincula refs por id y, si no, por nombre prefiriendo la fuente guardada (class, subclass, species/subrace, background, multiclass, feats, hechizos, optional features);
+     - re-vincula arma, armadura y runas al catálogo actual conservando rareza, modo y slots. El objeto embebido queda como fallback lossless.
+
+     Lo que no resuelve se conserva tal cual y se avisa.
+
+  El toast de import (`showBuilderJsonImportToast`) lista los warnings. `backstoryNotes` ausente no pisa las notas locales; `art` solo acepta `data:image/…`. Si el build actual ya empezó, pide confirmación (`ConfirmActionDialog`).
+- **Origin feat tras restaurar** (`storage/origin-feat-restore.ts`): autosave, import y Undo programan la re-aplicación. `BuilderAutosaveSync` la re-aplica (como mucho 3 intentos, caduca a los 15 s) mientras los loaders asíncronos de grants dejan el slot vacío, y no guarda en el autosave un slot vacío mientras haya una restauración pendiente.
+- **Modo de empuñadura**: `useEquipmentSlice` mantiene `mainHandRef` con el último valor encolado, así que `equipWeapon → setWeaponMode → off-hand/escudo` en el mismo tick (restore del snapshot) ven el arma recién equipada.
 - **Standard Array / dados**: el reparto del pool no se persiste; `useAbilityGenerationState` lo reconstruye desde `character.abilities` con `poolStateFromScores` cuando los scores cambian desde fuera (import, autosave, remount). Una permutación completa asigna las 6; si no, los 8 quedan sin asignar (8 = default de "sin asignar"). Desasignar un valor devuelve la habilidad a 8.
 - **Orden de restauración**: `flushSync(resetBuild + homebrew)` y luego `rehydrateBuilderState` con los setters del render post-reset. El reset debe commitearse antes porque los loaders de identidad/grants están keyed por id: si el personaje importado comparte clase/especie/trasfondo con el build actual, un reset batcheado no recargaría `classData` / `speciesData` / grants.
 

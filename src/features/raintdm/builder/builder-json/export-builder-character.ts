@@ -7,32 +7,53 @@ import type { CharacterBuilderContextValue } from "../context/character-builder.
 import { buildBuilderPersistPayload } from "../storage/builder-persist";
 import type { BuilderPersistedBuild } from "../storage/builder-autosave.storage";
 import {
+  BUILDER_CHARACTER_JSON_APP,
   BUILDER_CHARACTER_JSON_KIND,
   BUILDER_CHARACTER_JSON_VERSION,
   BUILDER_SNAPSHOT_VERSION,
+  type BuilderCharacterDerived,
   type BuilderCharacterJson,
+  type BuilderCharacterMeta,
   type BuilderCharacterProvenance,
 } from "./builder-character.types";
+import { collectBuildSources } from "./builder-character-sources";
 
-/** Builds the typed envelope from a persisted autosave / import payload. */
+export interface BuilderCharacterJsonExtras {
+  art?: BuilderCharacterJson["art"];
+  provenance?: BuilderCharacterProvenance;
+  derived?: BuilderCharacterDerived;
+  /** Creation-check status; omitted → `complete: false`. */
+  completeness?: Pick<BuilderCharacterMeta, "complete" | "pendingChoices">;
+}
+
+/**
+ * Builds the typed envelope from a persisted autosave / import payload.
+ * Keys follow the documented v2 order (art last so the file reads top-down).
+ */
 export function builderCharacterJsonFromPersistedBuild(
   saved: BuilderPersistedBuild,
-  options?: {
-    art?: BuilderCharacterJson["art"];
-    provenance?: BuilderCharacterProvenance;
-  },
+  options?: BuilderCharacterJsonExtras,
 ): BuilderCharacterJson {
+  const art = options?.art;
+  const hasArt = Boolean(art?.portrait || art?.token);
   return {
     kind: BUILDER_CHARACTER_JSON_KIND,
     version: BUILDER_CHARACTER_JSON_VERSION,
     snapshotVersion: BUILDER_SNAPSHOT_VERSION,
-    exportedAt: new Date().toISOString(),
+    meta: {
+      exportedAt: new Date().toISOString(),
+      app: BUILDER_CHARACTER_JSON_APP,
+      sources: collectBuildSources(saved),
+      complete: options?.completeness?.complete ?? false,
+      pendingChoices: options?.completeness?.pendingChoices ?? [],
+    },
     identity: saved.identity,
     core: saved.core,
     multiclass: saved.multiclass,
     snapshot: saved.snapshot,
-    ...(options?.art ? { art: options.art } : {}),
     ...(options?.provenance ? { provenance: options.provenance } : {}),
+    ...(options?.derived ? { derived: options.derived } : {}),
+    ...(hasArt && art ? { art } : {}),
   };
 }
 
@@ -40,20 +61,11 @@ export function builderCharacterJsonFromPersistedBuild(
 export function buildBuilderCharacterJson(
   builder: CharacterBuilderContextValue,
   inventory: { items: CartEntry[] },
-  provenance?: BuilderCharacterProvenance,
+  extras?: Omit<BuilderCharacterJsonExtras, "art">,
 ): BuilderCharacterJson {
-  const payload = buildBuilderPersistPayload(builder, inventory);
-  const hasArt = Boolean(builder.portraitImage || builder.tokenImage);
-  return builderCharacterJsonFromPersistedBuild(payload, {
-    ...(hasArt
-      ? {
-          art: {
-            portrait: builder.portraitImage,
-            token: builder.tokenImage,
-          },
-        }
-      : {}),
-    ...(provenance ? { provenance } : {}),
+  return builderCharacterJsonFromPersistedBuild(buildBuilderPersistPayload(builder, inventory), {
+    ...extras,
+    art: { portrait: builder.portraitImage, token: builder.tokenImage },
   });
 }
 

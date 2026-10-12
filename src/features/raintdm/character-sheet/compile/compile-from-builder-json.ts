@@ -72,6 +72,7 @@ import { getAbilityModifier } from "@/shared/utils/cr.utils";
 import { entryToPlainText } from "@/shared/utils/entry-text.utils";
 import { plainFeatureText } from "@/features/raintdm/builder/foundry-export/feature-usage.utils";
 import { buildPlayResources } from "./class-resources";
+import { upgradeStoredBuilderJson } from "../utils/stored-builder-json";
 import {
   detectFeatureStatEffects,
   isStubFeatureDescription,
@@ -1192,9 +1193,10 @@ function inventoryModsFromCompiled(compiled: PlayCharacterCompiled): {
 }
 
 export async function createPlayCharacterRecord(
-  json: BuilderCharacterJson,
+  input: BuilderCharacterJson,
   existingId?: string,
 ): Promise<PlayCharacterRecord> {
+  const json = upgradeStoredBuilderJson(input);
   const compiled = await compilePlayCharacterFromBuilderJson(json);
   const now = new Date().toISOString();
   const session = createInitialSession(compiled);
@@ -1224,9 +1226,10 @@ export async function createPlayCharacterRecord(
 /** Merge a newly compiled build into an existing record, preserving session. */
 export async function recompilePlayCharacterRecord(
   existing: PlayCharacterRecord,
-  json: BuilderCharacterJson,
+  input: BuilderCharacterJson,
   options: { replaceInventory?: boolean } = {},
 ): Promise<PlayCharacterRecord> {
+  const json = upgradeStoredBuilderJson(input);
   const compiled = await compilePlayCharacterFromBuilderJson(json);
   let session = {
     ...existing.session,

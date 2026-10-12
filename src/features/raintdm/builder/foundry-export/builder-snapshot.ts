@@ -32,6 +32,28 @@ import {
   type BuilderPersonality,
 } from "../storage/builder.storage";
 import type { AbilityScoreGenerationMethod } from "@/shared/utils/ability-scores";
+import {
+  abilityMethodOr,
+  abilityOr,
+  backgroundAsiModeOr,
+  factionOr,
+  inventoryOf,
+  isDamageType,
+  isRecord,
+  isSkillKey,
+  isSpellSelection,
+  isString,
+  listOf,
+  normalizeEquippedArmor,
+  normalizeEquippedWeapon,
+  normalizeFeatSelection,
+  normalizeOptionalFeature,
+  normalizeShield,
+  normalizeTrinket,
+  recordOfLists,
+  slotListOf,
+  type SnapshotWarn,
+} from "./builder-snapshot-validators";
 
 /** Module namespace used for the Foundry actor/item `flags` object. */
 export const TOOLBOX_FLAG_NAMESPACE = "amellwind-toolbox";
@@ -130,106 +152,147 @@ export function toBuilderSnapshotFlags(
 
 // ─── Normalization ────────────────────────────────────────────────────────────
 
-type UnknownRecord = Record<string, unknown>;
-
-function isRecord(value: unknown): value is UnknownRecord {
-  return typeof value === "object" && value !== null && !Array.isArray(value);
-}
-
-function arrayOr<T>(value: unknown): T[] {
-  return Array.isArray(value) ? (value as T[]) : [];
-}
-
-function recordOr<T>(value: unknown): Record<string, T> {
-  return isRecord(value) ? (value as Record<string, T>) : {};
-}
-
-function nullableOr<T>(value: unknown): T | null {
-  return value === undefined ? null : (value as T | null);
-}
-
 /**
  * Validates the version and fills every missing field with its empty default,
  * so snapshots written by older builds (or edited by hand) restore without
- * crashing on absent arrays/records. Returns `null` for unsupported versions.
+ * crashing. Malformed entries are dropped (or nulled when their index carries
+ * meaning) and described in `warnings` when provided. Returns `null` for
+ * unsupported versions.
  */
-export function normalizeBuilderSnapshot(raw: unknown): BuilderChoiceSnapshot | null {
+export function normalizeBuilderSnapshot(
+  raw: unknown,
+  warnings?: string[],
+): BuilderChoiceSnapshot | null {
   if (!isRecord(raw) || raw.version !== BUILDER_SNAPSHOT_VERSION) return null;
+  const warn: SnapshotWarn = warnings ? (message) => warnings.push(message) : () => {};
   const eq = isRecord(raw.equipment) ? raw.equipment : {};
   const personality = isRecord(raw.personality) ? raw.personality : {};
+
+  const feat = (value: unknown, label: string) => normalizeFeatSelection(value, label, warn);
+  const skills = (value: unknown, label: string) => listOf(value, isSkillKey, label, warn);
+  const strings = (value: unknown, label: string) => listOf(value, isString, label, warn);
+  const skillRecord = (value: unknown, label: string) =>
+    recordOfLists(value, skills, label, warn);
+  const stringRecord = (value: unknown, label: string) =>
+    recordOfLists(value, strings, label, warn);
+
+  const optionalFeatureSelections: BuilderOptionalFeatureSelections = {};
+  if (isRecord(raw.optionalFeatureSelections)) {
+    for (const [progressionId, picks] of Object.entries(raw.optionalFeatureSelections)) {
+      optionalFeatureSelections[progressionId] = slotListOf(
+        picks,
+        (item) => normalizeOptionalFeature(item, progressionId),
+        `Optional feature (${progressionId})`,
+        warn,
+      );
+    }
+  }
+
+  const speciesTraitChoices: Record<string, string> = {};
+  if (isRecord(raw.speciesTraitChoices)) {
+    for (const [trait, optionId] of Object.entries(raw.speciesTraitChoices)) {
+      if (isString(optionId)) speciesTraitChoices[trait.toLowerCase()] = optionId;
+      else warn(`Species trait choice "${trait}": invalid option was dropped.`);
+    }
+  }
 
   return {
     version: BUILDER_SNAPSHOT_VERSION,
     useAmellwindHomebrew: raw.useAmellwindHomebrew === true,
-    abilityScoreMethod:
-      typeof raw.abilityScoreMethod === "string"
-        ? (raw.abilityScoreMethod as AbilityScoreGenerationMethod)
-        : "manual",
+    abilityScoreMethod: abilityMethodOr(raw.abilityScoreMethod, warn),
     useUnarmedStrike: raw.useUnarmedStrike === true,
     attacksPerTurnOverride:
-      typeof raw.attacksPerTurnOverride === "number"
+      typeof raw.attacksPerTurnOverride === "number" &&
+      Number.isInteger(raw.attacksPerTurnOverride) &&
+      raw.attacksPerTurnOverride >= 1
         ? raw.attacksPerTurnOverride
         : null,
-    faction: nullableOr<BackgroundFaction>(raw.faction),
-    personality: {
-      ...EMPTY_BUILDER_PERSONALITY,
-      ...(personality as Partial<BuilderPersonality>),
-    },
+    faction: factionOr(raw.faction, warn),
+    personality: Object.fromEntries(
+      (Object.keys(EMPTY_BUILDER_PERSONALITY) as (keyof BuilderPersonality)[]).map((key) => [
+        key,
+        typeof personality[key] === "string"
+          ? (personality[key] as string)
+          : EMPTY_BUILDER_PERSONALITY[key],
+      ]),
+    ) as unknown as BuilderPersonality,
     ...(typeof raw.backstoryNotes === "string"
       ? { backstoryNotes: raw.backstoryNotes }
       : {}),
 
-    featSelections: arrayOr<BuilderFeatSelection | null>(raw.featSelections),
-    speciesOriginFeat: nullableOr<BuilderFeatSelection>(raw.speciesOriginFeat),
-    backgroundOriginFeat: nullableOr<BuilderFeatSelection>(raw.backgroundOriginFeat),
-    optionalFeatureOriginFeats: arrayOr<BuilderFeatSelection | null>(
+    featSelections: slotListOf(raw.featSelections, feat, "Feat slot", warn),
+    speciesOriginFeat: raw.speciesOriginFeat
+      ? feat(raw.speciesOriginFeat, "Species origin feat")
+      : null,
+    backgroundOriginFeat: raw.backgroundOriginFeat
+      ? feat(raw.backgroundOriginFeat, "Background origin feat")
+      : null,
+    optionalFeatureOriginFeats: slotListOf(
       raw.optionalFeatureOriginFeats,
+      feat,
+      "Optional-feature origin feat",
+      warn,
     ),
-    originFeatSkillChoices: arrayOr<SkillKey>(raw.originFeatSkillChoices),
-    optionalFeatureOriginFeatSkillChoices: recordOr<SkillKey[]>(
+    originFeatSkillChoices: skills(raw.originFeatSkillChoices, "Origin feat skills"),
+    optionalFeatureOriginFeatSkillChoices: skillRecord(
       raw.optionalFeatureOriginFeatSkillChoices,
+      "Optional-feature origin feat skills",
     ),
-    optionalFeatureSelections: recordOr<
-      BuilderOptionalFeatureSelections[string]
-    >(raw.optionalFeatureSelections),
-    speciesSpellGroupChoice: nullableOr<string>(raw.speciesSpellGroupChoice),
-    speciesTraitChoices: recordOr<string>(raw.speciesTraitChoices),
+    optionalFeatureSelections,
+    speciesSpellGroupChoice: isString(raw.speciesSpellGroupChoice)
+      ? raw.speciesSpellGroupChoice
+      : null,
+    speciesTraitChoices,
 
     useTashaOrigin: raw.useTashaOrigin === true,
-    tashaPlus2: nullableOr<AbilityKey>(raw.tashaPlus2),
-    tashaPlus1: nullableOr<AbilityKey>(raw.tashaPlus1),
-    speciesAbilityChoices: arrayOr<AbilityKey | null>(raw.speciesAbilityChoices),
-    backgroundAsiMode: nullableOr<BackgroundAsiMode>(raw.backgroundAsiMode),
-    backgroundAsiPlus2: nullableOr<AbilityKey>(raw.backgroundAsiPlus2),
-    backgroundAsiPlus1: nullableOr<AbilityKey>(raw.backgroundAsiPlus1),
+    tashaPlus2: abilityOr(raw.tashaPlus2, "Tasha +2", warn),
+    tashaPlus1: abilityOr(raw.tashaPlus1, "Tasha +1", warn),
+    speciesAbilityChoices: Array.isArray(raw.speciesAbilityChoices)
+      ? raw.speciesAbilityChoices.map((ability, index) =>
+          abilityOr(ability, `Species ability choice #${index + 1}`, warn),
+        )
+      : [],
+    backgroundAsiMode: backgroundAsiModeOr(raw.backgroundAsiMode, warn),
+    backgroundAsiPlus2: abilityOr(raw.backgroundAsiPlus2, "Background +2", warn),
+    backgroundAsiPlus1: abilityOr(raw.backgroundAsiPlus1, "Background +1", warn),
 
-    classSkillChoices: recordOr<SkillKey[]>(raw.classSkillChoices),
-    backgroundSkillChoices: arrayOr<SkillKey>(raw.backgroundSkillChoices),
-    speciesSkillChoices: arrayOr<SkillKey>(raw.speciesSkillChoices),
-    featSkillChoices: recordOr<SkillKey[]>(raw.featSkillChoices),
-    expertiseChoices: recordOr<SkillKey[]>(raw.expertiseChoices),
-    classToolChoices: recordOr<string[]>(raw.classToolChoices),
-    backgroundToolChoices: arrayOr<string>(raw.backgroundToolChoices),
-    speciesToolChoices: arrayOr<string>(raw.speciesToolChoices),
-    speciesWeaponChoices: arrayOr<string>(raw.speciesWeaponChoices),
-    classWeaponChoices: recordOr<string[]>(raw.classWeaponChoices),
-    featWeaponChoices: recordOr<string[]>(raw.featWeaponChoices),
-    featToolChoices: recordOr<string[]>(raw.featToolChoices),
-    classLanguageChoices: recordOr<string[]>(raw.classLanguageChoices),
-    backgroundLanguageChoices: arrayOr<string>(raw.backgroundLanguageChoices),
-    speciesLanguageChoices: arrayOr<string>(raw.speciesLanguageChoices),
-    speciesDefenseChoices: recordOr<DamageType[]>(raw.speciesDefenseChoices),
+    classSkillChoices: skillRecord(raw.classSkillChoices, "Class skills"),
+    backgroundSkillChoices: skills(raw.backgroundSkillChoices, "Background skills"),
+    speciesSkillChoices: skills(raw.speciesSkillChoices, "Species skills"),
+    featSkillChoices: skillRecord(raw.featSkillChoices, "Feat skills"),
+    expertiseChoices: recordOfLists(raw.expertiseChoices, skills, "Expertise", warn, false),
+    classToolChoices: stringRecord(raw.classToolChoices, "Class tools"),
+    backgroundToolChoices: strings(raw.backgroundToolChoices, "Background tools"),
+    speciesToolChoices: strings(raw.speciesToolChoices, "Species tools"),
+    speciesWeaponChoices: strings(raw.speciesWeaponChoices, "Species weapons"),
+    classWeaponChoices: stringRecord(raw.classWeaponChoices, "Class weapons"),
+    featWeaponChoices: stringRecord(raw.featWeaponChoices, "Feat weapons"),
+    featToolChoices: stringRecord(raw.featToolChoices, "Feat tools"),
+    classLanguageChoices: stringRecord(raw.classLanguageChoices, "Class languages"),
+    backgroundLanguageChoices: strings(raw.backgroundLanguageChoices, "Background languages"),
+    speciesLanguageChoices: strings(raw.speciesLanguageChoices, "Species languages"),
+    speciesDefenseChoices: recordOfLists(
+      raw.speciesDefenseChoices,
+      (value, label) => listOf(value, isDamageType, label, warn),
+      "Species defenses",
+      warn,
+    ),
 
-    spellSelections: recordOr<BuilderSpellSelections[number]>(raw.spellSelections),
+    spellSelections: recordOfLists(
+      raw.spellSelections,
+      (value, label) => listOf(value, isSpellSelection, label, warn),
+      "Spells",
+      warn,
+    ),
 
     equipment: {
-      mainHand: nullableOr<EquippedWeapon>(eq.mainHand),
-      offHand: nullableOr<EquippedWeapon>(eq.offHand),
-      armor: nullableOr<EquippedArmor>(eq.armor),
-      shield: nullableOr<StandaloneShieldItem>(eq.shield),
-      trinket1: nullableOr<EquippedTrinket>(eq.trinket1),
-      trinket2: nullableOr<EquippedTrinket>(eq.trinket2),
-      inventory: arrayOr<CartEntry>(eq.inventory),
+      mainHand: normalizeEquippedWeapon(eq.mainHand, "Main hand", warn),
+      offHand: normalizeEquippedWeapon(eq.offHand, "Off hand", warn),
+      armor: normalizeEquippedArmor(eq.armor, warn),
+      shield: normalizeShield(eq.shield, warn),
+      trinket1: normalizeTrinket(eq.trinket1, "Trinket 1", warn),
+      trinket2: normalizeTrinket(eq.trinket2, "Trinket 2", warn),
+      inventory: inventoryOf(eq.inventory, warn),
     },
   };
 }

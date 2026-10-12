@@ -11,6 +11,7 @@ import type {
   BuilderFeatSource,
   BuilderSpellSelection,
   DamageType,
+  Rune,
   SkillKey,
 } from "@/shared/types";
 import type { ProficiencySource } from "@/shared/types/proficiency.types";
@@ -38,6 +39,7 @@ import type {
   ProvenanceEquipment,
   ProvenanceFeat,
   ProvenanceGrant,
+  ProvenanceOptionalFeature,
   ProvenanceSpell,
 } from "./builder-character.types";
 
@@ -89,6 +91,7 @@ function describeFeatAbilityChoices(feat: BuilderFeatSelection): string[] {
 
 function toProvenanceFeat(feat: BuilderFeatSelection, grantedBy: string): ProvenanceFeat {
   return {
+    id: feat.id,
     name: feat.name,
     source: FEAT_SOURCE_LABELS[feat.source] ?? feat.source,
     grantedBy,
@@ -174,8 +177,10 @@ export function buildCharacterProvenance({
     }
 
     classes.push({
+      id: entry.classRef.id,
       name: className,
       subclass: subclassName,
+      subclassId: entry.subclass?.id ?? null,
       level: entry.level,
       primary: entry.isPrimary,
       features,
@@ -230,13 +235,15 @@ export function buildCharacterProvenance({
   });
 
   // ── Optional features (fighting styles, invocations, maneuvers, …) ──
-  const optionalFeatures: ProvenanceGrant[] = [];
+  const optionalFeatures: ProvenanceOptionalFeature[] = [];
   for (const [progressionId, picks] of Object.entries(
     builder.optionalFeatureSelections ?? {},
   )) {
     for (const pick of picks) {
       if (!pick) continue;
       optionalFeatures.push({
+        id: pick.id,
+        progressionId,
         name: pick.name,
         grantedBy: [progressionLabels.get(progressionId) ?? progressionId],
       });
@@ -306,6 +313,7 @@ export function buildCharacterProvenance({
     const poolLevel = Number(key);
     for (const selection of selections ?? []) {
       spells.push({
+        id: selection.id,
         name: selection.name,
         level: selection.level,
         source: selection.source,
@@ -324,53 +332,43 @@ export function buildCharacterProvenance({
       unlockedAtLevel: grant.unlockedAtLevel,
     }));
 
-  // ── Equipment ──
+  // ── Equipment (catalog refs alongside the snapshot's embedded objects) ──
   const equipment: ProvenanceEquipment[] = [];
-  const runeNames = (runes: ({ name: string } | null)[] | undefined) =>
-    (runes ?? []).filter((r): r is { name: string } => r !== null).map((r) => r.name);
-  if (builder.mainHand) {
+  const equippedRunes = (runes: (Rune | null)[] | undefined) =>
+    (runes ?? []).filter((r): r is Rune => r !== null);
+  const pushEquipment = (
+    slot: string,
+    item: { id?: string; name: string; source?: string },
+    rarity: string | null,
+    runes: Rune[],
+  ) => {
     equipment.push({
-      slot: "Main hand",
-      name: builder.mainHand.weapon.name,
-      rarity: builder.mainHand.rarity,
-      runes: runeNames(builder.mainHand.runes),
+      slot,
+      name: item.name,
+      rarity,
+      runes: runes.map((r) => r.name),
+      ref: { id: item.id ?? null, name: item.name, source: item.source ?? null },
+      runeRefs: runes.map((r) => ({ name: r.name, monster: r.monsterName ?? null })),
     });
+  };
+  if (builder.mainHand) {
+    pushEquipment("Main hand", builder.mainHand.weapon, builder.mainHand.rarity, equippedRunes(builder.mainHand.runes));
   }
   if (builder.offHand) {
-    equipment.push({
-      slot: "Off hand",
-      name: builder.offHand.weapon.name,
-      rarity: builder.offHand.rarity,
-      runes: runeNames(builder.offHand.runes),
-    });
+    pushEquipment("Off hand", builder.offHand.weapon, builder.offHand.rarity, equippedRunes(builder.offHand.runes));
   }
   if (builder.armor) {
-    equipment.push({
-      slot: "Armor",
-      name: builder.armor.armor.name,
-      rarity: builder.armor.rarity,
-      runes: runeNames(builder.armor.runes),
-    });
+    pushEquipment("Armor", builder.armor.armor, builder.armor.rarity, equippedRunes(builder.armor.runes));
   }
   if (builder.equippedShield) {
-    equipment.push({
-      slot: "Shield",
-      name: builder.equippedShield.name,
-      rarity: builder.equippedShield.rarity,
-      runes: [],
-    });
+    pushEquipment("Shield", builder.equippedShield, builder.equippedShield.rarity, []);
   }
   for (const [slot, trinket] of [
     ["Trinket 1", builder.trinket1],
     ["Trinket 2", builder.trinket2],
   ] as const) {
     if (!trinket) continue;
-    equipment.push({
-      slot,
-      name: trinket.name,
-      rarity: null,
-      runes: trinket.rune ? [trinket.rune.name] : [],
-    });
+    pushEquipment(slot, trinket, null, trinket.rune ? [trinket.rune] : []);
   }
 
   const classSummary = classes
