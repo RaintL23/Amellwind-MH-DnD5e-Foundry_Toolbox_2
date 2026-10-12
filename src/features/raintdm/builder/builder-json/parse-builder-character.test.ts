@@ -1,11 +1,14 @@
 import { describe, expect, it } from "vitest";
 import { normalizeBuilderSnapshot } from "../foundry-export/builder-snapshot";
+import { normalizeBuilderPersistedBuild } from "../storage/builder-autosave.storage";
 import { parseBuilderCharacter } from "./parse-builder-character";
+import { builderCharacterJsonFromPersistedBuild } from "./export-builder-character";
 import {
   BUILDER_CHARACTER_JSON_KIND,
   BUILDER_CHARACTER_JSON_VERSION,
   BUILDER_SNAPSHOT_VERSION,
 } from "./builder-character.types";
+import v1Fixture from "./__fixtures__/builder-character.v1.json";
 
 function minimalEnvelope(overrides: Record<string, unknown> = {}) {
   return {
@@ -102,11 +105,141 @@ describe("parseBuilderCharacter", () => {
     );
     expect(badSnapshot.ok).toBe(false);
   });
+
+  it("rejects files from a newer app version with a clear message", () => {
+    const result = parseBuilderCharacter(
+      minimalEnvelope({ version: BUILDER_CHARACTER_JSON_VERSION + 1 }),
+    );
+    expect(result.ok).toBe(false);
+    if (result.ok) return;
+    expect(result.error).toMatch(/newer version/);
+  });
+
+  it("migrates a v1 export: exportedAt moves to meta, provenance is kept", () => {
+    const result = parseBuilderCharacter(structuredClone(v1Fixture));
+    expect(result.ok).toBe(true);
+    if (!result.ok) return;
+
+    expect(result.migratedFrom).toBe(1);
+    expect(result.warnings).toEqual([]);
+    expect(result.data.version).toBe(BUILDER_CHARACTER_JSON_VERSION);
+    expect(result.data).not.toHaveProperty("exportedAt");
+    expect(result.data.meta).toMatchObject({
+      exportedAt: "2026-05-01T10:00:00.000Z",
+      complete: false,
+      sources: ["XPHB"],
+    });
+    // The Character Sheet compiler reads these: they must survive the parse.
+    expect(result.data.provenance?.abilityScores.final.str).toBe(17);
+    expect(result.data.provenance?.languages).toEqual([
+      { name: "Common", grantedBy: ["Species: Human"] },
+    ]);
+    expect(result.data.snapshot.personality.trait1).toBe("Stubborn");
+    expect(result.data.snapshot.backgroundOriginFeat?.name).toBe("Savage Attacker");
+  });
+
+  it("keeps provenance, derived and meta of a current export", () => {
+    const v2 = builderCharacterJsonFromPersistedBuild(
+      normalizeBuilderPersistedBuild(structuredClone(v1Fixture))!,
+      {
+        provenance: parseV1().provenance,
+        derived: {
+          proficiencyBonus: 3,
+          hitPoints: { max: 44, hitDice: "5d10" },
+          armorClass: 16,
+          initiative: 2,
+          speed: { walk: 30 },
+          passivePerception: 14,
+          spellcasting: null,
+          attunement: { slots: 3, artificerBonusMaterialSlots: 0 },
+        },
+        completeness: { complete: true, pendingChoices: [] },
+      },
+    );
+    const result = parseBuilderCharacter(JSON.parse(JSON.stringify(v2)));
+    expect(result.ok).toBe(true);
+    if (!result.ok) return;
+
+    expect(result.migratedFrom).toBeNull();
+    expect(result.warnings).toEqual([]);
+    expect(result.data).toEqual(v2);
+    expect(Object.keys(result.data)).toEqual([
+      "kind",
+      "version",
+      "snapshotVersion",
+      "meta",
+      "identity",
+      "core",
+      "multiclass",
+      "snapshot",
+      "provenance",
+      "derived",
+    ]);
+  });
+
+  it("drops malformed entries with warnings instead of failing", () => {
+    const envelope = minimalEnvelope();
+    envelope.snapshot = {
+      ...envelope.snapshot,
+      featSelections: [
+        { id: "alert", name: "Alert", source: "dnd2024" },
+        { name: "No id", source: "dnd2024" },
+        null,
+      ],
+      classSkillChoices: { 0: ["ath", "xyz"], bad: ["prc"] },
+      spellSelections: { 1: [{ id: "a", name: "Bless", source: "XPHB" }] },
+      abilityScoreMethod: "telepathy",
+      equipment: { inventory: [{ name: "Torch", quantity: 0 }, { cost: "1 gp" }] },
+    } as unknown as typeof envelope.snapshot;
+
+    const result = parseBuilderCharacter(envelope);
+    expect(result.ok).toBe(true);
+    if (!result.ok) return;
+
+    const { snapshot } = result.data;
+    // Index-bearing lists keep their positions.
+    expect(snapshot.featSelections).toEqual([
+      { id: "alert", name: "Alert", source: "dnd2024" },
+      null,
+      null,
+    ]);
+    expect(snapshot.classSkillChoices).toEqual({ 0: ["ath"] });
+    expect(snapshot.spellSelections).toEqual({ 1: [] });
+    expect(snapshot.abilityScoreMethod).toBe("manual");
+    expect(snapshot.equipment.inventory).toEqual([
+      { name: "Torch", cost: "", weight: "", quantity: 1 },
+    ]);
+    expect(result.warnings).toHaveLength(6);
+    expect(result.warnings.join(" ")).toMatch(/"xyz"/);
+  });
+
+  it("falls back to base scores when provenance final scores are invalid", () => {
+    const fixture = structuredClone(v1Fixture) as Record<string, unknown>;
+    (fixture.provenance as { abilityScores: { final: unknown } }).abilityScores.final = "?";
+    const result = parseBuilderCharacter(fixture);
+    expect(result.ok).toBe(true);
+    if (!result.ok) return;
+    expect(result.data.provenance?.abilityScores.final).toEqual(result.data.core.abilities);
+    expect(result.warnings).toHaveLength(1);
+  });
 });
+
+function parseV1() {
+  const result = parseBuilderCharacter(structuredClone(v1Fixture));
+  if (!result.ok) throw new Error(result.error);
+  return result.data;
+}
 
 describe("normalizeBuilderSnapshot", () => {
   it("returns null for unsupported versions", () => {
     expect(normalizeBuilderSnapshot({ version: 0 })).toBeNull();
     expect(normalizeBuilderSnapshot(null)).toBeNull();
+  });
+
+  it("is idempotent", () => {
+    const once = normalizeBuilderSnapshot(structuredClone(v1Fixture.snapshot));
+    const twice = normalizeBuilderSnapshot(JSON.parse(JSON.stringify(once)));
+    expect(twice).toEqual(once);
+    expect(JSON.stringify(twice)).toBe(JSON.stringify(once));
   });
 });

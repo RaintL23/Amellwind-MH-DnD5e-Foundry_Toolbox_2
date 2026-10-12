@@ -1,14 +1,7 @@
 import { useCallback, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { toast } from "sonner";
-import { useCharacterBuilder } from "@/features/raintdm/builder/context/CharacterBuilderContext";
-import { useBuilderInventory } from "@/features/raintdm/builder/context/BuilderInventoryContext";
-import { useSpellcastingContext } from "@/features/raintdm/builder/context/SpellcastingContext";
-import { useEffectiveAbilityScores } from "@/features/raintdm/builder/hooks/useEffectiveAbilityScores";
-import {
-  buildBuilderCharacterJson,
-  buildCharacterProvenance,
-} from "@/features/raintdm/builder/builder-json";
+import { useBuilderCharacterJson } from "@/features/raintdm/builder/hooks/useBuilderCharacterJson";
 import {
   createPlayCharacterRecord,
   recompilePlayCharacterRecord,
@@ -27,33 +20,9 @@ import { identitiesMatch } from "./useEditInBuilder";
 import { PLAY_COMPILE_VERSION } from "../utils/play-character.types";
 
 export function useSendToPlaySheet(confirm?: ConfirmDialogFn) {
-  const builder = useCharacterBuilder();
-  const inventory = useBuilderInventory();
-  const effectiveAbilities = useEffectiveAbilityScores();
-  const { bonusCantripPools, optionalFeatureSpellGrants } =
-    useSpellcastingContext();
+  const buildJson = useBuilderCharacterJson();
   const navigate = useNavigate();
   const [busy, setBusy] = useState(false);
-
-  const buildJson = useCallback(() => {
-    const provenance = buildCharacterProvenance({
-      builder,
-      effectiveAbilities,
-      bonusSpellPools: bonusCantripPools,
-      optionalFeatureSpellGrants,
-    });
-    return buildBuilderCharacterJson(
-      builder,
-      { items: inventory.items },
-      provenance,
-    );
-  }, [
-    builder,
-    inventory.items,
-    effectiveAbilities,
-    bonusCantripPools,
-    optionalFeatureSpellGrants,
-  ]);
 
   const sendNew = useCallback(async () => {
     setBusy(true);

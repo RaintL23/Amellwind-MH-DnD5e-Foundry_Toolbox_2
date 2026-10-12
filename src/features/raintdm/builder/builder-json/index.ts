@@ -4,7 +4,9 @@ export {
 } from "./builder-character.types";
 export type {
   BuilderCharacterArt,
+  BuilderCharacterDerived,
   BuilderCharacterJson,
+  BuilderCharacterMeta,
   BuilderCharacterProvenance,
 } from "./builder-character.types";
 export {
@@ -15,4 +17,6 @@ export {
 export { buildCharacterProvenance } from "./build-character-provenance";
 export type { BuildCharacterProvenanceInput } from "./build-character-provenance";
 export { parseBuilderCharacter } from "./parse-builder-character";
+export { migrateBuilderCharacterJson } from "./migrate-builder-character";
+export { collectBuildSources } from "./builder-character-sources";
 export type { ParseBuilderCharacterResult } from "./parse-builder-character";
