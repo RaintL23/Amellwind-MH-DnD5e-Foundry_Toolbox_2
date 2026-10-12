@@ -4,6 +4,8 @@ import { FileJson, Plus, ScrollText, Trash2, UserRound } from "lucide-react";
 import { toast } from "sonner";
 import { Button } from "@/components/ui/button";
 import { parseBuilderCharacter } from "@/features/raintdm/builder/builder-json/parse-builder-character";
+import { prepareBuilderCharacterImport } from "@/features/raintdm/builder/builder-json/prepare-builder-character-import";
+import { showBuilderJsonImportToast } from "@/features/raintdm/builder/utils/builder-json-import-toast";
 import { createPlayCharacterRecord } from "../compile/compile-play-character";
 import { useLoadFromBuilder } from "../hooks/useLoadFromBuilder";
 import { useConfirmDialog } from "../hooks/useConfirmDialog";
@@ -64,10 +66,14 @@ export function CharacterRosterPage() {
         toast.error(parsed.error);
         return;
       }
-      const record = await createPlayCharacterRecord(parsed.data);
+      const prepared = await prepareBuilderCharacterImport(parsed.data);
+      const record = await createPlayCharacterRecord(prepared.data);
       await savePlayCharacter(record);
       setLinkedSheetId(record.id);
-      toast.success(`Imported ${record.compiled.name}`);
+      showBuilderJsonImportToast(`Imported ${record.compiled.name}`, {
+        migratedFrom: parsed.migratedFrom,
+        warnings: [...parsed.warnings, ...prepared.warnings],
+      });
       navigate(`/sheet/${record.id}`);
     } catch (e) {
       toast.error(e instanceof Error ? e.message : "Import failed");

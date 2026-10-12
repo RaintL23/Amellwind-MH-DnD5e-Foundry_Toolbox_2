@@ -53,7 +53,12 @@ export function useSendToPlaySheet(confirm?: ConfirmDialogFn) {
         await sendNew();
         return;
       }
-      const json = buildJson();
+      const built = buildJson();
+      // Builder art is session-only: keep the sheet's art when the Builder has none.
+      const json =
+        built.art || !existing.builderJson.art
+          ? built
+          : { ...built, art: existing.builderJson.art };
 
       if (confirm && !identitiesMatch(json, existing.builderJson)) {
         setBusy(false);
