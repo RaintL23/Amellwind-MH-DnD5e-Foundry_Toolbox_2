@@ -124,6 +124,12 @@
   ::-webkit-scrollbar-thumb:hover {
     @apply bg-muted-foreground;
   }
+
+  /* Modal dialogs set pointer-events: none on <body>; toasts inherit it, which
+     made toast actions (e.g. Builder "Undo") untappable while a sheet is open. */
+  [data-sonner-toast]:not([data-removed="true"]) {
+    pointer-events: auto;
+  }
 }
 
 /* Light theme: pale -200..-500 text accents are tuned for dark UIs; darken them for contrast on white. */

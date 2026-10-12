@@ -11,6 +11,8 @@ function Toaster({ ...props }: ToasterProps) {
     <SonnerToaster
       theme={sonnerTheme}
       className="toaster group"
+      // Clear bottom tab bars (e.g. the mobile Builder) on small screens.
+      mobileOffset={{ bottom: "calc(4.5rem + env(safe-area-inset-bottom))" }}
       toastOptions={{
         classNames: {
           toast:
