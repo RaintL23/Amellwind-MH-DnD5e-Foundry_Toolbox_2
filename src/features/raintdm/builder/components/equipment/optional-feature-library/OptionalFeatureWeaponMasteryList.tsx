@@ -166,7 +166,7 @@ export function OptionalFeatureWeaponMasteryList({
                               : `Select ${weapon.name}`
                         }
                         className={cn(
-                          "inline-flex items-center gap-1 rounded border px-1.5 py-0.5 text-[10px] font-medium transition-colors",
+                          "inline-flex items-center gap-1 rounded border px-1.5 py-0.5 text-[10px] font-medium transition-colors coarse:px-3 coarse:py-1.5 coarse:text-xs",
                           selected
                             ? "border-violet-400/50 bg-violet-400/10 text-violet-100"
                             : "border-border/50 bg-muted/40 text-muted-foreground hover:border-orange-500/40 hover:bg-orange-950/20 hover:text-orange-100",

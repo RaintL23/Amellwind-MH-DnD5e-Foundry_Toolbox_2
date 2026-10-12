@@ -154,7 +154,7 @@ export function AbilityScoresSection({
               type="button"
               size="sm"
               variant="outline"
-              className="h-7 shrink-0 gap-1 px-2 text-[11px]"
+              className="h-7 shrink-0 gap-1 px-2 text-[11px] coarse:h-9"
               disabled={!canApplyRecommended}
               onClick={onUseRecommended}
               aria-label={`Use recommended ability scores for ${classData.name}`}

@@ -35,6 +35,11 @@ const lightTints = plugin(({ addBase }) => {
   addBase(rules);
 });
 
+// `coarse:` — touch devices only (larger tap targets without changing desktop density).
+const coarsePointer = plugin(({ addVariant }) => {
+  addVariant("coarse", "@media (pointer: coarse)");
+});
+
 /** @type {import('tailwindcss').Config} */
 export default {
   darkMode: ["class"],
@@ -104,5 +109,5 @@ export default {
       },
     },
   },
-  plugins: [containerQueries, lightTints],
+  plugins: [containerQueries, lightTints, coarsePointer],
 };
