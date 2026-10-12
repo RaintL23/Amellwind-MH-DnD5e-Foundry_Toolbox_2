@@ -25,6 +25,7 @@ import {
   pickerQuota,
   type PickerGrant,
 } from "./picker-shared";
+import { PickerPillHint } from "./PickerPillHint";
 
 interface BuilderLanguagePickerProps {
   grants: PickerGrant[];
@@ -124,21 +125,24 @@ export function BuilderLanguagePicker({
         ? `Your ${SOURCE_LABELS[pickerSourceType]} choice`
         : undefined;
 
+    const blockedReason = coveredByHigher ? tooltip : undefined;
+
     return (
-      <button
-        key={key}
-        type="button"
-        disabled={isDisabled && !isChosen}
-        title={tooltip}
-        onClick={() => handleToggle(item, isChosen, coveredByHigher)}
-        className={pickerPillClassName({
-          badgeColor,
-          isDisabled,
-          cursorDefault: coveredByHigher,
-        })}
-      >
-        {item}
-      </button>
+      <PickerPillHint key={key} reason={blockedReason}>
+        <button
+          type="button"
+          aria-disabled={coveredByHigher || undefined}
+          title={blockedReason ? undefined : tooltip}
+          onClick={() => handleToggle(item, isChosen, coveredByHigher)}
+          className={pickerPillClassName({
+            badgeColor,
+            isDisabled,
+            cursorDefault: coveredByHigher,
+          })}
+        >
+          {item}
+        </button>
+      </PickerPillHint>
     );
   }
 
