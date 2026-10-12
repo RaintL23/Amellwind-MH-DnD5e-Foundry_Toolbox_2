@@ -10,7 +10,6 @@ import type {
 } from "@/shared/types";
 import { hasStartingEquipmentOffers } from "@/shared/utils/starting-equipment.parser";
 import { useSectionCompletenessHighlight } from "../../context/BuildCompletenessContext";
-import { CompletenessHighlightBanner } from "../shared/CompletenessHighlightBanner";
 import { useBuilderInventory } from "../../context/BuilderInventoryContext";
 import { badgeStyleForSource } from "../../utils/proficiency-source-styles";
 
@@ -86,7 +85,7 @@ export function StartingEquipmentPicker({
     setSelectedIds(inventoryIds);
   }, [inventoryIds, source.id]);
 
-  const { highlighted, issues: startingEquipmentIssues } =
+  const { highlighted } =
     useSectionCompletenessHighlight("starting-equipment", source.type);
 
   if (!hasStartingEquipmentOffers(offers)) return null;
@@ -169,9 +168,6 @@ export function StartingEquipmentPicker({
           "border-amber-500/60 bg-amber-500/10 ring-1 ring-amber-500/30",
       )}
     >
-      {highlighted && (
-        <CompletenessHighlightBanner issues={startingEquipmentIssues} />
-      )}
       <div className="mb-2 flex items-center gap-1.5">
         <Package className="h-3.5 w-3.5 text-muted-foreground" aria-hidden />
         <p className="text-[10px] font-medium uppercase tracking-wide text-muted-foreground">
