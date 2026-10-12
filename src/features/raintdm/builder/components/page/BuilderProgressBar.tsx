@@ -1,9 +1,16 @@
 import {
-  ArrowRight,
   CheckCircle2,
+  ChevronDown,
   Circle,
+  Dices,
+  FileDown,
+  FileJson,
   ListChecks,
   Lock,
+  RotateCcw,
+  ScrollText,
+  Upload,
+  type LucideIcon,
 } from "lucide-react";
 import { useState } from "react";
 import { Progress } from "@/components/ui/progress";
@@ -17,11 +24,15 @@ import { cn } from "@/shared/utils/cn";
 import {
   useBuildCompleteness,
 } from "../../context/BuildCompletenessContext";
-import { useBuilderSlotSelection } from "../../hooks/useBuilderSlotSelection";
+import {
+  BuilderCharacterActionsProvider,
+  useBuilderCharacterActions,
+} from "../../context/BuilderCharacterActionsContext";
 import { useBuilderLayoutOptional } from "../../context/BuilderLayoutContext";
 import { useBuilderDerivedStats } from "../../hooks/useBuilderDerivedStats";
 import { formatModifier } from "@/shared/utils/cr.utils";
 import type { CompletenessStep } from "../../utils/build-completeness/group-completeness-steps.utils";
+import { NextStepCard } from "./NextStepCard";
 import { AutosaveIndicator } from "./AutosaveIndicator";
 import { BuilderMobileSettingsMenu } from "./BuilderMobileSettingsMenu";
 
@@ -43,18 +54,174 @@ const STEP_STATUS_LABEL: Record<CompletenessStep["status"], string> = {
   locked: "unlocks after choosing a class",
 };
 
+function ActionRow({
+  icon: Icon,
+  label,
+  onSelect,
+  disabled,
+  spinning,
+  destructive,
+}: Readonly<{
+  icon: LucideIcon;
+  label: string;
+  onSelect: () => void;
+  disabled?: boolean;
+  spinning?: boolean;
+  destructive?: boolean;
+}>) {
+  return (
+    <button
+      type="button"
+      disabled={disabled}
+      onClick={onSelect}
+      className={cn(
+        "flex w-full items-center gap-2 rounded-md px-2 py-1.5 text-left text-xs transition-colors hover:bg-accent disabled:pointer-events-none disabled:opacity-50",
+        destructive && "text-destructive hover:bg-destructive/10",
+      )}
+    >
+      <Icon
+        className={cn("h-3.5 w-3.5 shrink-0", spinning && "animate-spin")}
+        aria-hidden
+      />
+      {label}
+    </button>
+  );
+}
+
+function CharacterActionsSection({ onDone }: Readonly<{ onDone: () => void }>) {
+  const a = useBuilderCharacterActions();
+  const run = (fn: () => void) => () => {
+    onDone();
+    fn();
+  };
+  return (
+    <div className="space-y-0.5 border-t border-border/60 pt-2">
+      <p className="px-2 pb-1 text-xs font-semibold uppercase tracking-wide text-muted-foreground">
+        Character
+      </p>
+      <ActionRow
+        icon={FileDown}
+        label="Download Character Sheet PDF"
+        disabled={a.exporting}
+        onSelect={run(a.exportPdf)}
+      />
+      <ActionRow
+        icon={ScrollText}
+        label="Send to Character Sheet"
+        disabled={a.sendingToSheet}
+        onSelect={run(a.sendToSheet)}
+      />
+      {a.linkedId && (
+        <ActionRow
+          icon={ScrollText}
+          label="Update linked Sheet"
+          disabled={a.sendingToSheet}
+          onSelect={run(a.updateLinkedSheet)}
+        />
+      )}
+      <ActionRow
+        icon={FileJson}
+        label="Save as Builder JSON"
+        onSelect={run(a.exportJson)}
+      />
+      <ActionRow
+        icon={Upload}
+        label="Load Builder JSON"
+        disabled={a.importing}
+        onSelect={run(a.loadJson)}
+      />
+      <div className="my-1 border-t border-border/60" />
+      <ActionRow
+        icon={Dices}
+        label="Randomize character"
+        disabled={!a.canRandomize || a.isRandomizing}
+        spinning={a.isRandomizing}
+        onSelect={run(a.randomize)}
+      />
+      <ActionRow
+        icon={RotateCcw}
+        label="Reset character"
+        destructive
+        onSelect={run(a.reset)}
+      />
+    </div>
+  );
+}
+
+/** Desktop: one labelled segment per step, so progress reads at a glance. */
+function StepperSegments() {
+  const { liveSteps, liveResult, goToIssue } = useBuildCompleteness();
+  const firstPendingId = liveSteps.find((step) => step.status === "pending")?.id;
+
+  return (
+    <ol className="flex min-w-0 flex-1 gap-2" aria-label="Creation steps">
+      {liveSteps.map((step, index) => {
+        const isCurrent = liveResult.hasStarted && step.id === firstPendingId;
+        const [issue] = step.issues;
+        return (
+          <li key={step.id} className="min-w-0 flex-1">
+            <button
+              type="button"
+              disabled={!issue}
+              onClick={() => issue && goToIssue(issue)}
+              className="group flex w-full min-w-0 flex-col gap-1 text-left disabled:cursor-default"
+            >
+              <span
+                className={cn(
+                  "h-1.5 w-full rounded-full transition-colors",
+                  liveResult.hasStarted && step.status === "complete"
+                    ? "bg-emerald-500"
+                    : isCurrent
+                      ? "bg-primary"
+                      : "bg-muted",
+                )}
+              />
+              <span
+                className={cn(
+                  "flex min-w-0 items-center gap-1 text-[11px]",
+                  isCurrent
+                    ? "font-medium text-foreground"
+                    : "text-muted-foreground",
+                  issue && "group-hover:text-foreground",
+                )}
+              >
+                <StepStatusIcon
+                  status={liveResult.hasStarted ? step.status : "pending"}
+                />
+                <span className="truncate">
+                  {index + 1}. {step.label}
+                </span>
+                <span className="sr-only">
+                  ({STEP_STATUS_LABEL[step.status]})
+                </span>
+              </span>
+            </button>
+          </li>
+        );
+      })}
+    </ol>
+  );
+}
+
 export function BuilderProgressBar() {
+  return (
+    <BuilderCharacterActionsProvider>
+      <BuilderProgressBarContent />
+    </BuilderCharacterActionsProvider>
+  );
+}
+
+function BuilderProgressBarContent() {
   const {
     liveResult,
     liveSteps,
     liveProgress,
     nextStep,
-    goToSection,
     goToIssue,
   } = useBuildCompleteness();
-  const { selectSlot } = useBuilderSlotSelection();
   const isMobileLayout = useBuilderLayoutOptional()?.isMobileLayout ?? false;
   const [open, setOpen] = useState(false);
+  const [guideOpen, setGuideOpen] = useState(true);
 
   const pendingIssues = liveResult.issues;
   const hasStarted = liveResult.hasStarted;
@@ -82,7 +249,7 @@ export function BuilderProgressBar() {
                   {liveProgress.completed} of {liveProgress.total} steps
                 </span>
               ) : (
-                <span>Get started</span>
+                <span>{liveProgress.total} steps</span>
               )}
             </Button>
           </PopoverTrigger>
@@ -90,32 +257,8 @@ export function BuilderProgressBar() {
             align="start"
             className="max-h-[70vh] w-80 overflow-y-auto p-3"
           >
-            {!hasStarted ? (
-              <div className="space-y-2">
-                <p className="text-sm font-medium text-foreground">
-                  Start your character
-                </p>
-                <p className="text-xs text-muted-foreground">
-                  Start with your class: it decides which ability scores,
-                  skills and spells matter. The checklist then tracks every
-                  remaining choice.
-                </p>
-                <Button
-                  type="button"
-                  size="sm"
-                  className="h-8 w-full text-xs"
-                  onClick={() => {
-                    setOpen(false);
-                    selectSlot("class");
-                    goToSection("identity");
-                  }}
-                >
-                  Choose a class
-                </Button>
-              </div>
-            ) : (
-              <div className="space-y-3">
-                {pendingIssues.length === 0 && (
+            <div className="space-y-3">
+                {hasStarted && pendingIssues.length === 0 && (
                   <div className="flex items-center gap-2 text-sm text-emerald-600 dark:text-emerald-400">
                     <CheckCircle2 className="h-4 w-4 shrink-0" aria-hidden />
                     Build complete — ready to export
@@ -169,50 +312,93 @@ export function BuilderProgressBar() {
                     </li>
                   ))}
                 </ol>
-              </div>
-            )}
+                <CharacterActionsSection onDone={() => setOpen(false)} />
+            </div>
           </PopoverContent>
         </Popover>
 
-        <div className="min-w-0 flex-1 space-y-1">
+        {!isMobileLayout && <StepperSegments />}
+        {!isMobileLayout && hasStarted && (
+          <Button
+            type="button"
+            variant="ghost"
+            size="sm"
+            className="h-8 shrink-0 gap-1 px-2 text-xs text-muted-foreground"
+            aria-expanded={guideOpen}
+            aria-controls="builder-guide-panel"
+            onClick={() => setGuideOpen((value) => !value)}
+          >
+            Guide
+            <ChevronDown
+              className={cn(
+                "h-3 w-3 transition-transform",
+                guideOpen && "rotate-180",
+              )}
+              aria-hidden
+            />
+          </Button>
+        )}
+        <div className={cn("min-w-0 flex-1 space-y-1", !isMobileLayout && "hidden")}>
           <Progress
             value={hasStarted ? liveProgress.percent : 0}
-            className="h-1.5"
+            className={cn(
+              "h-1.5",
+              hasStarted && pendingIssues.length === 0 && "[&>div]:bg-emerald-500",
+            )}
             aria-label={
               hasStarted
                 ? `Build progress ${liveProgress.percent} percent`
                 : "Build not started"
             }
           />
-          {/* Mobile: NextStepCard lives in the Build tab, so surface the next
-              choice here where every tab can reach it. */}
-          {isMobileLayout && hasStarted && nextStep ? (
+          {hasStarted ? (
             <button
               type="button"
-              className="flex w-full min-w-0 items-center gap-1 text-left text-[11px] font-medium text-primary"
-              onClick={() => goToIssue(nextStep.issue)}
+              className="flex w-full min-w-0 items-center gap-1 text-left text-[11px] text-muted-foreground hover:text-foreground"
+              aria-expanded={guideOpen}
+              aria-controls="builder-guide-panel"
+              onClick={() => setGuideOpen((value) => !value)}
             >
-              <span className="truncate">Next: {nextStep.issue.message}</span>
-              <ArrowRight className="h-3 w-3 shrink-0" aria-hidden />
+              <span
+                className={cn(
+                  "truncate",
+                  !guideOpen && nextStep && "font-medium text-primary",
+                )}
+              >
+                {guideOpen || !nextStep
+                  ? pendingIssues.length === 0
+                    ? "All required steps complete"
+                    : `${pendingIssues.length} pending choice${pendingIssues.length === 1 ? "" : "s"}`
+                  : `Next: ${nextStep.issue.message}`}
+              </span>
+              <ChevronDown
+                className={cn(
+                  "h-3 w-3 shrink-0 transition-transform",
+                  guideOpen && "rotate-180",
+                )}
+                aria-hidden
+              />
+              <span className="sr-only">
+                {guideOpen ? "Hide guide" : "Show guide"}
+              </span>
             </button>
           ) : (
-            <p
-              className={cn(
-                "truncate text-[11px] text-muted-foreground",
-                !hasStarted && "italic",
-              )}
-            >
-              {!hasStarted
-                ? "Start by choosing a class"
-                : pendingIssues.length === 0
-                  ? "All required steps complete"
-                  : `${pendingIssues.length} pending choice${pendingIssues.length === 1 ? "" : "s"}`}
+            <p className="truncate text-[11px] italic text-muted-foreground">
+              Not started yet
             </p>
           )}
         </div>
         <AutosaveIndicator />
         {isMobileLayout && <BuilderMobileSettingsMenu />}
       </div>
+      {(guideOpen || !hasStarted) && (
+        <div
+          id="builder-guide-panel"
+          className="mx-auto mt-2 w-full max-w-[1400px] [&>section]:border-0 [&>section]:bg-transparent [&>section]:p-0"
+        >
+          <NextStepCard />
+        </div>
+      )}
       {isMobileLayout && hasStarted && <CombatSummaryStrip />}
     </div>
   );
