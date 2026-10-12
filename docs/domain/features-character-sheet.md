@@ -22,7 +22,7 @@ Manage a player character during a live session: HP, death saves, actions / bonu
 
 Header: name + inspiration toggle + overflow menu (Short / Long Rest, **Edit in Builder**); horizontal **stat boxes** (AC, Init tappable, Speed, PB, Passive); taller HP bar (opens HP sheet); compact **Status** chips (conditions, Exhaustion, concentration).
 
-**Edit in Builder** writes the sheet’s `builderJson` into Builder autosave (with confirm if the Builder has a different character), sets the linked sheet id, then navigates to `/builder`. Opening a sheet does **not** overwrite the linked id — only Edit / Send / Import / Load do.
+**Edit in Builder** validates the sheet’s `builderJson` with `parseBuilderCharacter` (migrating older envelopes), writes it into Builder autosave (with confirm if the Builder has a different character), hands the portrait/token to the Builder in memory (`builder-art-handoff.ts`, art is not autosaved), sets the linked sheet id, then navigates to `/builder`. **Update sheet** keeps the record's art when the Builder has none. Opening a sheet does **not** overwrite the linked id — only Edit / Send / Import / Load do.
 
 ## Data model
 
@@ -42,8 +42,10 @@ Autosave (400 ms debounce) also flushes on `visibilitychange` (hidden) and `page
 ## Entry paths
 
 1. **Builder** → Download JSON / Import menu → **Send to Character Sheet** / **Update linked Sheet** (blocked until creation checks pass — same gate as PDF export). Update confirms when Builder identity does not match the linked sheet.
-2. **Roster** → **Load from Builder** (reads Builder autosave; requires the same completeness gate)
-3. **Roster** → **Import Builder JSON** (no need to open `/builder`)
+2. **Roster** → **Load from Builder** (reads Builder autosave; requires the same completeness gate). `provenance` / `derived` / `meta` come from the Builder's export cache (`builder-export-cache.storage.ts`, written by `BuilderExportCacheSync`) when its `buildKey` matches the autosave; otherwise the sheet is compiled without them and a warning suggests Send to Character Sheet.
+3. **Roster** → **Import Builder JSON** (no need to open `/builder`): `parseBuilderCharacter` → `prepareBuilderCharacterImport` → compile. Provenance from the file is kept (the compiler needs it for final scores, saves, skills, languages and proficiencies).
+
+Stored records are upgraded through the same parser on (re)compile (`utils/stored-builder-json.ts`).
 
 Compilation: `compilePlayCharacterFromBuilderJson` loads catalogs by refs and builds `PlayCharacterCompiled` without mounting `CharacterBuilderProvider`. Weapon attack ability uses STR / DEX / Finesse / ranged properties; `compiled.armorClass` is shield-free (runtime adds equipped shield once). Multiclass spell slots and hit dice are compiled when multiclass entries exist.
 
