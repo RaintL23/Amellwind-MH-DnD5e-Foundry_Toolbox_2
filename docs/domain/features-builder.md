@@ -93,6 +93,23 @@ Reglas de manos: armas `2H` bloquean off-hand; armas `V` (versatile) permiten mo
 
 Con **Amellwind Homebrew** activo, la librería de armas (`WeaponLibraryPanel`) muestra por defecto el catálogo del **Weapon Forge** (curated raintdm + custom de localStorage); el catálogo AGMH (`getAllWeapons()`) se elige desde **Filters → Catalog** (`Weapon Forge` / `Base (AGMH)`). La sección Inventory de esa librería filtra por el mismo catálogo (`isWeaponForgeWeapon`) para no mezclar badges `RAINTDM`/`AGMH` ni ocultar un catálogo por colisión de nombre con el otro. El detalle equipado (`WeaponLibraryDetail`) para armas Forge usa `customFeatures` + `includePrerequisiteMatches: false` (paridad con `WeaponForgeDialog`), sin inyectar optional features AGMH por nombre. Sin homebrew, sigue cargando armas D&D (`getDndWeapons`). Lo mismo aplica a feats (Amellwind / D&D 2014 / D&D 2024) y species/background (Amellwind / D&D): el conmutador de catálogo vive en el diálogo Filters, no como pills en el título de la library.
 
+#### Reglas Amellwind (AGMH) en el Builder
+
+Fuente: `public/data/gtmh-patreon/gtmh-patreon-chapter{1,2,3}.md`. Solo con Amellwind Homebrew activo salvo que se indique.
+
+- **Especies**: la librería AGMH lista solo especies raíz (`getAmellwindSpeciesLibraryOptions`) + **Elder Dragonborn** (= Dragonborn PHB con la ancestría AGMH como subespecie). `resolveSpeciesParts` convierte refs antiguas a una subespecie suelta (Felyne, Alatreon…) en padre + subespecie (`normalizedRef`). La fusión base + subespecie (`species-display.utils`: `mergeSpeciesAbilityBonuses`, `mergeSpeciesTraits`, `mergeSpeciesSpeed`) respeta `overwrite.ability` y `data.overwrite` de rasgos (las ancestrías sustituyen Breath Weapon / Damage Resistance / ASI) y toma velocidad/tamaño/darkvision de la subespecie (Lynian "Varies"). Lynian, Wyverian, Neopteroid y Elder Dragonborn exigen subespecie (`speciesSubraceMissing` → issue `identity-subspecies`); el randomizer la elige. Kechaborn, Malfestian y Neopteroid (+ Flying/Ground) no están en el feed GitHub: overlay curado en `scripts/gtmh/races.mjs`.
+- **ASI**: si la especie no da ASI y el trasfondo no da +2/+1 (todos los AGMH), se activa **Tasha's Customizing Your Origin** una vez por par especie/trasfondo (también en modo D&D). Con Tasha o ASI de trasfondo 2024 no se exigen los picks de ASI de especie.
+- **Trasfondos**: cada trasfondo AGMH da una **Origin Feat 2024 a elegir** (regla de la casa del Toolbox; el libro es estilo 2014). Su equipo inicial ("Equipment:") está transcrito en `features/amellwind/backgrounds/data/background-equipment.data.ts`. La **facción** la fija el trasfondo AGMH (`factionFromBackground`, picker bloqueado); al cambiar de trasfondo se limpia; con trasfondo D&D se puede elegir a mano (aprobación del DM). Los hechizos de facción se añaden a la lista de la clase principal.
+- **Equipo inicial**: `resolveStartingEquipmentOffers` quita armas D&D y escudos de las ofertas de clase/trasfondo (las sustituyen armas MH) en picker, completeness y randomizer.
+- **Escudos**: no hay escudo suelto; solo el integrado en armas (Sword & Shield, Lance, Gunlance, Charge Blade).
+- **Slots de material**: rareza Common 1 → Legendary 5. **Artificer**: +1 en arma y armadura a nivel 10/14/18 *de artificer* (`getArtificerLevel`, multiclase incluida), aplicado de verdad a los slots. En modo D&D el Artificer tiene 4/5/6 slots de attunement. **Unarmed item** (`data/unarmed-item.data.ts`): +1 slot por rareza.
+- **Attunement**: en modo Amellwind no se muestra la fila de Attunement (el libro la sustituye por 1 arma + 1 armadura + 2 trinkets; export Foundry `attunementMax` = 4).
+- **Rareza**: libre; `RarityButtonGroup` avisa si supera la guía de creación por nivel (`rarity-guideline.utils`: 1–2 Common, 3–8 Uncommon, 9–15 Rare, 16–20 Very Rare).
+- **Armadura Rare+**: una propiedad por paso (Rare/Very Rare/Legendary): +1 CA, +1 a dos skills, +1 a una salvación o +1 a salvaciones no competentes (`EquippedArmor.rarityProperties`, `armor-rarity-properties.utils`). Se aplica a CA, salvaciones, skills, Percepción pasiva y PDF; completeness exige elegirla.
+- **CA**: suma el material de armadura con bono de CA fijo (regla 3: uno), el material de armadura del trinket activo y la propiedad +1 CA (`collectAmellwindAcBonuses`).
+- **Trinkets**: nombre libre (trinket del PHB o trofeo); solo uno activo (`EquippedTrinket.active`, `setActiveTrinket`); velocidad/CA/DPT solo usan el activo (su material de arma se suma al arma principal).
+- **Dotes AGMH**: `toolProficiencies` estructuradas desde `scripts/gtmh/feats.mjs` (Bomb Specialist, Master Craftsman con herramientas de la Combo List). Las dotes no repetibles ya elegidas no vuelven a salir en otros slots. El feed GitHub "Switchaxe Mastery" se trata como alias de la local "Switch Axe Mastery".
+
 #### Randomizer (`useCharacterRandomizer`)
 
 Botón dados en `StatsPanel`. Disponible en **ambos** modos (Amellwind y D&D). Conserva el nivel actual, hace `resetBuild` y rellena clase/subclase, ASI point-buy, skills, idiomas, optional features, origin feats, hechizos, dotes de nivel y starting equipment del carrito (no equipa armas/armadura en el paper doll).
@@ -100,7 +117,7 @@ Botón dados en `StatsPanel`. Disponible en **ambos** modos (Amellwind y D&D). C
 Los slots de dote de nivel (`buildFeatSelectionsForLevel`) solo eligen dotes **General** / **Epic Boon** 2024 que cumplen `meetsFeatPrerequisites` para el nivel del slot y los ability scores ya asignados (p. ej. no Epic Boons bajo 19; no Fighting Styles / Origin en slots ASI). Requisitos no verificables automáticamente (proficiency, feature, race, …) excluyen esa rama OR del pool.
 
 - **D&D**: species/backgrounds 5e con ratings RPGBOT; lineage spells; background ASI.
-- **Amellwind**: species AGMH (`pickAmellwindSpecies` por saves/abilities relevantes); background preferido Hunter's Initiate (`pickAmellwindBackground`, si falta → aleatorio); skills/tools/idiomas del homebrew; Origin Feat de trasfondo AGMH (siempre choose 2024); facción la setea el slice de identity al aplicar el background.
+- **Amellwind**: species AGMH (`pickAmellwindSpecies` por saves/abilities relevantes; `pickAmellwindSubspecies` elige subespecie si la especie la tiene); background preferido Hunter's Initiate (`pickAmellwindBackground`, si falta → aleatorio); skills/tools/idiomas del homebrew; Origin Feat de trasfondo AGMH (siempre choose 2024); facción la setea el slice de identity al aplicar el background.
 
 #### Completeness / tests
 
