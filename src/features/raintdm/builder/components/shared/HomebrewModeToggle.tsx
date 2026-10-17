@@ -4,7 +4,13 @@ import { useState } from "react";
 import { toast } from "sonner";
 import { cn } from "@/shared/utils/cn";
 import { useCharacterBuilder } from "../../context/CharacterBuilderContext";
+import { BACKGROUND_FACTION_LABELS } from "@/shared/types";
 import { ConfirmActionDialog } from "./ConfirmActionDialog";
+import {
+  isAmellwindBackgroundSelection,
+  isAmellwindSpeciesSelection,
+  isAmellwindWeapon,
+} from "../../utils/homebrew-cleanup.utils";
 
 export function HomebrewModeToggle() {
   const {
@@ -12,21 +18,39 @@ export function HomebrewModeToggle() {
     setUseAmellwindHomebrew,
     species,
     background,
+    faction,
+    featSelections,
     mainHand,
     offHand,
-    armor,
     trinket1,
     trinket2,
   } = useCharacterBuilder();
   const [confirmOpen, setConfirmOpen] = useState(false);
 
-  function buildLossItems(): string[] {
+  const [lossItems, setLossItems] = useState<string[]>([]);
+
+  // Mirrors what turning Homebrew off actually clears (see clearAmellwindIdentity
+  // and clearHomebrewEquipment): D&D species/backgrounds and weapons are kept.
+  async function buildLossItems(): Promise<string[]> {
     const items: string[] = [];
-    if (species) items.push(`Species: ${species.name}`);
-    if (background) items.push(`Background: ${background.name}`);
-    if (mainHand) items.push(`Main hand: ${mainHand.weapon.name}`);
-    if (offHand) items.push(`Off hand: ${offHand.weapon.name}`);
-    if (armor) items.push(`Armor: ${armor.armor.name}`);
+    const [amellwindSpecies, amellwindBackground] = await Promise.all([
+      species ? isAmellwindSpeciesSelection(species) : false,
+      background ? isAmellwindBackgroundSelection(background) : false,
+    ]);
+    if (species && amellwindSpecies) items.push(`Species: ${species.name}`);
+    if (background && amellwindBackground) {
+      items.push(`Background: ${background.name}`);
+    }
+    if (faction) items.push(`Faction: ${BACKGROUND_FACTION_LABELS[faction]}`);
+    if (featSelections.some((feat) => feat?.source === "amellwind")) {
+      items.push("Amellwind feats");
+    }
+    if (mainHand && isAmellwindWeapon(mainHand.weapon)) {
+      items.push(`Main hand: ${mainHand.weapon.name}`);
+    }
+    if (offHand && isAmellwindWeapon(offHand.weapon)) {
+      items.push(`Off hand: ${offHand.weapon.name}`);
+    }
     if (trinket1) items.push(`Trinket: ${trinket1.name}`);
     if (trinket2) items.push(`Trinket: ${trinket2.name}`);
     items.push("Amellwind runes and rarities on equipped gear");
@@ -35,7 +59,10 @@ export function HomebrewModeToggle() {
 
   function handleCheckedChange(checked: boolean) {
     if (useAmellwindHomebrew && !checked) {
-      setConfirmOpen(true);
+      void buildLossItems().then((items) => {
+        setLossItems(items);
+        setConfirmOpen(true);
+      });
       return;
     }
     setUseAmellwindHomebrew(checked);
@@ -79,7 +106,7 @@ export function HomebrewModeToggle() {
         onOpenChange={setConfirmOpen}
         title="Turn off Amellwind Homebrew?"
         description="Switching to D&D 5e only will clear Amellwind-specific identity and equipment from this build."
-        lossItems={buildLossItems()}
+        lossItems={lossItems}
         confirmLabel="Turn off Homebrew"
         onConfirm={() => {
           setUseAmellwindHomebrew(false);

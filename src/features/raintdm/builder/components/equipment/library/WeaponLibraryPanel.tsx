@@ -35,6 +35,10 @@ import type { EquippedWeapon, Weapon } from "@/shared/types";
 import type { WeaponLibraryCatalog } from "@/features/raintdm/builder/utils/builder-library-filters";
 
 import { WeaponLibraryDetail } from "./WeaponLibraryDetail";
+import {
+  AMELLWIND_UNARMED_ITEM,
+  isAmellwindUnarmedItem,
+} from "@/features/raintdm/builder/data/unarmed-item.data";
 
 import { WeaponList } from "./shared/LibraryLists";
 
@@ -145,7 +149,13 @@ export function WeaponLibraryPanel({
       load = getAllWeapons();
     }
 
-    load.then(setAllWeapons).finally(() => setWeaponsLoading(false));
+    load
+      .then((list) =>
+        setAllWeapons(
+          useAmellwindHomebrew ? [AMELLWIND_UNARMED_ITEM, ...list] : list,
+        ),
+      )
+      .finally(() => setWeaponsLoading(false));
   }, [
     isWeaponSlot,
     selectedSlot,
@@ -332,7 +342,10 @@ export function WeaponLibraryPanel({
 
     equipWeapon(selectedSlot, weapon, rarity);
 
-    addEquipmentBundle(buildWeaponInventoryBundle(weapon));
+    // Handwraps / gauntlets are not a shop item to track in the inventory.
+    if (!isAmellwindUnarmedItem(weapon)) {
+      addEquipmentBundle(buildWeaponInventoryBundle(weapon));
+    }
   }
 
   function renderWeaponPreview(weapon: Weapon) {

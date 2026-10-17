@@ -93,6 +93,7 @@ export function BuilderCenterPanel() {
     backgroundOriginFeat,
     backstoryNotes,
     faction,
+    factionFromBackground,
     setFaction,
     isOffHandBlocked,
     offHandBlockReason,
@@ -539,6 +540,7 @@ export function BuilderCenterPanel() {
           optionalFeatureOriginFeats={optionalFeatureOriginFeats}
           backstoryNotes={backstoryNotes}
           faction={faction}
+          factionLocked={factionFromBackground}
           showFaction={useAmellwindHomebrew}
           selectedSlot={selectedSlot}
           onSelectSlot={selectSlot}

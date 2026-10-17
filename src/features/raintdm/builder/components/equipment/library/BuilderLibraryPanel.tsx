@@ -166,13 +166,11 @@ export function BuilderLibraryPanel({ selectedSlot }: BuilderLibraryPanelProps) 
     ? toRpgbotClassSlug(classSelection.name)
     : null;
 
-  const defaultIdentityCatalog = useMemo((): IdentityDataSource => {
-    if (!useAmellwindHomebrew) return "dnd";
-    const isIdentitySlot =
-      selectedSlot === "species" || selectedSlot === "background";
-    if (isIdentitySlot && rpgbotClassSlug) return "dnd";
-    return "amellwind";
-  }, [useAmellwindHomebrew, selectedSlot, rpgbotClassSlug]);
+  // Amellwind backgrounds are how a character joins a faction, so the AGMH
+  // catalog stays the default even once a class (and RPGBOT context) exists.
+  const defaultIdentityCatalog: IdentityDataSource = useAmellwindHomebrew
+    ? "amellwind"
+    : "dnd";
 
   const defaultFeatCatalog = useMemo((): FeatDataSource => {
     if (!useAmellwindHomebrew || isAnyOriginFeatSlotSelected) return "dnd2024";

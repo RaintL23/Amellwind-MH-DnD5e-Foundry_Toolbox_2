@@ -1,6 +1,7 @@
 import { Shield, Shirt } from "lucide-react";
 import { Badge } from "@/components/ui/badge";
-import { EquippedArmor } from "@/shared/types";
+import type { ArmorRarityProperty, EquippedArmor } from "@/shared/types";
+import { ArmorRarityPropertiesPicker } from "../ArmorRarityPropertiesPicker";
 import {
   formatArmorSlotDetail,
   isClothingArmor,
@@ -15,6 +16,11 @@ interface ArmorLibraryDetailProps {
   equipped: EquippedArmor;
   showHomebrewDetails?: boolean;
   onRarityChange?: (rarity: string) => void;
+  /** AGMH Rare+ armor property picks (only for the equipped armor). */
+  onRarityPropertyChange?: (
+    index: number,
+    property: ArmorRarityProperty | null,
+  ) => void;
   /** Rendered inside a library row: omit the titled accordion shell. */
   inline?: boolean;
 }
@@ -42,6 +48,7 @@ export function ArmorLibraryDetail({
   equipped,
   showHomebrewDetails = true,
   onRarityChange,
+  onRarityPropertyChange,
   inline = false,
 }: ArmorLibraryDetailProps) {
   const { armor, rarity, runes } = equipped;
@@ -73,6 +80,12 @@ export function ArmorLibraryDetail({
         <div className="mb-3">
           <RarityButtonGroup value={rarity} onChange={onRarityChange} />
         </div>
+      )}
+      {showHomebrewDetails && onRarityPropertyChange && (
+        <ArmorRarityPropertiesPicker
+          armor={equipped}
+          onChange={onRarityPropertyChange}
+        />
       )}
       <div className="mb-2 flex flex-wrap items-center gap-1.5">
         <Badge variant="secondary" className="text-[10px]">

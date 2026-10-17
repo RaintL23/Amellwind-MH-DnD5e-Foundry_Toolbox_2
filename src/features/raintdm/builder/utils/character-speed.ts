@@ -15,6 +15,7 @@ import type {
 import { parseFiveToolsMarkup } from "@/shared/utils/fivetools-parser";
 import { mergeProgressionWithSubclass } from "@/features/dnd/classes/mappers/class.mapper";
 import { getFeaturesUpToLevel } from "@/features/dnd/classes/utils/class-features-at-level.utils";
+import { getActiveTrinketEffect } from "./trinket.utils";
 
 export interface SpeedBonus {
   label: string;
@@ -320,16 +321,10 @@ export function collectEquippedRuneSpeedBonuses(options: {
     addFromRune(rune, rune?.weaponEffect ?? null);
   }
 
-  for (const trinket of [trinket1, trinket2]) {
-    if (!trinket?.rune) continue;
-    if (trinket.runeMaterialEffect === "weapon") {
-      addFromRune(trinket.rune, trinket.rune.weaponEffect);
-    } else if (trinket.runeMaterialEffect === "armor") {
-      addFromRune(trinket.rune, trinket.rune.armorEffect);
-    } else {
-      addFromRune(trinket.rune, trinket.rune.armorEffect);
-      addFromRune(trinket.rune, trinket.rune.weaponEffect);
-    }
+  // Only the active trinket's material applies, as either its armor or weapon effect.
+  for (const kind of ["armor", "weapon"] as const) {
+    const trinketEffect = getActiveTrinketEffect(trinket1, trinket2, kind);
+    if (trinketEffect) addFromRune(trinketEffect.rune, trinketEffect.effect);
   }
 
   return dedupeSpeedBonuses(bonuses);

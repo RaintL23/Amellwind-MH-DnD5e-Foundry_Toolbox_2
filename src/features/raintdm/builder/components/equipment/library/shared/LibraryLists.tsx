@@ -1,4 +1,6 @@
-import { useMemo } from "react";
+import { useMemo, useState } from "react";
+import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
 import { Award, Gem, Shield, Shirt, Sword } from "lucide-react";
 import { cn } from "@/shared/utils/cn";
 import { resolveBookSourceName } from "@/features/dnd/spells/services/book-source.service";
@@ -364,8 +366,14 @@ export function TrinketList({
   equippedName: string | null;
   onSelect: (name: string) => void;
 }) {
-  if (inventory.length === 0 && catalog.length === 0) {
-    return <EmptyState text="No trinkets available." />;
+  const [customName, setCustomName] = useState("");
+  const trimmedCustomName = customName.trim();
+
+  function handleAddCustom(event: React.FormEvent) {
+    event.preventDefault();
+    if (!trimmedCustomName) return;
+    onSelect(trimmedCustomName);
+    setCustomName("");
   }
 
   function renderTrinketRow(name: string, key: string, iconMuted: boolean) {
@@ -383,7 +391,7 @@ export function TrinketList({
         name={name}
         meta={
           <LibraryItemBadgeRow>
-            <LibraryItemBadge>Placeholder</LibraryItemBadge>
+            <LibraryItemBadge>Trinket</LibraryItemBadge>
           </LibraryItemBadgeRow>
         }
         equipped={equippedName === name}
@@ -394,6 +402,24 @@ export function TrinketList({
 
   return (
     <>
+      <form onSubmit={handleAddCustom} className="mb-2 flex gap-1.5">
+        <Input
+          value={customName}
+          onChange={(event) => setCustomName(event.target.value)}
+          placeholder="Name your trinket or trophy"
+          aria-label="Custom trinket name"
+          className="h-7 text-xs"
+        />
+        <Button
+          type="submit"
+          size="sm"
+          variant="outline"
+          className="h-7 px-2 text-xs"
+          disabled={!trimmedCustomName}
+        >
+          Equip
+        </Button>
+      </form>
       {inventory.length > 0 && <SectionLabel>Inventory</SectionLabel>}
       {inventory.map((name) => renderTrinketRow(name, `inv-${name}`, false))}
       {catalog.map((name) => renderTrinketRow(name, name, true))}

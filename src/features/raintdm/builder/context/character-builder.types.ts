@@ -96,6 +96,8 @@ export interface CharacterBuilderContextValue {
   backstoryNotes: string;
   personality: BuilderPersonality;
   faction: BackgroundFaction | null;
+  /** True when the faction comes from an Amellwind faction background (locked). */
+  factionFromBackground: boolean;
   setSpecies: (selection: CharacterSelectionRef | null) => void;
   /** Drops an invalid subrace ref without resetting origin feats or other identity picks. */
   clearInvalidSpeciesSubrace: () => void;
@@ -147,6 +149,8 @@ export interface CharacterBuilderContextValue {
   reloadClassData: () => Promise<void>;
   speciesData: Species | null;
   speciesDataLoading: boolean;
+  /** Species has subspecies (Lynian, Wyverian, Elder Dragonborn) but none is chosen. */
+  speciesSubraceMissing: boolean;
 
   // Ability score origin bonuses
   useTashaOrigin: boolean;
@@ -182,7 +186,13 @@ export interface CharacterBuilderContextValue {
   standaloneShieldAcBonus: number;
   shieldAcBonus: number;
 
-  equipWeapon: (slot: "mainHand" | "offHand", weapon: Weapon, rarity: string) => void;
+  equipWeapon: (
+    slot: "mainHand" | "offHand",
+    weapon: Weapon,
+    rarity: string,
+    /** Snapshot restore: saved material slot count (Artificer bonus slots). */
+    savedRuneSlots?: number,
+  ) => void;
   unequipWeapon: (slot: "mainHand" | "offHand") => void;
   setWeaponRarity: (slot: "mainHand" | "offHand", rarity: string) => void;
   setWeaponMode: (slot: "mainHand" | "offHand", modeIndex: number) => void;
@@ -190,9 +200,16 @@ export interface CharacterBuilderContextValue {
   unequipArmor: () => void;
   equipShield: (shield: StandaloneShieldItem) => void;
   unequipShield: () => void;
-  setArmorRarity: (rarity: string) => void;
+  setArmorRarity: (rarity: string, savedRuneSlots?: number) => void;
+  /** AGMH: property chosen for the index-th Rare+ armor rarity step. */
+  setArmorRarityProperty: (
+    index: number,
+    property: import("@/shared/types").ArmorRarityProperty | null,
+  ) => void;
   equipTrinket: (slot: "trinket1" | "trinket2", name: string) => void;
   unequipTrinket: (slot: "trinket1" | "trinket2") => void;
+  /** AGMH: choose which trinket's material is active. */
+  setActiveTrinket: (slot: "trinket1" | "trinket2") => void;
   clearEquipment: () => void;
 
   // Rune management

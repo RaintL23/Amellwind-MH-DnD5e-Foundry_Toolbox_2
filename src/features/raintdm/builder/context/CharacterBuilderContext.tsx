@@ -28,6 +28,8 @@ import {
 } from "../utils/alignment.utils";
 import { Character } from "../models/Character";
 import { getPrimaryClassLevel } from "../utils/multiclass.utils";
+import { getArtificerLevel } from "../utils/attunement.utils";
+import { getArtificerBonusMaterialSlots } from "@/shared/utils/artificer-material-slots.utils";
 import { computeEffectiveAbilityScores } from "../utils/effective-ability-scores";
 import {
   defaultPointBuyScores,
@@ -205,6 +207,15 @@ export function CharacterBuilderProvider({ children }: Readonly<{ children: Reac
     attacksPerTurnOverride,
     useUnarmedStrike,
     useAmellwindHomebrew,
+    artificerBonusMaterialSlots: useAmellwindHomebrew
+      ? getArtificerBonusMaterialSlots(
+          getArtificerLevel(
+            identity.class?.name,
+            character.level,
+            identity.multiclassEntries,
+          ),
+        )
+      : 0,
   });
 
   useEffect(() => {
@@ -439,6 +450,7 @@ export function CharacterBuilderProvider({ children }: Readonly<{ children: Reac
       backstoryNotes: identity.backstoryNotes,
       personality: identity.personality,
       faction: identity.faction,
+      factionFromBackground: identity.factionFromBackground,
       setSpecies: identity.setSpecies,
       clearInvalidSpeciesSubrace: identity.clearInvalidSpeciesSubrace,
       setBackground: identity.setBackground,
@@ -469,6 +481,7 @@ export function CharacterBuilderProvider({ children }: Readonly<{ children: Reac
       reloadClassData: identity.reloadClassData,
       speciesData: identity.speciesData,
       speciesDataLoading: identity.speciesDataLoading,
+      speciesSubraceMissing: identity.speciesSubraceMissing,
       useTashaOrigin: identity.useTashaOrigin,
       setUseTashaOrigin: identity.setUseTashaOrigin,
       tashaPlus2: identity.tashaPlus2,
@@ -504,8 +517,10 @@ export function CharacterBuilderProvider({ children }: Readonly<{ children: Reac
       equipShield: equipment.equipShield,
       unequipShield: equipment.unequipShield,
       setArmorRarity: equipment.setArmorRarity,
+      setArmorRarityProperty: equipment.setArmorRarityProperty,
       equipTrinket: equipment.equipTrinket,
       unequipTrinket: equipment.unequipTrinket,
+      setActiveTrinket: equipment.setActiveTrinket,
       clearEquipment: equipment.clearEquipment,
       assignWeaponRune: equipment.assignWeaponRune,
       removeWeaponRune: equipment.removeWeaponRune,

@@ -3,6 +3,7 @@ import { ABILITY_LABELS } from "@/shared/types";
 import { ShieldCheck } from "lucide-react";
 import { useCharacterBuilder } from "../../context/CharacterBuilderContext";
 import { useEffectiveAbilityScores } from "../../hooks/useEffectiveAbilityScores";
+import { useArmorRarityBonuses } from "../../hooks/useArmorRarityBonuses";
 import { ABILITY_ORDER, ABILITY_NAMES } from "@/shared/constants/dnd";
 import { BuilderPanel } from "../shared/BuilderPanel";
 import { BuilderStatRow } from "./BuilderStatRow";
@@ -12,6 +13,7 @@ export function BuilderSavingThrowsPanel() {
     useCharacterBuilder();
   const effectiveScores = useEffectiveAbilityScores();
   const proficiencyBonus = character.getProficiencyBonus();
+  const armorBonuses = useArmorRarityBonuses();
 
   return (
     <BuilderPanel
@@ -25,9 +27,10 @@ export function BuilderSavingThrowsPanel() {
         {ABILITY_ORDER.map((ability) => {
           const proficient = character.isSavingThrowProficient(ability);
           const abilityMod = getAbilityModifier(effectiveScores[ability]);
-          const saveMod = proficient
-            ? abilityMod + proficiencyBonus
-            : abilityMod;
+          const armorBonus = armorBonuses.saves[ability] ?? 0;
+          const saveMod =
+            (proficient ? abilityMod + proficiencyBonus : abilityMod) +
+            armorBonus;
           const saveSources = proficient
             ? [
                 {
@@ -36,9 +39,13 @@ export function BuilderSavingThrowsPanel() {
                 },
               ]
             : undefined;
-          const tooltip = proficient
-            ? `${ABILITY_NAMES[ability]} save`
-            : undefined;
+          const tooltip =
+            [
+              proficient ? `${ABILITY_NAMES[ability]} save` : null,
+              armorBonus ? `Armor rarity property: +${armorBonus}` : null,
+            ]
+              .filter(Boolean)
+              .join(" · ") || undefined;
           return (
             <BuilderStatRow
               key={ability}

@@ -1,12 +1,12 @@
 import { useCallback, useEffect, useMemo, useState } from "react";
+import { Button } from "@/components/ui/button";
 import { BASE_ARMORS } from "@/features/raintdm/builder/data/armor.data";
 import {
   armorItemToStandaloneShield,
   isShieldArmorItem,
-  standaloneShieldToArmorItem,
-  STANDALONE_SHIELD,
 } from "@/features/raintdm/builder/data/shield.data";
-import { PLACEHOLDER_TRINKETS } from "@/features/raintdm/builder/data/trinket.data";
+import { SUGGESTED_TRINKETS } from "@/features/raintdm/builder/data/trinket.data";
+import { getActiveTrinketSlot } from "@/features/raintdm/builder/utils/trinket.utils";
 import { getDndArmors } from "@/features/dnd/items/services/dnd-equipment.service";
 import { useCharacterBuilder } from "@/features/raintdm/builder/context/CharacterBuilderContext";
 import { useBuilderInventory } from "@/features/raintdm/builder/context/BuilderInventoryContext";
@@ -53,7 +53,9 @@ export function ArmorLibraryPanel({
     equipArmor,
     equipShield,
     equipTrinket,
+    setActiveTrinket,
     setArmorRarity,
+    setArmorRarityProperty,
     resolvedArmorItems,
     useAmellwindHomebrew,
   } = useCharacterBuilder();
@@ -97,9 +99,8 @@ export function ArmorLibraryPanel({
   }, [isArmorSlot, useAmellwindHomebrew, prefer2024]);
 
   const catalogArmors = useMemo(() => {
-    if (useAmellwindHomebrew) {
-      return [...BASE_ARMORS, standaloneShieldToArmorItem(STANDALONE_SHIELD)];
-    }
+    // AGMH: shields only come integrated in a weapon (Sword & Shield, Lance, …).
+    if (useAmellwindHomebrew) return BASE_ARMORS;
     return dndArmors;
   }, [useAmellwindHomebrew, dndArmors]);
 
@@ -113,9 +114,10 @@ export function ArmorLibraryPanel({
     return inventoryArmors.filter(
       (a) =>
         a.name.toLowerCase().includes(q) &&
+        !(useAmellwindHomebrew && isShieldArmorItem(a)) &&
         armorMatchesLibraryFilters(a, effectiveListFilters),
     );
-  }, [inventoryArmors, isArmorSlot, q, effectiveListFilters]);
+  }, [inventoryArmors, isArmorSlot, q, effectiveListFilters, useAmellwindHomebrew]);
 
   const catalogArmorsFiltered = useMemo(() => {
     if (!isArmorSlot) return [];
@@ -136,7 +138,7 @@ export function ArmorLibraryPanel({
   const catalogTrinketsFiltered = useMemo(() => {
     if (!isTrinketSlot) return [];
     const invNames = new Set(inventoryTrinkets);
-    return PLACEHOLDER_TRINKETS.filter(
+    return SUGGESTED_TRINKETS.filter(
       (name) => name.toLowerCase().includes(q) && !invNames.has(name),
     );
   }, [inventoryTrinkets, isTrinketSlot, q]);
@@ -242,6 +244,9 @@ export function ArmorLibraryPanel({
             onRarityChange={
               useAmellwindHomebrew ? setArmorRarity : undefined
             }
+            onRarityPropertyChange={
+              useAmellwindHomebrew ? setArmorRarityProperty : undefined
+            }
           />
         )}
         <ArmorList
@@ -260,13 +265,44 @@ export function ArmorLibraryPanel({
   }
 
   if (isTrinketSlot) {
+    const activeSlot = getActiveTrinketSlot(trinket1, trinket2);
+    const isActive = !!equippedTrinket && activeSlot === selectedSlot;
     return (
-      <TrinketList
-        inventory={inventoryTrinketsFiltered}
-        catalog={catalogTrinketsFiltered}
-        equippedName={equippedTrinket?.name ?? null}
-        onSelect={handleSelectTrinket}
-      />
+      <>
+        <p className="mb-2 text-[11px] text-muted-foreground">
+          Choose a trinket from the PHB trinket table or a trophy from a
+          creature you hunted. Each holds one material; only one trinket is
+          active at a time (swapping is an action).
+        </p>
+        {equippedTrinket && (
+          <div className="mb-2 flex items-center justify-between gap-2 rounded-md border border-border/60 bg-muted/20 px-2.5 py-1.5">
+            <span className="text-[11px] text-foreground">
+              {isActive ? "Active trinket" : "Inactive trinket"}
+            </span>
+            {!isActive && (
+              <Button
+                type="button"
+                size="sm"
+                variant="outline"
+                className="h-6 px-2 text-[11px]"
+                onClick={() =>
+                  selectedSlot === "trinket1" || selectedSlot === "trinket2"
+                    ? setActiveTrinket(selectedSlot)
+                    : undefined
+                }
+              >
+                Make active
+              </Button>
+            )}
+          </div>
+        )}
+        <TrinketList
+          inventory={inventoryTrinketsFiltered}
+          catalog={catalogTrinketsFiltered}
+          equippedName={equippedTrinket?.name ?? null}
+          onSelect={handleSelectTrinket}
+        />
+      </>
     );
   }
 

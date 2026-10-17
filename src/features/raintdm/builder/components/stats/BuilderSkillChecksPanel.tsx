@@ -13,6 +13,7 @@ import { BuilderSkillPicker } from "./BuilderSkillPicker";
 import { BuilderExpertisePicker } from "./BuilderExpertisePicker";
 import type { SkillKey } from "@/shared/types";
 import { useEffectiveAbilityScores } from "../../hooks/useEffectiveAbilityScores";
+import { useArmorRarityBonuses } from "../../hooks/useArmorRarityBonuses";
 import {
   getPendingChoiceGrants,
   getPendingExpertiseGrants,
@@ -57,6 +58,7 @@ export function BuilderSkillChecksPanel() {
     setExpertiseChoices,
   } = useCharacterBuilder();
   const effectiveScores = useEffectiveAbilityScores();
+  const armorBonuses = useArmorRarityBonuses();
   const proficiencyBonus = character.getProficiencyBonus();
 
   const speciesGrantList = allSkillGrants.filter((g) => g.source.type === "species");
@@ -327,7 +329,10 @@ export function BuilderSkillChecksPanel() {
           const abilityMod = getAbilityModifier(
             effectiveScores[SKILL_ABILITY[skill]],
           );
-          const skillMod = abilityMod + level * proficiencyBonus;
+          const skillMod =
+            abilityMod +
+            level * proficiencyBonus +
+            (armorBonuses.skills[skill] ?? 0);
           const passive = 10 + skillMod;
           return (
             <BuilderStatRow

@@ -9,6 +9,7 @@ import {
   getCharacterAcBreakdown,
   type CharacterAcBreakdown,
 } from "../utils/character-armor-class";
+import { collectAmellwindAcBonuses } from "../utils/amellwind-ac-bonuses.utils";
 
 export function useCharacterArmorClass(): CharacterAcBreakdown {
   const {
@@ -19,6 +20,9 @@ export function useCharacterArmorClass(): CharacterAcBreakdown {
     subclass,
     class: classRef,
     species: speciesRef,
+    trinket1,
+    trinket2,
+    useAmellwindHomebrew,
   } = useCharacterBuilder();
   const { classData } = useSelectedClass();
   const resolvedSpecies = useResolvedSpecies();
@@ -45,6 +49,12 @@ export function useCharacterArmorClass(): CharacterAcBreakdown {
         subclass: subclassData,
         speciesTraits: resolvedSpecies?.traits ?? [],
         speciesName: resolvedSpecies?.name ?? speciesRef?.name,
+        extraBonuses: collectAmellwindAcBonuses({
+          armor,
+          trinket1,
+          trinket2,
+          useAmellwindHomebrew,
+        }),
       }),
     [
       modifiers,
@@ -57,6 +67,9 @@ export function useCharacterArmorClass(): CharacterAcBreakdown {
       subclassData,
       resolvedSpecies,
       speciesRef?.name,
+      trinket1,
+      trinket2,
+      useAmellwindHomebrew,
     ],
   );
 }

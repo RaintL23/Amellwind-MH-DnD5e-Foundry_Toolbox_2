@@ -117,6 +117,7 @@ export function BuilderInventoryPanel() {
     equipTrinket,
     unequipTrinket,
     clearEquipment,
+    useAmellwindHomebrew,
   } = useCharacterBuilder();
 
   const effectiveScores = useEffectiveAbilityScores();
@@ -346,6 +347,7 @@ export function BuilderInventoryPanel() {
                           armorCatalog={armorCatalog}
                           equippedArmorName={equippedArmorName}
                           equippedShieldName={equippedShieldName}
+                          allowStandaloneShield={!useAmellwindHomebrew}
                           weaponSlot={getWeaponEquippedSlot(entry.name)}
                           trinketSlot={getTrinketEquippedSlot(entry.name)}
                           shieldParentEquipped={(() => {
@@ -413,6 +415,7 @@ function InventoryRow({
   armorCatalog,
   equippedArmorName,
   equippedShieldName,
+  allowStandaloneShield,
   weaponSlot,
   trinketSlot,
   shieldParentEquipped,
@@ -433,6 +436,8 @@ function InventoryRow({
   armorCatalog: ArmorItem[];
   equippedArmorName: string | null;
   equippedShieldName: string | null;
+  /** False in Amellwind mode: shields only come integrated in a weapon. */
+  allowStandaloneShield: boolean;
   weaponSlot: WeaponEquippedSlot | null;
   trinketSlot: TrinketEquippedSlot | null;
   shieldParentEquipped: boolean;
@@ -448,10 +453,11 @@ function InventoryRow({
   onRemove: () => void;
 }) {
   const lineCost = parseCostGp(entry.cost) * entry.quantity;
-  const shieldItem =
+  const cartShield =
     kind === "armor" ? findShieldByCartName(entry.name) : null;
+  const shieldItem = allowStandaloneShield ? cartShield : null;
   const armorItem =
-    kind === "armor" && !shieldItem
+    kind === "armor" && !cartShield
       ? findArmorByCartName(entry.name, armorCatalog)
       : null;
   const weaponItem =

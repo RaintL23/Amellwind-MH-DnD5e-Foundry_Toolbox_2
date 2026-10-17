@@ -3,8 +3,16 @@
  * derived AC / DPT. Enforces two-handed / dual-grip / integrated-shield rules
  * from Amellwind weapon utils.
  */
-import { useState, useCallback, useMemo, useRef, type SetStateAction } from "react";
+import {
+  useState,
+  useCallback,
+  useEffect,
+  useMemo,
+  useRef,
+  type SetStateAction,
+} from "react";
 import type {
+  ArmorRarityProperty,
   EquippedWeapon,
   EquippedArmor,
   EquippedTrinket,
@@ -19,9 +27,14 @@ import type {
 } from "@/shared/types";
 import type { StandaloneShieldItem } from "../../data/shield.data";
 import { calculateCombat } from "../../utils/combat.calculator";
+import { getActiveTrinketEffect } from "../../utils/trinket.utils";
+import { fitArmorRarityProperties } from "../../utils/armor-rarity-properties.utils";
+import { collectAmellwindAcBonuses } from "../../utils/amellwind-ac-bonuses.utils";
 import { getCharacterAcBreakdown } from "../../utils/character-armor-class";
 import { abilityModifiersFromScores } from "../../utils/effective-ability-scores";
 import {
+  getRuneSlotsForRarity,
+  getWeaponExtraSlots,
   makeWeaponSlot,
   makeArmorSlot,
   resizeRunesForRarity,
@@ -60,6 +73,22 @@ export interface EquipmentSliceInput {
   attacksPerTurnOverride: number | null;
   useUnarmedStrike: boolean;
   useAmellwindHomebrew: boolean;
+  /** AGMH Artificer: extra material slots on weapon and armor (10/14/18). */
+  artificerBonusMaterialSlots: number;
+}
+
+/**
+ * Snapshot restore: keep the saved slot count when it is larger (Artificer
+ * bonus slots are derived from class levels that load in the same tick).
+ */
+function withSavedRuneSlots<T extends { runeSlots: number; runes: (Rune | null)[] }>(
+  equipped: T,
+  savedRuneSlots: number | undefined,
+): T {
+  if (!savedRuneSlots || savedRuneSlots <= equipped.runeSlots) return equipped;
+  const runes = [...equipped.runes];
+  while (runes.length < savedRuneSlots) runes.push(null);
+  return { ...equipped, runeSlots: savedRuneSlots, runes };
 }
 
 export function useEquipmentSlice({
@@ -72,7 +101,11 @@ export function useEquipmentSlice({
   attacksPerTurnOverride,
   useUnarmedStrike,
   useAmellwindHomebrew,
+  artificerBonusMaterialSlots,
 }: EquipmentSliceInput) {
+  const bonusSlotsRef = useRef(artificerBonusMaterialSlots);
+  bonusSlotsRef.current = artificerBonusMaterialSlots;
+
   // ─── Equipped slots ─────────────────────────────────────────────────────────
 
   const [mainHand, setMainHandState] = useState<EquippedWeapon | null>(null);
@@ -95,8 +128,16 @@ export function useEquipmentSlice({
   // ─── Equip / unequip / rarity / grip mode ───────────────────────────────────
 
   const equipWeapon = useCallback(
-    (slot: "mainHand" | "offHand", weapon: Weapon, rarity: string) => {
-      const equipped = makeWeaponSlot(weapon, rarity);
+    (
+      slot: "mainHand" | "offHand",
+      weapon: Weapon,
+      rarity: string,
+      savedRuneSlots?: number,
+    ) => {
+      const equipped = withSavedRuneSlots(
+        makeWeaponSlot(weapon, rarity, bonusSlotsRef.current),
+        savedRuneSlots,
+      );
       if (slot === "mainHand") {
         setMainHand(equipped);
         if (
@@ -131,7 +172,14 @@ export function useEquipmentSlice({
     const setter = slot === "mainHand" ? setMainHand : setOffHand;
     setter((prev) => {
       if (!prev) return prev;
-      return { ...prev, ...resizeRunesForRarity(prev.runes, rarity) };
+      return {
+        ...prev,
+        ...resizeRunesForRarity(
+          prev.runes,
+          rarity,
+          bonusSlotsRef.current + getWeaponExtraSlots(prev.weapon),
+        ),
+      };
     });
   }, [setMainHand]);
 
@@ -155,40 +203,136 @@ export function useEquipmentSlice({
     [setMainHand],
   );
 
-  const equipShield = useCallback((shield: StandaloneShieldItem) => {
-    const current = mainHandRef.current;
-    if (hasActiveIntegratedShield(current) || blocksOffHand(current)) return;
-    setOffHand(null);
-    setEquippedShield(shield);
-  }, []);
+  // AGMH: shields only exist as part of a weapon that already provides one.
+  const equipShield = useCallback(
+    (shield: StandaloneShieldItem) => {
+      if (useAmellwindHomebrew) return;
+      const current = mainHandRef.current;
+      if (hasActiveIntegratedShield(current) || blocksOffHand(current)) return;
+      setOffHand(null);
+      setEquippedShield(shield);
+    },
+    [useAmellwindHomebrew],
+  );
+
+  useEffect(() => {
+    if (useAmellwindHomebrew) setEquippedShield(null);
+  }, [useAmellwindHomebrew]);
 
   const unequipShield = useCallback(() => setEquippedShield(null), []);
 
   const equipArmor = useCallback(
     (armorItem: ArmorItem) => {
-      setArmor(makeArmorSlot(armorItem, armorItem.rarity, useAmellwindHomebrew));
+      setArmor(
+        makeArmorSlot(
+          armorItem,
+          armorItem.rarity,
+          useAmellwindHomebrew,
+          bonusSlotsRef.current,
+        ),
+      );
     },
     [useAmellwindHomebrew],
   );
 
   const unequipArmor = useCallback(() => setArmor(null), []);
 
-  const setArmorRarity = useCallback((rarity: string) => {
+  const setArmorRarity = useCallback(
+    (rarity: string, savedRuneSlots?: number) => {
+      setArmor((prev) => {
+        if (!prev) return prev;
+        return withSavedRuneSlots(
+          {
+            ...prev,
+            ...resizeRunesForRarity(prev.runes, rarity, bonusSlotsRef.current),
+            rarityProperties: fitArmorRarityProperties(
+              prev.rarityProperties,
+              rarity,
+            ),
+          },
+          savedRuneSlots,
+        );
+      });
+    },
+    [],
+  );
+
+  /** AGMH: property gained at the index-th Rare+ rarity step. */
+  const setArmorRarityProperty = useCallback(
+    (index: number, property: ArmorRarityProperty | null) => {
+      setArmor((prev) => {
+        if (!prev) return prev;
+        const next = fitArmorRarityProperties(
+          prev.rarityProperties,
+          prev.rarity,
+        );
+        if (index < 0 || index >= next.length) return prev;
+        next[index] = property;
+        return { ...prev, rarityProperties: next };
+      });
+    },
+    [],
+  );
+
+  // Level / class changes move the Artificer breakpoints: resize equipped
+  // Amellwind gear, keeping the materials that still fit.
+  useEffect(() => {
+    const resizeWeapon = (prev: EquippedWeapon | null) => {
+      if (!prev || prev.weapon.contentSource === "dnd") return prev;
+      const bonus = artificerBonusMaterialSlots + getWeaponExtraSlots(prev.weapon);
+      const expected = getRuneSlotsForRarity(prev.rarity, bonus);
+      if (prev.runeSlots === expected) return prev;
+      return {
+        ...prev,
+        ...resizeRunesForRarity(prev.runes, prev.rarity, bonus),
+      };
+    };
+    setMainHand(resizeWeapon);
+    setOffHand(resizeWeapon);
+    if (!useAmellwindHomebrew) return;
     setArmor((prev) => {
       if (!prev) return prev;
-      return { ...prev, ...resizeRunesForRarity(prev.runes, rarity) };
+      const expected = getRuneSlotsForRarity(
+        prev.rarity,
+        artificerBonusMaterialSlots,
+      );
+      if (prev.runeSlots === expected) return prev;
+      return {
+        ...prev,
+        ...resizeRunesForRarity(
+          prev.runes,
+          prev.rarity,
+          artificerBonusMaterialSlots,
+        ),
+      };
     });
-  }, []);
+  }, [artificerBonusMaterialSlots, useAmellwindHomebrew, setMainHand]);
 
-  const equipTrinket = useCallback((slot: "trinket1" | "trinket2", name: string) => {
-    const trinket: EquippedTrinket = { name, rune: null };
-    if (slot === "trinket1") setTrinket1(trinket);
-    else setTrinket2(trinket);
-  }, []);
+  const equipTrinket = useCallback(
+    (slot: "trinket1" | "trinket2", name: string) => {
+      const other = slot === "trinket1" ? trinket2 : trinket1;
+      const current = slot === "trinket1" ? trinket1 : trinket2;
+      // Keep the active trinket; the first one equipped becomes active.
+      const active = current?.active ?? !other?.active;
+      const trinket: EquippedTrinket = { name, rune: null, active };
+      if (slot === "trinket1") setTrinket1(trinket);
+      else setTrinket2(trinket);
+    },
+    [trinket1, trinket2],
+  );
 
   const unequipTrinket = useCallback((slot: "trinket1" | "trinket2") => {
+    const otherSetter = slot === "trinket1" ? setTrinket2 : setTrinket1;
     if (slot === "trinket1") setTrinket1(null);
     else setTrinket2(null);
+    // The remaining trinket becomes the active one.
+    otherSetter((prev) => (prev ? { ...prev, active: true } : prev));
+  }, []);
+
+  /** AGMH: swap which trinket's material is active (an action in play). */
+  const setActiveTrinket = useCallback((slot: "trinket1" | "trinket2") => {
+    setTrinket1((prev) => (prev ? { ...prev, active: slot === "trinket1" } : prev));
+    setTrinket2((prev) => (prev ? { ...prev, active: slot === "trinket2" } : prev));
   }, []);
 
   const clearEquipment = useCallback(() => {
@@ -308,8 +452,17 @@ export function useEquipmentSlice({
       className: classRef?.name,
       subclass: null,
       speciesName: speciesRef?.name,
+      extraBonuses: collectAmellwindAcBonuses({
+        armor,
+        trinket1,
+        trinket2,
+        useAmellwindHomebrew,
+      }),
     }).total;
   }, [
+    trinket1,
+    trinket2,
+    useAmellwindHomebrew,
     armor,
     character.level,
     effectiveAbilities,
@@ -338,6 +491,7 @@ export function useEquipmentSlice({
         classData,
         speciesData,
         useAmellwindHomebrew,
+        getActiveTrinketEffect(trinket1, trinket2, "weapon")?.rune ?? null,
       ),
     [
       combatCharacter,
@@ -349,6 +503,8 @@ export function useEquipmentSlice({
       classData,
       speciesData,
       useAmellwindHomebrew,
+      trinket1,
+      trinket2,
     ],
   );
 
@@ -399,8 +555,10 @@ export function useEquipmentSlice({
       equipShield,
       unequipShield,
       setArmorRarity,
+      setArmorRarityProperty,
       equipTrinket,
       unequipTrinket,
+      setActiveTrinket,
       clearEquipment,
       assignWeaponRune,
       removeWeaponRune,
@@ -437,8 +595,10 @@ export function useEquipmentSlice({
       equipShield,
       unequipShield,
       setArmorRarity,
+      setArmorRarityProperty,
       equipTrinket,
       unequipTrinket,
+      setActiveTrinket,
       clearEquipment,
       assignWeaponRune,
       removeWeaponRune,

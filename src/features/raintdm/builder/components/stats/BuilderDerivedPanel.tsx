@@ -77,12 +77,15 @@ export function BuilderDerivedPanel() {
               />
             </>
           )}
-        <DerivedRow
-          label="Attunement"
-          term="attunement"
-          value={`${attunement.attunementSlots} slots`}
-          valueTooltip={attunement.tooltip}
-        />
+        {/* AGMH replaces magic-item attunement with weapon + armor + trinkets. */}
+        {!useAmellwindHomebrew && (
+          <DerivedRow
+            label="Attunement"
+            term="attunement"
+            value={`${attunement.attunementSlots} slots`}
+            valueTooltip={attunement.tooltip}
+          />
+        )}
         {useAmellwindHomebrew &&
           attunement.isArtificer &&
           attunement.artificerBonusMaterialSlots > 0 && (

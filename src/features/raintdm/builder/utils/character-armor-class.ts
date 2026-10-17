@@ -226,6 +226,8 @@ export function getCharacterAcBreakdown(input: {
   subclass: Subclass | null;
   speciesTraits?: SpeciesTrait[];
   speciesName?: string | null;
+  /** Flat bonuses added to whichever AC method wins (Amellwind gear). */
+  extraBonuses?: { label: string; amount: number }[];
 }): CharacterAcBreakdown {
   const {
     modifiers,
@@ -238,6 +240,7 @@ export function getCharacterAcBreakdown(input: {
     subclass,
     speciesTraits = [],
     speciesName,
+    extraBonuses = [],
   } = input;
 
   const dexMod = modifiers.dex;
@@ -343,6 +346,13 @@ export function getCharacterAcBreakdown(input: {
     }
   }
 
-  const lines = [...winner.lines, ...inactiveNotes, `Total: ${winner.total}`];
-  return { total: winner.total, tooltip: lines.join("\n") };
+  const extraTotal = extraBonuses.reduce((sum, bonus) => sum + bonus.amount, 0);
+  const total = winner.total + extraTotal;
+  const lines = [
+    ...winner.lines,
+    ...extraBonuses.map((bonus) => `${bonus.label}: +${bonus.amount}`),
+    ...inactiveNotes,
+    `Total: ${total}`,
+  ];
+  return { total, tooltip: lines.join("\n") };
 }

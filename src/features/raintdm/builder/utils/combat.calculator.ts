@@ -6,6 +6,7 @@ import {
   CombatCalculation,
   EquippedWeapon,
   CritRune,
+  Rune,
   Species,
 } from "@/shared/types";
 import { formatModifier } from "@/shared/utils/cr.utils";
@@ -33,6 +34,10 @@ function buildDiceExpression(diceParts: string[], flatModifier: number): string 
  */
 function parseDiceNotation(notation: string): DiceRoll {
   const match = notation.match(/^(\d+)d(\d+)$/i);
+  // Flat damage (AGMH unarmed item: 1 + modifier, like an unarmed strike).
+  if (!match && /^\d+$/.test(notation.trim())) {
+    return { count: 0, sides: 0, average: Number(notation), notation };
+  }
   if (!match) {
     return { count: 0, sides: 0, average: 0, notation };
   }
@@ -114,6 +119,8 @@ function calculateWeaponDamage(
   attacksPerTurn: number,
   isOffHand: boolean,
   useAmellwindHomebrew = true,
+  /** Weapon materials from outside the weapon (the active trinket). */
+  extraRunes: Rune[] = [],
 ): DamageBreakdown {
   const diceNotation = getActiveWeaponDamage(equipped);
   const damageModeLabel = getActiveWeaponDamageLabel(equipped);
@@ -153,7 +160,9 @@ function calculateWeaponDamage(
   const runeDice: DiceRoll[] = [];
   const critRunes: CritRune[] = [];
 
-  const runesToApply = useAmellwindHomebrew ? equipped.runes : [];
+  const runesToApply = useAmellwindHomebrew
+    ? [...equipped.runes, ...extraRunes]
+    : [];
 
   for (const rune of runesToApply) {
     if (rune) {
@@ -353,6 +362,8 @@ export function calculateCombat(
   classData?: Class | null,
   speciesData?: Species | null,
   useAmellwindHomebrew = true,
+  /** Active trinket holding a weapon material: applies to the attuned (main-hand) weapon. */
+  activeTrinketWeaponRune: Rune | null = null,
 ): CombatCalculation {
   if (useUnarmedStrike) {
     const unarmedBreakdown = calculateUnarmedStrikeDamage(
@@ -379,6 +390,7 @@ export function calculateCombat(
       attacksPerTurn,
       false,
       useAmellwindHomebrew,
+      activeTrinketWeaponRune ? [activeTrinketWeaponRune] : [],
     );
   }
 

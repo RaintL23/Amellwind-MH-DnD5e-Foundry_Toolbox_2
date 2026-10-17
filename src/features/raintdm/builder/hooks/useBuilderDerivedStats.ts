@@ -1,16 +1,22 @@
 import { getAbilityModifier } from "@/shared/utils/cr.utils";
 import { useCharacterBuilder } from "../context/CharacterBuilderContext";
 import { useSpellcastingContext } from "../context/SpellcastingContext";
-import { getAttunementInfo } from "../utils/attunement.utils";
+import { getArtificerLevel, getAttunementInfo } from "../utils/attunement.utils";
 import { computeSpellcastingAttackStats } from "../utils/spellcasting-stats.utils";
 import { useCharacterArmorClass } from "./useCharacterArmorClass";
 import { useCharacterHitPoints } from "./useCharacterHitPoints";
 import { useCharacterSpeed } from "./useCharacterSpeed";
 import { useEffectiveAbilityScores } from "./useEffectiveAbilityScores";
+import { useArmorRarityBonuses } from "./useArmorRarityBonuses";
 
 /** Derived combat stats shared by the General Stats panel and the mobile summary strip. */
 export function useBuilderDerivedStats() {
-  const { character, class: classSelection } = useCharacterBuilder();
+  const {
+    character,
+    class: classSelection,
+    multiclassEntries,
+    useAmellwindHomebrew,
+  } = useCharacterBuilder();
   const hitPoints = useCharacterHitPoints();
   const armorClass = useCharacterArmorClass();
   const speed = useCharacterSpeed();
@@ -18,10 +24,12 @@ export function useBuilderDerivedStats() {
   const { spellcasting } = useSpellcastingContext();
   const proficiencyBonus = character.getProficiencyBonus();
 
+  const armorBonuses = useArmorRarityBonuses();
   const passivePerception =
     10 +
     getAbilityModifier(effectiveScores.wis) +
-    character.getSkillProficiencyLevel("prc") * proficiencyBonus;
+    character.getSkillProficiencyLevel("prc") * proficiencyBonus +
+    (armorBonuses.skills.prc ?? 0);
 
   const spellAttackStats = spellcasting?.isSpellcaster
     ? computeSpellcastingAttackStats(
@@ -39,6 +47,13 @@ export function useBuilderDerivedStats() {
     initiative: getAbilityModifier(effectiveScores.dex),
     passivePerception,
     spellAttackStats,
-    attunement: getAttunementInfo(classSelection?.name, character.level),
+    attunement: getAttunementInfo(
+      getArtificerLevel(
+        classSelection?.name,
+        character.level,
+        multiclassEntries,
+      ),
+      useAmellwindHomebrew,
+    ),
   };
 }

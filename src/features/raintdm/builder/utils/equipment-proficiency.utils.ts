@@ -74,7 +74,15 @@ const MARTIAL_WEAPON_NAMES = new Set([
   "net",
   "firearms",
   "firearm",
+  "musket",
+  "pistol",
 ]);
+
+/** True for a PHB/XPHB simple or martial weapon name (case/format-insensitive). */
+export function isDndWeaponName(name: string): boolean {
+  const key = normalizeProficiencyKey(name);
+  return SIMPLE_WEAPON_NAMES.has(key) || MARTIAL_WEAPON_NAMES.has(key);
+}
 
 /** PHB/XPHB martial weapons that have the Finesse and/or Light property. */
 const MARTIAL_FINESSE_OR_LIGHT_WEAPON_NAMES = [
