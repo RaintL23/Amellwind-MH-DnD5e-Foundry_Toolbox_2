@@ -216,11 +216,20 @@ async function readGithubGtmhList(githubKey: string, dataKey: string): Promise<u
   return Array.isArray(data) ? data : [];
 }
 
+/**
+ * GitHub names already covered by a local (Patreon) entry spelled differently,
+ * per GTMH json key. Name keys only normalize case/punctuation, not spacing.
+ */
+const GTMH_GITHUB_ALIASES_COVERED_LOCALLY: Record<string, string[]> = {
+  feat: ["Switchaxe Mastery"], // local: "Switch Axe Mastery"
+};
+
 async function persistMergedGtmhNamedList(options: {
   githubKey: string;
   dataKey: string;
   local: unknown[];
   githubFeed?: unknown[];
+  extraCoveredNames?: string[];
 }): Promise<unknown[]> {
   const github =
     options.githubFeed ??
@@ -235,7 +244,11 @@ async function persistMergedGtmhNamedList(options: {
     return Array.isArray(existing) && existing.length > 0 ? existing : github;
   }
 
-  const { items } = mergeNamedFeeds(github, options.local);
+  const { items } = mergeNamedFeeds(
+    github,
+    options.local,
+    options.extraCoveredNames,
+  );
   await setStoreValue("GTMH_CURRENT", options.githubKey, github);
   await setStoreValue("GTMH_CURRENT", options.dataKey, items);
   return items;
@@ -265,6 +278,7 @@ async function persistMergedGtmhData(
       dataKey: key.dataKey,
       local,
       githubFeed: github,
+      extraCoveredNames: GTMH_GITHUB_ALIASES_COVERED_LOCALLY[key.jsonKey],
     });
   }
 

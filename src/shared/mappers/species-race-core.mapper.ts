@@ -338,6 +338,10 @@ export function mapTraits(entries: unknown[]): SpeciesTrait[] {
     const name = String(e.name ?? "").trim();
     if (!name) continue;
     const rawEntries = Array.isArray(e.entries) ? (e.entries as unknown[]) : [];
+    const overwrites =
+      typeof e.data?.overwrite === "string" && e.data.overwrite.trim()
+        ? String(e.data.overwrite).trim()
+        : undefined;
     const creation = tryMapCreationChoice(name, rawEntries);
     if (creation) {
       traits.push({
@@ -347,6 +351,7 @@ export function mapTraits(entries: unknown[]): SpeciesTrait[] {
           ? creation.intro.tables
           : undefined,
         creationChoice: creation.creationChoice,
+        ...(overwrites ? { overwrites } : {}),
       });
       continue;
     }
@@ -355,6 +360,7 @@ export function mapTraits(entries: unknown[]): SpeciesTrait[] {
       name,
       entries: texts,
       tables: tables.length ? tables : undefined,
+      ...(overwrites ? { overwrites } : {}),
     });
   }
 

@@ -23,6 +23,7 @@ import {
   parseSkillToolLanguageProficiencies,
 } from "@/shared/utils/skill-proficiency.parser";
 import { DND_FEAT_CATEGORY_LABELS } from "@/shared/types/dnd-feat.types";
+import { parseNamedProficiencyBlocks } from "@/shared/utils/named-proficiency.parser";
 
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
 type Raw = Record<string, any>;
@@ -448,6 +449,10 @@ export function mapFeat(raw: any): Feat {
     Array.isArray(raw.expertise) ? raw.expertise : [],
     featSource,
   );
+  const toolProficiencyGrants = parseNamedProficiencyBlocks(
+    Array.isArray(raw.toolProficiencies) ? raw.toolProficiencies : [],
+    featSource,
+  );
 
   return {
     id: featId(raw),
@@ -465,5 +470,6 @@ export function mapFeat(raw: any): Feat {
     summary: buildSummary(prerequisites, abilityIncreases, lead),
     skillGrants,
     expertiseGrants,
+    ...(toolProficiencyGrants.length > 0 ? { toolProficiencyGrants } : {}),
   };
 }

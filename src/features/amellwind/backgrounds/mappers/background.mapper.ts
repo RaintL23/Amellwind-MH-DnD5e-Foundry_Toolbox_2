@@ -5,6 +5,8 @@ import {
 import { parseSkillProficiencyBlocks } from "@/shared/utils/skill-proficiency.parser";
 import { parseNamedProficiencyBlocks } from "@/shared/utils/named-proficiency.parser";
 import { AMELLWIND_BACKGROUND_ORIGIN_FEAT_GRANT } from "../constants/origin-feat.constants";
+import { AMELLWIND_BACKGROUND_STARTING_EQUIPMENT } from "../data/background-equipment.data";
+import { parseBackgroundStartingEquipment } from "@/shared/utils/starting-equipment.parser";
 import { mapFluffEntriesToText } from "@/shared/utils/fluff.utils";
 import {
   mapListProficiencies,
@@ -98,5 +100,10 @@ export function mapBackground(raw: any): Background {
     toolGrants,
     languageGrants,
     originFeatGrant: AMELLWIND_BACKGROUND_ORIGIN_FEAT_GRANT,
+    startingEquipmentOffers: parseBackgroundStartingEquipment(
+      raw.startingEquipment ??
+        AMELLWIND_BACKGROUND_STARTING_EQUIPMENT[String(raw.name ?? "")] ??
+        [],
+    ),
   };
 }

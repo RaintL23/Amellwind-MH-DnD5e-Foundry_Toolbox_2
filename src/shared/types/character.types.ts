@@ -1,4 +1,9 @@
-import { AbilityScores, AbilityKey, type DamageType } from "./actor.types";
+import {
+  AbilityScores,
+  AbilityKey,
+  type DamageType,
+  type SkillKey,
+} from "./actor.types";
 import { Weapon } from "./weapon.types";
 import { Rune } from "./rune.types";
 
@@ -124,11 +129,23 @@ export interface EquippedWeapon {
   activeModeIndex: number;
 }
 
+/**
+ * AGMH: each time armor reaches Rare, Very Rare and Legendary it gains one of
+ * these properties (the same one may be picked again).
+ */
+export type ArmorRarityProperty =
+  | { kind: "ac" }
+  | { kind: "skills"; skills: (SkillKey | null)[] }
+  | { kind: "save"; ability: AbilityKey | null }
+  | { kind: "unproficient-saves" };
+
 export interface EquippedArmor {
   armor: ArmorItem;
   rarity: string;
   runeSlots: number;
   runes: (Rune | null)[];
+  /** One entry per Rare+ rarity step (null = not chosen yet). */
+  rarityProperties?: (ArmorRarityProperty | null)[];
 }
 
 export interface EquippedTrinket {
@@ -136,6 +153,8 @@ export interface EquippedTrinket {
   rune: Rune | null;
   /** Which material effect the trinket rune applies (weapon or armor). */
   runeMaterialEffect?: "weapon" | "armor";
+  /** AGMH: only one trinket's material is active at a time (swap as an action). */
+  active?: boolean;
 }
 
 // ─── Character Stats ─────────────────────────────────────────────────────────

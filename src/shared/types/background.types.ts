@@ -46,6 +46,8 @@ export interface Background {
   languageGrants: import("./proficiency.types").NamedProficiencyGrant[];
   /** D&D 2024-style origin feat grant (all AGMH backgrounds). */
   originFeatGrant?: OriginFeatGrant | null;
+  /** Background "Equipment:" line as pickable starting equipment. */
+  startingEquipmentOffers?: import("./starting-equipment.types").StartingEquipmentOffers;
 }
 
 export const BACKGROUND_FACTION_LABELS: Record<BackgroundFaction, string> = {

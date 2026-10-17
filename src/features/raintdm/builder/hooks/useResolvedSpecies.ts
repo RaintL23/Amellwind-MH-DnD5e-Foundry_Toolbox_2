@@ -2,6 +2,7 @@ import { useEffect, useState } from "react";
 import type { SpeciesTrait } from "@/shared/types";
 import { resolveSpeciesParts } from "../utils/species-resolution.utils";
 import { useCharacterBuilder } from "../context/CharacterBuilderContext";
+import { mergeSpeciesTraits } from "@/shared/utils/species-display.utils";
 
 export interface ResolvedSpeciesData {
   name: string;
@@ -31,10 +32,7 @@ export function useResolvedSpecies(): ResolvedSpeciesData | null {
         ? `${base.name} (${speciesRef.subraceName})`
         : base.name;
       const subrace = mhSubrace ?? dndSubrace;
-      const traits = [
-        ...base.traits,
-        ...(subrace?.traits ?? []),
-      ];
+      const traits = mergeSpeciesTraits(base.traits, subrace?.traits);
 
       setData({ name: displayName, traits });
     });

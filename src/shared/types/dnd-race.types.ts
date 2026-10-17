@@ -48,6 +48,8 @@ export interface DndRace {
   speed: string;
   abilityBonuses: AbilityBonus[];
   abilitySummary: string;
+  /** Subrace ASI replaces the parent's instead of adding to it (5etools `overwrite.ability`). */
+  overwritesAbility?: boolean;
   darkvision?: number;
   resistances: DamageType[];
   resistanceSummary: string;

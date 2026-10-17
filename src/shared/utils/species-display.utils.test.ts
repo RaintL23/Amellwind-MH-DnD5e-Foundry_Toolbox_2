@@ -1,6 +1,11 @@
 import { describe, expect, it } from "vitest";
+import type { SpeciesTrait } from "@/shared/types";
 import {
+  filterOverwrittenTraits,
+  mergeSpeciesAbilityBonuses,
+  mergeSpeciesSpeed,
   resolveSpeciesDisplayStats,
+  subspeciesReplacesResistance,
   type SpeciesContentData,
 } from "./species-display.utils";
 import {
@@ -84,5 +89,52 @@ describe("species spell groups", () => {
     expect(
       resolveActiveSpellGroup({ namedSpellGroups: groups }, "infernal")?.name,
     ).toBe("Infernal");
+  });
+});
+
+const trait = (name: string, overwrites?: string): SpeciesTrait => ({
+  name,
+  entries: [],
+  ...(overwrites ? { overwrites } : {}),
+});
+
+describe("species + subspecies merge", () => {
+  it("drops base traits a subspecies overwrites (Elder Dragonborn)", () => {
+    const base = [
+      trait("Draconic Ancestry"),
+      trait("Breath Weapon"),
+      trait("Damage Resistance"),
+    ];
+    const alatreon = [
+      trait("Draconic Resistance", "Damage Resistance"),
+      trait("Elemental Affinity", "Draconic Ancestry"),
+      trait("Menacing", "Breath Weapon"),
+    ];
+    expect(filterOverwrittenTraits(base, alatreon)).toEqual([]);
+    expect(subspeciesReplacesResistance(alatreon)).toBe(true);
+    expect(subspeciesReplacesResistance([trait("Felyne Magic")])).toBe(false);
+  });
+
+  it("replaces the base ASI only when the subspecies overwrites it", () => {
+    const dragonborn = {
+      abilityBonuses: [{ kind: "fixed" as const, bonuses: { str: 2, cha: 1 } }],
+    };
+    const alatreon = {
+      abilityBonuses: [{ kind: "fixed" as const, bonuses: { str: 2 } }],
+      overwritesAbility: true,
+    };
+    const felyne = {
+      abilityBonuses: [{ kind: "fixed" as const, bonuses: { cha: 1 } }],
+    };
+    expect(mergeSpeciesAbilityBonuses(dragonborn, alatreon)).toEqual(
+      alatreon.abilityBonuses,
+    );
+    expect(mergeSpeciesAbilityBonuses(dragonborn, felyne)).toHaveLength(2);
+  });
+
+  it("uses the subspecies speed when the base speed varies", () => {
+    expect(mergeSpeciesSpeed("Varies", "25 ft.")).toBe("25 ft.");
+    expect(mergeSpeciesSpeed("30 ft.", undefined)).toBe("30 ft.");
+    expect(mergeSpeciesSpeed("30 ft.", "Varies")).toBe("30 ft.");
   });
 });

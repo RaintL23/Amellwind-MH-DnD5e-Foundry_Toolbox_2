@@ -564,6 +564,9 @@ export function mapDndRace(raw: any): DndRace {
     speed: formatSpeed(raw.speed),
     abilityBonuses,
     abilitySummary: formatAbilitySummary(abilityBonuses),
+    ...(raw.raceName && raw.overwrite?.ability === true
+      ? { overwritesAbility: true }
+      : {}),
     darkvision: typeof raw.darkvision === "number" ? raw.darkvision : undefined,
     resistances,
     resistanceSummary,

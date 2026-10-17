@@ -73,6 +73,8 @@ export interface Feat {
   skillGrants: import("./proficiency.types").SkillProficiencyGrant[];
   /** Expertise grants (from 5etools data when available). */
   expertiseGrants: import("./proficiency.types").ExpertiseGrant[];
+  /** Structured tool proficiency grants (`toolProficiencies`), preferred over prose parsing. */
+  toolProficiencyGrants?: import("./proficiency.types").NamedProficiencyGrant[];
 }
 
 export interface FeatSection {

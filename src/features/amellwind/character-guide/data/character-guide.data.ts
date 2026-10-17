@@ -50,7 +50,7 @@ export const STARTING_WEALTH_TABLE: GuideTable = {
     ["1-2", "Gold given by your Background"],
     ["3-8", "500 gp plus 1d10 × 25 gp"],
     ["9-15", "5,000 gp plus 1d10 × 250 gp"],
-    ["16-20", "5,000 gp plus 1d10 × 250 gp"],
+    ["16-20", "20,000 gp plus 1d10 × 250 gp"],
   ],
 };
 

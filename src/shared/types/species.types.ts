@@ -76,6 +76,8 @@ export interface SpeciesTrait extends Entry {
    * `creationChoice.options` and must be selected in the Builder.
    */
   creationChoice?: SpeciesTraitCreationChoice;
+  /** Base-species trait this subspecies trait replaces (5etools `data.overwrite`). */
+  overwrites?: string;
 }
 
 export interface Species {
@@ -92,6 +94,8 @@ export interface Species {
   speed: string;
   abilityBonuses: AbilityBonus[];
   abilitySummary: string;
+  /** Subspecies ASI replaces the parent's instead of adding to it (5etools `overwrite.ability`). */
+  overwritesAbility?: boolean;
   darkvision?: number;
   resistances: DamageType[];
   /** Texto cuando la resistencia es a elegir (p. ej. dragonborn de dragón anciano). */

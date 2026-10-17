@@ -30,7 +30,14 @@ export { formatAbilitySummary };
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
 type Raw = Record<string, any>;
 
-const STANDARD_ANCESTRIES = new Set(["Lynian", "Troverian", "Wyverian"]);
+const STANDARD_ANCESTRIES = new Set([
+  "Lynian",
+  "Troverian",
+  "Wyverian",
+  "Kechaborn",
+  "Malfestian",
+  "Neopteroid",
+]);
 
 function speciesId(raw: Raw): string {
   const parent = raw.raceName ? `::${raw.raceName}` : "";
@@ -114,6 +121,9 @@ export function mapSpecies(raw: any): Species {
     speed: formatSpeed(raw.speed, { prefixWalk: true }),
     abilityBonuses,
     abilitySummary: formatAbilitySummary(abilityBonuses),
+    ...(raw.raceName && raw.overwrite?.ability === true
+      ? { overwritesAbility: true }
+      : {}),
     darkvision: typeof raw.darkvision === "number" ? raw.darkvision : undefined,
     resistances,
     resistanceSummary,

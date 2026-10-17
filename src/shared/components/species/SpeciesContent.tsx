@@ -22,6 +22,7 @@ import type { SpeciesTrait } from "@/shared/types";
 import { cn } from "@/shared/utils/cn";
 import { entriesMentionProficiencyGrant } from "@/shared/utils/library-proficiency-highlight.utils";
 import {
+  filterOverwrittenTraits,
   resolveSpeciesDisplayStats,
   type SpeciesContentData,
 } from "@/shared/utils/species-display.utils";
@@ -240,6 +241,7 @@ export function SpeciesContent({
       ? subspecies.fluff
       : null;
   const subspeciesTraits = subspecies?.traits ?? [];
+  const baseTraits = filterOverwrittenTraits(species.traits, subspeciesTraits);
 
   return (
     <>
@@ -362,7 +364,7 @@ export function SpeciesContent({
         </div>
       )}
 
-      {species.traits.length > 0 && (
+      {baseTraits.length > 0 && (
         <>
           <Separator className={styles.separator} />
           <h3
@@ -374,7 +376,7 @@ export function SpeciesContent({
             Traits
           </h3>
           <TraitList
-            traits={species.traits}
+            traits={baseTraits}
             variant="species"
             styles={styles}
             traitChoices={traitChoices}

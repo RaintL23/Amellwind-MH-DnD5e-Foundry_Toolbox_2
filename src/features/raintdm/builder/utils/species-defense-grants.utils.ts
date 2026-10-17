@@ -1,5 +1,6 @@
 import type { DndRace } from "@/shared/types";
 import type { DefenseGrant } from "@/shared/types/proficiency.types";
+import { subspeciesReplacesResistance } from "@/shared/utils/species-display.utils";
 
 export function resolveSpeciesDefenseGrants(
   base: DndRace,
@@ -23,5 +24,9 @@ export function resolveSpeciesDefenseGrants(
     }
   }
 
-  return [...base.defenseGrants, ...(subrace?.defenseGrants ?? [])];
+  // Elder Dragonborn ancestries overwrite the base "Damage Resistance" trait.
+  const baseGrants = subspeciesReplacesResistance(subrace?.traits)
+    ? base.defenseGrants.filter((grant) => grant.defenseKind !== "resistance")
+    : base.defenseGrants;
+  return [...baseGrants, ...(subrace?.defenseGrants ?? [])];
 }
