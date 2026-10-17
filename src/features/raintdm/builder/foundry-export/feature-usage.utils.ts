@@ -147,7 +147,7 @@ function abilityModFormula(abilityWord: string, minimumOnce: boolean): string {
  */
 const NOT_TURN_OR_ROUND = String.raw`(?!\s+per\s+(?:turn|round)\b)`;
 
-function parseUsesMax(text: string): string {
+function parseUsesMax(text: string, hasRestRecovery: boolean): string {
   // "a number of times equal to your Proficiency Bonus"
   if (
     /number\s+of\s+times\s+equal\s+to\s+your\s+proficiency\s+bonus/i.test(text)
@@ -186,13 +186,17 @@ function parseUsesMax(text: string): string {
   );
   if (digitCount) return digitCount[1];
 
-  // "You can rage twice" / class-specific "You can X N times"
-  const namedWord = text.match(
-    new RegExp(
-      String.raw`\byou\s+can\s+[a-z][a-z\s]{0,40}?\s+(once|twice|thrice)\b${NOT_TURN_OR_ROUND}`,
-      "i",
-    ),
-  );
+  // "You can rage twice" / class-specific "You can X N times".
+  // Only when the text also states a rest recovery: "You can attack twice"
+  // (Extra Attack) is an attack count, not a use pool.
+  const namedWord = hasRestRecovery
+    ? text.match(
+        new RegExp(
+          String.raw`\byou\s+can\s+(?!attack\b)[a-z][a-z\s]{0,40}?\s+(once|twice|thrice)\b${NOT_TURN_OR_ROUND}`,
+          "i",
+        ),
+      )
+    : null;
   if (namedWord) {
     const n = WORD_COUNTS[namedWord[1].toLowerCase()];
     if (n) return String(n);
@@ -239,8 +243,8 @@ export function parseFeatureUsage(description: string | undefined): ParsedFeatur
   // Activation is usually stated up front; scanning the whole body false-positives
   // nested options (e.g. Font of Magic → Creating Spell Slots as a Bonus Action).
   const activation = parseActivation(text.slice(0, 480));
-  const usesMax = parseUsesMax(text);
   let recoveryPeriod = parseRecovery(text);
+  const usesMax = parseUsesMax(text, Boolean(recoveryPeriod));
 
   // If we found uses but no explicit recovery, default to long rest (most common).
   if (usesMax && !recoveryPeriod) {

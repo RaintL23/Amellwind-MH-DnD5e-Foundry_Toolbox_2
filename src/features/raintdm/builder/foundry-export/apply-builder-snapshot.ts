@@ -5,6 +5,7 @@ import type {
 } from "@/shared/types";
 import type { CharacterBuilderContextValue } from "../context/character-builder.types";
 import type { BuilderChoiceSnapshot } from "./builder-snapshot";
+import { getActiveTrinketSlot } from "../utils/trinket.utils";
 
 /** Minimal inventory surface needed to restore the snapshot's loose items. */
 export interface ApplyBuilderSnapshotInventory {
@@ -134,7 +135,7 @@ export function applyBuilderSnapshot(
     entry: EquippedWeapon | null,
   ) => {
     if (!entry) return;
-    builder.equipWeapon(slot, entry.weapon, entry.rarity);
+    builder.equipWeapon(slot, entry.weapon, entry.rarity, entry.runeSlots);
     const legacy = entry as EquippedWeapon & { useVersatile?: boolean };
     const modeIndex =
       typeof entry.activeModeIndex === "number"
@@ -152,7 +153,7 @@ export function applyBuilderSnapshot(
 
   if (eq.armor) {
     builder.equipArmor(eq.armor.armor);
-    builder.setArmorRarity(eq.armor.rarity);
+    builder.setArmorRarity(eq.armor.rarity, eq.armor.runeSlots);
     (eq.armor.runes ?? []).forEach((rune, index) => {
       if (rune) builder.assignArmorRune(index, rune);
     });
@@ -179,6 +180,9 @@ export function applyBuilderSnapshot(
       );
     }
   }
+
+  const activeTrinketSlot = getActiveTrinketSlot(eq.trinket1, eq.trinket2);
+  if (activeTrinketSlot) builder.setActiveTrinket(activeTrinketSlot);
 
   inventory.clearInventory();
   for (const item of eq.inventory) inventory.addToInventory(item);

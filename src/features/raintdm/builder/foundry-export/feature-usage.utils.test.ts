@@ -59,4 +59,20 @@ describe("parseFeatureUsage", () => {
       ).recoveryPeriod,
     ).toBe("sr");
   });
+
+  it("does not treat Extra Attack as a limited-use feature", () => {
+    const usage = parseFeatureUsage(
+      "Beginning at 5th level, you can attack twice, instead of once, whenever you take the Attack action on your turn.",
+    );
+    expect(usage.usesMax).toBe("");
+    expect(usage.recoveryPeriod).toBe("");
+  });
+
+  it("still detects named uses with a rest recovery (Rage)", () => {
+    const usage = parseFeatureUsage(
+      "You can rage twice. You regain all expended uses when you finish a long rest.",
+    );
+    expect(usage.usesMax).toBe("2");
+    expect(usage.recoveryPeriod).toBe("lr");
+  });
 });

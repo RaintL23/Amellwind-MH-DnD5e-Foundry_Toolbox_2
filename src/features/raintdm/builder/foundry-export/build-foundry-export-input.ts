@@ -19,7 +19,7 @@ import {
   type FeatExportDescLookup,
   type OptionalFeatureDescMap,
 } from "../utils/character-sheet-export.utils";
-import { getAttunementInfo } from "../utils/attunement.utils";
+import { getArtificerLevel, getAttunementInfo } from "../utils/attunement.utils";
 import { standaloneShieldToArmorItem } from "../data/shield.data";
 import { getWeaponMasteryWeapon } from "@/shared/data/weapon-mastery.data";
 import type { CharacterBuilderContextValue } from "../context/character-builder.types";
@@ -452,7 +452,10 @@ export function buildFoundryExportInput(
   // ── Currency (entries named "90 gp" / gold pouch rows, not inventory items) ──
   const goldGp = sumInventoryGoldGp(inventory.items);
 
-  const attunement = getAttunementInfo(builder.class?.name, level);
+  const attunement = getAttunementInfo(
+    getArtificerLevel(builder.class?.name, level, builder.multiclassEntries),
+    builder.useAmellwindHomebrew,
+  );
 
   // Weapon Mastery picks → Foundry traits.weaponProf.mastery.value (baseItem ids)
   const weaponMasteryBaseItems: string[] = [];

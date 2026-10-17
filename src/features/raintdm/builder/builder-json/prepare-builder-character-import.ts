@@ -58,6 +58,10 @@ import { getAllDndOptionalFeatures } from "@/features/dnd/optionalfeatures/servi
 import { getAllWeapons } from "@/features/amellwind/weapons/services/weapon.service";
 import { getAllForgeWeapons } from "@/features/raintdm/weapon-forge/services/weapon-forge.service";
 import {
+  AMELLWIND_UNARMED_ITEM,
+  isAmellwindUnarmedItem,
+} from "../data/unarmed-item.data";
+import {
   getDndArmors,
   getDndWeaponVariantsByName,
 } from "@/features/dnd/items/services/dnd-equipment.service";
@@ -318,6 +322,7 @@ async function relinkWeapon(
     match = (await getDndWeaponVariantsByName(saved.name)).find(sameItem);
   } else {
     match =
+      (isAmellwindUnarmedItem(saved) ? AMELLWIND_UNARMED_ITEM : undefined) ??
       (await getAllWeapons()).find(sameItem) ??
       ((await getAllForgeWeapons()) as EquippedWeapon["weapon"][]).find(sameItem);
   }

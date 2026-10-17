@@ -7,6 +7,7 @@
 import { ABILITY_KEYS, SKILL_KEYS } from "@/shared/constants/dnd";
 import type {
   AbilityKey,
+  ArmorRarityProperty,
   BackgroundAsiMode,
   BackgroundFaction,
   BuilderFeatSelection,
@@ -307,6 +308,39 @@ export function normalizeEquippedWeapon(
   };
 }
 
+function normalizeArmorRarityProperty(
+  value: unknown,
+): ArmorRarityProperty | null {
+  if (!isRecord(value)) return null;
+  switch (value.kind) {
+    case "ac":
+    case "unproficient-saves":
+      return { kind: value.kind };
+    case "save":
+      return {
+        kind: "save",
+        ability:
+          typeof value.ability === "string" &&
+          (ABILITY_KEYS as string[]).includes(value.ability)
+            ? (value.ability as AbilityKey)
+            : null,
+      };
+    case "skills":
+      return {
+        kind: "skills",
+        skills: [0, 1].map((i) => {
+          const skill = Array.isArray(value.skills) ? value.skills[i] : null;
+          return typeof skill === "string" &&
+            (SKILL_KEYS as string[]).includes(skill)
+            ? (skill as SkillKey)
+            : null;
+        }),
+      };
+    default:
+      return null;
+  }
+}
+
 export function normalizeEquippedArmor(value: unknown, warn: SnapshotWarn): EquippedArmor | null {
   if (value === undefined || value === null) return null;
   if (!isRecord(value) || !isRecord(value.armor) || !isString(value.armor.name)) {
@@ -314,11 +348,15 @@ export function normalizeEquippedArmor(value: unknown, warn: SnapshotWarn): Equi
     return null;
   }
   const runes = runeSlots(value.runes, "Armor", warn);
+  const rarityProperties = Array.isArray(value.rarityProperties)
+    ? value.rarityProperties.map(normalizeArmorRarityProperty)
+    : undefined;
   return {
     armor: value.armor as unknown as EquippedArmor["armor"],
     rarity: typeof value.rarity === "string" ? value.rarity : "Common",
     runeSlots: slotCount(value.runeSlots, runes.length),
     runes,
+    ...(rarityProperties ? { rarityProperties } : {}),
   };
 }
 
@@ -354,6 +392,7 @@ export function normalizeTrinket(
     ...(value.runeMaterialEffect === "weapon" || value.runeMaterialEffect === "armor"
       ? { runeMaterialEffect: value.runeMaterialEffect }
       : {}),
+    ...(typeof value.active === "boolean" ? { active: value.active } : {}),
   };
 }
 
