@@ -310,7 +310,6 @@ export function ClassDetailPage() {
                 anchorIdPrefix={CLASS_FEATURE_ANCHOR_PREFIX}
                 highlightUid={highlightUid}
                 hideSourceEqualTo={active.source}
-                contentClassName="max-w-[80ch]"
                 collapsedUids={collapsedUids}
                 onToggleCollapsed={toggleCollapsed}
               />
