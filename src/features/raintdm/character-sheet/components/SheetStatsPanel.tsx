@@ -23,6 +23,7 @@ interface StatsPanelProps {
   rollD20Test: ReturnType<typeof useSheetRoller>["rollD20Test"];
   /** When true, show Resources + Hit Dice (mobile Stats tab / when no right rail) */
   showResources?: boolean;
+  onOpenFeature?: (featureId: string) => void;
   /** Compact aside: single-column skills */
   compact?: boolean;
 }
@@ -55,6 +56,7 @@ export function SheetStatsPanel({
   dispatch,
   rollD20Test,
   showResources = false,
+  onOpenFeature,
   compact = false,
 }: StatsPanelProps) {
   const rollCheck = (
@@ -283,6 +285,7 @@ export function SheetStatsPanel({
             compiled={compiled}
             session={session}
             dispatch={dispatch}
+            onOpenFeature={onOpenFeature}
           />
           <HitDicePanel
             compiled={compiled}

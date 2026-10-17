@@ -55,6 +55,7 @@ export function CharacterSheetPage() {
   const [hpOpen, setHpOpen] = useState(false);
   const [restKind, setRestKind] = useState<"short" | "long" | null>(null);
   const [statusOpen, setStatusOpen] = useState(false);
+  const [focusFeatureId, setFocusFeatureId] = useState<string | null>(null);
 
   const isLg = useMediaQuery("(min-width: 1024px)");
   const isXl = useMediaQuery("(min-width: 1280px)");
@@ -73,6 +74,14 @@ export function CharacterSheetPage() {
       );
     },
     [setSearchParams],
+  );
+
+  const openFeature = useCallback(
+    (featureId: string) => {
+      setFocusFeatureId(featureId);
+      setTab("features");
+    },
+    [setTab],
   );
 
   useEffect(() => {
@@ -194,6 +203,8 @@ export function CharacterSheetPage() {
               compiled={compiled}
               session={session}
               dispatch={dispatch}
+              focusFeatureId={focusFeatureId}
+              onFocusHandled={() => setFocusFeatureId(null)}
             />
           )}
           {tab === "inventory" && (
@@ -215,6 +226,7 @@ export function CharacterSheetPage() {
                 dispatch={dispatch}
                 rollD20Test={rollD20Test}
                 showResources
+                onOpenFeature={openFeature}
               />
             </div>
           )}
@@ -231,6 +243,7 @@ export function CharacterSheetPage() {
               compiled={compiled}
               session={session}
               dispatch={dispatch}
+              onOpenFeature={openFeature}
             />
             <HitDicePanel
               compiled={compiled}

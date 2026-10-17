@@ -1,4 +1,4 @@
-import { useDeferredValue, useMemo, useState } from "react";
+import { useDeferredValue, useEffect, useMemo, useState } from "react";
 import { Input } from "@/components/ui/input";
 import { Card } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
@@ -24,6 +24,9 @@ interface FeaturesPanelProps {
   compiled: PlayCharacterCompiled;
   session: PlaySessionState;
   dispatch: (a: PlaySessionAction) => void;
+  /** Feature to expand + scroll to (set when jumping from Resources). */
+  focusFeatureId?: string | null;
+  onFocusHandled?: () => void;
 }
 
 const BUCKET_BADGE: Partial<Record<PlayActivationBucket, string>> = {
@@ -37,8 +40,26 @@ export function FeaturesPanel({
   compiled,
   session,
   dispatch,
+  focusFeatureId,
+  onFocusHandled,
 }: FeaturesPanelProps) {
   const [q, setQ] = useState("");
+  const [openIds, setOpenIds] = useState<string[]>([]);
+
+  useEffect(() => {
+    if (!focusFeatureId) return;
+    setQ("");
+    setOpenIds((prev) =>
+      prev.includes(focusFeatureId) ? prev : [...prev, focusFeatureId],
+    );
+    const t = window.setTimeout(() => {
+      document
+        .getElementById(`sheet-feature-${focusFeatureId}`)
+        ?.scrollIntoView({ behavior: "smooth", block: "center" });
+      onFocusHandled?.();
+    }, 50);
+    return () => window.clearTimeout(t);
+  }, [focusFeatureId, onFocusHandled]);
   const deferredQ = useDeferredValue(q);
   // All character features (every activation bucket). Standard PHB actions stay
   // on the Actions tab only — they are not build-specific traits.
@@ -83,13 +104,22 @@ export function FeaturesPanel({
             {source}{" "}
             <span className="font-normal">({feats.length})</span>
           </h3>
-          <Accordion type="multiple" className="space-y-2">
+          <Accordion
+            type="multiple"
+            value={openIds}
+            onValueChange={setOpenIds}
+            className="space-y-2"
+          >
             {feats.map((f) => {
               const effects = f.statEffects ?? [];
               const bucketLabel = BUCKET_BADGE[f.bucket];
               const uses = f.uses;
               return (
-                <Card key={f.id} className="overflow-hidden shadow-none">
+                <Card
+                  key={f.id}
+                  id={`sheet-feature-${f.id}`}
+                  className="overflow-hidden shadow-none"
+                >
                   <AccordionItem value={f.id} className="border-0">
                     <AccordionTrigger className="px-3 py-2.5 hover:no-underline">
                       <span className="flex min-w-0 flex-1 flex-col items-start gap-1 text-left">

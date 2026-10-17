@@ -14,7 +14,23 @@ interface ResourcesPanelProps {
   compiled: PlayCharacterCompiled;
   session: PlaySessionState;
   dispatch: (a: PlaySessionAction) => void;
+  /** Jump to the Features tab and expand the given feature. */
+  onOpenFeature?: (featureId: string) => void;
   className?: string;
+}
+
+/** Feature a resource represents: its own feature, else a name match (Rages → Rage). */
+function resolveResourceFeatureId(
+  r: PlayResource,
+  compiled: PlayCharacterCompiled,
+): string | undefined {
+  if (r.featureId) return r.featureId;
+  const norm = (v: string) => v.trim().toLowerCase();
+  const label = norm(r.label);
+  const candidates = new Set([label, label.replace(/s$/, ""), label.replace(/ points$/, "")]);
+  return compiled.features.find(
+    (f) => f.sourceKind !== "standard" && candidates.has(norm(f.name)),
+  )?.id;
 }
 
 function spentForResource(
@@ -51,6 +67,7 @@ export const ResourcesPanel = memo(function ResourcesPanel({
   compiled,
   session,
   dispatch,
+  onOpenFeature,
   className,
 }: ResourcesPanelProps) {
   if (compiled.resources.length === 0) {
@@ -69,17 +86,34 @@ export const ResourcesPanel = memo(function ResourcesPanel({
         {compiled.resources.map((r) => {
           const spent = spentForResource(r, session);
           const left = r.max - spent;
+          const featureId = onOpenFeature
+            ? resolveResourceFeatureId(r, compiled)
+            : undefined;
           return (
             <li
               key={r.id}
               className="flex items-center justify-between gap-2 rounded-md border border-border px-3 py-2 text-sm"
             >
-              <span className="min-w-0">
-                <span className="block font-medium leading-tight">{r.label}</span>
-                <span className="text-[10px] text-muted-foreground">
-                  {formatRecoveryLabel(r.recovery)} · {left}/{r.max}
+              {featureId ? (
+                <button
+                  type="button"
+                  onClick={() => onOpenFeature?.(featureId)}
+                  title={`Open ${r.label} in Features`}
+                  className="min-w-0 rounded text-left hover:underline focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring"
+                >
+                  <span className="block font-medium leading-tight">{r.label}</span>
+                  <span className="text-[10px] text-muted-foreground">
+                    {formatRecoveryLabel(r.recovery)} · {left}/{r.max}
+                  </span>
+                </button>
+              ) : (
+                <span className="min-w-0">
+                  <span className="block font-medium leading-tight">{r.label}</span>
+                  <span className="text-[10px] text-muted-foreground">
+                    {formatRecoveryLabel(r.recovery)} · {left}/{r.max}
+                  </span>
                 </span>
-              </span>
+              )}
               <UsesPips
                 label={r.label}
                 max={r.max}

@@ -38,6 +38,7 @@ import {
 import { BACKGROUND_FACTION_LABELS } from "@/shared/types";
 import { downloadCharacterImages } from "../utils/image-download.utils";
 import { formatAlignmentLabel, parseAlignmentAxes } from "../utils/alignment.utils";
+import { useArmorRarityBonuses } from "./useArmorRarityBonuses";
 
 /** Generated sheet bytes plus the base name used for the PDF and images. */
 export interface CharacterSheetPdfFile {
@@ -63,6 +64,7 @@ export function useCharacterSheetExport() {
   const { allSpells } = useSpellCatalog();
   const { spellcasting } = useSpellcastingContext();
   const effectiveScores = useEffectiveAbilityScores();
+  const armorBonuses = useArmorRarityBonuses();
   const [exporting, setExporting] = useState(false);
   const [previewing, setPreviewing] = useState(false);
   const [preview, setPreview] = useState<CharacterSheetPdfFile | null>(null);
@@ -184,9 +186,9 @@ export function useCharacterSheetExport() {
     const savingThrows: Record<string, string> = {};
     for (const key of ABILITY_KEYS) {
       const abilityMod = getAbilityModifier(effectiveScores[key]);
-      const saveMod = character.isSavingThrowProficient(key)
-        ? abilityMod + prof
-        : abilityMod;
+      const saveMod =
+        (character.isSavingThrowProficient(key) ? abilityMod + prof : abilityMod) +
+        (armorBonuses.saves[key] ?? 0);
       savingThrows[key.toUpperCase()] = formatModifier(saveMod);
     }
 
@@ -195,14 +197,16 @@ export function useCharacterSheetExport() {
       const level = character.getSkillProficiencyLevel(skill);
       const skillMod =
         getAbilityModifier(effectiveScores[SKILL_ABILITY[skill]]) +
-        level * prof;
+        level * prof +
+        (armorBonuses.skills[skill] ?? 0);
       skills[skill] = formatModifier(skillMod);
     }
 
     const perceptionLevel = character.getSkillProficiencyLevel("prc");
     const perceptionMod =
       getAbilityModifier(effectiveScores[SKILL_ABILITY.prc]) +
-      perceptionLevel * prof;
+      perceptionLevel * prof +
+      (armorBonuses.skills.prc ?? 0);
 
     return {
       name: character.name,
@@ -287,6 +291,7 @@ export function useCharacterSheetExport() {
     };
   }, [
     allSpells,
+    armorBonuses,
     armorClass.total,
     builder,
     classData,
