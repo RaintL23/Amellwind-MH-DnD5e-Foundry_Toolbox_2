@@ -153,4 +153,30 @@ describe("gtmh parsers", () => {
     expect(Array.isArray(races.race)).toBe(true);
     expect(Array.isArray(races.subrace)).toBe(true);
   });
+
+  it("adds the book races missing from the GitHub feed", () => {
+    const { race, subrace } = buildRaces();
+    expect(race.map((r) => r.name)).toEqual([
+      "Kechaborn",
+      "Malfestian",
+      "Neopteroid",
+    ]);
+    expect(subrace.map((r) => `${r.raceName}:${r.name}`)).toEqual([
+      "Neopteroid:Flying",
+      "Neopteroid:Ground",
+    ]);
+    const kechaborn = race.find((r) => r.name === "Kechaborn");
+    expect(kechaborn?.ability).toEqual([{ dex: 2, wis: 1 }]);
+    expect(kechaborn?.speed).toEqual({ walk: 30, climb: 30 });
+  });
+
+  it("emits structured tool proficiencies for AGMH feats", () => {
+    const feats = buildFeats();
+    expect(feats.find((f) => f.name === "Bomb Specialist")?.toolProficiencies).toEqual([
+      { "tinker's tools": true },
+    ]);
+    const craftsman = feats.find((f) => f.name === "Master Craftsman");
+    expect(craftsman?.toolProficiencies?.[0]?.choose?.from).toHaveLength(9);
+    expect(feats.find((f) => f.name === "Bastion")?.toolProficiencies).toBeUndefined();
+  });
 });

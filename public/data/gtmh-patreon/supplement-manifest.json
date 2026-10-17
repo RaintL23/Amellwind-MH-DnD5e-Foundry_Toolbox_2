@@ -5,8 +5,8 @@
   "counts": {
     "item": 22,
     "optionalfeature": 290,
-    "race": 0,
-    "subrace": 0,
+    "race": 3,
+    "subrace": 2,
     "background": 10,
     "feat": 14,
     "variantrule": 8,
@@ -332,8 +332,15 @@
       "Wyvernfire Upgrade",
       "Wyvernfire Upgrade (Legendary)"
     ],
-    "race": [],
-    "subrace": [],
+    "race": [
+      "Kechaborn",
+      "Malfestian",
+      "Neopteroid"
+    ],
+    "subrace": [
+      "Flying",
+      "Ground"
+    ],
     "background": [
       "Apprentice Guild Knight",
       "Handler Initiate",

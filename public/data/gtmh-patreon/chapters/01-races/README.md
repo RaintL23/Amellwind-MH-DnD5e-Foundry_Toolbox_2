@@ -1,7 +1,7 @@
 # Races and Subraces
 
-This directory is reserved for curated race/subrace extracts from GTMH Patreon.
+Curated race/subrace extracts from GTMH Patreon live in `scripts/gtmh/races.mjs` (Kechaborn, Malfestian, Neopteroid + Flying / Ground subraces — missing from the GitHub feed).
 
-Current runtime behavior in this PR:
+Runtime behavior:
 - merge pipeline is enabled for `race[]` and `subrace[]`
-- if local arrays are empty, GitHub feed remains the source for those keys
+- local entries win by name; the GitHub feed fills every other race/subrace

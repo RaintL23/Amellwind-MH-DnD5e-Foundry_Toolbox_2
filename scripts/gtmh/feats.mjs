@@ -70,6 +70,34 @@ function parseAbilityIncrease(text) {
   return code ? [{ [code]: 1 }] : undefined;
 }
 
+/** Tools that have a section in the chapter 3 Combo List. */
+const COMBO_LIST_TOOLS = [
+  "alchemist's supplies",
+  "brewer's supplies",
+  "cook's utensils",
+  "glassblower's tools",
+  "herbalism kit",
+  "poisoner's kit",
+  "smith's tools",
+  "tinker's tools",
+  "woodcarver's tools",
+];
+
+/** Structured `toolProficiencies` so the Builder does not rely on prose parsing. */
+function parseToolProficiencies(text) {
+  const body = String(text ?? "").replace(/[’]/g, "'");
+  if (
+    /proficiency with one tool of your choice that is listed in the combo list/i.test(
+      body,
+    )
+  ) {
+    return [{ choose: { from: COMBO_LIST_TOOLS, count: 1 } }];
+  }
+  const fixed = body.match(/You gain proficiency with ([a-z' ]+?(?:tools|kit|supplies|utensils))\./i);
+  if (fixed) return [{ [fixed[1].toLowerCase()]: true }];
+  return undefined;
+}
+
 function italicToFiveTools(text) {
   return String(text ?? "").replace(
     /\*([^*]+)\*/g,
@@ -173,6 +201,7 @@ export function buildFeats() {
     const bodyLines = collectBodyLines(block.body);
     const prerequisite = parsePrerequisite(bodyLines);
     const ability = parseAbilityIncrease(block.body);
+    const toolProficiencies = parseToolProficiencies(block.body);
     const entries = parseFeatEntries(block.body);
     return {
       name: block.title,
@@ -180,6 +209,7 @@ export function buildFeats() {
       page: PAGE_NEW_FEATS,
       prerequisite,
       ability,
+      toolProficiencies,
       repeatable: /select this feat multiple times/i.test(block.body),
       entries,
     };
