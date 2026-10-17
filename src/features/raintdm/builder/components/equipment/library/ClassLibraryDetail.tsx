@@ -14,6 +14,11 @@ import { getCasterLabel } from "@/features/dnd/classes/mappers/class.mapper";
 import { getSpellcastingSectionLabel } from "../../../utils/builder-class.utils";
 import { hasStartingEquipmentOffers } from "@/shared/utils/starting-equipment.parser";
 import { StartingEquipmentPicker } from "../StartingEquipmentPicker";
+import { useCharacterBuilder } from "../../../context/CharacterBuilderContext";
+import {
+  AMELLWIND_STARTING_WEAPON_NOTE,
+  resolveStartingEquipmentOffers,
+} from "../../../utils/amellwind-starting-equipment.utils";
 import type { BookSourceNameMap } from "@/features/dnd/spells/services/book-source.service";
 import type { ClassVariantField } from "@/features/dnd/classes/utils/class-variant.utils";
 import { getFeaturesUpToLevel } from "@/features/dnd/classes/utils/class-features-at-level.utils";
@@ -67,6 +72,11 @@ export function ClassLibraryDetail({
   onSourceSelect,
   inline = false,
 }: ClassLibraryDetailProps) {
+  const { useAmellwindHomebrew } = useCharacterBuilder();
+  const startingEquipmentOffers = resolveStartingEquipmentOffers(
+    classData.startingEquipmentOffers,
+    useAmellwindHomebrew,
+  );
   const features = getFeaturesUpToLevel(classData, subclass, level);
   const byLevel = groupFeaturesByLevel(features);
   const subclassLevel = getSubclassGainLevel(classData);
@@ -162,9 +172,14 @@ export function ClassLibraryDetail({
         </p>
       )}
 
-      {hasStartingEquipmentOffers(classData.startingEquipmentOffers) && (
+      {useAmellwindHomebrew && (
+        <p className="text-[11px] text-muted-foreground">
+          {AMELLWIND_STARTING_WEAPON_NOTE}
+        </p>
+      )}
+      {hasStartingEquipmentOffers(startingEquipmentOffers) && (
         <StartingEquipmentPicker
-          offers={classData.startingEquipmentOffers}
+          offers={startingEquipmentOffers}
           source={{
             type: "class",
             id: classData.id,

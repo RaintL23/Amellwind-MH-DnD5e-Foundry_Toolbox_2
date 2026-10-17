@@ -1,3 +1,7 @@
+import {
+  mergeSpeciesAbilityBonuses,
+  mergeSpeciesTraits,
+} from "@/shared/utils/species-display.utils";
 import type {
   AbilityKey,
   Background,
@@ -174,6 +178,39 @@ export function pickAmellwindSpecies(
 
   const matching = filterSpeciesByAbilityPriority(roots, preferredAbilities);
   return pickRandom(matching);
+}
+
+/** Random Amellwind subspecies for a root species (null when it has none). */
+export function pickAmellwindSubspecies(
+  speciesList: Species[],
+  root: Species,
+): Species | null {
+  const name = root.name.toLowerCase();
+  const subspecies = speciesList.filter(
+    (species) =>
+      species.isSubrace && species.parentSpecies?.toLowerCase() === name,
+  );
+  return pickRandom(subspecies) ?? null;
+}
+
+/** Root + subspecies grants as the Builder resolves them once both are selected. */
+export function mergeAmellwindSpeciesForRandomizer(
+  root: Species,
+  subspecies: Species | null,
+) {
+  return {
+    abilityBonuses: mergeSpeciesAbilityBonuses(root, subspecies),
+    skillGrants: [...root.skillGrants, ...(subspecies?.skillGrants ?? [])],
+    languageGrants: [
+      ...(root.languageGrants ?? []),
+      ...(subspecies?.languageGrants ?? []),
+    ],
+    weaponProficiencyGrants: [
+      ...(root.weaponProficiencyGrants ?? []),
+      ...(subspecies?.weaponProficiencyGrants ?? []),
+    ],
+    traits: mergeSpeciesTraits(root.traits, subspecies?.traits),
+  };
 }
 
 export function pickDndBackground(

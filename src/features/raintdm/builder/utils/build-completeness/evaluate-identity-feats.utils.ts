@@ -72,6 +72,16 @@ export function evaluateIdentityCompleteness(
     });
   }
 
+  if (input.species && input.speciesSubraceMissing) {
+    issues.push({
+      id: "identity-subspecies",
+      section: "identity",
+      message: `Choose a subspecies for ${input.species.name}`,
+      slot: "species",
+      highlightKey: "species",
+    });
+  }
+
   if (input.species && input.speciesData) {
     const gaps = findSpeciesTraitChoiceGaps(
       speciesTraitsForCreationChoices(input.speciesData),

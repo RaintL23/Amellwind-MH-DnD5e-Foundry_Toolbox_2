@@ -8,9 +8,11 @@ import { ScrollableWhenNeeded } from "../../shared/ScrollableWhenNeeded";
 import { cn } from "@/shared/utils/cn";
 
 export function FactionLibraryPanel() {
-  const { faction, setFaction } = useCharacterBuilder();
+  const { faction, setFaction, factionFromBackground, background } =
+    useCharacterBuilder();
 
   function handleSelect(id: BackgroundFaction) {
+    if (factionFromBackground) return;
     setFaction(faction === id ? null : id);
   }
 
@@ -24,8 +26,11 @@ export function FactionLibraryPanel() {
       }
     >
       <p className="mb-2 text-[11px] text-muted-foreground">
-        Faction membership expands your spell list if you are a spellcaster.
-        Usually inferred from your Amellwind background.
+        Faction membership expands your spell list if you are a spellcaster
+        (Spellcasting or Pact Magic).{" "}
+        {factionFromBackground
+          ? `Set by your ${background?.name ?? "faction"} background — choose another faction background to change it.`
+          : "You join a faction by choosing one of its backgrounds; picking one here without it needs your DM's approval."}
       </p>
       <ScrollableWhenNeeded>
         {FACTION_OPTIONS.map((option) => {
@@ -35,8 +40,10 @@ export function FactionLibraryPanel() {
               key={option.id}
               type="button"
               onClick={() => handleSelect(option.id)}
+              disabled={factionFromBackground && !selected}
+              aria-pressed={selected}
               className={cn(
-                "mb-1.5 w-full rounded-md border px-2.5 py-2 text-left transition-colors",
+                "mb-1.5 w-full rounded-md border px-2.5 py-2 text-left transition-colors disabled:cursor-not-allowed disabled:opacity-50",
                 selected
                   ? "border-violet-400/50 bg-violet-400/10"
                   : "border-border/60 hover:bg-muted/50",

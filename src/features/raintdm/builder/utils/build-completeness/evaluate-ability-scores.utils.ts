@@ -71,7 +71,12 @@ export function evaluateAbilityScoresCompleteness(
   const baseIssue = evaluateBaseAbilityScores(input);
   if (baseIssue) issues.push(baseIssue);
 
-  if (input.speciesData) {
+  const backgroundOwnsAsi =
+    !!input.dndBackground && hasBackgroundAsi(input.dndBackground.abilityBonuses);
+
+  // Same rule as OriginBonusesPanel: Tasha's origin or a 2024 background ASI
+  // replaces the species bonuses, so their pickers are hidden and not required.
+  if (input.speciesData && !input.useTashaOrigin && !backgroundOwnsAsi) {
     const chooseSlots = getSpeciesChooseSlots(input.speciesData.abilityBonuses ?? []);
     chooseSlots.forEach((slot, index) => {
       if (input.speciesAbilityChoices[index]) return;
@@ -84,7 +89,7 @@ export function evaluateAbilityScoresCompleteness(
     });
   }
 
-  if (input.dndBackground && hasBackgroundAsi(input.dndBackground.abilityBonuses)) {
+  if (input.dndBackground && backgroundOwnsAsi) {
     if (!input.backgroundAsiMode) {
       issues.push({
         id: "background-asi-mode",

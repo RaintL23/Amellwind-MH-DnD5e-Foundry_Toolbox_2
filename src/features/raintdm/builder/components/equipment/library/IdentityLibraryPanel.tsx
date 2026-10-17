@@ -3,8 +3,8 @@ import { useEffect, useMemo, useState } from "react";
 import { ScrollText, Users } from "lucide-react";
 import { useBookSourceNames } from "@/shared/hooks/useBookSourceNames";
 import {
-  getAllSpecies,
   getSubracesOf,
+  getSubracesOfParent,
 } from "@/features/amellwind/species/services/species.service";
 import {
   getBuilderListDndRaces,
@@ -24,7 +24,10 @@ import { useCharacterBuilder } from "@/features/raintdm/builder/context/Characte
 import { useBuilderUndo } from "@/features/raintdm/builder/context/BuilderUndoContext";
 import type { BuilderSlotSelection } from "@/features/raintdm/builder/hooks/useBuilderSlotSelection";
 import { useLibraryVariants } from "@/features/raintdm/builder/hooks/useLibraryVariants";
-import { resolveSpeciesParts } from "@/features/raintdm/builder/utils/species-resolution.utils";
+import {
+  getAmellwindSpeciesLibraryOptions,
+  resolveSpeciesParts,
+} from "@/features/raintdm/builder/utils/species-resolution.utils";
 import {
   entityToLibraryOption,
   prepareLibraryListOptions,
@@ -92,8 +95,9 @@ export function IdentityLibraryPanel({
   const [identityDetail, setIdentityDetail] = useState<
     LoadedIdentity | null
   >(null);
-  const [identitySubraceDetail, setIdentitySubraceDetail] =
-    useState<DndRace | null>(null);
+  const [identitySubraceDetail, setIdentitySubraceDetail] = useState<
+    DndRace | Species | null
+  >(null);
   const [loadedDndRaceBase, setLoadedDndRaceBase] = useState<DndRace | null>(null);
   const [dndSubraceOptions, setDndSubraceOptions] = useState<NamedVariant[]>(
     [],
@@ -131,9 +135,7 @@ export function IdentityLibraryPanel({
           ? getBuilderListDndRaces().then((list) =>
               list.map(entityToLibraryOption),
             )
-          : getAllSpecies().then((list) =>
-              list.map((s) => ({ id: s.id, name: s.name })),
-            );
+          : getAmellwindSpeciesLibraryOptions();
     } else {
       load =
         identitySource === "dnd"
@@ -290,10 +292,12 @@ export function IdentityLibraryPanel({
           setIdentityDetail(dndRace);
           setLoadedDndRaceBase(dndRace);
 
-          const subraces = await getDndSubracesForParent(
-            dndRace.name,
-            dndRace.source,
-          );
+          // Amellwind catalog: the D&D parent only hosts Amellwind subspecies
+          // (Elder Dragonborn ancestries on Dragonborn PHB).
+          const subraces: (DndRace | Species)[] =
+            identitySource === "amellwind"
+              ? await getSubracesOfParent(dndRace.name, dndRace.source)
+              : await getDndSubracesForParent(dndRace.name, dndRace.source);
           if (cancelled) return;
 
           setDndSubraceOptions(
@@ -304,6 +308,7 @@ export function IdentityLibraryPanel({
           );
 
           const selectedSubrace =
+            mhSubrace ??
             dndSubrace ??
             (selectedIdentity!.subraceId
               ? subraces.find(
@@ -498,8 +503,9 @@ export function IdentityLibraryPanel({
             onClick={() => setBrowsing(true)}
           />
           <IdentityLibraryDetail
-          background={identityDetail}          startingEquipmentSource={
-            identitySource === "dnd" && selectedIdentity
+          background={identityDetail}
+          startingEquipmentSource={
+            selectedIdentity
               ? {
                   type: "background",
                   id: selectedIdentity.id,

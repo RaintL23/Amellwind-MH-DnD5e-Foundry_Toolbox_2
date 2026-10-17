@@ -1,5 +1,5 @@
 import { describe, expect, it } from "vitest";
-import type { Class } from "@/shared/types";
+import type { Class, EquippedArmor, Species } from "@/shared/types";
 import { AMELLWIND_BACKGROUND_ORIGIN_FEAT_GRANT } from "../origin-feat.constants";
 import type { SpellcastingInfo } from "../../hooks/useSpellcasting";
 import { evaluateBuildCompleteness } from "../build-completeness.utils";
@@ -538,5 +538,67 @@ describe("getNextStep", () => {
       }),
     );
     expect(getNextStep(groupCompletenessSteps(result))).toBeNull();
+  });
+});
+
+describe("evaluateBuildCompleteness — Amellwind species and gear", () => {
+  const speciesWithChoice = {
+    name: "Dragonborn (Alatreon)",
+    abilityBonuses: [
+      { kind: "fixed", bonuses: { str: 2 } },
+      { kind: "choose", from: ["int", "wis", "cha"], amount: 1 },
+    ],
+    traits: [],
+  } as unknown as Species;
+
+  it("does not require species ASI picks while Tasha's origin is used", () => {
+    const base = {
+      species: { id: "dragonborn|phb", name: "Elder Dragonborn" },
+      speciesData: speciesWithChoice,
+    };
+    const withoutTasha = evaluateBuildCompleteness(
+      createEmptyCompletenessInput(base),
+    );
+    expect(hasIssueId(withoutTasha.issues, "species-asi-0")).toBe(true);
+
+    const withTasha = evaluateBuildCompleteness(
+      createEmptyCompletenessInput({
+        ...base,
+        useTashaOrigin: true,
+        tashaPlus2: "str",
+        tashaPlus1: "con",
+      }),
+    );
+    expect(hasIssueId(withTasha.issues, "species-asi-0")).toBe(false);
+  });
+
+  it("asks for a subspecies when the species requires one", () => {
+    const result = evaluateBuildCompleteness(
+      createEmptyCompletenessInput({
+        species: { id: "lynian|agmh", name: "Lynian" },
+        speciesSubraceMissing: true,
+      }),
+    );
+    expect(hasIssueId(result.issues, "identity-subspecies")).toBe(true);
+  });
+
+  it("requires a property for each Rare+ armor step in Amellwind mode", () => {
+    const armor: EquippedArmor = {
+      armor: { name: "Chain Mail", category: "heavy", baseAC: 16 } as EquippedArmor["armor"],
+      rarity: "Very Rare",
+      runeSlots: 4,
+      runes: [],
+      rarityProperties: [{ kind: "ac" }, null],
+    };
+    const amellwind = evaluateBuildCompleteness(
+      createEmptyCompletenessInput({ armor, useAmellwindHomebrew: true }),
+    );
+    expect(hasIssueId(amellwind.issues, "armor-rarity-property-0")).toBe(false);
+    expect(hasIssueId(amellwind.issues, "armor-rarity-property-1")).toBe(true);
+
+    const dnd = evaluateBuildCompleteness(
+      createEmptyCompletenessInput({ armor, useAmellwindHomebrew: false }),
+    );
+    expect(hasIssueId(dnd.issues, "armor-rarity-property-1")).toBe(false);
   });
 });

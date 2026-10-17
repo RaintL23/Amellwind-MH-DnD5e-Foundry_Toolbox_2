@@ -144,7 +144,11 @@ export interface RandomizerPipelineState {
   backgroundLanguageGrants: NamedProficiencyGrant[];
   speciesOriginFeatGrant: OriginFeatGrant | null;
   backgroundOriginFeatGrant: OriginFeatGrant | null;
-  randomizedBackgroundDetail: DndBackground | null;
+  /** Background whose starting equipment the randomizer adds (D&D or Amellwind). */
+  randomizedBackgroundDetail: Pick<
+    DndBackground,
+    "id" | "name" | "startingEquipmentOffers"
+  > | null;
   invocationOriginFeatSlots: OptionalFeatureOriginFeatSlot[];
   invocationOriginFeatBySlot: Map<number, BuilderFeatSelection>;
   originFeatSkillChoices: SkillKey[];

@@ -13,6 +13,8 @@ import type {
   Subclass,
 } from "@/shared/types";
 import type { DndBackground } from "@/shared/types/dnd-background.types";
+import type { StartingEquipmentOffers } from "@/shared/types/starting-equipment.types";
+import type { EquippedArmor } from "@/shared/types/character.types";
 import type {
   DefenseGrant,
   ExpertiseGrant,
@@ -62,7 +64,11 @@ export interface BuildCompletenessInput {
   classData: Class | null;
   subclassData: Subclass | null;
   speciesData: Species | null;
+  /** Species requires a subspecies pick that is still empty. */
+  speciesSubraceMissing?: boolean;
   dndBackground: DndBackground | null;
+  /** Starting equipment of the selected Amellwind background (AGMH "Equipment:" line). */
+  amellwindBackgroundEquipmentOffers?: StartingEquipmentOffers | null;
   useAmellwindHomebrew: boolean;
   speciesOriginFeatGrant: OriginFeatGrant | null;
   backgroundOriginFeatGrant: OriginFeatGrant | null;
@@ -107,7 +113,8 @@ export interface BuildCompletenessInput {
   tashaPlus1: AbilityKey | null;
   mainHand: unknown | null;
   offHand: unknown | null;
-  armor: unknown | null;
+  /** Equipped armor (Amellwind Rare+ rarity properties must be chosen). */
+  armor: EquippedArmor | null;
   equippedShield: unknown | null;
   inventoryItems: CartEntry[];
   spellcasting: SpellcastingInfo | null;

@@ -1,6 +1,11 @@
 import { PACT_SPELL_SLOT } from "../pact-magic.utils";
 import type { BuildCompletenessInput, BuildCompletenessIssue } from "../build-completeness.types";
 import { collectStartingEquipmentIssues } from "./helpers";
+import { resolveStartingEquipmentOffers } from "../amellwind-starting-equipment.utils";
+import {
+  fitArmorRarityProperties,
+  isArmorRarityPropertyComplete,
+} from "../armor-rarity-properties.utils";
 
 export function evaluateEquipmentAndSpellsCompleteness(
   input: BuildCompletenessInput,
@@ -10,7 +15,10 @@ export function evaluateEquipmentAndSpellsCompleteness(
   if (input.classData && input.classSelection) {
     issues.push(
       ...collectStartingEquipmentIssues(
-        input.classData.startingEquipmentOffers,
+        resolveStartingEquipmentOffers(
+          input.classData.startingEquipmentOffers,
+          input.useAmellwindHomebrew,
+        ),
         {
           type: "class",
           id: input.classSelection.id,
@@ -21,10 +29,16 @@ export function evaluateEquipmentAndSpellsCompleteness(
     );
   }
 
-  if (input.dndBackground && input.background) {
+  const backgroundOffers =
+    input.dndBackground?.startingEquipmentOffers ??
+    input.amellwindBackgroundEquipmentOffers;
+  if (backgroundOffers && input.background) {
     issues.push(
       ...collectStartingEquipmentIssues(
-        input.dndBackground.startingEquipmentOffers,
+        resolveStartingEquipmentOffers(
+          backgroundOffers,
+          input.useAmellwindHomebrew,
+        ),
         {
           type: "background",
           id: input.background.id,
@@ -33,6 +47,24 @@ export function evaluateEquipmentAndSpellsCompleteness(
         input.inventoryItems,
       ),
     );
+  }
+
+  const armor = input.armor;
+  if (input.useAmellwindHomebrew && armor) {
+    const properties = fitArmorRarityProperties(
+      armor.rarityProperties,
+      armor.rarity,
+    );
+    properties.forEach((property, index) => {
+      if (isArmorRarityPropertyComplete(property)) return;
+      issues.push({
+        id: `armor-rarity-property-${index}`,
+        section: "starting-equipment",
+        message: `Choose a rarity property for your ${armor.armor.name}`,
+        slot: "armor",
+        highlightKey: "armor",
+      });
+    });
   }
 
   const spellcasting = input.spellcasting;

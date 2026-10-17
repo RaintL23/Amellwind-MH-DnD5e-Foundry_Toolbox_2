@@ -12,6 +12,7 @@ import { useCharacterBuilder } from "./CharacterBuilderContext";
 import { useBuilderInventory } from "./BuilderInventoryContext";
 import { useSelectedClass, useSelectedSubclass, useSelectedSpecies } from "../hooks/useBuilderSelections";
 import { useSelectedDndBackground } from "../hooks/useSelectedDndBackground";
+import { useSelectedBackground } from "../hooks/useSelectedBackground";
 import { useSpellcastingContext } from "./SpellcastingContext";
 import {
   evaluateBuildCompleteness,
@@ -97,6 +98,7 @@ export function BuildCompletenessProvider({
   const subclassData = useSelectedSubclass();
   const { species: speciesData } = useSelectedSpecies();
   const { dndBackground } = useSelectedDndBackground();
+  const amellwindBackground = useSelectedBackground();
   const { spellcasting } = useSpellcastingContext();
   const layout = useBuilderLayoutOptional();
   const isMobileLayout = layout?.isMobileLayout ?? false;
@@ -115,7 +117,10 @@ export function BuildCompletenessProvider({
       classData,
       subclassData,
       speciesData,
+      speciesSubraceMissing: builder.speciesSubraceMissing,
       dndBackground,
+      amellwindBackgroundEquipmentOffers:
+        amellwindBackground?.startingEquipmentOffers ?? null,
       useAmellwindHomebrew: builder.useAmellwindHomebrew,
       speciesOriginFeatGrant: builder.speciesOriginFeatGrant,
       backgroundOriginFeatGrant: builder.backgroundOriginFeatGrant,
@@ -165,7 +170,16 @@ export function BuildCompletenessProvider({
       inventoryItems: inventory.items,
       spellcasting,
     }),
-    [builder, classData, subclassData, speciesData, dndBackground, inventory.items, spellcasting],
+    [
+      builder,
+      classData,
+      subclassData,
+      speciesData,
+      dndBackground,
+      amellwindBackground,
+      inventory.items,
+      spellcasting,
+    ],
   );
 
   const deferredInput = useDeferredValue(input);

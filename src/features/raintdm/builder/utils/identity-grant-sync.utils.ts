@@ -10,6 +10,7 @@ import { EMPTY_BACKGROUND_GRANTS, EMPTY_SPECIES_GRANTS } from "./grant-sync.cons
 import { resolveSpeciesDefenseGrants } from "./species-defense-grants.utils";
 import { resolveSpeciesParts } from "./species-resolution.utils";
 import { parseEntriesProficiencyGrants } from "@/shared/utils/text-proficiency-grants.parser";
+import { mergeSpeciesTraits } from "@/shared/utils/species-display.utils";
 
 import type { SpeciesTrait } from "@/shared/types";
 import type { NamedProficiencyGrant } from "@/shared/types/proficiency.types";
@@ -62,7 +63,7 @@ function buildSpeciesGrantPayloadFromParts(
   const sub = subrace ?? null;
   const traitSourceName = sub?.name ?? base.name;
   const traitGrants = collectTraitTextProficiencyGrants(
-    [...base.traits, ...(sub?.traits ?? [])],
+    mergeSpeciesTraits(base.traits, sub?.traits),
     "species",
     traitSourceName,
   );
@@ -123,14 +124,17 @@ export async function loadSpeciesGrantPayload(
   }
 
   if (parts.dndRace) {
-    if (species.subraceId && !parts.dndSubrace) {
+    // Elder Dragonborn: D&D Dragonborn base + Amellwind ancestry subspecies.
+    const subrace =
+      parts.dndSubrace ?? (useAmellwindHomebrew ? parts.mhSubrace : undefined);
+    if (species.subraceId && !subrace) {
       return { payload: EMPTY_SPECIES_GRANTS, invalidSubrace: true };
     }
 
     return {
       payload: buildSpeciesGrantPayloadFromParts(
         parts.dndRace,
-        parts.dndSubrace,
+        subrace,
         speciesSpellGroupChoice,
       ),
       invalidSubrace: false,

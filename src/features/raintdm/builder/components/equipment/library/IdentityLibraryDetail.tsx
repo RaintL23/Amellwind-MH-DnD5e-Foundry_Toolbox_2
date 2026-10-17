@@ -21,6 +21,8 @@ import {
 } from "@/shared/utils/species-display.utils";
 import { hasStartingEquipmentOffers } from "@/shared/utils/starting-equipment.parser";
 import { StartingEquipmentPicker } from "../StartingEquipmentPicker";
+import { useCharacterBuilder } from "../../../context/CharacterBuilderContext";
+import { resolveStartingEquipmentOffers } from "../../../utils/amellwind-starting-equipment.utils";
 import { LibraryDetailAccordion } from "./shared/LibraryDetailAccordion";
 
 interface IdentityLibraryDetailProps {
@@ -75,6 +77,13 @@ export function IdentityLibraryDetail({
   onSpeciesTraitChoiceSelect,
   inline = false,
 }: IdentityLibraryDetailProps) {
+  const { useAmellwindHomebrew } = useCharacterBuilder();
+  const backgroundEquipmentOffers = background?.startingEquipmentOffers
+    ? resolveStartingEquipmentOffers(
+        background.startingEquipmentOffers,
+        useAmellwindHomebrew,
+      )
+    : undefined;
   const isSpecies = !!species;
   const name = species?.name ?? background?.name ?? "";
   const accentClass = isSpecies ? "text-emerald-400" : "text-sky-400";
@@ -169,12 +178,12 @@ export function IdentityLibraryDetail({
           density="compact"
           accent="sky"
           equipmentSlot={
-            background.startingEquipmentOffers &&
+            backgroundEquipmentOffers &&
             startingEquipmentSource &&
-            hasStartingEquipmentOffers(background.startingEquipmentOffers) ? (
+            hasStartingEquipmentOffers(backgroundEquipmentOffers) ? (
               <div className="mb-3">
                 <StartingEquipmentPicker
-                  offers={background.startingEquipmentOffers}
+                  offers={backgroundEquipmentOffers}
                   source={startingEquipmentSource}
                 />
               </div>

@@ -43,11 +43,16 @@ export function clearAmellwindFeats(
 export async function isAmellwindSpeciesSelection(
   species: CharacterSelectionRef,
 ): Promise<boolean> {
-  const [mh, dnd] = await Promise.all([
+  const [mh, dnd, mhSubrace] = await Promise.all([
     getSpeciesById(species.id),
     getDndRaceById(species.id),
+    species.subraceId
+      ? getSpeciesById(species.subraceId)
+      : Promise.resolve(undefined),
   ]);
   if (mh && !dnd) return true;
+  // Elder Dragonborn: D&D parent with an Amellwind ancestry subspecies.
+  if (mhSubrace) return true;
   return !!mh && !species.subraceId;
 }
 

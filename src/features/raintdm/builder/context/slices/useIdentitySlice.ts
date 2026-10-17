@@ -17,7 +17,16 @@ import type {
 } from "@/shared/types";
 import { getBackgroundById } from "@/features/amellwind/backgrounds/services/background.service";
 import { getClassById } from "@/features/dnd/classes/services/class.service";
-import { resolveSpeciesParts } from "../../utils/species-resolution.utils";
+import {
+  isSpeciesSubraceRequired,
+  resolveSpeciesParts,
+} from "../../utils/species-resolution.utils";
+import {
+  mergeSpeciesAbilityBonuses,
+  mergeSpeciesSpeed,
+  mergeSpeciesTraits,
+} from "@/shared/utils/species-display.utils";
+import { hasBackgroundAsi } from "../../utils/species-ability-bonuses";
 import { formatAbilitySummary } from "@/features/dnd/races/mappers/dnd-race.mapper";
 import { getDndBackgroundById } from "@/features/dnd/backgrounds/services/dnd-background.service";
 import { resolveDndFeatForRef } from "@/features/dnd/feats/services/dnd-feat.service";
@@ -72,6 +81,13 @@ export function useIdentitySlice({
   const [species, setSpeciesState] = useState<CharacterSelectionRef | null>(null);
   const [speciesData, setSpeciesData] = useState<Species | null>(null);
   const [speciesDataLoading, setSpeciesDataLoading] = useState(false);
+  const [speciesSubraceMissing, setSpeciesSubraceMissing] = useState(false);
+  /** Whether the loaded background grants a 2024 +2/+1 (keyed by background id). */
+  const [backgroundAsiInfo, setBackgroundAsiInfo] = useState<{
+    backgroundId: string;
+    grantsAsi: boolean;
+  } | null>(null);
+  const autoTashaKeyRef = useRef<string | null>(null);
   const [backgroundRef, setBackgroundRef] = useState<CharacterSelectionRef | null>(null);
   const [classRef, setClassState] = useState<CharacterSelectionRef | null>(null);
   const [classData, setClassData] = useState<Class | null>(null);
@@ -111,6 +127,8 @@ export function useIdentitySlice({
     () => loadBuilderPersonality(),
   );
   const [faction, setFactionState] = useState<BackgroundFaction | null>(null);
+  /** AGMH: faction membership comes from the faction background itself. */
+  const [factionFromBackground, setFactionFromBackground] = useState(false);
 
   const [originFeatSkillChoices, setOriginFeatSkillChoicesState] = useState<SkillKey[]>([]);
   const [speciesOriginFeatGrant, setSpeciesOriginFeatGrant] =
@@ -226,15 +244,16 @@ export function useIdentitySlice({
     setBackgroundAsiPlus2(null);
     setBackgroundAsiPlus1(null);
     setBackgroundOriginFeatState(null);
+    // A faction from the previous background must not leak into the new one;
+    // the background loader sets it again for Amellwind faction backgrounds.
+    setFactionState(null);
+    setFactionFromBackground(false);
     if (selection && useAmellwindHomebrew) {
       setBackgroundOriginFeatGrant(AMELLWIND_BACKGROUND_ORIGIN_FEAT_GRANT);
       setBackgroundOriginFeatGrantReady(true);
     } else {
       setBackgroundOriginFeatGrant(null);
       setBackgroundOriginFeatGrantReady(!selection);
-    }
-    if (!selection) {
-      setFactionState(null);
     }
     onBackgroundChange();
   }, [onBackgroundChange, useAmellwindHomebrew]);
@@ -587,6 +606,7 @@ export function useIdentitySlice({
     if (!species) {
       setSpeciesData(null);
       setSpeciesDataLoading(false);
+      setSpeciesSubraceMissing(false);
       return;
     }
 
@@ -594,19 +614,26 @@ export function useIdentitySlice({
     setSpeciesDataLoading(true);
 
     resolveSpeciesParts(species)
-      .then(({ base, dndSubrace, mhSubrace }) => {
+      .then(async (parts) => {
         if (cancelled) return;
+        const { base, dndSubrace, mhSubrace, normalizedRef } = parts;
+
+        // Older builds stored a lone subspecies (Felyne, Alatreon…): swap to
+        // parent + subspecies without the reset side effects of setSpecies.
+        if (normalizedRef) {
+          speciesIdRef.current = normalizedRef.id;
+          setSpeciesState(normalizedRef);
+          return;
+        }
 
         if (!base) {
           setSpeciesData(null);
+          setSpeciesSubraceMissing(false);
           return;
         }
 
         const subrace = mhSubrace ?? dndSubrace;
-        const abilityBonuses = [
-          ...base.abilityBonuses,
-          ...(subrace?.abilityBonuses ?? []),
-        ];
+        const abilityBonuses = mergeSpeciesAbilityBonuses(base, subrace);
         const displayName = species.subraceName
           ? `${base.name} (${species.subraceName})`
           : base.name;
@@ -616,7 +643,16 @@ export function useIdentitySlice({
           name: displayName,
           abilityBonuses,
           abilitySummary: formatAbilitySummary(abilityBonuses),
+          speed: mergeSpeciesSpeed(base.speed, subrace?.speed),
+          sizes: (subrace?.sizes.length
+            ? subrace.sizes
+            : base.sizes) as Species["sizes"],
+          darkvision: subrace?.darkvision ?? base.darkvision,
+          traits: mergeSpeciesTraits(base.traits, subrace?.traits),
         });
+
+        const subraceMissing = await isSpeciesSubraceRequired(species, parts);
+        if (!cancelled) setSpeciesSubraceMissing(subraceMissing);
       })
       .catch(() => {
         if (!cancelled) setSpeciesData(null);
@@ -628,7 +664,7 @@ export function useIdentitySlice({
     return () => {
       cancelled = true;
     };
-  }, [species?.id, species?.subraceId, species?.subraceName]);
+  }, [species?.id, species?.subraceId, species?.subraceName, species?.name]);
 
   useEffect(() => {
     if (!species) {
@@ -643,8 +679,9 @@ export function useIdentitySlice({
     setSpeciesOriginFeatGrantReady(false);
 
     async function loadOriginFeatGrant() {
-      const { base, dndSubrace, mhSubrace } = await resolveSpeciesParts(species!);
-      if (cancelled) return;
+      const { base, dndSubrace, mhSubrace, normalizedRef } =
+        await resolveSpeciesParts(species!);
+      if (cancelled || normalizedRef) return;
 
       if (!base) {
         setSpeciesOriginFeatGrant(null);
@@ -702,6 +739,7 @@ export function useIdentitySlice({
 
   useEffect(() => {
     if (!backgroundRef) {
+      setBackgroundAsiInfo(null);
       setBackgroundOriginFeatGrant(null);
       setBackgroundOriginFeatGrantReady(true);
       // Do not clear userOriginFeatRef — species may still own the choose pick.
@@ -719,6 +757,12 @@ export function useIdentitySlice({
       ]);
       if (cancelled) return;
 
+      setBackgroundAsiInfo({
+        backgroundId: backgroundRef!.id,
+        grantsAsi:
+          !!dndBackground && hasBackgroundAsi(dndBackground.abilityBonuses),
+      });
+
       if (!dndBackground && !mhBackground) {
         if (useAmellwindHomebrew) {
           setBackgroundOriginFeatGrant(AMELLWIND_BACKGROUND_ORIGIN_FEAT_GRANT);
@@ -733,6 +777,9 @@ export function useIdentitySlice({
 
       if (mhBackground?.faction) {
         setFactionState(mhBackground.faction);
+        setFactionFromBackground(true);
+      } else {
+        setFactionFromBackground(false);
       }
 
       const isAmellwindBackground =
@@ -829,11 +876,26 @@ export function useIdentitySlice({
     useAmellwindHomebrew,
   ]);
 
+  // No ASI source at all (a 2024 species without bonuses + a background
+  // without +2/+1, e.g. every Amellwind background): turn on Tasha's
+  // Customizing Your Origin once per species/background pair.
+  useEffect(() => {
+    if (!species || !backgroundRef || !speciesData) return;
+    if (backgroundAsiInfo?.backgroundId !== backgroundRef.id) return;
+    const key = `${species.id}|${species.subraceId ?? ""}|${backgroundRef.id}`;
+    if (autoTashaKeyRef.current === key) return;
+    autoTashaKeyRef.current = key;
+    if (backgroundAsiInfo.grantsAsi) return;
+    if (speciesData.abilityBonuses.length > 0) return;
+    setUseTashaOrigin(true);
+  }, [species, backgroundRef, speciesData, backgroundAsiInfo]);
+
   // ─── Homebrew cleanup + full reset ──────────────────────────────────────────
 
   const clearAmellwindIdentity = useCallback(async () => {
     userOriginFeatRef.current = null;
     setFactionState(null);
+    setFactionFromBackground(false);
     setFeatSelections((prev) => clearAmellwindFeats(prev));
     setSpeciesOriginFeatState((prev) =>
       prev?.source === "amellwind" ? null : prev,
@@ -868,6 +930,8 @@ export function useIdentitySlice({
 
   const resetIdentitySlice = useCallback(() => {
     speciesIdRef.current = null;
+    autoTashaKeyRef.current = null;
+    setSpeciesSubraceMissing(false);
     backgroundIdRef.current = null;
     userOriginFeatRef.current = null;
     setSpeciesState(null);
@@ -885,6 +949,7 @@ export function useIdentitySlice({
     setBackstoryNotesState("");
     setPersonalityState({ ...EMPTY_BUILDER_PERSONALITY });
     setFactionState(null);
+    setFactionFromBackground(false);
     setUseTashaOrigin(false);
     setTashaPlus2(null);
     setTashaPlus1(null);
@@ -915,6 +980,7 @@ export function useIdentitySlice({
       reloadClassData,
       speciesData,
       speciesDataLoading,
+      speciesSubraceMissing,
       speciesOriginFeatGrant,
       speciesOriginFeat,
       backgroundOriginFeatGrant,
@@ -925,6 +991,7 @@ export function useIdentitySlice({
       backstoryNotes,
       personality,
       faction,
+      factionFromBackground,
       useTashaOrigin,
       tashaPlus2,
       tashaPlus1,
@@ -982,6 +1049,7 @@ export function useIdentitySlice({
       reloadClassData,
       speciesData,
       speciesDataLoading,
+      speciesSubraceMissing,
       speciesOriginFeatGrant,
       speciesOriginFeat,
       backgroundOriginFeatGrant,
@@ -992,6 +1060,7 @@ export function useIdentitySlice({
       backstoryNotes,
       personality,
       faction,
+      factionFromBackground,
       useTashaOrigin,
       tashaPlus2,
       tashaPlus1,

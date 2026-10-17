@@ -56,6 +56,8 @@ interface IdentityGridPanelProps {
   species: CharacterSelectionRef | null;
   background: CharacterSelectionRef | null;
   faction: import("@/shared/types/background.types").BackgroundFaction | null;
+  /** Faction set by an Amellwind faction background cannot be removed here. */
+  factionLocked?: boolean;
   classSelection: CharacterSelectionRef | null;
   subclass: CharacterSelectionRef | null;
   classData: Class | null;
@@ -84,6 +86,7 @@ export function IdentityGridPanel({
   species,
   background,
   faction,
+  factionLocked = false,
   classSelection,
   subclass,
   classData,
@@ -311,7 +314,11 @@ export function IdentityGridPanel({
           }
           onClickEquip={() => onSelectSlot("faction")}
           onClickDetails={() => onSelectSlot("faction")}
-          onUnequip={faction ? () => onUnequipSlot("faction") : undefined}
+          onUnequip={
+            faction && !factionLocked
+              ? () => onUnequipSlot("faction")
+              : undefined
+          }
           isSelected={selectedSlot === "faction"}
           emptyTitle="Choose Amellwind faction"
         />

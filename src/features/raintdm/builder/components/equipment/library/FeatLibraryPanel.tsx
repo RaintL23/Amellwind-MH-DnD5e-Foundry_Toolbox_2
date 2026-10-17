@@ -231,6 +231,34 @@ export function FeatLibraryPanel({
           ? (featSelections[featSlotIndex] ?? null)
           : null;
 
+  // A non-repeatable feat already taken in another slot cannot be picked again.
+  const takenFeatNames = useMemo(() => {
+    const names = new Set<string>();
+    const add = (selection: BuilderFeatSelection | null | undefined) => {
+      if (!selection || isAsiFeatSelection(selection)) return;
+      names.add(selection.name.trim().toLowerCase());
+    };
+    featSelections.forEach((selection, index) => {
+      if (index !== featSlotIndex) add(selection);
+    });
+    add(speciesOriginFeat);
+    add(backgroundOriginFeat);
+    optionalFeatureOriginFeats.forEach(add);
+    return names;
+  }, [
+    featSelections,
+    featSlotIndex,
+    speciesOriginFeat,
+    backgroundOriginFeat,
+    optionalFeatureOriginFeats,
+  ]);
+
+  const isTakenElsewhere = useCallback(
+    (feat: Pick<Feat, "name" | "repeatable">) =>
+      !feat.repeatable && takenFeatNames.has(feat.name.trim().toLowerCase()),
+    [takenFeatNames],
+  );
+
   const showAsiPanel =
     isFeatSlot &&
     !!selectedFeat &&
@@ -404,6 +432,7 @@ export function FeatLibraryPanel({
         .filter(
           (f) =>
             f.name !== ABILITY_SCORE_IMPROVEMENT.name &&
+            !isTakenElsewhere(f) &&
             meetsCheckableFeatPrerequisites(f, featPrereqContext),
         )
         .map((f) => ({
@@ -423,12 +452,14 @@ export function FeatLibraryPanel({
         ? dndFeats.filter(
             (f) =>
               !isDnd2024Feat(f) &&
+              !isTakenElsewhere(f) &&
               isSelectableGeneralFeat(f, featPrereqContext) &&
               dndFeatMatchesTypeFilter(f, featTypeFilter),
           )
         : dndFeats.filter(
             (f) =>
               isDnd2024Feat(f) &&
+              !isTakenElsewhere(f) &&
               isSelectableGeneralFeat(f, featPrereqContext) &&
               dndFeatMatchesTypeFilter(f, featTypeFilter),
           );
@@ -466,6 +497,7 @@ export function FeatLibraryPanel({
     sourceCatalog,
     identityBookNames,
     featPrereqContext,
+    isTakenElsewhere,
   ]);
 
   const isDndFeatSelection =

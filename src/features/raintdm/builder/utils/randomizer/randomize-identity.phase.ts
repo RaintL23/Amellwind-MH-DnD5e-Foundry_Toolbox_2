@@ -14,8 +14,10 @@ import { isSubclassLevelReached } from "@/features/raintdm/builder/utils/builder
 import { delay } from "@/features/raintdm/builder/utils/randomizer/character-randomizer.utils";
 import { pickRandomClass, pickBestSubclass } from "@/features/raintdm/builder/utils/randomizer/class-randomizer.utils";
 import {
+  mergeAmellwindSpeciesForRandomizer,
   pickAmellwindBackground,
   pickAmellwindSpecies,
+  pickAmellwindSubspecies,
   pickDndBackground,
   pickDndSpecies,
   pickRandomCharacterName,
@@ -46,7 +48,6 @@ import {
   pickNamedChoicesFromGrants,
 } from "@/features/raintdm/builder/utils/randomizer/named-proficiency-randomizer.utils";
 import type { AbilityKey, BuilderFeatSelection, DndRace, SkillKey } from "@/shared/types";
-import type { DndBackground } from "@/shared/types/dnd-background.types";
 import type {
   NamedProficiencyGrant,
   SkillProficiencyGrant,
@@ -240,7 +241,8 @@ export async function randomizeSpeciesAndBackgroundPhase(
   let backgroundLanguageGrants: NamedProficiencyGrant[] = [];
   let speciesOriginFeatGrant: OriginFeatGrant | null = null;
   let backgroundOriginFeatGrant: OriginFeatGrant | null = null;
-  let randomizedBackgroundDetail: DndBackground | null = null;
+  let randomizedBackgroundDetail: RandomizerPipelineState["randomizedBackgroundDetail"] =
+    null;
 
   if (useAmellwindHomebrew) {
     const pickedSpecies = pickAmellwindSpecies(
@@ -248,18 +250,34 @@ export async function randomizeSpeciesAndBackgroundPhase(
       abilityPriority,
     );
     if (pickedSpecies) {
-      speciesName = pickedSpecies.name;
-      setters.setSpecies(toRef(pickedSpecies.id, pickedSpecies.name));
-      speciesGrants = pickedSpecies.skillGrants;
-      speciesLanguageGrants = pickedSpecies.languageGrants ?? [];
+      // Lynian / Wyverian are incomplete without a subspecies.
+      const pickedSubspecies = pickAmellwindSubspecies(
+        amellwindSpecies,
+        pickedSpecies,
+      );
+      const merged = mergeAmellwindSpeciesForRandomizer(
+        pickedSpecies,
+        pickedSubspecies,
+      );
+      speciesName = pickedSubspecies
+        ? `${pickedSpecies.name} (${pickedSubspecies.name})`
+        : pickedSpecies.name;
+      setters.setSpecies({
+        id: pickedSpecies.id,
+        name: pickedSpecies.name,
+        subraceId: pickedSubspecies?.id ?? null,
+        subraceName: pickedSubspecies?.name ?? null,
+      });
+      speciesGrants = merged.skillGrants;
+      speciesLanguageGrants = merged.languageGrants;
       speciesOriginFeatGrant = pickedSpecies.originFeatGrant ?? null;
       assignSpeciesAbilityChoices(
-        pickedSpecies.abilityBonuses,
+        merged.abilityBonuses,
         abilityPriority,
         setters.setSpeciesAbilityChoice,
       );
       const speciesSkills = pickAllSkillChoices(
-        pickedSpecies.skillGrants,
+        merged.skillGrants,
         speciesLookup,
       );
       speciesSkillChoices = speciesSkills;
@@ -267,7 +285,7 @@ export async function randomizeSpeciesAndBackgroundPhase(
         setters.setSpeciesSkillChoices(speciesSkills);
       }
       const speciesLanguages = pickNamedChoicesFromGrants(
-        pickedSpecies.languageGrants ?? [],
+        merged.languageGrants,
         new Set(),
         resolvedLanguagePool,
       );
@@ -276,7 +294,7 @@ export async function randomizeSpeciesAndBackgroundPhase(
         setters.setSpeciesLanguageChoices(speciesLanguages);
       }
       const speciesWeapons = pickNamedChoicesFromGrants(
-        pickedSpecies.weaponProficiencyGrants ?? [],
+        merged.weaponProficiencyGrants,
       );
       if (speciesWeapons.length > 0) {
         setters.setSpeciesWeaponChoices(speciesWeapons);
@@ -295,7 +313,7 @@ export async function randomizeSpeciesAndBackgroundPhase(
         speciesOriginFeatSelection = resolvedSpeciesOriginFeat;
       }
       assignRandomSpeciesTraitChoices(
-        pickedSpecies.traits,
+        merged.traits,
         setters.setSpeciesTraitChoice,
       );
     }
@@ -306,6 +324,13 @@ export async function randomizeSpeciesAndBackgroundPhase(
       setters.setBackground(
         toRef(pickedBackground.id, pickedBackground.name),
       );
+      randomizedBackgroundDetail = {
+        id: pickedBackground.id,
+        name: pickedBackground.name,
+        startingEquipmentOffers: pickedBackground.startingEquipmentOffers ?? {
+          groups: [],
+        },
+      };
       await delay();
 
       backgroundGrants = pickedBackground.skillGrants;

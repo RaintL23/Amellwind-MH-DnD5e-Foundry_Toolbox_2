@@ -127,7 +127,19 @@ export async function loadFeatGrantPayload(
     );
     armorGrants.push(...textGrants.armorGrants);
     weaponGrants.push(...textGrants.weaponGrants);
-    toolGrants.push(...textGrants.toolGrants);
+    // AGMH feats carry structured tool grants (Master Craftsman picks a Combo
+    // List tool); D&D feats keep the established prose parsing.
+    const structuredTools =
+      entry.selection.source === "amellwind"
+        ? feat.toolProficiencyGrants
+        : undefined;
+    if (structuredTools?.length) {
+      toolGrants.push(
+        ...structuredTools.map((grant) => ({ ...grant, source: tagSource })),
+      );
+    } else {
+      toolGrants.push(...textGrants.toolGrants);
+    }
 
     if ((feat.skillGrants?.length ?? 0) === 0) {
       skillChoiceResets.push({

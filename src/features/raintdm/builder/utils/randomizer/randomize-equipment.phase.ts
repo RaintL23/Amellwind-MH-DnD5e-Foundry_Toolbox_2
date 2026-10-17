@@ -1,5 +1,6 @@
 import { buildRandomStartingEquipmentEntries } from "@/features/raintdm/builder/utils/randomizer/starting-equipment-randomizer.utils";
 import { generateXanatharBackstoryNotes } from "@/features/raintdm/builder/utils/randomizer/backstory-randomizer.utils";
+import { resolveStartingEquipmentOffers } from "@/features/raintdm/builder/utils/amellwind-starting-equipment.utils";
 import type {
   RandomizeCharacterContext,
   RandomizerPipelineState,
@@ -19,13 +20,20 @@ export function randomizeEquipmentPhase(
     primaryMod,
   } = state;
 
+  // AGMH: MH weapons replace class/background starting weapons.
   const classEquipment = buildRandomStartingEquipmentEntries(
-    classData.startingEquipmentOffers,
+    resolveStartingEquipmentOffers(
+      classData.startingEquipmentOffers,
+      ctx.useAmellwindHomebrew,
+    ),
     { type: "class", id: classData.id, name: classData.name },
   );
   const backgroundEquipment = randomizedBackgroundDetail
     ? buildRandomStartingEquipmentEntries(
-        randomizedBackgroundDetail.startingEquipmentOffers,
+        resolveStartingEquipmentOffers(
+          randomizedBackgroundDetail.startingEquipmentOffers,
+          ctx.useAmellwindHomebrew,
+        ),
         {
           type: "background",
           id: randomizedBackgroundDetail.id,
