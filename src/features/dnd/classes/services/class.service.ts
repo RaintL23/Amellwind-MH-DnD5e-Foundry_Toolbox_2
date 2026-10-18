@@ -21,7 +21,7 @@ import { processAllClasses } from "../utils/class-processor.utils";
 import { dedupeClassesByName } from "../utils/class-dedupe.utils";
 
 /** Bump when mapped Class shape changes so in-memory cache is rebuilt. */
-const CLASS_CACHE_VERSION = 20;
+const CLASS_CACHE_VERSION = 21;
 
 let lookupCache: SubclassLookup | null = null;
 const loadedUaSources = new Set<string>();

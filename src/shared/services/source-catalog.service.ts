@@ -439,22 +439,51 @@ export function defaultOfficialSourceCodes(
 }
 
 /**
- * Official defaults published on/after `minYear` (D&D 2024+ when minYear=2024).
- * Codes without a catalog year are kept only for known 2024 core books.
+ * Official books on the 2024 rules (XPHB onward), used when the catalog is
+ * offline or does not know a code. Keep in sync with 5etools books.json.
  */
+export const KNOWN_2024_RULES_SOURCES: ReadonlySet<string> = new Set([
+  "XPHB",
+  "XDMG",
+  "XMM",
+  "XSAC",
+  "ABH",
+  "FRAiF",
+  "FRHoF",
+  "NF",
+  "LFL",
+  "EFA",
+  "RHW",
+  "AU",
+  "HotB",
+]);
+
+/**
+ * True for an official book published on/after `minYear` (D&D 2024+ when
+ * minYear=2024). Codes the catalog does not date fall back to
+ * {@link KNOWN_2024_RULES_SOURCES}.
+ */
+export function isOfficialSourceSince(
+  code: string,
+  catalog: Map<string, SourceCatalogEntry>,
+  minYear = 2024,
+): boolean {
+  const entry = catalog.get(code);
+  if (!entry) return KNOWN_2024_RULES_SOURCES.has(code);
+  if (entry.kind !== "official") return false;
+  if (entry.year != null) return entry.year >= minYear;
+  return KNOWN_2024_RULES_SOURCES.has(code);
+}
+
+/** Official defaults published on/after `minYear` (see {@link isOfficialSourceSince}). */
 export function defaultOfficialSourceCodesSince(
   sourceCodes: Iterable<string>,
   catalog: Map<string, SourceCatalogEntry>,
   minYear = 2024,
 ): string[] {
-  const FALLBACK_CORE_2024 = new Set(["XPHB", "XDMG", "XMM"]);
-  return defaultOfficialSourceCodes(sourceCodes, catalog).filter((code) => {
-    const entry = catalog.get(code);
-    if (!entry) return FALLBACK_CORE_2024.has(code);
-    if (entry.kind !== "official") return false;
-    if (entry.year != null) return entry.year >= minYear;
-    return FALLBACK_CORE_2024.has(code);
-  });
+  return defaultOfficialSourceCodes(sourceCodes, catalog).filter((code) =>
+    isOfficialSourceSince(code, catalog, minYear),
+  );
 }
 
 const SOURCE_KIND_ORDER: SourceKind[] = [

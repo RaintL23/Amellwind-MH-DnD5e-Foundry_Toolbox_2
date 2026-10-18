@@ -62,6 +62,7 @@ export function resolveSubclassCopies(
       preparedSpellsProgression:
         overrides.preparedSpellsProgression ?? base.preparedSpellsProgression,
     };
+    merged.linkedFromCopy = true;
     delete merged._copy;
     return merged;
   });

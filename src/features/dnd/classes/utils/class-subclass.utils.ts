@@ -12,7 +12,8 @@ function isNativeToClassBook(cls: Class, sc: Subclass): boolean {
 /**
  * Subclasses tied to this class book (PHB, XPHB, EFA, …) and matching rules edition.
  * XPHB lists legacy subclasses (classSource XPHB, source PHB/XGE/…) for reference;
- * only `edition: "one"` or native-book entries (e.g. EFA on EFA) are valid for 2024.
+ * only `edition: "one"`, native-book entries (e.g. EFA on EFA) and original entries
+ * without an edition (e.g. Exploring Eberron on EFA, RHW Reanimator) are valid for 2024.
  */
 export function subclassesForClassVariant(cls: Class): Subclass[] {
   const edition = classEdition(cls);
@@ -22,7 +23,8 @@ export function subclassesForClassVariant(cls: Class): Subclass[] {
 
     if (edition === "one") {
       if (isNativeToClassBook(cls, sc)) return true;
-      return sc.edition === "one";
+      if (sc.edition === "one") return true;
+      return !sc.edition && !sc.linkedFromCopy;
     }
 
     return sc.edition !== "one";

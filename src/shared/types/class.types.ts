@@ -56,6 +56,8 @@ export interface Subclass {
   /** Parent class book this subclass is linked to (e.g. PHB, XPHB) */
   classSource: string;
   edition?: "classic" | "one";
+  /** Expanded from a `_copy` stub: an older subclass re-linked to this class book. */
+  linkedFromCopy?: boolean;
   page?: number;
   progression: ClassLevelRow[];
   /** Third-caster progression (e.g. Eldritch Knight, Arcane Trickster). */

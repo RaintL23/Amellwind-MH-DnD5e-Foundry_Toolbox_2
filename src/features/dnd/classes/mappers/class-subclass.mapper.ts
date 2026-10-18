@@ -64,6 +64,7 @@ export function mapSubclass(
     source: sc.source,
     classSource: sc.classSource || DEFAULT_CLASS_SOURCE,
     edition: sc.edition,
+    linkedFromCopy: sc.linkedFromCopy,
     page: sc.page,
     progression: mapProgression(sc.subclassFeaturesByLevel, tableGroups),
     casterProgression: sc.casterProgression,

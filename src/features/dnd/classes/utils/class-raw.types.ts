@@ -70,6 +70,8 @@ export interface RawSubclassDefinition {
   optionalfeatureProgression?: RawOptionalFeatureProgression[];
   featProgression?: RawClassFeatProgression[];
   isReprinted?: boolean;
+  /** Set when expanded from a `_copy` stub (a 2014 subclass re-linked to another class book). */
+  linkedFromCopy?: boolean;
   _copy?: Record<string, unknown>;
 }
 
