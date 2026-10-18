@@ -103,6 +103,9 @@ export interface CharacterBuilderContextValue {
   clearInvalidSpeciesSubrace: () => void;
   setBackground: (selection: CharacterSelectionRef | null) => void;
   setClass: (selection: CharacterSelectionRef | null) => void;
+  /** Keeps the class when randomizing (cleared when the class is removed or the build resets). */
+  classLocked: boolean;
+  setClassLocked: (locked: boolean) => void;
   setSubclass: (selection: CharacterSelectionRef | null) => void;
   setFeatAtIndex: (index: number, selection: BuilderFeatSelection | null) => void;
 

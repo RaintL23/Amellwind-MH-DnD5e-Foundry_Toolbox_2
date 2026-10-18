@@ -61,7 +61,8 @@ export function BuilderCharacterActionsProvider({
   children,
 }: Readonly<{ children: ReactNode }>) {
   const { resetBuild } = useCharacterBuilder();
-  const { randomize, isRandomizing, canRandomize } = useCharacterRandomizer();
+  const { randomize, isRandomizing, canRandomize, lockedClassName } =
+    useCharacterRandomizer();
   const {
     exportSheet,
     exporting,
@@ -233,8 +234,9 @@ export function BuilderCharacterActionsProvider({
       : pending?.kind === "randomize"
         ? {
             title: "Randomize character?",
-            description:
-              "This replaces your current choices with a randomized build at the same level.",
+            description: lockedClassName
+              ? `This replaces your current choices with a randomized build at the same level. Class ${lockedClassName} stays locked.`
+              : "This replaces your current choices with a randomized build at the same level.",
             confirmLabel: "Randomize",
           }
         : pending?.kind === "import"

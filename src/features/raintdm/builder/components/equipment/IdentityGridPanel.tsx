@@ -110,7 +110,8 @@ export function IdentityGridPanel({
   onSelectSlot,
   onUnequipSlot,
 }: IdentityGridPanelProps) {
-  const { useAmellwindHomebrew } = useCharacterBuilder();
+  const { useAmellwindHomebrew, classLocked, setClassLocked } =
+    useCharacterBuilder();
   const hasBackstory = backstoryNotes.trim().length > 0;
   const showSubclass = isSubclassLevelReached(classData, primaryClassLevel);
   const classEntries = buildClassLevelEntries(
@@ -198,6 +199,17 @@ export function IdentityGridPanel({
         onClickDetails={() => onSelectSlot("class")}
         onUnequip={classSelection ? () => onUnequipSlot("class") : undefined}
         isSelected={selectedSlot === "class"}
+        lock={
+          classSelection
+            ? {
+                locked: classLocked,
+                onToggle: () => setClassLocked(!classLocked),
+                hint: classLocked
+                  ? "Class locked — Randomize keeps it (click to unlock)"
+                  : "Lock class so Randomize keeps it",
+              }
+            : undefined
+        }
       />
       {multiclassEnabled &&
         multiclassEntries.map((entry, index) => {

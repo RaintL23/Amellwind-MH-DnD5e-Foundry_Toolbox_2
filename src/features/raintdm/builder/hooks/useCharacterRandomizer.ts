@@ -18,12 +18,15 @@ export function useCharacterRandomizer() {
   const {
     character,
     useAmellwindHomebrew,
+    class: classRef,
+    classLocked,
     resetBuild,
     setLevel,
     setName,
     setLawChaosAlignment,
     setGoodEvilAlignment,
     setClass,
+    setClassLocked,
     setSubclass,
     setSpecies,
     setBackground,
@@ -58,6 +61,9 @@ export function useCharacterRandomizer() {
     setSpeciesLanguageChoices,
     setClassLanguageChoicesAtIndex,
     setOptionalFeaturesForProgression,
+    equipWeapon,
+    equipArmor,
+    equipShield,
   } = builder;
 
   const randomize = useCallback(async () => {
@@ -74,6 +80,7 @@ export function useCharacterRandomizer() {
       setLawChaosAlignment,
       setGoodEvilAlignment,
       setClass,
+      setClassLocked,
       setSubclass,
       setSpecies,
       setBackground,
@@ -108,13 +115,19 @@ export function useCharacterRandomizer() {
       setSpeciesLanguageChoices,
       setClassLanguageChoicesAtIndex,
       setOptionalFeaturesForProgression,
+      equipWeapon: (slot, weapon, rarity) => equipWeapon(slot, weapon, rarity),
+      equipArmor,
+      equipShield,
     };
 
     const ctx: RandomizeCharacterContext = {
       useAmellwindHomebrew,
       preservedLevel,
       characterAbilities: character.abilities,
+      lockedClass: classLocked ? classRef : null,
       catalogs: {} as RandomizerCatalogs,
+      // Replaced by the pipeline once the source catalog loads.
+      isAllowedSource: () => false,
       setters,
       rpgbot: { rpgbotData, createLookup },
       addEquipmentBundle,
@@ -130,12 +143,15 @@ export function useCharacterRandomizer() {
     isRandomizing,
     character.level,
     character.abilities,
+    classRef,
+    classLocked,
     resetBuild,
     setLevel,
     setName,
     setLawChaosAlignment,
     setGoodEvilAlignment,
     setClass,
+    setClassLocked,
     setSubclass,
     setSpecies,
     setBackground,
@@ -170,6 +186,9 @@ export function useCharacterRandomizer() {
     setSpeciesLanguageChoices,
     setClassLanguageChoicesAtIndex,
     setOptionalFeaturesForProgression,
+    equipWeapon,
+    equipArmor,
+    equipShield,
     rpgbotData,
     createLookup,
     addEquipmentBundle,
@@ -179,5 +198,6 @@ export function useCharacterRandomizer() {
     randomize,
     isRandomizing,
     canRandomize: true,
+    lockedClassName: classLocked ? (classRef?.name ?? null) : null,
   };
 }

@@ -90,6 +90,8 @@ export function useIdentitySlice({
   const autoTashaKeyRef = useRef<string | null>(null);
   const [backgroundRef, setBackgroundRef] = useState<CharacterSelectionRef | null>(null);
   const [classRef, setClassState] = useState<CharacterSelectionRef | null>(null);
+  /** Randomizer keeps this class (subclass is always re-rolled). */
+  const [classLocked, setClassLockedState] = useState(false);
   const [classData, setClassData] = useState<Class | null>(null);
   const [classDataLoading, setClassDataLoading] = useState(false);
   const [subclass, setSubclassState] = useState<CharacterSelectionRef | null>(null);
@@ -375,11 +377,16 @@ export function useIdentitySlice({
 
   const setClass = useCallback((selection: CharacterSelectionRef | null) => {
     setClassState(selection);
+    if (!selection) setClassLockedState(false);
     setClassData(null);
     setSubclassState(null);
     setFeatSelections([]);
     onClassChange();
   }, [onClassChange]);
+
+  const setClassLocked = useCallback((locked: boolean) => {
+    setClassLockedState(locked);
+  }, []);
 
   const setSubclass = useCallback((selection: CharacterSelectionRef | null) => {
     setSubclassState(selection);
@@ -939,6 +946,7 @@ export function useIdentitySlice({
     setSpeciesDataLoading(false);
     setBackgroundRef(null);
     setClassState(null);
+    setClassLockedState(false);
     setClassData(null);
     setClassDataLoading(false);
     setSubclassState(null);
@@ -973,6 +981,7 @@ export function useIdentitySlice({
       species,
       background: backgroundRef,
       class: classRef,
+      classLocked,
       subclass,
       featSelections,
       classData,
@@ -1006,6 +1015,7 @@ export function useIdentitySlice({
       setBackground,
       clearInvalidSpeciesSubrace,
       setClass,
+      setClassLocked,
       setSubclass,
       setFeatAtIndex,
       setSpeciesOriginFeat,
@@ -1042,6 +1052,7 @@ export function useIdentitySlice({
       species,
       backgroundRef,
       classRef,
+      classLocked,
       subclass,
       featSelections,
       classData,
@@ -1075,6 +1086,7 @@ export function useIdentitySlice({
       setBackground,
       clearInvalidSpeciesSubrace,
       setClass,
+      setClassLocked,
       setSubclass,
       setFeatAtIndex,
       setSpeciesOriginFeat,

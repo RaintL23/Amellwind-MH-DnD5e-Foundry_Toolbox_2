@@ -1,5 +1,5 @@
 import { ReactNode } from "react";
-import { Lock, Plus, X } from "lucide-react";
+import { Lock, LockOpen, Plus, X } from "lucide-react";
 import { cn } from "@/shared/utils/cn";
 import {
   Tooltip,
@@ -25,6 +25,8 @@ interface GridElementSlotProps {
   highlighted?: boolean;
   /** Suggested next choice from the creation checklist (softer than `highlighted`). */
   isNext?: boolean;
+  /** Lock toggle on an equipped slot (e.g. keep the class when randomizing). */
+  lock?: { locked: boolean; onToggle: () => void; hint: string };
 }
 
 const ACCENT_CLASS: Record<SlotAccent, string> = {
@@ -62,6 +64,7 @@ export function GridElementSlot({
   emptyTitle,
   highlighted = false,
   isNext = false,
+  lock,
 }: Readonly<GridElementSlotProps>) {
   const showNext = isNext && !highlighted;
   if (disabled) {
@@ -152,6 +155,34 @@ export function GridElementSlot({
               </button>
             </TooltipTrigger>
             <TooltipContent side="top">Remove {label}</TooltipContent>
+          </Tooltip>
+        )}
+        {lock && (
+          <Tooltip>
+            <TooltipTrigger asChild>
+              <button
+                type="button"
+                onClick={(e) => {
+                  e.stopPropagation();
+                  lock.onToggle();
+                }}
+                aria-pressed={lock.locked}
+                aria-label={lock.locked ? `Unlock ${label}` : `Lock ${label}`}
+                className={cn(
+                  "absolute -bottom-1.5 -right-1.5 flex h-6 w-6 items-center justify-center rounded-full border shadow-sm transition-colors after:absolute after:-inset-1.5 after:content-['']",
+                  lock.locked
+                    ? "border-amber-500 bg-amber-500 text-white hover:bg-amber-600"
+                    : "border-border bg-card text-muted-foreground hover:text-foreground",
+                )}
+              >
+                {lock.locked ? (
+                  <Lock className="h-3 w-3" strokeWidth={2.5} />
+                ) : (
+                  <LockOpen className="h-3 w-3" strokeWidth={2.5} />
+                )}
+              </button>
+            </TooltipTrigger>
+            <TooltipContent side="bottom">{lock.hint}</TooltipContent>
           </Tooltip>
         )}
         {showNext && <NextBadge />}
