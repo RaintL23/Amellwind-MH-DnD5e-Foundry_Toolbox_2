@@ -77,18 +77,21 @@ export function pickMultipleByRpgbot<T>(
   return picked;
 }
 
-const PREFERRED_2024_SOURCES = new Set(["XPHB", "PHB", "XMM", "XDMG"]);
+/** Weighted random pick; non-positive weights never win. */
+export function pickWeighted<T>(
+  items: readonly T[],
+  weightOf: (item: T) => number,
+): T | null {
+  const weighted = items
+    .map((item) => ({ item, weight: Math.max(0, weightOf(item)) }))
+    .filter((entry) => entry.weight > 0);
+  const total = weighted.reduce((sum, entry) => sum + entry.weight, 0);
+  if (total <= 0) return pickRandom([...items]);
 
-export function isPreferred2024Source(source: string | undefined): boolean {
-  if (!source) return false;
-  return PREFERRED_2024_SOURCES.has(source);
-}
-
-export function prefer2024Edition<T extends { source: string; edition?: string }>(
-  items: T[],
-): T[] {
-  const preferred = items.filter(
-    (item) => item.edition === "one" || isPreferred2024Source(item.source),
-  );
-  return preferred.length > 0 ? preferred : items;
+  let roll = Math.random() * total;
+  for (const entry of weighted) {
+    roll -= entry.weight;
+    if (roll < 0) return entry.item;
+  }
+  return weighted[weighted.length - 1]?.item ?? null;
 }

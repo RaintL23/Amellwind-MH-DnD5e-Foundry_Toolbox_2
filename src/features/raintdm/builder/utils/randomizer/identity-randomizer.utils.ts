@@ -20,7 +20,13 @@ import type {
   GoodEvilAxis,
   LawChaosAxis,
 } from "@/features/raintdm/builder/utils/alignment.utils";
-import { pickByRpgbot, pickRandom, prefer2024Edition } from "./character-randomizer.utils";
+import { pickByRpgbot, pickRandom } from "./character-randomizer.utils";
+import {
+  excludeLastPick,
+  getLastPick,
+  rememberPick,
+  type VarietyStorage,
+} from "./randomizer-variety.utils";
 import {
   loadDndNameTables,
   pickRandomDndName,
@@ -121,7 +127,16 @@ function filterBackgroundsByClassAbilities(
     return backgrounds;
   }
 
-  const [primary] = preferredAbilities;
+  const [primary, secondary] = preferredAbilities;
+  if (primary && secondary) {
+    const bothMatches = backgrounds.filter(
+      (background) =>
+        abilityBonusesIncludeAny(background.abilityBonuses, [primary]) &&
+        abilityBonusesIncludeAny(background.abilityBonuses, [secondary]),
+    );
+    if (bothMatches.length > 0) return bothMatches;
+  }
+
   if (primary) {
     const primaryMatches = backgrounds.filter((background) =>
       abilityBonusesIncludeAny(background.abilityBonuses, [primary]),
@@ -137,47 +152,57 @@ function filterBackgroundsByClassAbilities(
   return backgrounds;
 }
 
+const SPECIES_VARIETY_CATEGORY = "species";
+const BACKGROUND_VARIETY_CATEGORY = "background";
+
+/** Expects races already limited to 2024+ sources; avoids the species picked last time. */
 export function pickDndSpecies(
   races: DndRace[],
   rpgbotData: RpgbotRatingsData | null,
   className: string,
+  storage?: VarietyStorage | null,
 ): DndRace | null {
-  const rootRaces = prefer2024Edition(
+  const rootRaces = excludeLastPick(
     races.filter((race) => !race.parentName && race.kind !== "subrace"),
+    (race) => race.id,
+    getLastPick(SPECIES_VARIETY_CATEGORY, storage),
   );
   if (rootRaces.length === 0) return null;
 
   const classSlug = toRpgbotClassSlug(className);
-  if (!classSlug || !rpgbotData) {
-    return pickRandom(rootRaces);
-  }
+  const picked =
+    !classSlug || !rpgbotData
+      ? pickRandom(rootRaces)
+      : pickByRpgbot(rootRaces, (race) =>
+          findRpgbotRating(
+            rpgbotData.byClass,
+            { classSlug, guideKey: "class", category: "species" },
+            race.name,
+            race.source,
+            race.variantSources,
+          ),
+        );
 
-  const context: RpgbotLookupContext = {
-    classSlug,
-    guideKey: "class",
-    category: "species",
-  };
-
-  return pickByRpgbot(rootRaces, (race) =>
-    findRpgbotRating(
-      rpgbotData.byClass,
-      context,
-      race.name,
-      race.source,
-      race.variantSources,
-    ),
-  );
+  rememberPick(SPECIES_VARIETY_CATEGORY, picked?.id, storage);
+  return picked;
 }
 
 export function pickAmellwindSpecies(
   speciesList: Species[],
   preferredAbilities: AbilityKey[],
+  storage?: VarietyStorage | null,
 ): Species | null {
   const roots = speciesList.filter((species) => !species.isSubrace);
   if (roots.length === 0) return null;
 
-  const matching = filterSpeciesByAbilityPriority(roots, preferredAbilities);
-  return pickRandom(matching);
+  const matching = excludeLastPick(
+    filterSpeciesByAbilityPriority(roots, preferredAbilities),
+    (species) => species.name,
+    getLastPick(SPECIES_VARIETY_CATEGORY, storage),
+  );
+  const picked = pickRandom(matching);
+  rememberPick(SPECIES_VARIETY_CATEGORY, picked?.name, storage);
+  return picked;
 }
 
 /** Random Amellwind subspecies for a root species (null when it has none). */
@@ -213,39 +238,40 @@ export function mergeAmellwindSpeciesForRandomizer(
   };
 }
 
+/** Expects backgrounds already limited to 2024+ sources; avoids the background picked last time. */
 export function pickDndBackground(
   backgrounds: DndBackground[],
   rpgbotData: RpgbotRatingsData | null,
   className: string,
   preferredAbilities: AbilityKey[] = [],
+  storage?: VarietyStorage | null,
 ): DndBackground | null {
-  const preferred = prefer2024Edition(backgrounds);
-  if (preferred.length === 0) return null;
-  const compatible = filterBackgroundsByClassAbilities(
-    preferred,
-    preferredAbilities,
+  if (backgrounds.length === 0) return null;
+  const compatible = excludeLastPick(
+    filterBackgroundsByClassAbilities(backgrounds, preferredAbilities),
+    (background) => background.id,
+    getLastPick(BACKGROUND_VARIETY_CATEGORY, storage),
   );
 
   const classSlug = toRpgbotClassSlug(className);
-  if (!classSlug || !rpgbotData) {
-    return pickRandom(compatible);
-  }
+  const context: RpgbotLookupContext | null = classSlug
+    ? { classSlug, guideKey: "class", category: "background" }
+    : null;
+  const picked =
+    !context || !rpgbotData
+      ? pickRandom(compatible)
+      : pickByRpgbot(compatible, (background) =>
+          findRpgbotRating(
+            rpgbotData.byClass,
+            context,
+            background.name,
+            background.source,
+            background.variantSources,
+          ),
+        );
 
-  const context: RpgbotLookupContext = {
-    classSlug,
-    guideKey: "class",
-    category: "background",
-  };
-
-  return pickByRpgbot(compatible, (background) =>
-    findRpgbotRating(
-      rpgbotData.byClass,
-      context,
-      background.name,
-      background.source,
-      background.variantSources,
-    ),
-  );
+  rememberPick(BACKGROUND_VARIETY_CATEGORY, picked?.id, storage);
+  return picked;
 }
 
 export function pickAmellwindBackground(

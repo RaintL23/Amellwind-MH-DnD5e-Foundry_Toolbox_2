@@ -231,13 +231,13 @@ describe("buildFeatSelectionsForLevel", () => {
     ];
 
     for (let i = 0; i < 20; i++) {
-      const picks = buildFeatSelectionsForLevel(
+      const picks = buildFeatSelectionsForLevel({
         classData,
-        8,
-        pool,
-        null,
-        scores({ str: 14, dex: 14 }),
-      );
+        level: 8,
+        feats: pool,
+        rpgbotData: null,
+        abilities: scores({ str: 14, dex: 14 }),
+      });
       expect(picks.length).toBeGreaterThan(0);
       for (const pick of picks) {
         expect(pick?.name).toBe("Chef");

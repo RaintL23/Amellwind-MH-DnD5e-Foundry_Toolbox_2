@@ -16,11 +16,38 @@ import { resolveBonusCantripPools } from "@/features/raintdm/builder/utils/cantr
 import { buildRandomSpellSelections } from "@/features/raintdm/builder/utils/randomizer/spell-randomizer.utils";
 import { buildSpeciesLineageSpellSelectionsFromCatalog } from "@/features/raintdm/builder/utils/species-spell-grants.utils";
 import { pickPendingSkillGrants } from "@/features/raintdm/builder/utils/randomizer/skill-randomizer.utils";
-import type { BuilderFeatSelection, SkillKey } from "@/shared/types";
+import { resolveProficiencyItems } from "@/features/raintdm/builder/utils/equipment-proficiency.utils";
+import type {
+  BuilderFeatSelection,
+  BuilderOptionalFeatureSelections,
+  Class,
+  SkillKey,
+  Subclass,
+} from "@/shared/types";
+import { resolveOriginAbilityScores } from "./randomize-loadout.phase";
 import type {
   RandomizeCharacterContext,
   RandomizerPipelineState,
 } from "./randomize-context.types";
+
+function hasSpellcastingFeature(
+  classData: Pick<Class, "casterProgression">,
+  subclass: Pick<Subclass, "casterProgression"> | null,
+): boolean {
+  const isCaster = (progression: string | undefined) =>
+    !!progression && progression !== "none";
+  return isCaster(classData.casterProgression) || isCaster(subclass?.casterProgression);
+}
+
+/** Agonizing Blast needs a damaging Warlock cantrip: keep Eldritch Blast in the picks. */
+function requiredCantripsForSelections(
+  selections: BuilderOptionalFeatureSelections,
+): string[] {
+  const picked = Object.values(selections)
+    .flat()
+    .some((selection) => selection?.name === "Agonizing Blast");
+  return picked ? ["Eldritch Blast"] : [];
+}
 
 export async function randomizeInvocationOriginFeatsPhase(
   ctx: RandomizeCharacterContext,
@@ -53,6 +80,7 @@ export async function randomizeInvocationOriginFeatsPhase(
       classData.name,
       usedOriginFeatIds,
       state.abilityPriority,
+      state.archetype.archetype,
     );
     if (!selection) continue;
     setters.setOptionalFeatureOriginFeatAtIndex(slot.slotIndex, selection);
@@ -72,7 +100,6 @@ export async function randomizeFeatsAndSpellsPhase(
   const {
     classData,
     pickedSubclass,
-    abilityScores,
     abilityPriority,
     spellLookup,
     featLookup,
@@ -86,6 +113,29 @@ export async function randomizeFeatsAndSpellsPhase(
     backgroundOriginFeatGrant,
     featSkillExclude,
   } = state;
+
+  // Level feats first: their spells (Fey Touched, Magic Initiate list, …) join the bonus pools.
+  const featSelections = buildFeatSelectionsForLevel({
+    classData,
+    level: preservedLevel,
+    feats: catalogs.dndFeats,
+    rpgbotData: rpgbot.rpgbotData,
+    abilities: {
+      ...characterAbilities,
+      ...resolveOriginAbilityScores(state),
+    },
+    abilityPriority,
+    archetype: state.archetype.archetype,
+    hasSpellcasting: hasSpellcastingFeature(classData, pickedSubclass),
+    armorProficiencies:
+      state.loadout?.armorProficiencies ??
+      resolveProficiencyItems(classData.armorGrants),
+    saveProficiencies: classData.saveProficiencies,
+    mainWeaponName: state.loadout?.mainHand ?? null,
+  });
+  featSelections.forEach((selection, index) => {
+    if (selection) setters.setFeatAtIndex(index, selection);
+  });
 
   setters.clearSpells();
   const activeProgressionsList = activeProgressions.map((r) => r.progression);
@@ -101,6 +151,7 @@ export async function randomizeFeatsAndSpellsPhase(
     backgroundOriginFeat: backgroundOriginFeatSelection,
     speciesOriginFeatGrant,
     backgroundOriginFeatGrant,
+    featSelections,
   });
   const lineageSpells = randomizedSpeciesDetail
     ? buildSpeciesLineageSpellSelectionsFromCatalog(
@@ -121,13 +172,16 @@ export async function randomizeFeatsAndSpellsPhase(
     level: preservedLevel,
     abilities: {
       ...characterAbilities,
-      ...abilityScores,
+      ...resolveOriginAbilityScores(state),
     },
     rpgbotLookup: spellLookup,
     bonusCantripPools,
     excludedCantripNames: lineageSpells
       .filter((spell) => spell.level === 0)
       .map((spell) => spell.name),
+    requiredCantripNames: requiredCantripsForSelections(
+      randomFeatureChoiceSelections,
+    ),
   });
   for (const [levelKey, spells] of Object.entries(spellSelections)) {
     for (const spell of spells) {
@@ -139,20 +193,6 @@ export async function randomizeFeatsAndSpellsPhase(
     setters.addSpell(spell.level, spell);
   }
 
-  const featSelections = buildFeatSelectionsForLevel(
-    classData,
-    preservedLevel,
-    catalogs.dndFeats,
-    rpgbot.rpgbotData,
-    {
-      ...characterAbilities,
-      ...abilityScores,
-    },
-    abilityPriority,
-  );
-  featSelections.forEach((selection, index) => {
-    if (selection) setters.setFeatAtIndex(index, selection);
-  });
 
   const featSkillChoicesMap: Record<number, SkillKey[]> = {};
   const classFeatSkillExclude = new Set(featSkillExclude);

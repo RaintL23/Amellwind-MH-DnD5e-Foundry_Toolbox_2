@@ -9,6 +9,7 @@ import type { OptionalFeatureOriginFeatSlot } from "@/features/raintdm/builder/u
 import type {
   AbilityKey,
   AbilityScores,
+  ArmorItem,
   Background,
   BuilderFeatSelection,
   BuilderOptionalFeatureSelection,
@@ -23,7 +24,9 @@ import type {
   SkillKey,
   Species,
   Spell,
+  StandaloneShieldItem,
   Subclass,
+  Weapon,
 } from "@/shared/types";
 import type { DndBackground } from "@/shared/types/dnd-background.types";
 import type {
@@ -31,6 +34,9 @@ import type {
   SkillProficiencyGrant,
 } from "@/shared/types/proficiency.types";
 import type { OriginFeatGrant } from "@/shared/utils/origin-feat-grant.parser";
+import type { ArchetypeProfile } from "./build-archetype.utils";
+import type { LoadoutWeaponCandidates } from "./loadout-randomizer.utils";
+import type { RandomizerSourceFilter } from "./randomizer-sources.utils";
 
 export function toSelectionRef(id: string, name: string): CharacterSelectionRef {
   return { id, name, subraceId: null, subraceName: null };
@@ -47,6 +53,9 @@ export interface RandomizerCatalogs {
   allOptionalFeatures: DndOptionalFeature[];
   allFeatCatalog: DndFeat[];
   resolvedLanguagePool: readonly string[];
+  /** D&D mode only (empty in Amellwind): basic gear the randomizer may equip. */
+  dndWeapons: Weapon[];
+  dndArmors: ArmorItem[];
 }
 
 export interface RandomizerSetters {
@@ -56,6 +65,7 @@ export interface RandomizerSetters {
   setLawChaosAlignment: (axis: "L" | "N" | "C") => void;
   setGoodEvilAlignment: (axis: "G" | "N" | "E") => void;
   setClass: (selection: CharacterSelectionRef | null) => void;
+  setClassLocked: (locked: boolean) => void;
   setSubclass: (selection: CharacterSelectionRef | null) => void;
   setSpecies: (selection: CharacterSelectionRef | null) => void;
   setBackground: (selection: CharacterSelectionRef | null) => void;
@@ -99,6 +109,9 @@ export interface RandomizerSetters {
     progressionId: string,
     picks: BuilderOptionalFeatureSelection[],
   ) => void;
+  equipWeapon: (slot: "mainHand" | "offHand", weapon: Weapon, rarity: string) => void;
+  equipArmor: (armor: ArmorItem) => void;
+  equipShield: (shield: StandaloneShieldItem) => void;
 }
 
 export interface RandomizerRpgbotContext {
@@ -110,15 +123,37 @@ export interface RandomizeCharacterContext {
   useAmellwindHomebrew: boolean;
   preservedLevel: number;
   characterAbilities: AbilityScores;
+  /** Class kept by the lock in the Class slot (subclass is always re-rolled). */
+  lockedClass: CharacterSelectionRef | null;
   catalogs: RandomizerCatalogs;
+  /** Set by the pipeline once the source catalog loads (2024+ official books). */
+  isAllowedSource: RandomizerSourceFilter;
   setters: RandomizerSetters;
   rpgbot: RandomizerRpgbotContext;
   addEquipmentBundle: (entries: CartEntry[]) => void;
 }
 
+/** Weapons / armor the randomizer equips (D&D) or uses for Weapon Mastery (both modes). */
+export interface RandomizerLoadout {
+  candidates: LoadoutWeaponCandidates;
+  mainHand: string | null;
+  offHand: string | null;
+  backup: string | null;
+  useShield: boolean;
+  armor: ArmorItem | null;
+  weaponProficiencies: string[];
+  armorProficiencies: string[];
+  /** Starting equipment packages already chosen for the cart. */
+  startingEquipment: CartEntry[];
+}
+
 export interface RandomizerPipelineState {
   classData: Class;
   pickedSubclass: Subclass | null;
+  archetype: ArchetypeProfile;
+  /** Ability score bonuses from species + background (before level feats). */
+  originAbilityBonuses: Partial<Record<AbilityKey, number>>;
+  loadout: RandomizerLoadout | null;
   activeProgressions: ResolvedOptionalFeatureProgression[];
   randomFeatureChoiceSelections: BuilderOptionalFeatureSelections;
   abilityPriority: AbilityKey[];

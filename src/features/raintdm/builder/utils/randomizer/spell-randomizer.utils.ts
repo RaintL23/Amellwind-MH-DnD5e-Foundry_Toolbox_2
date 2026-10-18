@@ -165,6 +165,8 @@ export function buildRandomSpellSelections(params: {
   bonusCantripPools?: CantripPoolDefinition[];
   /** Cantrip names already granted by species (avoid duplicate class picks). */
   excludedCantripNames?: string[];
+  /** Class cantrips that must be picked when eligible (e.g. Eldritch Blast for Agonizing Blast). */
+  requiredCantripNames?: string[];
 }): BuilderSpellSelections {
   const {
     allSpells,
@@ -174,6 +176,7 @@ export function buildRandomSpellSelections(params: {
     rpgbotLookup,
     bonusCantripPools = [],
     excludedCantripNames = [],
+    requiredCantripNames = [],
   } = params;
   const rawSelections: Record<number, Spell[]> = {};
   const eligiblePools: Spell[][] = [];
@@ -234,17 +237,28 @@ export function buildRandomSpellSelections(params: {
       (spell) => !excludedCantripNameSet.has(spell.name.toLowerCase()),
     );
     eligiblePools.push(cantrips);
-    const picked = pickMultipleByRpgbot(
-      cantrips,
-      cantripCount,
-      (spell) => rpgbotLookup?.(spell.name, spell.source) ?? null,
+    const requiredNames = new Set(
+      requiredCantripNames.map((name) => name.toLowerCase()),
     );
+    const required = cantrips
+      .filter((spell) => requiredNames.has(spell.name.toLowerCase()))
+      .slice(0, cantripCount);
+    const picked = [
+      ...required,
+      ...pickMultipleByRpgbot(
+        cantrips.filter((spell) => !required.includes(spell)),
+        cantripCount - required.length,
+        (spell) => rpgbotLookup?.(spell.name, spell.source) ?? null,
+      ),
+    ];
     if (picked.length > 0) {
       rawSelections[0] = picked;
       for (const spell of picked) pickedCantripIds.add(spell.id);
     }
   }
 
+  // Feat / feature spells (Magic Initiate, …) are picked first; class picks skip them.
+  const bonusPickedSpells = new Set<Spell>();
   for (const bonusPool of bonusCantripPools) {
     if (bonusPool.maxCount <= 0 || bonusPool.needsSpellListChoice) continue;
     const poolSpells = filterSpellsForClassFit(
@@ -265,6 +279,7 @@ export function buildRandomSpellSelections(params: {
     );
     if (picked.length > 0) {
       rawSelections[bonusPool.selectionLevel] = picked;
+      for (const spell of picked) bonusPickedSpells.add(spell);
       if (bonusPool.spellLevel === 0) {
         for (const spell of picked) pickedCantripIds.add(spell.id);
       }
@@ -317,6 +332,7 @@ export function buildRandomSpellSelections(params: {
       pool,
       maxSpells,
       (spell) => rpgbotLookup?.(spell.name, spell.source) ?? null,
+      bonusPickedSpells,
     );
     if (picked.length > 0) {
       rawSelections[PACT_SPELL_POOL_LEVEL] = picked;
@@ -355,6 +371,7 @@ export function buildRandomSpellSelections(params: {
       pool,
       Math.min(perLevel, remaining),
       (spell) => rpgbotLookup?.(spell.name, spell.source) ?? null,
+      bonusPickedSpells,
     );
     if (picked.length > 0) {
       rawSelections[spellLevel] = picked;

@@ -14,6 +14,11 @@ import {
 import { getListSpells } from "@/features/dnd/spells/services/spell.service";
 import { getAllDndOptionalFeatures } from "@/features/dnd/optionalfeatures/services/dnd-optionalfeature.service";
 import {
+  getDndArmors,
+  getDndWeapons,
+} from "@/features/dnd/items/services/dnd-equipment.service";
+import { getSourceCatalog } from "@/shared/services/source-catalog.service";
+import {
   getDnd2024LanguageNames,
   getChooseableLanguages,
   loadChooseableLanguages,
@@ -27,7 +32,10 @@ import {
   randomizeClassAndSubclassPhase,
   randomizeSpeciesAndBackgroundPhase,
 } from "@/features/raintdm/builder/utils/randomizer/randomize-identity.phase";
-import { randomizeOptionalFeaturesPhase } from "@/features/raintdm/builder/utils/randomizer/randomize-optional-features.phase";
+import {
+  randomizeOptionalFeaturesPhase,
+  randomizeWeaponMasteryPhase,
+} from "@/features/raintdm/builder/utils/randomizer/randomize-optional-features.phase";
 import {
   randomizeExpertisePhase,
   randomizeProficienciesPhase,
@@ -37,7 +45,13 @@ import {
   randomizeInvocationOriginFeatsPhase,
 } from "@/features/raintdm/builder/utils/randomizer/randomize-feats-spells.phase";
 import { randomizeEquipmentPhase } from "@/features/raintdm/builder/utils/randomizer/randomize-equipment.phase";
-import type { Class, Subclass } from "@/shared/types";
+import { planLoadoutPhase } from "@/features/raintdm/builder/utils/randomizer/randomize-loadout.phase";
+import {
+  createRandomizerSourceFilter,
+  filterRandomizerCatalogs,
+} from "@/features/raintdm/builder/utils/randomizer/randomizer-sources.utils";
+import type { ArmorItem, Class, Subclass, Weapon } from "@/shared/types";
+import type { SourceCatalogEntry } from "@/shared/services/source-catalog.service";
 import type {
   RandomizeCharacterContext,
   RandomizerPipelineState,
@@ -47,6 +61,9 @@ function createInitialPipelineState(): RandomizerPipelineState {
   return {
     classData: {} as Class,
     pickedSubclass: null as Subclass | null,
+    archetype: { archetype: "caster" },
+    originAbilityBonuses: {},
+    loadout: null,
     activeProgressions: [],
     randomFeatureChoiceSelections: {},
     abilityPriority: [],
@@ -81,6 +98,13 @@ function createInitialPipelineState(): RandomizerPipelineState {
   };
 }
 
+/**
+ * Order: class (lock / shuffled bag) → subclass → archetype → abilities →
+ * species & background → optional features → loadout plan → Weapon Mastery →
+ * invocation origin feats → name → proficiencies → spells & level feats →
+ * expertise → starting equipment + equip (D&D) → backstory.
+ * Every D&D catalog is limited to 2024+ official sources first.
+ */
 export async function randomizeCharacterPipeline(
   ctx: RandomizeCharacterContext,
 ): Promise<void> {
@@ -104,6 +128,9 @@ export async function randomizeCharacterPipeline(
     /* loadChooseableLanguages — loaded for side-effects only */,
     allOptionalFeatures,
     allFeatCatalog,
+    sourceCatalog,
+    dndWeapons,
+    dndArmors,
   ] = await Promise.all([
     getListClasses(),
     getBuilderListDndRaces(),
@@ -115,6 +142,13 @@ export async function randomizeCharacterPipeline(
     loadChooseableLanguages(),
     getAllDndOptionalFeatures(),
     getAllDndFeatsForFightingStyles(),
+    getSourceCatalog().catch(() => new Map<string, SourceCatalogEntry>()),
+    useAmellwindHomebrew
+      ? Promise.resolve<Weapon[]>([])
+      : getDndWeapons(true).catch(() => [] as Weapon[]),
+    useAmellwindHomebrew
+      ? Promise.resolve<ArmorItem[]>([])
+      : getDndArmors(true).catch(() => [] as ArmorItem[]),
   ]);
 
   const dnd2024Languages = getDnd2024LanguageNames();
@@ -124,30 +158,38 @@ export async function randomizeCharacterPipeline(
   const resolvedLanguagePool =
     languagePool.length > 0 ? languagePool : dnd2024Languages;
 
-  ctx.catalogs = {
-    classes,
-    dndRaces,
-    dndBackgrounds,
-    amellwindSpecies,
-    amellwindBackgrounds,
-    dndFeats,
-    allSpells,
-    allOptionalFeatures,
-    allFeatCatalog,
-    resolvedLanguagePool,
-  };
+  ctx.isAllowedSource = createRandomizerSourceFilter(sourceCatalog);
+  ctx.catalogs = filterRandomizerCatalogs(
+    {
+      classes,
+      dndRaces,
+      dndBackgrounds,
+      amellwindSpecies,
+      amellwindBackgrounds,
+      dndFeats,
+      allSpells,
+      allOptionalFeatures,
+      allFeatCatalog,
+      resolvedLanguagePool,
+      dndWeapons,
+      dndArmors,
+    },
+    ctx.isAllowedSource,
+  );
 
   const state = createInitialPipelineState();
 
   const hasClass = await randomizeClassAndSubclassPhase(ctx, state);
   if (!hasClass) return;
 
-  randomizeOptionalFeaturesPhase(ctx, state);
-
   randomizeAbilityScoresPhase(ctx, state);
   buildRpgbotLookupsPhase(ctx, state);
 
   await randomizeSpeciesAndBackgroundPhase(ctx, state);
+
+  randomizeOptionalFeaturesPhase(ctx, state);
+  planLoadoutPhase(ctx, state);
+  randomizeWeaponMasteryPhase(ctx, state);
 
   await randomizeInvocationOriginFeatsPhase(ctx, state);
 

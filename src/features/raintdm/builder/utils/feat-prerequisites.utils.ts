@@ -5,6 +5,7 @@ import type {
   DndFeat,
   Feat,
   FeatPrerequisiteCheckGroup,
+  FeatPrerequisiteKind,
 } from "@/shared/types";
 
 export interface FeatPrerequisiteContext {
@@ -125,6 +126,45 @@ export function isEligibleGeneralFeat(
   ctx: FeatPrerequisiteContext,
 ): boolean {
   return isGeneralFeatSlotCategory(feat) && meetsFeatPrerequisites(feat, ctx);
+}
+
+const RANDOMIZER_CHECKABLE_KINDS = new Set<FeatPrerequisiteKind>([
+  "level",
+  "ability",
+  "spellcasting",
+  "proficiency",
+]);
+
+function hasOnlyCheckableExtras(
+  feat: Pick<Feat, "prerequisiteKinds" | "prerequisiteCheckGroups">,
+): boolean {
+  if (!(feat.prerequisiteKinds ?? []).every((kind) => RANDOMIZER_CHECKABLE_KINDS.has(kind))) {
+    return false;
+  }
+  // A "proficiency" branch counts only when it is an armor / shield requirement.
+  return (feat.prerequisiteCheckGroups ?? []).every(
+    (group) =>
+      !group.hasUnverifiedRequirements ||
+      group.requiresSpellcasting === true ||
+      (group.requiredArmor?.length ?? 0) > 0,
+  );
+}
+
+/**
+ * Randomizer gate for ASI slots: strict prerequisites, plus feats whose only
+ * extra requirements are Spellcasting or armor/shield proficiency when the
+ * context can verify both (`hasSpellcasting` and `armorProficiencies` set).
+ */
+export function isRandomizerEligibleGeneralFeat(
+  feat: DndFeat,
+  ctx: FeatPrerequisiteContext,
+): boolean {
+  if (!isGeneralFeatSlotCategory(feat)) return false;
+  if (meetsFeatPrerequisites(feat, ctx)) return true;
+  if (ctx.hasSpellcasting === undefined || ctx.armorProficiencies === undefined) {
+    return false;
+  }
+  return hasOnlyCheckableExtras(feat) && meetsCheckableFeatPrerequisites(feat, ctx);
 }
 
 /**

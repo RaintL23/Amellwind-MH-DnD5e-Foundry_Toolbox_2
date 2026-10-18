@@ -14,6 +14,10 @@ import { isSubclassLevelReached } from "@/features/raintdm/builder/utils/builder
 import { delay } from "@/features/raintdm/builder/utils/randomizer/character-randomizer.utils";
 import { pickRandomClass, pickBestSubclass } from "@/features/raintdm/builder/utils/randomizer/class-randomizer.utils";
 import {
+  applyArchetypeAbilityPriority,
+  pickBuildArchetype,
+} from "@/features/raintdm/builder/utils/randomizer/build-archetype.utils";
+import {
   mergeAmellwindSpeciesForRandomizer,
   pickAmellwindBackground,
   pickAmellwindSpecies,
@@ -60,32 +64,53 @@ import type {
 } from "./randomize-context.types";
 import { toSelectionRef as toRef } from "./randomize-context.types";
 
+type AbilityBonusMap = Partial<Record<AbilityKey, number>>;
+
+function addBonus(map: AbilityBonusMap, ability: AbilityKey | null, amount: number): void {
+  if (!ability || amount === 0) return;
+  map[ability] = (map[ability] ?? 0) + amount;
+}
+
+/** Assigns species "choose" bonuses by priority; returns fixed + chosen bonuses. */
 function assignSpeciesAbilityChoices(
   bonuses: AbilityBonus[],
   abilityPriority: AbilityKey[],
   setChoice: (index: number, ability: AbilityKey | null) => void,
-): void {
+): AbilityBonusMap {
+  const applied: AbilityBonusMap = {};
   let index = 0;
   for (const bonus of bonuses) {
+    if (bonus.kind === "fixed") {
+      for (const [ability, amount] of Object.entries(bonus.bonuses) as [
+        AbilityKey,
+        number,
+      ][]) {
+        addBonus(applied, ability, amount);
+      }
+      continue;
+    }
     if (bonus.kind !== "choose") continue;
     const preferred =
       abilityPriority.find((ability) => bonus.from.includes(ability)) ??
       bonus.from[0] ??
       null;
     setChoice(index, preferred);
+    addBonus(applied, preferred, bonus.amount);
     index += 1;
   }
+  return applied;
 }
 
+/** +2 primary / +1 secondary from the 2024 background; returns the applied bonuses. */
 function assignBackgroundAsi(
   bonuses: AbilityBonus[],
   abilityPriority: AbilityKey[],
   setMode: (mode: "plus2plus1" | "plus1each" | null) => void,
   setPlus2: (ability: AbilityKey | null) => void,
   setPlus1: (ability: AbilityKey | null) => void,
-): void {
+): AbilityBonusMap {
   const weighted = bonuses.find((bonus) => bonus.kind === "weightedDistribution");
-  if (!weighted || weighted.kind !== "weightedDistribution") return;
+  if (!weighted || weighted.kind !== "weightedDistribution") return {};
 
   const primary =
     abilityPriority.find((ability) => weighted.from.includes(ability)) ??
@@ -101,6 +126,21 @@ function assignBackgroundAsi(
   setMode("plus2plus1");
   setPlus2(primary);
   setPlus1(secondary);
+
+  const applied: AbilityBonusMap = {};
+  addBonus(applied, primary, 2);
+  addBonus(applied, secondary, 1);
+  return applied;
+}
+
+function mergeBonusMaps(...maps: AbilityBonusMap[]): AbilityBonusMap {
+  const merged: AbilityBonusMap = {};
+  for (const map of maps) {
+    for (const [ability, amount] of Object.entries(map) as [AbilityKey, number][]) {
+      addBonus(merged, ability, amount);
+    }
+  }
+  return merged;
 }
 
 export interface IdentityPhaseResult {
@@ -112,15 +152,22 @@ export async function randomizeClassAndSubclassPhase(
   ctx: RandomizeCharacterContext,
   state: RandomizerPipelineState,
 ): Promise<boolean> {
-  const { preservedLevel, catalogs, setters, rpgbot } = ctx;
+  const { preservedLevel, catalogs, setters, rpgbot, lockedClass } = ctx;
 
-  const pickedClass = pickRandomClass(catalogs.classes, rpgbot.rpgbotData);
+  // Locked class: keep it (even a 2014 one picked by hand); never consume the bag.
+  const lockedData = lockedClass ? await getClassById(lockedClass.id) : undefined;
+  const pickedClass = lockedData ?? pickRandomClass(catalogs.classes);
   if (!pickedClass) return false;
 
   const classData = (await getClassById(pickedClass.id)) ?? pickedClass;
-  const pickedSubclass = pickBestSubclass(classData, rpgbot.rpgbotData);
+  const pickedSubclass = pickBestSubclass(
+    classData,
+    rpgbot.rpgbotData,
+    ctx.isAllowedSource,
+  );
 
   setters.setClass(toRef(classData.id, classData.name));
+  if (lockedData) setters.setClassLocked(true);
   await delay();
 
   if (
@@ -135,6 +182,7 @@ export async function randomizeClassAndSubclassPhase(
 
   state.classData = classData;
   state.pickedSubclass = pickedSubclass;
+  state.archetype = pickBuildArchetype(classData, pickedSubclass);
 
   return true;
 }
@@ -146,9 +194,9 @@ export function randomizeAbilityScoresPhase(
   const { setters, characterAbilities } = ctx;
   const { classData, pickedSubclass } = state;
 
-  const abilityPriority = resolveClassAbilityPriority(
-    classData,
-    pickedSubclass,
+  const abilityPriority = applyArchetypeAbilityPriority(
+    resolveClassAbilityPriority(classData, pickedSubclass),
+    state.archetype,
   );
   setters.setAbilityScoreMethod("pointbuy");
   const abilityScores = buildClassPointBuyScores(abilityPriority);
@@ -222,6 +270,11 @@ export async function randomizeSpeciesAndBackgroundPhase(
     speciesLookup,
     backgroundLookup,
   } = state;
+  const archetype = state.archetype.archetype;
+  // Shared so species → background never repeat a non-repeatable origin feat.
+  const usedOriginFeatIds = new Set<string>();
+  let speciesBonuses: AbilityBonusMap = {};
+  let backgroundBonuses: AbilityBonusMap = {};
   const { resolvedLanguagePool, dndRaces, dndBackgrounds, amellwindSpecies, amellwindBackgrounds, dndFeats } =
     catalogs;
 
@@ -271,7 +324,7 @@ export async function randomizeSpeciesAndBackgroundPhase(
       speciesGrants = merged.skillGrants;
       speciesLanguageGrants = merged.languageGrants;
       speciesOriginFeatGrant = pickedSpecies.originFeatGrant ?? null;
-      assignSpeciesAbilityChoices(
+      speciesBonuses = assignSpeciesAbilityChoices(
         merged.abilityBonuses,
         abilityPriority,
         setters.setSpeciesAbilityChoice,
@@ -305,12 +358,14 @@ export async function randomizeSpeciesAndBackgroundPhase(
           dndFeats,
           rpgbot.rpgbotData,
           classData.name,
-          new Set(),
+          usedOriginFeatIds,
           abilityPriority,
+          archetype,
         );
       if (resolvedSpeciesOriginFeat) {
         setters.setSpeciesOriginFeat(resolvedSpeciesOriginFeat);
         speciesOriginFeatSelection = resolvedSpeciesOriginFeat;
+        usedOriginFeatIds.add(resolvedSpeciesOriginFeat.id);
       }
       assignRandomSpeciesTraitChoices(
         merged.traits,
@@ -370,12 +425,14 @@ export async function randomizeSpeciesAndBackgroundPhase(
           dndFeats,
           rpgbot.rpgbotData,
           classData.name,
-          new Set(),
+          usedOriginFeatIds,
           abilityPriority,
+          archetype,
         );
       if (resolvedBackgroundOriginFeat) {
         setters.setBackgroundOriginFeat(resolvedBackgroundOriginFeat);
         backgroundOriginFeatSelection = resolvedBackgroundOriginFeat;
+        usedOriginFeatIds.add(resolvedBackgroundOriginFeat.id);
       }
     }
   } else {
@@ -392,7 +449,7 @@ export async function randomizeSpeciesAndBackgroundPhase(
         speciesGrants = speciesDetail.skillGrants;
         speciesLanguageGrants = speciesDetail.languageGrants;
         speciesOriginFeatGrant = speciesDetail.originFeatGrant ?? null;
-        assignSpeciesAbilityChoices(
+        speciesBonuses = assignSpeciesAbilityChoices(
           speciesDetail.abilityBonuses,
           abilityPriority,
           setters.setSpeciesAbilityChoice,
@@ -425,12 +482,14 @@ export async function randomizeSpeciesAndBackgroundPhase(
           dndFeats,
           rpgbot.rpgbotData,
           classData.name,
-          new Set(),
+          usedOriginFeatIds,
           abilityPriority,
+          archetype,
         );
         if (resolvedSpeciesOriginFeat) {
           setters.setSpeciesOriginFeat(resolvedSpeciesOriginFeat);
           speciesOriginFeatSelection = resolvedSpeciesOriginFeat;
+          usedOriginFeatIds.add(resolvedSpeciesOriginFeat.id);
         }
 
         if (speciesDetail.namedSpellGroups && speciesDetail.namedSpellGroups.length > 0) {
@@ -469,7 +528,7 @@ export async function randomizeSpeciesAndBackgroundPhase(
         backgroundLanguageGrants = backgroundDetail.languageGrants;
         backgroundOriginFeatGrant =
           backgroundDetail.originFeatGrant ?? null;
-        assignBackgroundAsi(
+        backgroundBonuses = assignBackgroundAsi(
           backgroundDetail.abilityBonuses,
           abilityPriority,
           setters.setBackgroundAsiMode,
@@ -512,17 +571,20 @@ export async function randomizeSpeciesAndBackgroundPhase(
             dndFeats,
             rpgbot.rpgbotData,
             classData.name,
-            new Set(),
+            usedOriginFeatIds,
             abilityPriority,
+            archetype,
           );
         if (resolvedBackgroundOriginFeat) {
           setters.setBackgroundOriginFeat(resolvedBackgroundOriginFeat);
           backgroundOriginFeatSelection = resolvedBackgroundOriginFeat;
+          usedOriginFeatIds.add(resolvedBackgroundOriginFeat.id);
         }
       }
     }
   }
 
+  state.originAbilityBonuses = mergeBonusMaps(speciesBonuses, backgroundBonuses);
   state.speciesName = speciesName;
   state.backgroundName = backgroundName;
   state.randomizedSpeciesDetail = randomizedSpeciesDetail;

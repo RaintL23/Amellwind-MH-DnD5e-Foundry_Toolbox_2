@@ -1,50 +1,19 @@
-import { buildRandomStartingEquipmentEntries } from "@/features/raintdm/builder/utils/randomizer/starting-equipment-randomizer.utils";
 import { generateXanatharBackstoryNotes } from "@/features/raintdm/builder/utils/randomizer/backstory-randomizer.utils";
-import { resolveStartingEquipmentOffers } from "@/features/raintdm/builder/utils/amellwind-starting-equipment.utils";
+import { applyLoadoutPhase } from "./randomize-loadout.phase";
 import type {
   RandomizeCharacterContext,
   RandomizerPipelineState,
 } from "./randomize-context.types";
 
+/** Starting equipment + loadout (planned earlier by `planLoadoutPhase`) and backstory. */
 export function randomizeEquipmentPhase(
   ctx: RandomizeCharacterContext,
   state: RandomizerPipelineState,
 ): void {
-  const { addEquipmentBundle } = ctx;
   const { setters } = ctx;
-  const {
-    classData,
-    randomizedBackgroundDetail,
-    speciesName,
-    backgroundName,
-    primaryMod,
-  } = state;
+  const { classData, speciesName, backgroundName, primaryMod } = state;
 
-  // AGMH: MH weapons replace class/background starting weapons.
-  const classEquipment = buildRandomStartingEquipmentEntries(
-    resolveStartingEquipmentOffers(
-      classData.startingEquipmentOffers,
-      ctx.useAmellwindHomebrew,
-    ),
-    { type: "class", id: classData.id, name: classData.name },
-  );
-  const backgroundEquipment = randomizedBackgroundDetail
-    ? buildRandomStartingEquipmentEntries(
-        resolveStartingEquipmentOffers(
-          randomizedBackgroundDetail.startingEquipmentOffers,
-          ctx.useAmellwindHomebrew,
-        ),
-        {
-          type: "background",
-          id: randomizedBackgroundDetail.id,
-          name: randomizedBackgroundDetail.name,
-        },
-      )
-    : [];
-
-  if (classEquipment.length > 0 || backgroundEquipment.length > 0) {
-    addEquipmentBundle([...classEquipment, ...backgroundEquipment]);
-  }
+  applyLoadoutPhase(ctx, state);
 
   const backstory = generateXanatharBackstoryNotes({
     raceName: speciesName,
