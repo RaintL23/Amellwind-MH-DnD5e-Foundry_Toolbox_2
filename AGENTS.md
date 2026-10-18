@@ -149,7 +149,7 @@ Placement: **same Sidebar section**. Character Builder is RaintDM.
 
 Read the matching `docs/domain/` file and types **before** editing.
 
-1. **Character Builder (ALPHA)** — `src/features/raintdm/builder/` → `docs/domain/features-builder.md`
+1. **Character Builder (ALPHA)** — `src/features/raintdm/builder/` → `docs/domain/features-builder.md` (randomizer rules: `docs/domain/features-builder-randomizer.md` — keep it updated when randomizer behavior changes)
 2. **Export Foundry VTT (SPA character)** — `src/shared/foundry/` + `builder/foundry-export/` → `features-builder.md`
 3. **Import Foundry VTT** — `builder/foundry-import/` → `features-builder.md`
 4. **Foundry hunt bosses / module** — `public/data/foundry-*` → skill `foundry-monsters` (not actor JSON dumps)

@@ -20,6 +20,7 @@ Technical source of truth for Amellwind / 5etools / Foundry domain rules, split 
 | [`features-world.md`](./features-world.md) | small | Resources, Environments |
 | [`features-rune-planner.md`](./features-rune-planner.md) | small | Rune `BuildDrawer` |
 | [`features-builder.md`](./features-builder.md) | medium | Character Builder (ALPHA) |
+| [`features-builder-randomizer.md`](./features-builder-randomizer.md) | small | Builder randomizer rules (2024+ only, class lock, archetypes, feats, loadout) |
 | [`features-combat-tracker.md`](./features-combat-tracker.md) | small | Combat Tracker (GM Tools) |
 | [`features-character-sheet.md`](./features-character-sheet.md) | small | Character Sheet (session play) |
 | [`features-amellwind-tools.md`](./features-amellwind-tools.md) | small | Damage calc, species, guide, Monstie, NPC, Downtime |
@@ -32,6 +33,7 @@ Technical source of truth for Amellwind / 5etools / Foundry domain rules, split 
 | Combat Tracker (GM init / HP / death saves) | `features-combat-tracker.md` |
 | Character Sheet (session play / import Builder JSON) | `features-character-sheet.md` |
 | Character Builder / completeness / export gates | `features-builder.md` + skill `builder-validation` |
+| Builder randomizer (rules, picks, loadout) | `features-builder-randomizer.md` + skill `builder-validation` |
 | Foundry character export/import (SPA) | `features-builder.md` + `src/shared/foundry/` |
 | Foundry NPC/monster module (Alatreon, packs) | skill `foundry-monsters` — **not** actor JSON dumps |
 | New list/feature service | `data-layer.md` + `data-architecture.md` |
