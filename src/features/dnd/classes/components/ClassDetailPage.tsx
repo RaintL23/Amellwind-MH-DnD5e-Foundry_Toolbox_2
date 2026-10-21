@@ -96,6 +96,7 @@ export function ClassDetailPage() {
     showAllFeatures,
     handleSourceSelect,
     handleSubclassSelect,
+    subclassSources,
   } = useClassDetailPage(classId);
 
   const scrollRef = useRef<HTMLDivElement>(null);
@@ -222,6 +223,7 @@ export function ClassDetailPage() {
                 activeSubclassId={activeSubclassId}
                 onSubclassSelect={handleSubclassSelect}
                 bookNames={bookNames}
+                subclassSources={subclassSources}
               />
             </DetailSection>
 

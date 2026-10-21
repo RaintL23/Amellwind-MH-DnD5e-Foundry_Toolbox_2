@@ -18,6 +18,8 @@ import {
 } from "@/features/dnd/spells/services/book-source.service";
 import { useSourceCatalog } from "@/shared/hooks/useSourceCatalog";
 import { cn } from "@/shared/utils/cn";
+import type { SubclassSourceControls } from "../../hooks/useClassDetailPage";
+import { ClassSubclassSourcePicker } from "./ClassSubclassSourcePicker";
 
 interface ClassSubclassSelectorProps {
   subclasses: Subclass[];
@@ -27,6 +29,8 @@ interface ClassSubclassSelectorProps {
   bookNames: BookSourceNameMap;
   /** Marks the subclass count as varying across class sources. */
   countDiffers?: boolean;
+  /** On-demand sources with subclasses that are not loaded yet. */
+  subclassSources: SubclassSourceControls;
 }
 
 type SubclassOptionMeta = {
@@ -66,6 +70,7 @@ export const ClassSubclassSelector = memo(function ClassSubclassSelector({
   subclassTitle,
   bookNames,
   countDiffers = false,
+  subclassSources,
 }: ClassSubclassSelectorProps) {
   const catalog = useSourceCatalog();
 
@@ -112,7 +117,23 @@ export const ClassSubclassSelector = memo(function ClassSubclassSelector({
     }));
   }, [options]);
 
-  if (subclasses.length === 0) return null;
+  const sourcePicker = (
+    <ClassSubclassSourcePicker
+      controls={subclassSources}
+      bookNames={bookNames}
+    />
+  );
+
+  if (subclasses.length === 0) {
+    return subclassSources.visible ? (
+      <div className="flex items-center justify-between gap-2">
+        <p className="text-xs text-muted-foreground">
+          No {(subclassTitle ?? "subclass").toLowerCase()} in the loaded sources
+        </p>
+        {sourcePicker}
+      </div>
+    ) : null;
+  }
 
   const active = options.find((o) => o.subclass.id === activeSubclassId);
   const triggerPrimary = active?.subclass.name ?? "— No subclass selected —";
@@ -126,18 +147,21 @@ export const ClassSubclassSelector = memo(function ClassSubclassSelector({
 
   return (
     <div className="space-y-1.5">
-      <p className="flex items-baseline gap-1.5 text-xs font-semibold uppercase tracking-wide text-muted-foreground">
-        {subclassTitle ?? "Subclass"}
-        <span
-          className={cn(
-            "text-[10px] font-normal normal-case",
-            countDiffers ? "text-amber-400" : "text-muted-foreground/80",
-          )}
-        >
-          · {subclasses.length} option{subclasses.length === 1 ? "" : "s"}
-          {countDiffers && " (varies)"}
-        </span>
-      </p>
+      <div className="flex items-center justify-between gap-2">
+        <p className="flex items-baseline gap-1.5 text-xs font-semibold uppercase tracking-wide text-muted-foreground">
+          {subclassTitle ?? "Subclass"}
+          <span
+            className={cn(
+              "text-[10px] font-normal normal-case",
+              countDiffers ? "text-amber-400" : "text-muted-foreground/80",
+            )}
+          >
+            · {subclasses.length} option{subclasses.length === 1 ? "" : "s"}
+            {countDiffers && " (varies)"}
+          </span>
+        </p>
+        {sourcePicker}
+      </div>
 
       <DropdownMenu>
         <DropdownMenuTrigger asChild>

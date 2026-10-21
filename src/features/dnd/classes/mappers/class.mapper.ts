@@ -173,8 +173,11 @@ export function mapClass(
     startingProficiencies: mapStartingProficiencies(raw.startingProficiencies),
     startingEquipment: mapStartingEquipment(raw.startingEquipment),
     startingEquipmentOffers: parseClassStartingEquipment(raw.startingEquipment),
-    multiclassing: mapMulticlassing(raw.multiclassing),
-    multiclassRequirements: mapMulticlassRequirements(raw.multiclassing),
+    multiclassing: mapMulticlassing(raw.multiclassing, raw.primaryAbility),
+    multiclassRequirements: mapMulticlassRequirements(
+      raw.multiclassing,
+      raw.primaryAbility,
+    ),
     multiclassProficiencies: mapMulticlassProficiencyGrants(
       raw.multiclassing,
       classSource,

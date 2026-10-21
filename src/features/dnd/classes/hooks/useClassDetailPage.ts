@@ -1,5 +1,6 @@
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { useNavigate } from "react-router-dom";
+import { toast } from "sonner";
 import { Class, ClassFeatureEntry } from "@/shared/types";
 import { useBookSourceNames } from "@/shared/hooks/useBookSourceNames";
 import { useListItemUrlParam } from "@/shared/hooks/useListItemUrlParam";
@@ -7,8 +8,10 @@ import { readListSessionState } from "@/shared/utils/list-session-storage.utils"
 import { mergeProgressionWithSubclass, mergeClassTableGroups } from "../mappers/class.mapper";
 import {
   ensureClassUaSourcesLoaded,
+  findSubclassSourcesForClass,
   getAllClasses,
   getClassesByName,
+  getUnloadedSubclassSourceCodes,
 } from "../services/class.service";
 import {
   sortClassVariants,
@@ -41,6 +44,23 @@ function sourceFromEntityId(id: string): string | null {
   return source || null;
 }
 
+/** "Add source" picker state: on-demand sources that hold subclasses of this class. */
+export interface SubclassSourceControls {
+  /** Whether the Add source button should render at all. */
+  visible: boolean;
+  /** Unloaded sources with at least one subclass of the viewed class. */
+  codes: string[];
+  /** Source code → number of subclasses of the viewed class. */
+  counts: ReadonlyMap<string, number>;
+  scanProgress: { done: number; total: number } | null;
+  loadingLabel: string | null;
+  /** Starts the (cached) background scan the first time it is called per class. */
+  onOpen: () => void;
+  onLoad: (codes: string[], label: string) => void;
+}
+
+type SubclassScanState = "idle" | "scanning" | "done";
+
 export function useClassDetailPage(classId: string) {
   const navigate = useNavigate();
   const { value: urlSubclass, setValue: setUrlSubclass } =
@@ -53,6 +73,21 @@ export function useClassDetailPage(classId: string) {
   const [loading, setLoading] = useState(true);
   const [notFound, setNotFound] = useState(false);
   const [subclassEnsureDone, setSubclassEnsureDone] = useState(false);
+  const [unloadedSubclassSources, setUnloadedSubclassSources] = useState<
+    string[]
+  >([]);
+  const [loadingSubclassSource, setLoadingSubclassSource] = useState<
+    string | null
+  >(null);
+  const [subclassMatches, setSubclassMatches] = useState<
+    ReadonlyMap<string, number>
+  >(() => new Map());
+  const [scanState, setScanState] = useState<SubclassScanState>("idle");
+  const [scanProgress, setScanProgress] = useState<{
+    done: number;
+    total: number;
+  } | null>(null);
+  const scanTokenRef = useRef(0);
 
   const [activeId, setActiveId] = useState("");
   const [activeSubclassId, setActiveSubclassId] = useState("");
@@ -164,6 +199,26 @@ export function useClassDetailPage(classId: string) {
       cancelled = true;
     };
   }, [urlSubclass, loading, cls]);
+
+  useEffect(() => {
+    if (!cls) return;
+    let cancelled = false;
+    void getUnloadedSubclassSourceCodes().then((codes) => {
+      if (!cancelled) setUnloadedSubclassSources(codes);
+    });
+    return () => {
+      cancelled = true;
+    };
+  }, [cls]);
+
+  // A different class invalidates any scan results and in-flight scan.
+  const className = cls?.name;
+  useEffect(() => {
+    scanTokenRef.current++;
+    setSubclassMatches(new Map());
+    setScanState("idle");
+    setScanProgress(null);
+  }, [className]);
 
   const variants = resolvedVariants;
 
@@ -279,6 +334,92 @@ export function useClassDetailPage(classId: string) {
     [setUrlSubclass],
   );
 
+  const handleLoadSubclassSource = useCallback(
+    async (codes: string[], label: string) => {
+      if (!cls || !active) return;
+      const activeVariantId = active.id;
+      setLoadingSubclassSource(label);
+      try {
+        await ensureClassUaSourcesLoaded(codes);
+        const byName = await getClassesByName(cls.name);
+        const sorted = byName.length > 0 ? sortClassVariants(byName) : [cls];
+        setResolvedVariants(sorted);
+
+        const variant = sorted.find((v) => v.id === activeVariantId);
+        const added = variant
+          ? subclassesForClassVariant(variant).filter((s) =>
+              codes.includes(s.source),
+            )
+          : [];
+        if (added.length > 0) {
+          toast.success(
+            `Loaded ${added.length} ${cls.name} subclass${added.length === 1 ? "" : "es"} from ${label}`,
+          );
+        } else {
+          toast.info(`${label} has no ${cls.name} subclasses for this version`);
+        }
+      } catch {
+        toast.error(`Could not load ${label}`);
+      } finally {
+        setLoadingSubclassSource(null);
+        setUnloadedSubclassSources(await getUnloadedSubclassSourceCodes());
+      }
+    },
+    [cls, active],
+  );
+
+  const scanSubclassSources = useCallback(() => {
+    if (!cls || scanState !== "idle" || unloadedSubclassSources.length === 0) {
+      return;
+    }
+    const token = ++scanTokenRef.current;
+    setScanState("scanning");
+    setScanProgress({ done: 0, total: unloadedSubclassSources.length });
+    void findSubclassSourcesForClass(
+      cls.name,
+      unloadedSubclassSources,
+      (matches, done, total) => {
+        if (token !== scanTokenRef.current) return;
+        setSubclassMatches(matches);
+        setScanProgress({ done, total });
+      },
+      () => token !== scanTokenRef.current,
+    ).then(() => {
+      if (token !== scanTokenRef.current) return;
+      setScanState("done");
+      setScanProgress(null);
+    });
+  }, [cls, scanState, unloadedSubclassSources]);
+
+  const subclassSources = useMemo(
+    (): SubclassSourceControls => {
+      const codes = unloadedSubclassSources.filter((code) =>
+        subclassMatches.has(code),
+      );
+      return {
+        visible:
+          loadingSubclassSource != null ||
+          codes.length > 0 ||
+          (unloadedSubclassSources.length > 0 && scanState !== "done"),
+        codes,
+        counts: subclassMatches,
+        scanProgress,
+        loadingLabel: loadingSubclassSource,
+        onOpen: scanSubclassSources,
+        onLoad: handleLoadSubclassSource,
+      };
+    },
+    [
+      unloadedSubclassSources,
+      subclassMatches,
+      scanState,
+      scanProgress,
+      loadingSubclassSource,
+      scanSubclassSources,
+      handleLoadSubclassSource,
+    ],
+  );
+
   const varyingFields = useMemo(
     () => getFieldsThatVaryAcrossVariants(variants),
     [variants],
@@ -329,5 +470,6 @@ export function useClassDetailPage(classId: string) {
     showAllFeatures,
     handleSourceSelect,
     handleSubclassSelect,
+    subclassSources,
   };
 }

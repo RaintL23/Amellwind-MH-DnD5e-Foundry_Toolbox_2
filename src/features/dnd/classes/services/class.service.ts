@@ -6,7 +6,14 @@ import {
 } from "@/shared/constants/api.constants";
 import { fetchFiveToolsJson } from "@/shared/data/fivetools-fetch";
 import { createEntityService } from "@/shared/services/create-entity-service";
-import { collectOnDemandBrewSourceCodesForProps } from "@/shared/services/source-catalog.service";
+import {
+  brewFileUrl,
+  brewLocalPath,
+  collectOnDemandBrewSourceCodesForProps,
+  getBrewPathsForSources,
+  getSourceCatalog,
+  type BrewFeed,
+} from "@/shared/services/source-catalog.service";
 import {
   collectUaPropEntries,
   loadUaBrewDocuments,
@@ -19,9 +26,13 @@ import type {
 } from "../utils/class-raw.types";
 import { processAllClasses } from "../utils/class-processor.utils";
 import { dedupeClassesByName } from "../utils/class-dedupe.utils";
+import {
+  buildTableIndex,
+  inlineStatblockTableRefs,
+} from "../utils/class-feature-entries.utils";
 
 /** Bump when mapped Class shape changes so in-memory cache is rebuilt. */
-const CLASS_CACHE_VERSION = 21;
+const CLASS_CACHE_VERSION = 23;
 
 let lookupCache: SubclassLookup | null = null;
 const loadedUaSources = new Set<string>();
@@ -84,6 +95,7 @@ const service = createEntityService<Class, Class>({
           subclass: collectUaPropEntries(docs, "subclass"),
           classFeature: collectUaPropEntries(docs, "classFeature"),
           subclassFeature: collectUaPropEntries(docs, "subclassFeature"),
+          table: collectUaPropEntries(docs, "table"),
         },
       ];
       documents = [...results, ...uaDocs];
@@ -91,9 +103,14 @@ const service = createEntityService<Class, Class>({
 
     const classes = documents.flatMap((doc) => doc.class ?? []);
     const subclasses = documents.flatMap((doc) => doc.subclass ?? []);
-    const classFeatures = documents.flatMap((doc) => doc.classFeature ?? []);
-    const subclassFeatures = documents.flatMap(
-      (doc) => doc.subclassFeature ?? [],
+    const tableIndex = buildTableIndex(documents.flatMap((doc) => doc.table ?? []));
+    const classFeatures = inlineStatblockTableRefs(
+      documents.flatMap((doc) => doc.classFeature ?? []),
+      tableIndex,
+    );
+    const subclassFeatures = inlineStatblockTableRefs(
+      documents.flatMap((doc) => doc.subclassFeature ?? []),
+      tableIndex,
     );
 
     const processed = processAllClasses(
@@ -159,6 +176,111 @@ export const ensureClassUaSourcesLoaded = createUaSourceLoader({
     return service.getAll();
   },
 });
+
+/**
+ * On-demand brew / UA source codes that ship subclasses and are not loaded yet.
+ * The prop index is per file, not per class, so a source may hold no subclass
+ * for the class being viewed.
+ */
+export async function getUnloadedSubclassSourceCodes(): Promise<string[]> {
+  const [codes, catalog, loadedPaths] = await Promise.all([
+    collectOnDemandBrewSourceCodesForProps(["subclass"]),
+    getSourceCatalog(),
+    getBrewPathsForSources(loadedUaSources),
+  ]);
+  // A file can carry several codes (e.g. BoET / BookOfEbonTides): compare by path.
+  const loadedKeys = new Set(loadedPaths.map((p) => `${p.feed}:${p.path}`));
+  return codes.filter((code) => {
+    if (loadedUaSources.has(code)) return false;
+    const entry = catalog.get(code);
+    return !(
+      entry?.uaPath && loadedKeys.has(`${entry.brewFeed ?? "ua"}:${entry.uaPath}`)
+    );
+  });
+}
+
+/** `feed:path` → lowercase class name → subclass count in that brew file. */
+const brewSubclassCounts = new Map<string, Promise<Map<string, number>>>();
+
+function subclassCountsForBrewFile(
+  path: string,
+  feed: BrewFeed,
+): Promise<Map<string, number>> {
+  const key = `${feed}:${path}`;
+  const cached = brewSubclassCounts.get(key);
+  if (cached) return cached;
+
+  const pending = fetchFiveToolsJson<{ subclass?: Array<{ className?: string }> }>(
+    brewFileUrl(path, feed),
+    brewLocalPath(path, feed),
+  )
+    .then((doc) => {
+      const counts = new Map<string, number>();
+      for (const sc of doc.subclass ?? []) {
+        const name = sc.className?.toLowerCase();
+        if (name) counts.set(name, (counts.get(name) ?? 0) + 1);
+      }
+      return counts;
+    })
+    .catch(() => new Map<string, number>());
+  brewSubclassCounts.set(key, pending);
+  return pending;
+}
+
+const SUBCLASS_SCAN_CONCURRENCY = 6;
+
+/**
+ * Scans brew files for subclasses of `className` (the prop index is per file,
+ * not per class). Reports matching codes → subclass count as files resolve.
+ */
+export async function findSubclassSourcesForClass(
+  className: string,
+  codes: readonly string[],
+  onProgress: (
+    matches: Map<string, number>,
+    done: number,
+    total: number,
+  ) => void,
+  isCancelled: () => boolean,
+): Promise<void> {
+  const catalog = await getSourceCatalog();
+  const files = new Map<
+    string,
+    { path: string; feed: BrewFeed; codes: string[] }
+  >();
+  for (const code of codes) {
+    const entry = catalog.get(code);
+    if (!entry?.uaPath) continue;
+    const feed = entry.brewFeed ?? "ua";
+    const key = `${feed}:${entry.uaPath}`;
+    const file = files.get(key) ?? { path: entry.uaPath, feed, codes: [] };
+    file.codes.push(code);
+    files.set(key, file);
+  }
+
+  const queue = [...files.values()];
+  const total = queue.length;
+  const classKey = className.toLowerCase();
+  const matches = new Map<string, number>();
+  let done = 0;
+
+  async function worker(): Promise<void> {
+    while (queue.length > 0 && !isCancelled()) {
+      const file = queue.shift()!;
+      const count =
+        (await subclassCountsForBrewFile(file.path, file.feed)).get(classKey) ?? 0;
+      done++;
+      if (count > 0) for (const code of file.codes) matches.set(code, count);
+      if (count > 0 || done === total || done % 20 === 0) {
+        onProgress(new Map(matches), done, total);
+      }
+    }
+  }
+
+  await Promise.all(
+    Array.from({ length: SUBCLASS_SCAN_CONCURRENCY }, () => worker()),
+  );
+}
 
 export async function getClassFilterSourceCodes(): Promise<string[]> {
   const [all, brewCodes] = await Promise.all([

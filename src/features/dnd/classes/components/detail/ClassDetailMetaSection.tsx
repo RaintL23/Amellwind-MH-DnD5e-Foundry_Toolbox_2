@@ -7,6 +7,7 @@ import {
 } from "@/components/ui/collapsible";
 import { type BookSourceNameMap } from "@/features/dnd/spells/services/book-source.service";
 import { cn } from "@/shared/utils/cn";
+import type { SubclassSourceControls } from "../../hooks/useClassDetailPage";
 import { getCasterLabel } from "../../mappers/class.mapper";
 import { hasClassMetaListContent } from "../../utils/class-meta-list.utils";
 import { type ClassVariantField } from "../../utils/class-variant.utils";
@@ -21,6 +22,7 @@ interface ClassDetailMetaSectionProps {
   activeSubclassId: string;
   onSubclassSelect: (id: string) => void;
   bookNames: BookSourceNameMap;
+  subclassSources: SubclassSourceControls;
 }
 
 const CARD = "rounded-md border border-border bg-muted/20 p-3 @lg/classdetail:p-4";
@@ -34,6 +36,7 @@ export function ClassDetailMetaSection({
   activeSubclassId,
   onSubclassSelect,
   bookNames,
+  subclassSources,
 }: ClassDetailMetaSectionProps) {
   const hasStartingInfo =
     hasClassMetaListContent(active.startingProficiencies) ||
@@ -90,6 +93,7 @@ export function ClassDetailMetaSection({
           subclassTitle={active.subclassTitle}
           bookNames={bookNames}
           countDiffers={differs("subclassCount")}
+          subclassSources={subclassSources}
         />
 
         {hasMulticlassing && (

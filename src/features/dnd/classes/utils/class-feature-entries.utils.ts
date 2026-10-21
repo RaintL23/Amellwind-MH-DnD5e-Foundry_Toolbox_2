@@ -69,6 +69,70 @@ function lookupSubclassFeature(
   );
 }
 
+// ─── Statblock table refs ───
+
+function tableRefKey(name: string, source: string): string {
+  return `${name}|${source}`.toLowerCase();
+}
+
+export function buildTableIndex(tables: readonly Raw[]): Map<string, Raw> {
+  const index = new Map<string, Raw>();
+  for (const table of tables) {
+    if (typeof table.name === "string" && typeof table.source === "string") {
+      index.set(tableRefKey(table.name, table.source), table);
+    }
+  }
+  return index;
+}
+
+/** Returns the same reference when nothing under `value` was replaced. */
+function inlineTableRefs(value: unknown, tables: Map<string, Raw>): unknown {
+  if (Array.isArray(value)) {
+    let changed = false;
+    const next = value.map((item) => {
+      const resolved = inlineTableRefs(item, tables);
+      if (resolved !== item) changed = true;
+      return resolved;
+    });
+    return changed ? next : value;
+  }
+  if (typeof value !== "object" || value === null) return value;
+
+  const obj = value as Raw;
+  // UA/brew features point at a top-level `table` instead of embedding it.
+  if (
+    obj.type === "statblock" &&
+    obj.tag === "table" &&
+    typeof obj.name === "string" &&
+    typeof obj.source === "string"
+  ) {
+    return tables.get(tableRefKey(obj.name, obj.source)) ?? value;
+  }
+
+  const entries = inlineTableRefs(obj.entries, tables);
+  const items = inlineTableRefs(obj.items, tables);
+  if (entries === obj.entries && items === obj.items) return value;
+  return {
+    ...obj,
+    ...(entries !== obj.entries && { entries }),
+    ...(items !== obj.items && { items }),
+  };
+}
+
+/** Replaces `{type:"statblock", tag:"table"}` refs in feature entries with the referenced table. */
+export function inlineStatblockTableRefs<T extends { entries?: unknown[] }>(
+  features: readonly T[],
+  tables: Map<string, Raw>,
+): T[] {
+  if (tables.size === 0) return [...features];
+  return features.map((feature) => {
+    const entries = inlineTableRefs(feature.entries, tables);
+    return entries === feature.entries
+      ? feature
+      : { ...feature, entries: entries as unknown[] };
+  });
+}
+
 export interface ResolveFeatureEntriesOptions {
   subclassFeatureIndex?: Map<string, RawSubclassFeature>;
   /** Omit refs that are promoted to sibling features during subclass processing. */

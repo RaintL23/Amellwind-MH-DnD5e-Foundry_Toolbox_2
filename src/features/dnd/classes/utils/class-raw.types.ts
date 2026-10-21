@@ -6,6 +6,8 @@ export interface ClassFileDocument {
   subclass?: RawSubclassDefinition[];
   classFeature?: RawClassFeature[];
   subclassFeature?: RawSubclassFeature[];
+  /** Top-level tables that features reference via `{type:"statblock", tag:"table"}`. */
+  table?: Record<string, unknown>[];
 }
 
 export interface RawClassDefinition {
@@ -28,6 +30,8 @@ export interface RawClassDefinition {
   startingProficiencies?: RawStartingProficiencies;
   startingEquipment?: RawStartingEquipment;
   multiclassing?: RawMulticlassing;
+  /** XPHB: alternatives (OR) of ability sets (AND) — the 2024 multiclass prerequisite. */
+  primaryAbility?: Record<string, boolean>[];
   classFeatures?: (string | ClassFeatureRef)[];
   subclassTitle?: string;
   optionalfeatureProgression?: RawOptionalFeatureProgression[];
@@ -160,7 +164,8 @@ export interface RawStartingEquipment {
 }
 
 export interface RawMulticlassing {
-  requirements?: Record<string, number>;
+  /** Ability minimums; `or` lists objects whose keys are alternatives. */
+  requirements?: Record<string, number | Record<string, number>[]>;
   proficienciesGained?: RawStartingProficiencies;
   prerequisites?: unknown[];
 }
