@@ -1,7 +1,11 @@
 import { useCallback, useMemo } from "react";
 import type { ColumnDef } from "@tanstack/react-table";
 import { DataTable } from "@/components/data-table/data-table";
-import { DataTableColumnHeader } from "@/components/data-table/data-table-column-header";
+import {
+  createNameColumn,
+  createSourcePageColumn,
+  getEntityRowId,
+} from "@/components/data-table/data-table-columns";
 import { CompendiumMobileCard } from "@/shared/components/CompendiumMobileCard";
 import { cn } from "@/shared/utils/cn";
 
@@ -24,7 +28,6 @@ interface ConditionEntryDataTableProps<T extends ConditionEntry> {
   /** Label shown in the Type column; must be a stable reference. */
   getBadge: (entry: T) => string;
   onRowClick: (entry: T) => void;
-  emptyMessage: string;
 }
 
 /** Shared table for the Conditions / Diseases tabs (Amellwind MH and D&D 5e). */
@@ -33,21 +36,10 @@ export function ConditionEntryDataTable<T extends ConditionEntry>({
   tone,
   getBadge,
   onRowClick,
-  emptyMessage,
 }: ConditionEntryDataTableProps<T>) {
   const columns = useMemo<ColumnDef<T>[]>(
     () => [
-      {
-        accessorKey: "name",
-        header: ({ column }) => (
-          <DataTableColumnHeader column={column} title="Name" />
-        ),
-        cell: ({ row }) => (
-          <span className="font-medium text-foreground">
-            {row.original.name}
-          </span>
-        ),
-      },
+      createNameColumn<T>(),
       {
         id: "type",
         header: "Type",
@@ -74,20 +66,7 @@ export function ConditionEntryDataTable<T extends ConditionEntry>({
           </p>
         ),
       },
-      {
-        accessorKey: "source",
-        header: "Source",
-        enableSorting: false,
-        meta: { hideBelowMd: true },
-        cell: ({ row }) => (
-          <span className="whitespace-nowrap text-xs text-muted-foreground">
-            {row.original.source}
-            {row.original.page !== undefined
-              ? ` · p. ${row.original.page}`
-              : ""}
-          </span>
-        ),
-      },
+      createSourcePageColumn<T>(),
     ],
     [tone, getBadge],
   );
@@ -108,9 +87,8 @@ export function ConditionEntryDataTable<T extends ConditionEntry>({
     <DataTable
       columns={columns}
       data={entries}
-      getRowId={(entry) => entry.id}
+      getRowId={getEntityRowId}
       onRowClick={onRowClick}
-      emptyMessage={emptyMessage}
       pageSize={25}
       enableSearchToolbar={false}
       renderMobileRow={renderMobileRow}
