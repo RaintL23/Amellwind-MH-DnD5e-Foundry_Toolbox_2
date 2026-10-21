@@ -13,6 +13,15 @@ export type ResourceRarity =
   | "Very Rare"
   | "Legendary";
 
+/** Ascending tier order (also used for material effects). */
+export const RESOURCE_RARITIES: ResourceRarity[] = [
+  "Common",
+  "Uncommon",
+  "Rare",
+  "Very Rare",
+  "Legendary",
+];
+
 export interface Resource {
   name: string;
   category: ResourceCategory;

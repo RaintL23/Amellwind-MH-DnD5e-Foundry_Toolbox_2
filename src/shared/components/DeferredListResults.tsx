@@ -1,4 +1,5 @@
 import type { ReactNode } from "react";
+import type { LucideIcon } from "lucide-react";
 import { cn } from "@/shared/utils/cn";
 import { ListAreaLoading } from "@/shared/components/ListAreaLoading";
 
@@ -9,7 +10,6 @@ interface DeferredListResultsProps {
   isEmpty: boolean;
   empty: ReactNode;
   children: ReactNode;
-  loadingVariant?: "table" | "cards";
   className?: string;
 }
 
@@ -23,15 +23,10 @@ export function DeferredListResults({
   isEmpty,
   empty,
   children,
-  loadingVariant = "table",
   className,
 }: DeferredListResultsProps) {
   if (loading) {
-    return (
-      <ListAreaLoading
-        variant={loadingVariant === "cards" ? "cards" : undefined}
-      />
-    );
+    return <ListAreaLoading />;
   }
 
   if (isEmpty) {
@@ -46,6 +41,30 @@ export function DeferredListResults({
         className,
       )}
     >
+      {children}
+    </div>
+  );
+}
+
+interface ListEmptyStateProps {
+  icon: LucideIcon;
+  message: ReactNode;
+  messageClassName?: string;
+  /** Extra actions below the message (e.g. "Clear filters"). */
+  children?: ReactNode;
+}
+
+/** Centered icon + message for empty compendium lists. */
+export function ListEmptyState({
+  icon: Icon,
+  message,
+  messageClassName,
+  children,
+}: ListEmptyStateProps) {
+  return (
+    <div className="flex h-48 flex-col items-center justify-center gap-2 text-muted-foreground">
+      <Icon className="h-10 w-10 opacity-20" />
+      <p className={cn("text-sm", messageClassName)}>{message}</p>
       {children}
     </div>
   );
