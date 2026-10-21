@@ -149,3 +149,7 @@ Tres listados de referencia derivados del homebrew Amellwind, con caché en memo
 
 Sus cachés se limpian en el bootstrap (`clearMaterialEffectCache`, `clearConditionCache`, `clearDiseaseCache`).
 
+#### Convención de listados: DataTable
+
+Todos los listados de catálogo (no solo los de esta sección) se renderizan con `DataTable` (`src/components/data-table/`), nunca como grid de cards: Feats (MH y 5e), Backgrounds (MH), Species, Siege Weapons, Hunter Weapons, Material Effects, Resources y las pestañas Conditions / Diseases (MH y 5e). Patrón: la página conserva búsqueda y filtros (`ListSearchWithFilters`) y pasa el array filtrado a un `<X>DataTable` con `enableSearchToolbar={false}`; las columnas viven en `<x>-columns.tsx` y bajo `md` se usa `renderMobileRow` con `CompendiumMobileCard`. Conditions/Diseases comparten `ConditionEntryDataTable` (`src/shared/components/`). Excepción: Weapon Forge mantiene cards porque cada una lleva acciones (comparar, clonar, editar, borrar).
+

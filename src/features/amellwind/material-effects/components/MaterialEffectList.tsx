@@ -1,9 +1,9 @@
 import { ListAreaLoading } from "@/shared/components/ListAreaLoading";
 import { useDebouncedListSearch } from "@/shared/hooks/useDebouncedListSearch";
 import { useListSessionFilters } from "@/shared/hooks/useListSessionFilters";
-import { useEffect, useMemo, useState, useCallback } from "react";
+import { useEffect, useMemo, useState, useCallback, useRef } from "react";
+import type { OnChangeFn, PaginationState } from "@tanstack/react-table";
 import type { MaterialEffect } from "@/shared/types";
-import { Pagination } from "@/components/ui/pagination";
 import { Sparkles } from "lucide-react";
 import { getAllMaterialEffects } from "../services/material-effect.service";
 import {
@@ -11,7 +11,7 @@ import {
   type MaterialEffectFiltersState,
 } from "../constants/material-effect.constants";
 import { MaterialEffectFilters } from "./MaterialEffectFilters";
-import { MaterialEffectCard } from "./MaterialEffectCard";
+import { MaterialEffectDataTable } from "./MaterialEffectDataTable";
 import { MaterialEffectDetailDialog } from "./MaterialEffectDetailDialog";
 import { parsePositiveInt } from "@/shared/utils/list-url-params.utils";
 
@@ -102,21 +102,31 @@ export function MaterialEffectList() {
     [patchFilters, commitSearch],
   );
 
-  const handlePageChange = useCallback(
-    (nextPage: number) => patchFilters({ page: String(nextPage) }),
-    [patchFilters],
-  );
-
-  const handlePageSizeChange = useCallback(
-    (size: number) => patchFilters({ pageSize: String(size), page: "1" }),
-    [patchFilters],
-  );
-
   const totalPages = Math.max(1, Math.ceil(filtered.length / pageSize));
   const safePage = Math.min(page, totalPages);
-  const paginated = filtered.slice(
-    (safePage - 1) * pageSize,
-    safePage * pageSize,
+  const pagination = useMemo<PaginationState>(
+    () => ({ pageIndex: safePage - 1, pageSize }),
+    [safePage, pageSize],
+  );
+
+  // TanStack issues setPageSize + setPageIndex back-to-back from one click; the ref
+  // lets the second updater see the first one's result instead of stale props.
+  const latestPagination = useRef(pagination);
+  latestPagination.current = pagination;
+
+  const handlePaginationChange = useCallback<OnChangeFn<PaginationState>>(
+    (updater) => {
+      const next =
+        typeof updater === "function"
+          ? updater(latestPagination.current)
+          : updater;
+      latestPagination.current = next;
+      patchFilters({
+        page: String(next.pageIndex + 1),
+        pageSize: String(next.pageSize),
+      });
+    },
+    [patchFilters],
   );
 
   const weaponCount = effects.filter((e) => e.slot === "weapon").length;
@@ -156,36 +166,22 @@ export function MaterialEffectList() {
 
       <div className="flex-1 overflow-y-auto px-6 py-6">
         {loading || isSearchPending ? (
-          <ListAreaLoading variant="cards" />
+          <ListAreaLoading />
         ) : filtered.length === 0 ? (
           <div className="flex flex-col items-center justify-center h-48 text-muted-foreground gap-2">
             <Sparkles className="h-10 w-10 opacity-20" />
             <p className="text-sm">No material effects match your filters.</p>
           </div>
         ) : (
-          <>
-            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4">
-              {paginated.map((effect) => (
-                <MaterialEffectCard
-                  key={effect.id}
-                  effect={effect}
-                  onClick={() => {
-                    setSelected(effect);
-                    setDialogOpen(true);
-                  }}
-                />
-              ))}
-            </div>
-
-            <Pagination
-              page={safePage}
-              totalPages={totalPages}
-              totalItems={filtered.length}
-              pageSize={pageSize}
-              onPageChange={handlePageChange}
-              onPageSizeChange={handlePageSizeChange}
-            />
-          </>
+          <MaterialEffectDataTable
+            effects={filtered}
+            pagination={pagination}
+            onPaginationChange={handlePaginationChange}
+            onRowClick={(effect) => {
+              setSelected(effect);
+              setDialogOpen(true);
+            }}
+          />
         )}
       </div>
 

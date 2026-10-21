@@ -7,48 +7,17 @@ import {
   type ResourceRarity,
 } from "@/shared/types";
 import { getAllResourceTables, searchResources } from "../services/resource.service";
-import { Badge } from "@/components/ui/badge";
 import { cn } from "@/shared/utils/cn";
 import { Hammer } from "lucide-react";
 import { ListAreaLoading } from "@/shared/components/ListAreaLoading";
 import { ClearableSearchInput } from "@/shared/components/list-filters";
 import { useDebouncedListSearch } from "@/shared/hooks/useDebouncedListSearch";
 import { useListSessionFilters } from "@/shared/hooks/useListSessionFilters";
+import { ResourceDataTable } from "./ResourceDataTable";
 import { ResourceDetailDialog } from "./ResourceDetailDialog";
+import { RESOURCE_RARITIES } from "./resource-columns";
 
 const CATEGORIES: ResourceCategory[] = ["Bonepiles", "Fish", "Insects", "Minerals", "Mushrooms", "Plants"];
-const RARITIES: ResourceRarity[] = ["Common", "Uncommon", "Rare", "Very Rare", "Legendary"];
-
-function ResourceCard({ resource, onClick }: { resource: Resource; onClick: () => void }) {
-  const style = RESOURCE_RARITY_STYLES[resource.rarity];
-  return (
-    <button
-      onClick={onClick}
-      className={cn(
-        "w-full text-left rounded-lg border p-3 bg-gradient-to-br transition-all duration-150",
-        "hover:scale-[1.02] hover:shadow-md cursor-pointer",
-        style.bg,
-        style.border
-      )}
-    >
-      <div className="flex items-start justify-between gap-2">
-        <div className="min-w-0">
-          <p className={cn("font-semibold text-sm truncate", style.text)}>{resource.name}</p>
-          <p className="text-xs text-muted-foreground mt-0.5 line-clamp-2">{resource.details}</p>
-        </div>
-        <div className="shrink-0 flex flex-col items-end gap-1">
-          <Badge variant="outline" className={cn("text-xs", style.badge)}>
-            {resource.rarity}
-          </Badge>
-          {resource.isCraftingMaterial && (
-            <Hammer className="h-3 w-3 text-yellow-500" />
-          )}
-        </div>
-      </div>
-      <p className="text-xs text-amber-400 mt-2 font-medium">{resource.sellValue}</p>
-    </button>
-  );
-}
 
 export function ResourcePage() {
   const { q, getString, patchFilters } = useListSessionFilters({
@@ -87,19 +56,10 @@ export function ResourcePage() {
     return allTables.find((t) => t.category === activeCategory)?.footnotes ?? [];
   }, [allTables, activeCategory]);
 
-  function handleCardClick(r: Resource) {
+  function handleRowClick(r: Resource) {
     setSelected(r);
     setDialogOpen(true);
   }
-
-  const groupedByRarity = useMemo(() => {
-    const groups: Partial<Record<ResourceRarity, Resource[]>> = {};
-    for (const r of filteredResources) {
-      if (!groups[r.rarity]) groups[r.rarity] = [];
-      groups[r.rarity]!.push(r);
-    }
-    return groups;
-  }, [filteredResources]);
 
   return (
     <div className="flex flex-col h-full min-h-0">
@@ -161,7 +121,7 @@ export function ResourcePage() {
           >
             All Rarities
           </button>
-          {RARITIES.map((r) => {
+          {RESOURCE_RARITIES.map((r) => {
             const s = RESOURCE_RARITY_STYLES[r];
             return (
               <button
@@ -205,31 +165,16 @@ export function ResourcePage() {
         )}
 
         {isSearchPending ? (
-          <ListAreaLoading variant="cards" />
+          <ListAreaLoading />
         ) : filteredResources.length === 0 ? (
           <div className="text-center py-12 text-muted-foreground">
             <p className="text-sm">No resources found.</p>
           </div>
         ) : (
-          RARITIES.map((rarity) => {
-            const items = groupedByRarity[rarity];
-            if (!items?.length) return null;
-            const s = RESOURCE_RARITY_STYLES[rarity];
-            return (
-              <section key={rarity}>
-                <h2 className={cn("text-sm font-bold mb-3 flex items-center gap-2", s.text)}>
-                  <span className={cn("w-2 h-2 rounded-full inline-block", s.badge.split(" ")[0])} />
-                  {rarity}
-                  <span className="text-muted-foreground font-normal">({items.length})</span>
-                </h2>
-                <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-2">
-                  {items.map((r) => (
-                    <ResourceCard key={`${r.category}-${r.name}`} resource={r} onClick={() => handleCardClick(r)} />
-                  ))}
-                </div>
-              </section>
-            );
-          })
+          <ResourceDataTable
+            resources={filteredResources}
+            onRowClick={handleRowClick}
+          />
         )}
       </div>
 

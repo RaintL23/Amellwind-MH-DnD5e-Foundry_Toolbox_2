@@ -11,10 +11,13 @@ import {
   getListDndConditions,
   getListDndDiseases,
 } from "../services/dnd-condition.service";
-import { ConditionCard } from "@/features/amellwind/conditions/components/ConditionCard";
+import { ConditionEntryDataTable } from "@/shared/components/ConditionEntryDataTable";
 import { ConditionDetailDialog } from "@/features/amellwind/conditions/components/ConditionDetailDialog";
-import { DiseaseCard } from "@/features/amellwind/diseases/components/DiseaseCard";
 import { DiseaseDetailDialog } from "@/features/amellwind/diseases/components/DiseaseDetailDialog";
+
+const getDndConditionBadge = (item: DndCondition) =>
+  item.category === "status" ? "Status" : "Condition";
+const getDndDiseaseBadge = () => "Disease";
 
 export function DndConditionsDiseasesPage() {
   const { q, patchFilters } = useListSessionFilters({
@@ -164,52 +167,45 @@ export function DndConditionsDiseasesPage() {
 
           <TabsContent value="conditions">
             {loading || isSearchPending ? (
-              <ListAreaLoading variant="cards" />
+              <ListAreaLoading />
             ) : filteredConditions.length === 0 ? (
               <div className="flex flex-col items-center justify-center h-48 text-muted-foreground gap-2">
                 <AlertTriangle className="h-10 w-10 opacity-20" />
                 <p className="text-sm">No conditions found.</p>
               </div>
             ) : (
-              <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
-                {filteredConditions.map((item) => (
-                  <ConditionCard
-                    key={item.id}
-                    condition={item}
-                    badge={
-                      item.category === "status" ? "Status" : "Condition"
-                    }
-                    onClick={() => {
-                      setUrlDisease(null);
-                      setUrlCondition(item.name);
-                    }}
-                  />
-                ))}
-              </div>
+              <ConditionEntryDataTable
+                entries={filteredConditions}
+                tone="condition"
+                getBadge={getDndConditionBadge}
+                emptyMessage="No conditions found."
+                onRowClick={(item) => {
+                  setUrlDisease(null);
+                  setUrlCondition(item.name);
+                }}
+              />
             )}
           </TabsContent>
 
           <TabsContent value="diseases">
             {loading || isSearchPending ? (
-              <ListAreaLoading variant="cards" />
+              <ListAreaLoading />
             ) : filteredDiseases.length === 0 ? (
               <div className="flex flex-col items-center justify-center h-48 text-muted-foreground gap-2">
                 <Biohazard className="h-10 w-10 opacity-20" />
                 <p className="text-sm">No diseases found.</p>
               </div>
             ) : (
-              <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
-                {filteredDiseases.map((item) => (
-                  <DiseaseCard
-                    key={item.id}
-                    disease={item}
-                    onClick={() => {
-                      setUrlCondition(null);
-                      setUrlDisease(item.name);
-                    }}
-                  />
-                ))}
-              </div>
+              <ConditionEntryDataTable
+                entries={filteredDiseases}
+                tone="disease"
+                getBadge={getDndDiseaseBadge}
+                emptyMessage="No diseases found."
+                onRowClick={(item) => {
+                  setUrlCondition(null);
+                  setUrlDisease(item.name);
+                }}
+              />
             )}
           </TabsContent>
         </Tabs>

@@ -10,7 +10,7 @@ import { useDebouncedListSearch } from "@/shared/hooks/useDebouncedListSearch";
 import { useListSessionFilters } from "@/shared/hooks/useListSessionFilters";
 import { ListSearchWithFilters } from "@/shared/components/list-filters";
 import type { ListFilterValues } from "@/shared/components/list-filters";
-import { BackgroundCard } from "./BackgroundCard";
+import { BackgroundDataTable } from "./BackgroundDataTable";
 import { BackgroundDetailDialog } from "./BackgroundDetailDialog";
 import { ScrollText } from "lucide-react";
 import { GtmhSourceNotice } from "@/shared/components/GtmhSourceNotice";
@@ -124,22 +124,17 @@ export function BackgroundList() {
 
       <div className="flex-1 overflow-y-auto px-4 py-4 md:px-6 md:py-6">
         {loading || isSearchPending ? (
-          <ListAreaLoading variant="cards" />
+          <ListAreaLoading />
         ) : filtered.length === 0 ? (
           <div className="flex flex-col items-center justify-center h-48 text-muted-foreground gap-2">
             <ScrollText className="h-10 w-10 opacity-20" />
             <p className="text-sm">No backgrounds found with those filters.</p>
           </div>
         ) : (
-          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
-            {filtered.map((item) => (
-              <BackgroundCard
-                key={item.id}
-                background={item}
-                onClick={() => handleSelect(item)}
-              />
-            ))}
-          </div>
+          <BackgroundDataTable
+            backgrounds={filtered}
+            onRowClick={handleSelect}
+          />
         )}
       </div>
 

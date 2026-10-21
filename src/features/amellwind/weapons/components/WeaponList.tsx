@@ -6,7 +6,7 @@ import { useDebouncedListSearch } from "@/shared/hooks/useDebouncedListSearch";
 import { useListSessionFilters } from "@/shared/hooks/useListSessionFilters";
 import { useWeaponDialogUrlSync } from "../hooks/useWeaponDialogUrlSync";
 import { findWeaponByUrlKey } from "../utils/weapon-dialog-url.utils";
-import { WeaponCard } from "./WeaponCard";
+import { WeaponDataTable } from "./WeaponDataTable";
 import { WeaponDialog } from "./WeaponDialog";
 import { WeaponListFilters } from "./WeaponListFilters";
 import { weaponMatchesCompatibleProficiency } from "../data/weapon-proficiencies.data";
@@ -149,7 +149,7 @@ export function WeaponList() {
 
       <div className="flex-1 overflow-y-auto px-4 py-4 md:px-6 md:py-6">
         {loading || isSearchPending ? (
-          <ListAreaLoading variant="cards" />
+          <ListAreaLoading />
         ) : filtered.length === 0 ? (
           <div className="flex flex-col items-center justify-center h-48 text-muted-foreground gap-2">
             <Swords className="h-10 w-10 opacity-20" />
@@ -162,15 +162,7 @@ export function WeaponList() {
             </button>
           </div>
         ) : (
-          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-3 sm:gap-4">
-            {filtered.map((weapon) => (
-              <WeaponCard
-                key={weapon.name}
-                weapon={weapon}
-                onClick={() => handleSelect(weapon)}
-              />
-            ))}
-          </div>
+          <WeaponDataTable weapons={filtered} onRowClick={handleSelect} />
         )}
       </div>
 

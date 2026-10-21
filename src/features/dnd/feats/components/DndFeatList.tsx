@@ -1,4 +1,4 @@
-import { useEffect, useMemo, useState, useCallback, useDeferredValue } from "react";
+import { useMemo, useCallback, useDeferredValue } from "react";
 import type { DndFeat } from "@/shared/types";
 import {
   ensureDndFeatUaSourcesLoaded,
@@ -21,12 +21,9 @@ import {
   dndFeatMatchesFacetFilters,
   type DndFeatListMultiKey,
 } from "../utils/dnd-feat-list-filters";
-import { DndFeatCard } from "./DndFeatCard";
+import { DndFeatDataTable } from "./DndFeatDataTable";
 import { DndFeatDetailDialog } from "./DndFeatDetailDialog";
-import { Pagination } from "@/components/ui/pagination";
 import { Award } from "lucide-react";
-
-const DND_FEAT_PAGE_SIZE = 30;
 
 export function DndFeatList() {
   const {
@@ -72,8 +69,6 @@ export function DndFeatList() {
   }, [getAll]);
 
   const repeat = getString("repeat");
-  const [page, setPage] = useState(1);
-  const [pageSize, setPageSize] = useState(DND_FEAT_PAGE_SIZE);
 
   const presentFacets = useMemo(
     () => collectDndFeatPresentFacets(listFeats),
@@ -128,26 +123,6 @@ export function DndFeatList() {
 
     return [...result].sort((a, b) => a.name.localeCompare(b.name));
   }, [deferredList, deferredInput]);
-
-  useEffect(() => {
-    setPage(1);
-  }, [
-    appliedSearch,
-    repeat,
-    multi.kind,
-    multi.cat,
-    multi.abi,
-    multi.prereq,
-    multi.plvl,
-    multi.src,
-  ]);
-
-  const totalPages = Math.max(1, Math.ceil(filtered.length / pageSize));
-  const safePage = Math.min(page, totalPages);
-  const paginated = useMemo(
-    () => filtered.slice((safePage - 1) * pageSize, safePage * pageSize),
-    [filtered, safePage, pageSize],
-  );
 
   const handleSelect = useCallback(
     (feat: DndFeat) => dialog?.openItem(feat),
@@ -205,7 +180,6 @@ export function DndFeatList() {
         <DeferredListResults
           loading={loading}
           updating={showUpdating}
-          loadingVariant="cards"
           isEmpty={filtered.length === 0 && !showUpdating}
           empty={
             <div className="flex h-48 flex-col items-center justify-center gap-2 text-muted-foreground">
@@ -214,29 +188,9 @@ export function DndFeatList() {
             </div>
           }
         >
-          <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-3">
-            {paginated.map((item) => (
-              <DndFeatCard key={item.id} feat={item} onSelect={handleSelect} />
-            ))}
-          </div>
+          <DndFeatDataTable feats={filtered} onRowClick={handleSelect} />
         </DeferredListResults>
       </div>
-
-      {!loading && filtered.length > 0 && (
-        <div className="shrink-0 border-t border-border px-4 py-3 md:px-6">
-          <Pagination
-            page={safePage}
-            totalPages={totalPages}
-            totalItems={filtered.length}
-            pageSize={pageSize}
-            onPageChange={setPage}
-            onPageSizeChange={(size) => {
-              setPageSize(size);
-              setPage(1);
-            }}
-          />
-        </div>
-      )}
 
       {dialog?.dialogOpen && dialog.selected && (
         <DndFeatDetailDialog

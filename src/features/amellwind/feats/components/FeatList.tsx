@@ -7,7 +7,7 @@ import { useListItemUrlParam } from "@/shared/hooks/useListItemUrlParam";
 import { useListSessionFilters } from "@/shared/hooks/useListSessionFilters";
 import { ListSearchWithFilters } from "@/shared/components/list-filters";
 import type { ListFilterValues } from "@/shared/components/list-filters";
-import { FeatCard } from "./FeatCard";
+import { FeatDataTable } from "./FeatDataTable";
 import { FeatDetailDialog } from "./FeatDetailDialog";
 import { Award } from "lucide-react";
 import { GtmhSourceNotice } from "@/shared/components/GtmhSourceNotice";
@@ -143,22 +143,14 @@ export function FeatList() {
 
       <div className="flex-1 overflow-y-auto px-4 py-4 md:px-6 md:py-6">
         {loading || isSearchPending ? (
-          <ListAreaLoading variant="cards" />
+          <ListAreaLoading />
         ) : filtered.length === 0 ? (
           <div className="flex flex-col items-center justify-center h-48 text-muted-foreground gap-2">
             <Award className="h-10 w-10 opacity-20" />
             <p className="text-sm">No feats found with those filters.</p>
           </div>
         ) : (
-          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
-            {filtered.map((item) => (
-              <FeatCard
-                key={item.id}
-                feat={item}
-                onClick={() => handleSelect(item)}
-              />
-            ))}
-          </div>
+          <FeatDataTable feats={filtered} onRowClick={handleSelect} />
         )}
       </div>
 

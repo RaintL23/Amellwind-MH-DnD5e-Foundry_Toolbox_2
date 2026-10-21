@@ -6,7 +6,7 @@ import { useDebouncedListSearch } from "@/shared/hooks/useDebouncedListSearch";
 import { useListItemUrlParam } from "@/shared/hooks/useListItemUrlParam";
 import { useListSessionFilters } from "@/shared/hooks/useListSessionFilters";
 import { ClearableSearchInput } from "@/shared/components/list-filters";
-import { SiegeWeaponCard } from "./SiegeWeaponCard";
+import { SiegeWeaponDataTable } from "./SiegeWeaponDataTable";
 import { SiegeWeaponDetailDialog } from "./SiegeWeaponDetailDialog";
 import { DragonshipRulesPanel } from "./DragonshipRulesPanel";
 import { Crosshair } from "lucide-react";
@@ -108,22 +108,14 @@ export function SiegeWeaponList() {
 
       <div className="flex-1 overflow-y-auto px-6 py-6">
         {loading || isSearchPending ? (
-          <ListAreaLoading variant="cards" />
+          <ListAreaLoading />
         ) : filtered.length === 0 ? (
           <div className="flex flex-col items-center justify-center h-48 text-muted-foreground gap-2">
             <Crosshair className="h-10 w-10 opacity-20" />
             <p className="text-sm">No siege weapons found.</p>
           </div>
         ) : (
-          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
-            {filtered.map((item) => (
-              <SiegeWeaponCard
-                key={item.id}
-                weapon={item}
-                onClick={() => handleSelect(item)}
-              />
-            ))}
-          </div>
+          <SiegeWeaponDataTable weapons={filtered} onRowClick={handleSelect} />
         )}
       </div>
 

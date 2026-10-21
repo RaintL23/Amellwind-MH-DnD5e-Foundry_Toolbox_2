@@ -10,11 +10,13 @@ import { Tabs, TabsList, TabsTrigger, TabsContent } from "@/components/ui/tabs";
 import { AlertTriangle, Biohazard } from "lucide-react";
 import { getAllConditions } from "../services/condition.service";
 import { getAllDiseases } from "@/features/amellwind/diseases/services/disease.service";
-import { ConditionCard } from "./ConditionCard";
 import { ConditionDetailDialog } from "./ConditionDetailDialog";
-import { DiseaseCard } from "@/features/amellwind/diseases/components/DiseaseCard";
 import { DiseaseDetailDialog } from "@/features/amellwind/diseases/components/DiseaseDetailDialog";
+import { ConditionEntryDataTable } from "@/shared/components/ConditionEntryDataTable";
 import { MhmmSourceNotice } from "@/shared/components/MhmmSourceNotice";
+
+const getMhConditionBadge = () => "Blight / Condition";
+const getMhDiseaseBadge = () => "Disease";
 
 export function ConditionsDiseasesPage() {
   const { q, patchFilters } = useListSessionFilters({
@@ -166,50 +168,46 @@ export function ConditionsDiseasesPage() {
           {/* Conditions tab */}
           <TabsContent value="conditions">
             {loading || isSearchPending ? (
-              <ListAreaLoading variant="cards" />
+              <ListAreaLoading />
             ) : filteredConditions.length === 0 ? (
               <div className="flex flex-col items-center justify-center h-48 text-muted-foreground gap-2">
                 <AlertTriangle className="h-10 w-10 opacity-20" />
                 <p className="text-sm">No conditions found.</p>
               </div>
             ) : (
-              <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
-                {filteredConditions.map((item) => (
-                  <ConditionCard
-                    key={item.id}
-                    condition={item}
-                    onClick={() => {
-                      setUrlDisease(null);
-                      setUrlCondition(item.name);
-                    }}
-                  />
-                ))}
-              </div>
+              <ConditionEntryDataTable
+                entries={filteredConditions}
+                tone="condition"
+                getBadge={getMhConditionBadge}
+                emptyMessage="No conditions found."
+                onRowClick={(item) => {
+                  setUrlDisease(null);
+                  setUrlCondition(item.name);
+                }}
+              />
             )}
           </TabsContent>
 
           {/* Diseases tab */}
           <TabsContent value="diseases">
             {loading || isSearchPending ? (
-              <ListAreaLoading variant="cards" />
+              <ListAreaLoading />
             ) : filteredDiseases.length === 0 ? (
               <div className="flex flex-col items-center justify-center h-48 text-muted-foreground gap-2">
                 <Biohazard className="h-10 w-10 opacity-20" />
                 <p className="text-sm">No diseases found.</p>
               </div>
             ) : (
-              <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
-                {filteredDiseases.map((item) => (
-                  <DiseaseCard
-                    key={item.id}
-                    disease={item}
-                    onClick={() => {
-                      setUrlCondition(null);
-                      setUrlDisease(item.name);
-                    }}
-                  />
-                ))}
-              </div>
+              <ConditionEntryDataTable
+                entries={filteredDiseases}
+                tone="disease"
+                getBadge={getMhDiseaseBadge}
+                emptyMessage="No diseases found."
+                onRowClick={(item) => {
+                  setUrlCondition(null);
+                  setUrlDisease(item.name);
+                }}
+              />
             )}
           </TabsContent>
         </Tabs>
