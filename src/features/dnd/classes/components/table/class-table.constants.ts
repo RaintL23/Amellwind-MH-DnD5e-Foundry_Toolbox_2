@@ -3,7 +3,7 @@ export const CASTER_OPTIONS = [
   { value: "full", label: "Full caster" },
   { value: "1/2", label: "Half caster" },
   { value: "1/3", label: "Third caster" },
-  { value: "artificer", label: "Artificer" },
+  { value: "artificer", label: "Half caster (rounds up)" },
   { value: "none", label: "None" },
 ] as const;
 

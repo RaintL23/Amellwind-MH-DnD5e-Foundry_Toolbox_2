@@ -227,6 +227,55 @@ function subclassCountsForBrewFile(
   return pending;
 }
 
+/** Loaded on-demand sources that hold subclasses of `className` → subclass count. */
+export async function getLoadedSubclassSourceCounts(
+  className: string,
+): Promise<Map<string, number>> {
+  const catalog = await getSourceCatalog();
+  const classKey = className.toLowerCase();
+  const matches = new Map<string, number>();
+  await Promise.all(
+    [...loadedUaSources].map(async (code) => {
+      const entry = catalog.get(code);
+      if (!entry?.uaPath) return;
+      const counts = await subclassCountsForBrewFile(
+        entry.uaPath,
+        entry.brewFeed ?? "ua",
+      );
+      const count = counts.get(classKey) ?? 0;
+      if (count > 0) matches.set(code, count);
+    }),
+  );
+  return matches;
+}
+
+/** Drops on-demand sources (and any alias code sharing their file) from the pool. */
+export async function unloadClassUaSources(codes: string[]): Promise<boolean> {
+  const catalog = await getSourceCatalog();
+  const fileKey = (code: string): string | null => {
+    const entry = catalog.get(code);
+    return entry?.uaPath ? `${entry.brewFeed ?? "ua"}:${entry.uaPath}` : null;
+  };
+  const targets = new Set(codes);
+  const targetFiles = new Set(
+    codes.map(fileKey).filter((key): key is string => key != null),
+  );
+  let changed = false;
+  for (const code of [...loadedUaSources]) {
+    const key = fileKey(code);
+    if (targets.has(code) || (key != null && targetFiles.has(key))) {
+      loadedUaSources.delete(code);
+      changed = true;
+    }
+  }
+  if (!changed) return false;
+  service.clearCache();
+  lookupCache = null;
+  ensureCacheVersion();
+  await service.getAll();
+  return true;
+}
+
 const SUBCLASS_SCAN_CONCURRENCY = 6;
 
 /**

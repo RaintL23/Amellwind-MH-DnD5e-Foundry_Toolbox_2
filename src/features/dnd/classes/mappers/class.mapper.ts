@@ -46,7 +46,8 @@ const CASTER_LABELS: Record<string, string> = {
   full: "Full caster",
   "1/2": "Half caster",
   "1/3": "Third caster",
-  artificer: "Artificer",
+  // 5etools "artificer" = half-caster rounded up (Artificer, 2024 Paladin/Ranger)
+  artificer: "Half caster (rounds up)",
   pact: "Pact Magic",
   none: "None",
 };

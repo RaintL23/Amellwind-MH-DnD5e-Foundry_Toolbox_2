@@ -11,7 +11,9 @@ import {
   findSubclassSourcesForClass,
   getAllClasses,
   getClassesByName,
+  getLoadedSubclassSourceCounts,
   getUnloadedSubclassSourceCodes,
+  unloadClassUaSources,
 } from "../services/class.service";
 import {
   sortClassVariants,
@@ -44,12 +46,14 @@ function sourceFromEntityId(id: string): string | null {
   return source || null;
 }
 
-/** "Add source" picker state: on-demand sources that hold subclasses of this class. */
+/** "Manage sources" picker state: on-demand sources that hold subclasses of this class. */
 export interface SubclassSourceControls {
-  /** Whether the Add source button should render at all. */
+  /** Whether the Manage sources button should render at all. */
   visible: boolean;
   /** Unloaded sources with at least one subclass of the viewed class. */
   codes: string[];
+  /** Loaded on-demand sources with at least one subclass of the viewed class. */
+  loadedCodes: string[];
   /** Source code → number of subclasses of the viewed class. */
   counts: ReadonlyMap<string, number>;
   scanProgress: { done: number; total: number } | null;
@@ -57,6 +61,7 @@ export interface SubclassSourceControls {
   /** Starts the (cached) background scan the first time it is called per class. */
   onOpen: () => void;
   onLoad: (codes: string[], label: string) => void;
+  onUnload: (codes: string[], label: string) => void;
 }
 
 type SubclassScanState = "idle" | "scanning" | "done";
@@ -80,6 +85,9 @@ export function useClassDetailPage(classId: string) {
     string | null
   >(null);
   const [subclassMatches, setSubclassMatches] = useState<
+    ReadonlyMap<string, number>
+  >(() => new Map());
+  const [loadedSubclassMatches, setLoadedSubclassMatches] = useState<
     ReadonlyMap<string, number>
   >(() => new Map());
   const [scanState, setScanState] = useState<SubclassScanState>("idle");
@@ -219,6 +227,18 @@ export function useClassDetailPage(classId: string) {
     setScanState("idle");
     setScanProgress(null);
   }, [className]);
+
+  // Source loads/unloads (including URL-driven ones) always rebuild the variants.
+  useEffect(() => {
+    if (!className) return;
+    let cancelled = false;
+    void getLoadedSubclassSourceCounts(className).then((counts) => {
+      if (!cancelled) setLoadedSubclassMatches(counts);
+    });
+    return () => {
+      cancelled = true;
+    };
+  }, [className, resolvedVariants]);
 
   const variants = resolvedVariants;
 
@@ -373,6 +393,39 @@ export function useClassDetailPage(classId: string) {
     [cls, active],
   );
 
+  const handleUnloadSubclassSource = useCallback(
+    async (codes: string[], label: string) => {
+      if (!cls) return;
+      setLoadingSubclassSource(label);
+      try {
+        // Clear the selection first so the URL-driven loader does not reload the source.
+        if (activeSubclass && codes.includes(activeSubclass.source)) {
+          setActiveSubclassId("");
+          setUrlSubclass(null);
+        }
+        await unloadClassUaSources(codes);
+        // Keep it offered in the add list even if the scan never visited it.
+        setSubclassMatches((prev) => {
+          const next = new Map(prev);
+          for (const code of codes) {
+            const count = loadedSubclassMatches.get(code);
+            if (count) next.set(code, count);
+          }
+          return next;
+        });
+        const byName = await getClassesByName(cls.name);
+        setResolvedVariants(byName.length > 0 ? sortClassVariants(byName) : [cls]);
+        toast.success(`Removed ${label}`);
+      } catch {
+        toast.error(`Could not remove ${label}`);
+      } finally {
+        setLoadingSubclassSource(null);
+        setUnloadedSubclassSources(await getUnloadedSubclassSourceCodes());
+      }
+    },
+    [cls, activeSubclass, loadedSubclassMatches, setUrlSubclass],
+  );
+
   const scanSubclassSources = useCallback(() => {
     if (!cls || scanState !== "idle" || unloadedSubclassSources.length === 0) {
       return;
@@ -401,27 +454,40 @@ export function useClassDetailPage(classId: string) {
       const codes = unloadedSubclassSources.filter((code) =>
         subclassMatches.has(code),
       );
+      // Never offer to remove a source that supplies one of the class versions.
+      const classSources = new Set(
+        variants.flatMap((v) => [v.source, ...(v.variantSources ?? [])]),
+      );
+      const loadedCodes = [...loadedSubclassMatches.keys()].filter(
+        (code) => !classSources.has(code),
+      );
       return {
         visible:
           loadingSubclassSource != null ||
           codes.length > 0 ||
+          loadedCodes.length > 0 ||
           (unloadedSubclassSources.length > 0 && scanState !== "done"),
         codes,
-        counts: subclassMatches,
+        loadedCodes,
+        counts: new Map([...subclassMatches, ...loadedSubclassMatches]),
         scanProgress,
         loadingLabel: loadingSubclassSource,
         onOpen: scanSubclassSources,
         onLoad: handleLoadSubclassSource,
+        onUnload: handleUnloadSubclassSource,
       };
     },
     [
       unloadedSubclassSources,
       subclassMatches,
+      loadedSubclassMatches,
+      variants,
       scanState,
       scanProgress,
       loadingSubclassSource,
       scanSubclassSources,
       handleLoadSubclassSource,
+      handleUnloadSubclassSource,
     ],
   );
 

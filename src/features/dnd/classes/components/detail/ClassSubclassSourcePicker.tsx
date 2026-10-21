@@ -1,5 +1,5 @@
 import { memo, useMemo, useState } from "react";
-import { Loader2, Plus } from "lucide-react";
+import { Loader2, Settings2, X } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import {
   Command,
@@ -35,7 +35,16 @@ export const ClassSubclassSourcePicker = memo(function ClassSubclassSourcePicker
   controls,
   bookNames,
 }: ClassSubclassSourcePickerProps) {
-  const { codes, counts, scanProgress, loadingLabel, onOpen, onLoad } = controls;
+  const {
+    codes,
+    loadedCodes,
+    counts,
+    scanProgress,
+    loadingLabel,
+    onOpen,
+    onLoad,
+    onUnload,
+  } = controls;
   const [open, setOpen] = useState(false);
   const catalog = useSourceCatalog();
 
@@ -50,6 +59,57 @@ export const ClassSubclassSourcePicker = memo(function ClassSubclassSourcePicker
       })),
     );
   }, [codes, catalog, bookNames]);
+
+  const loadedOptions = useMemo((): ListFilterOption[] => {
+    const { groups } = buildSourceFilterSectionOptions(
+      loadedCodes,
+      catalog,
+      bookNames,
+    );
+    return groups.flatMap((kind) =>
+      (kind.groups ?? []).flatMap((year) => year.options),
+    );
+  }, [loadedCodes, catalog, bookNames]);
+
+  function renderOption(
+    { value, label, aliases }: ListFilterOption,
+    loaded: boolean,
+  ) {
+    const optionCodes = [value, ...(aliases ?? [])];
+    const count = Math.max(...optionCodes.map((code) => counts.get(code) ?? 0));
+    return (
+      <CommandItem
+        key={value}
+        value={`${label} ${optionCodes.join(" ")}`}
+        onSelect={() => {
+          setOpen(false);
+          if (loaded) onUnload(optionCodes, label);
+          else onLoad(optionCodes, label);
+        }}
+        className="flex-col items-start gap-0.5 py-2"
+      >
+        <span className="flex w-full items-start gap-2">
+          <span className="min-w-0 flex-1 whitespace-normal break-words text-sm font-medium leading-snug text-foreground">
+            {label}
+          </span>
+          {loaded && (
+            <span className="flex shrink-0 items-center gap-1 text-[11px] text-muted-foreground">
+              <X className="h-3 w-3" />
+              Remove
+            </span>
+          )}
+        </span>
+        <span className="flex w-full items-center gap-2 text-[11px] text-muted-foreground">
+          <span className="min-w-0 truncate">{value}</span>
+          {count > 0 && (
+            <span className="ml-auto shrink-0">
+              {count} subclass{count === 1 ? "" : "es"}
+            </span>
+          )}
+        </span>
+      </CommandItem>
+    );
+  }
 
   function handleOpenChange(next: boolean) {
     setOpen(next);
@@ -69,9 +129,14 @@ export const ClassSubclassSourcePicker = memo(function ClassSubclassSourcePicker
           {loadingLabel ? (
             <Loader2 className="h-3 w-3 animate-spin" />
           ) : (
-            <Plus className="h-3 w-3" />
+            <Settings2 className="h-3 w-3" />
           )}
-          Add source
+          Manage sources
+          {loadedCodes.length > 0 && (
+            <span className="text-[10px] text-muted-foreground/80">
+              · {loadedOptions.length} loaded
+            </span>
+          )}
         </Button>
       </PopoverTrigger>
       <PopoverContent align="end" className="w-96 max-w-[calc(100vw-2rem)] p-0">
@@ -92,37 +157,14 @@ export const ClassSubclassSourcePicker = memo(function ClassSubclassSourcePicker
                 ? "No match yet…"
                 : "No other source adds subclasses for this class."}
             </CommandEmpty>
+            {loadedOptions.length > 0 && (
+              <CommandGroup heading="Loaded sources">
+                {loadedOptions.map((option) => renderOption(option, true))}
+              </CommandGroup>
+            )}
             {sections.map(({ id, heading, options }) => (
-              <CommandGroup key={id} heading={heading}>
-                {options.map(({ value, label, aliases }) => {
-                  const optionCodes = [value, ...(aliases ?? [])];
-                  const count = Math.max(
-                    ...optionCodes.map((code) => counts.get(code) ?? 0),
-                  );
-                  return (
-                    <CommandItem
-                      key={value}
-                      value={`${label} ${optionCodes.join(" ")}`}
-                      onSelect={() => {
-                        setOpen(false);
-                        onLoad(optionCodes, label);
-                      }}
-                      className="flex-col items-start gap-0.5 py-2"
-                    >
-                      <span className="w-full whitespace-normal break-words text-sm font-medium leading-snug text-foreground">
-                        {label}
-                      </span>
-                      <span className="flex w-full items-center gap-2 text-[11px] text-muted-foreground">
-                        <span className="min-w-0 truncate">{value}</span>
-                        {count > 0 && (
-                          <span className="ml-auto shrink-0">
-                            {count} subclass{count === 1 ? "" : "es"}
-                          </span>
-                        )}
-                      </span>
-                    </CommandItem>
-                  );
-                })}
+              <CommandGroup key={id} heading={`Add · ${heading}`}>
+                {options.map((option) => renderOption(option, false))}
               </CommandGroup>
             ))}
           </CommandList>
