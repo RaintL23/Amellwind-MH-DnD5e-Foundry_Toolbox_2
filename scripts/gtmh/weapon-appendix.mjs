@@ -432,10 +432,38 @@ function buildWeaponRecord(block) {
   return { item, optionalFeatures };
 }
 
+// The chapter 3 "Armor & Weapon Pricing" table is the only place with the full
+// cost/weight of every weapon (Appendix B omits prices or lists only one piece,
+// e.g. "Lance: 20 gp" + "Shield: 20 gp").
+const PRICING_NAME_ALIASES = {
+  "wired knuckles": "wire knuckles",
+  "sword & shield": "sword and shield",
+};
+
+function parseWeaponPricingTable() {
+  const section = readRawDumpSection(
+    "Armor & Weapon Pricing",
+    "Armor Cost Armour Class (AC) Strength Stealth Weight",
+  );
+  const byName = new Map();
+  for (const line of section.split("\n")) {
+    const row = line.trim().match(/^(.+?)\s+(\d+)\s*gp\s.*?(\d+(?:\.\d+)?)\s*lb\./i);
+    if (!row) continue;
+    const name = row[1].trim().toLowerCase();
+    byName.set(PRICING_NAME_ALIASES[name] ?? name, {
+      value: Number(row[2]) * 100,
+      weight: Number(row[3]),
+    });
+  }
+  return byName;
+}
+
 let cached = null;
 
 export function parseWeaponAppendix() {
   if (cached) return cached;
+
+  const pricing = parseWeaponPricingTable();
 
   const section = readRawDumpSection(
     "Appendix B: Monster Hunter Weapons",
@@ -447,6 +475,8 @@ export function parseWeaponAppendix() {
 
   for (const block of blocks) {
     const parsed = buildWeaponRecord(block);
+    const price = pricing.get(block.name.toLowerCase());
+    if (price) Object.assign(parsed.item, price);
     items.push(parsed.item);
     optionalFeatures.push(...parsed.optionalFeatures);
   }

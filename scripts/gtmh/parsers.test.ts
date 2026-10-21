@@ -88,6 +88,14 @@ describe("gtmh parsers", () => {
     expect(wire.property).toContain("L");
     expect(wire.value).toBe(3000);
 
+    // Cost/weight come from the chapter 3 pricing table, not Appendix B.
+    const byName = new Map(weapons.map((w) => [w.name, w]));
+    expect(weapons.every((w) => w.value > 0)).toBe(true);
+    expect(byName.get("Charge Blade").value).toBe(3000);
+    expect(byName.get("Magnet Spike").value).toBe(3500);
+    expect(byName.get("Lance").value).toBe(4000);
+    expect(byName.get("Lance").weight).toBe(12);
+
     const mapped = mapWeapon(wire);
     expect(mapped.rarityRows.map((r) => r.rarity)).toEqual([
       "Common",

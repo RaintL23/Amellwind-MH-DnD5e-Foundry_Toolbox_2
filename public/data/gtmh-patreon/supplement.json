@@ -73,7 +73,7 @@
       "type": "HW",
       "rarity": "none",
       "weight": 7,
-      "value": 0,
+      "value": 3000,
       "property": [
         "2H",
         "H",
@@ -147,8 +147,8 @@
       "source": "AGMH",
       "type": "HW",
       "rarity": "none",
-      "weight": 2,
-      "value": 1500,
+      "weight": 4,
+      "value": 3000,
       "property": [
         "L",
         "F"
@@ -275,8 +275,8 @@
       "source": "AGMH",
       "type": "HW",
       "rarity": "none",
-      "weight": 6,
-      "value": 3000,
+      "weight": 12,
+      "value": 5000,
       "property": [
         "R"
       ],
@@ -537,8 +537,8 @@
       "source": "AGMH",
       "type": "HW",
       "rarity": "none",
-      "weight": 6,
-      "value": 2000,
+      "weight": 12,
+      "value": 4000,
       "property": [
         "R",
         "V"
@@ -671,7 +671,7 @@
       "type": "HW",
       "rarity": "none",
       "weight": 7,
-      "value": 0,
+      "value": 3500,
       "property": [
         "2H",
         "H"
@@ -798,8 +798,8 @@
       "source": "AGMH",
       "type": "HW",
       "rarity": "none",
-      "weight": 0,
-      "value": 0,
+      "weight": 4,
+      "value": 3000,
       "property": [
         "L",
         "F"
@@ -865,7 +865,7 @@
       "type": "HW",
       "rarity": "none",
       "weight": 7,
-      "value": 0,
+      "value": 3000,
       "property": [
         "2H",
         "H",
@@ -931,8 +931,8 @@
       "source": "AGMH",
       "type": "HW",
       "rarity": "none",
-      "weight": 2,
-      "value": 1000,
+      "weight": 8,
+      "value": 2000,
       "property": [
         "L",
         "F"
@@ -1001,7 +1001,7 @@
       "source": "AGMH",
       "type": "HW",
       "rarity": "none",
-      "weight": 4,
+      "weight": 6,
       "value": 2500,
       "property": [
         "L"
@@ -1133,8 +1133,8 @@
       "source": "AGMH",
       "type": "HW",
       "rarity": "none",
-      "weight": 0,
-      "value": 0,
+      "weight": 8,
+      "value": 4000,
       "property": [
         "2H",
         "T"
