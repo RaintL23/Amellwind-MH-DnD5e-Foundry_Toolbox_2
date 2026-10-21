@@ -3,10 +3,13 @@ import type {
   AbilityScores,
   BuilderMulticlassEntry,
   BuilderMulticlassClassSlot,
+  BuilderMulticlassSpellSlot,
   BuilderMulticlassSubclassSlot,
   Class,
   CharacterSelectionRef,
+  Subclass,
 } from "@/shared/types";
+import { subclassesForClassVariant } from "@/features/dnd/classes/utils/class-subclass.utils";
 import {
   getFixedHpPerLevel,
   parseHitDieFaces,
@@ -14,19 +17,12 @@ import {
 } from "./character-hit-points";
 import { formatModifier } from "@/shared/utils/cr.utils";
 import { ABILITY_NAMES } from "@/shared/constants/dnd";
+import { formatMulticlassRequirements } from "@/features/dnd/classes/mappers/class-multiclass.mapper";
+import { getClassAsiLevels } from "./builder-class.utils";
 import {
-  MULTICLASS_SPELL_SLOTS,
-  getMulticlassCasterLevel as getSharedMulticlassCasterLevel,
-  getMulticlassSpellSlotCounts as getSharedMulticlassSpellSlotCounts,
-  getMulticlassSpellSlotLevels as getSharedMulticlassSpellSlotLevels,
-  hasMultipleSpellcastingClasses as hasSharedMultipleSpellcastingClasses,
-  type MulticlassCasterEntry,
-} from "@/shared/utils/multiclass-spell-slots.utils";
-
-export { MULTICLASS_SPELL_SLOTS };
-
-const STANDARD_ASI_LEVELS = [4, 8, 12, 16, 19] as const;
-const FIGHTER_BONUS_ASI_CLASS_LEVELS = [6, 14] as const;
+  resolveOptionalFeatureProgressions,
+  type ResolvedOptionalFeatureProgression,
+} from "./class-optional-features.utils";
 
 const ABILITY_LABELS: Record<AbilityKey, string> = ABILITY_NAMES;
 
@@ -72,6 +68,80 @@ export function toMulticlassSubclassSlot(
   index: number,
 ): BuilderMulticlassSubclassSlot {
   return `multiclass-subclass-${index}`;
+}
+
+const MULTICLASS_SPELL_SLOT_RE = /^multiclass-(\d+):(.+)$/;
+
+export function toMulticlassSpellSlot(
+  index: number,
+  innerSlot: string,
+): BuilderMulticlassSpellSlot {
+  return `multiclass-${index}:${innerSlot}`;
+}
+
+export function isMulticlassSpellSlot(
+  slot: string | null,
+): slot is BuilderMulticlassSpellSlot {
+  return typeof slot === "string" && MULTICLASS_SPELL_SLOT_RE.test(slot);
+}
+
+/** Splits `multiclass-<i>:<inner>` into the entry index and its inner spell slot. */
+export function parseMulticlassSpellSlot(
+  slot: BuilderMulticlassSpellSlot,
+): { index: number; innerSlot: string } {
+  const match = MULTICLASS_SPELL_SLOT_RE.exec(slot);
+  return match
+    ? { index: Number(match[1]), innerSlot: match[2] }
+    : { index: -1, innerSlot: "" };
+}
+
+// ─── Additional class context ───────────────────────────────────────────────
+
+/** Loaded data of one additional class, resolved at its own class level. */
+export interface MulticlassEntryContext {
+  index: number;
+  entry: BuilderMulticlassEntry;
+  classData: Class;
+  subclassData: Subclass | null;
+  /** Optional-feature progressions (Fighting Style, Invocations…) at the entry level. */
+  progressions: ResolvedOptionalFeatureProgression[];
+}
+
+export function resolveSubclassData(
+  classData: Class | null,
+  subclassRef: CharacterSelectionRef | null,
+): Subclass | null {
+  if (!classData || !subclassRef) return null;
+  return (
+    subclassesForClassVariant(classData).find((sc) => sc.id === subclassRef.id) ??
+    classData.subclasses.find((sc) => sc.id === subclassRef.id) ??
+    null
+  );
+}
+
+/** Additional classes with a chosen class whose data matches the entry (stale loads skipped). */
+export function resolveMulticlassEntryContexts(
+  entries: BuilderMulticlassEntry[],
+  classData: (Class | null)[],
+): MulticlassEntryContext[] {
+  return entries.flatMap((entry, index) => {
+    const data = classData[index];
+    if (!entry.classRef || !data || data.id !== entry.classRef.id) return [];
+    const subclassData = resolveSubclassData(data, entry.subclass);
+    return [
+      {
+        index,
+        entry,
+        classData: data,
+        subclassData,
+        progressions: resolveOptionalFeatureProgressions(
+          data,
+          subclassData,
+          entry.level,
+        ),
+      },
+    ];
+  });
 }
 
 export function getPrimaryClassLevel(
@@ -144,45 +214,56 @@ export function getMulticlassPrerequisiteFailures(
 
 export interface PrerequisiteFailure {
   className: string;
-  ability: AbilityKey;
-  abilityLabel: string;
-  current: number;
-  minimum: number;
+  /** Unmet requirement, e.g. "Strength 13 or Dexterity 13". */
+  requirement: string;
+  /** Current scores of the abilities involved, e.g. "Strength 10, Dexterity 12". */
+  current: string;
 }
 
+function meetsRequirementGroup(
+  group: Partial<Record<AbilityKey, number>>,
+  abilityScores: AbilityScores,
+): boolean {
+  return (Object.entries(group) as [AbilityKey, number][]).every(
+    ([ability, minimum]) => abilityScores[ability] >= minimum,
+  );
+}
+
+/**
+ * Every class in the build (primary included) must meet its own prerequisite:
+ * any one requirement group, with all abilities in that group at the minimum.
+ */
 export function collectPrerequisiteFailures(
   classEntries: BuilderClassLevelEntry[],
   abilityScores: AbilityScores,
 ): PrerequisiteFailure[] {
   const failures: PrerequisiteFailure[] = [];
-  const active = classEntries.filter((e) => e.classRef && e.classData);
 
-  for (const entry of active) {
-    const reqs = entry.classData!.multiclassRequirements;
-    if (!reqs) continue;
-
-    for (const [ability, minimum] of Object.entries(reqs) as [
-      AbilityKey,
-      number,
-    ][]) {
-      const current = abilityScores[ability];
-      if (current < minimum) {
-        failures.push({
-          className: entry.classData!.name,
-          ability,
-          abilityLabel: ABILITY_LABELS[ability],
-          current,
-          minimum,
-        });
-      }
+  for (const entry of classEntries) {
+    if (!entry.classRef || !entry.classData) continue;
+    const groups = entry.classData.multiclassRequirements;
+    if (!groups?.length) continue;
+    if (groups.some((group) => meetsRequirementGroup(group, abilityScores))) {
+      continue;
     }
+
+    const abilities = [
+      ...new Set(groups.flatMap((g) => Object.keys(g) as AbilityKey[])),
+    ];
+    failures.push({
+      className: entry.classData.name,
+      requirement: formatMulticlassRequirements(groups),
+      current: abilities
+        .map((ability) => `${ABILITY_LABELS[ability]} ${abilityScores[ability]}`)
+        .join(", "),
+    });
   }
 
   return failures;
 }
 
 function formatPrerequisiteFailureLine(failure: PrerequisiteFailure): string {
-  return `${failure.className}: ${failure.abilityLabel} ${failure.current} (min. ${failure.minimum})`;
+  return `${failure.className}: needs ${failure.requirement} (you have ${failure.current})`;
 }
 
 /** User-facing summary for library disabled rows. */
@@ -190,10 +271,7 @@ export function formatPrerequisiteFailureReason(
   failures: PrerequisiteFailure[],
 ): string {
   if (!failures.length) return "";
-  const parts = failures.map(
-    (f) => `${f.abilityLabel} ${f.minimum} (you have ${f.current})`,
-  );
-  return `Prerequisites not met: ${parts.join(", ")}`;
+  return `Prerequisites not met: ${failures.map(formatPrerequisiteFailureLine).join("; ")}`;
 }
 
 export function getMulticlassCandidatePrerequisiteFailures(
@@ -248,38 +326,6 @@ export function buildCurrentClassesForMulticlassPicker(
   });
 
   return entries;
-}
-
-function toCasterEntries(
-  classEntries: BuilderClassLevelEntry[],
-): MulticlassCasterEntry[] {
-  return classEntries.map((entry) => ({
-    classData: entry.classData,
-    level: entry.level,
-    subclassName: entry.subclass?.name ?? null,
-  }));
-}
-
-export function getMulticlassCasterLevel(
-  classEntries: BuilderClassLevelEntry[],
-): number {
-  return getSharedMulticlassCasterLevel(toCasterEntries(classEntries));
-}
-
-export function getMulticlassSpellSlotLevels(casterLevel: number): number[] {
-  return getSharedMulticlassSpellSlotLevels(casterLevel);
-}
-
-export function getMulticlassSpellSlotCounts(
-  casterLevel: number,
-): Record<number, number> {
-  return getSharedMulticlassSpellSlotCounts(casterLevel);
-}
-
-export function hasMultipleSpellcastingClasses(
-  classEntries: BuilderClassLevelEntry[],
-): boolean {
-  return hasSharedMultipleSpellcastingClasses(toCasterEntries(classEntries));
 }
 
 export interface MulticlassHitDicePool {
@@ -367,37 +413,34 @@ export function getMulticlassHitPointBreakdown(
   };
 }
 
+/**
+ * Feat/ASI slots (as character levels) for a multiclass build. ASIs are class
+ * features, so each class grants them at its own class levels; character
+ * levels follow {@link buildLevelOrder}.
+ */
 export function getFeatSlotLevelsForBuild(
   classEntries: BuilderClassLevelEntry[],
   totalLevel: number,
 ): number[] {
   const levelOrder = buildLevelOrder(classEntries);
-  const slots = new Set<number>();
-
-  for (const asiLevel of STANDARD_ASI_LEVELS) {
-    if (asiLevel <= totalLevel) slots.add(asiLevel);
-  }
-
-  const fighterIndex = classEntries.findIndex(
-    (e) => e.classData?.name.toLowerCase() === "fighter",
+  const classLevels = classEntries.map(() => 0);
+  const asiLevels = classEntries.map((e) =>
+    getClassAsiLevels(e.classData?.name ?? e.classRef?.name ?? ""),
   );
-  if (fighterIndex >= 0) {
-    let fighterLevel = 0;
-    for (let charLevel = 1; charLevel <= levelOrder.length; charLevel++) {
-      if (levelOrder[charLevel - 1] === fighterIndex) {
-        fighterLevel++;
-        if (
-          (FIGHTER_BONUS_ASI_CLASS_LEVELS as readonly number[]).includes(
-            fighterLevel,
-          )
-        ) {
-          slots.add(charLevel);
-        }
-      }
+  const slots: number[] = [];
+
+  const maxLevel = Math.min(totalLevel, levelOrder.length);
+  for (let charLevel = 1; charLevel <= maxLevel; charLevel++) {
+    const classIndex = levelOrder[charLevel - 1];
+    classLevels[classIndex] += 1;
+    // Empty "Class N" rows have no features yet.
+    if (!classEntries[classIndex].classRef) continue;
+    if (asiLevels[classIndex].includes(classLevels[classIndex])) {
+      slots.push(charLevel);
     }
   }
 
-  return [...slots].sort((a, b) => a - b);
+  return slots;
 }
 
 export function createEmptyMulticlassEntry(): BuilderMulticlassEntry {

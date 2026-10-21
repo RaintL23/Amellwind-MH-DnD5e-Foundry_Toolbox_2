@@ -31,10 +31,18 @@ export type BuilderMulticlassClassSlot = `multiclass-class-${number}`;
 /** Subclass slot for an additional multiclass entry. */
 export type BuilderMulticlassSubclassSlot = `multiclass-subclass-${number}`;
 
+/**
+ * Spell picker slot of an additional class: `multiclass-<index>:<inner slot>`
+ * where the inner slot is a regular spell picker slot (e.g. `spell-level-1`).
+ */
+export type BuilderMulticlassSpellSlot = `multiclass-${number}:${string}`;
+
 export interface BuilderMulticlassEntry {
   classRef: CharacterSelectionRef | null;
   level: number;
   subclass: CharacterSelectionRef | null;
+  /** Spells known/prepared for this class (same shape as the primary class). */
+  spellSelections?: BuilderSpellSelections;
 }
 
 /** Origin Feat granted by an optional feature (e.g. Eldritch Invocation). */

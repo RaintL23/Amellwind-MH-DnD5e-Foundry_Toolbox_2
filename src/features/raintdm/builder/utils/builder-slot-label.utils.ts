@@ -1,5 +1,10 @@
 import { isFeatSlotSelection, isOptionalOriginFeatSlot } from "./builder-class.utils";
-import { isMulticlassClassSlot, isMulticlassSubclassSlot } from "./multiclass.utils";
+import {
+  isMulticlassClassSlot,
+  isMulticlassSpellSlot,
+  isMulticlassSubclassSlot,
+  parseMulticlassSpellSlot,
+} from "./multiclass.utils";
 import { isBonusSpellPoolSlot } from "./cantrip-pools.utils";
 import {
   isOptionalFeatureSlot,
@@ -16,6 +21,10 @@ export function formatBuilderSlotLabel(
   progressionNames?: Readonly<Record<string, string>>,
 ): string {
   if (!slot) return "Slot";
+  if (isMulticlassSpellSlot(slot)) {
+    const { index, innerSlot } = parseMulticlassSpellSlot(slot);
+    return `Class ${index + 2} · ${formatBuilderSlotLabel(innerSlot)}`;
+  }
   if (slot === "mainHand") return "Main Hand";
   if (slot === "offHand") return "Off Hand";
   if (slot === "origin-feat" || isOptionalOriginFeatSlot(slot)) {

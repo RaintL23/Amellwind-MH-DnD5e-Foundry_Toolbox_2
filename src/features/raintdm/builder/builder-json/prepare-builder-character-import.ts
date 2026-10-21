@@ -429,6 +429,9 @@ export async function prepareBuilderCharacterImport(
           ...entry,
           classRef: cls.ref,
           subclass: relinkSubclass(`${label} subclass`, entry.subclass, cls.data, warn),
+          ...(entry.spellSelections
+            ? { spellSelections: await relinkSpells(entry.spellSelections, warn) }
+            : {}),
         };
       }),
     ),

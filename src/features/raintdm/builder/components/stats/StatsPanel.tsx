@@ -171,7 +171,7 @@ export function StatsPanel() {
             ? {
                 title: "Disable multiclass?",
                 description:
-                  "Additional class entries will be cleared and total level stays on your primary class.",
+                  "Additional classes and their levels are removed. Your character keeps its levels in the first class.",
                 confirmLabel: "Disable multiclass",
               }
               : null;
@@ -256,7 +256,7 @@ export function StatsPanel() {
                     disabled={multiclassEnabled}
                     title={
                       multiclassEnabled
-                        ? "Adjust levels in the multiclass section below"
+                        ? "Adjust each class level in Class progression below"
                         : undefined
                     }
                   />
@@ -327,9 +327,9 @@ export function StatsPanel() {
                     Multiclass
                   </Label>
                   <p className="text-[10px] leading-snug text-muted-foreground">
-                    Split your total level across two or more classes (D&amp;D
-                    5e rules). An advanced option — most first characters use
-                    a single class.
+                    Take levels in two or more classes (D&amp;D 5e rules); your
+                    total level is their sum. An advanced option — most first
+                    characters use a single class.
                   </p>
                 </div>
               </div>

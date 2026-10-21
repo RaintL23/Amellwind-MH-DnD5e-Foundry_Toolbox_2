@@ -1,10 +1,14 @@
 import {
-  getFeatSlotLevels,
   isAsiFeatSelection,
   isSubclassLevelReached,
   toFeatSlot,
   toOptionalOriginFeatSlot,
 } from "../builder-class.utils";
+import {
+  resolveMulticlassEntryContexts,
+  toMulticlassClassSlot,
+  toMulticlassSubclassSlot,
+} from "../multiclass.utils";
 import {
   getProgressionPicks,
   resolveOptionalFeatureProgressions,
@@ -15,7 +19,11 @@ import {
 } from "../origin-feat.constants";
 import { areFeatAbilityIncreaseChoicesComplete } from "../feat-ability-increase-choices.utils";
 import type { BuildCompletenessInput, BuildCompletenessIssue } from "../build-completeness.types";
-import { isAsiChoicesComplete } from "./helpers";
+import {
+  getCompletenessFeatSlotLevels,
+  getCompletenessPrimaryLevel,
+  isAsiChoicesComplete,
+} from "./helpers";
 import {
   findSpeciesTraitChoiceGaps,
   speciesTraitsForCreationChoices,
@@ -60,7 +68,7 @@ export function evaluateIdentityCompleteness(
 
   if (
     input.classData &&
-    isSubclassLevelReached(input.classData, input.level) &&
+    isSubclassLevelReached(input.classData, getCompletenessPrimaryLevel(input)) &&
     !input.subclass
   ) {
     issues.push({
@@ -71,6 +79,35 @@ export function evaluateIdentityCompleteness(
       highlightKey: "subclass",
     });
   }
+
+  (input.multiclassEntries ?? []).forEach((entry, index) => {
+    if (!entry.classRef) {
+      const slot = toMulticlassClassSlot(index);
+      issues.push({
+        id: `identity-multiclass-class-${index}`,
+        section: "identity",
+        message: `Choose class ${index + 2}`,
+        slot,
+        highlightKey: slot,
+      });
+      return;
+    }
+    const entryClassData = input.multiclassClassData?.[index] ?? null;
+    if (
+      entryClassData &&
+      !entry.subclass &&
+      isSubclassLevelReached(entryClassData, entry.level)
+    ) {
+      const slot = toMulticlassSubclassSlot(index);
+      issues.push({
+        id: `identity-multiclass-subclass-${index}`,
+        section: "identity",
+        message: `Choose a ${entryClassData.subclassTitle ?? "subclass"} for ${entry.classRef.name}`,
+        slot,
+        highlightKey: slot,
+      });
+    }
+  });
 
   if (input.species && input.speciesSubraceMissing) {
     issues.push({
@@ -127,10 +164,7 @@ export function evaluateFeatsCompleteness(
   }
 
   if (input.classSelection) {
-    const featSlotLevels = getFeatSlotLevels(
-      input.classSelection.name,
-      input.level,
-    );
+    const featSlotLevels = getCompletenessFeatSlotLevels(input);
     featSlotLevels.forEach((featLevel, index) => {
       const feat = input.featSelections[index];
       if (feat) {
@@ -187,21 +221,35 @@ export function evaluateFeatsCompleteness(
     });
   });
 
-  const optionalProgressions = resolveOptionalFeatureProgressions(
-    input.classData,
-    input.subclassData,
-    input.level,
-  );
-  for (const { progression, slotCount } of optionalProgressions) {
-    const picks = getProgressionPicks(input.optionalFeatureSelections, progression.id);
-    if (picks.length >= slotCount) continue;
-    issues.push({
-      id: `optional-feature-${progression.id}`,
-      section: "optional-features",
-      message: `Choose ${slotCount - picks.length} more ${progression.name.replace(/ Options$/i, "")} option${slotCount - picks.length === 1 ? "" : "s"} (${picks.length}/${slotCount})`,
-      slot: toOptionalFeatureSlot(progression.id),
-      highlightKey: toOptionalFeatureSlot(progression.id),
-    });
+  const optionalOwners = [
+    {
+      prefix: "",
+      progressions: resolveOptionalFeatureProgressions(
+        input.classData,
+        input.subclassData,
+        getCompletenessPrimaryLevel(input),
+      ),
+    },
+    ...resolveMulticlassEntryContexts(
+      input.multiclassEntries ?? [],
+      input.multiclassClassData ?? [],
+    ).map((ctx) => ({
+      prefix: `${ctx.classData.name}: `,
+      progressions: ctx.progressions,
+    })),
+  ];
+  for (const { prefix, progressions } of optionalOwners) {
+    for (const { progression, slotCount } of progressions) {
+      const picks = getProgressionPicks(input.optionalFeatureSelections, progression.id);
+      if (picks.length >= slotCount) continue;
+      issues.push({
+        id: `optional-feature-${progression.id}`,
+        section: "optional-features",
+        message: `${prefix}Choose ${slotCount - picks.length} more ${progression.name.replace(/ Options$/i, "")} option${slotCount - picks.length === 1 ? "" : "s"} (${picks.length}/${slotCount})`,
+        slot: toOptionalFeatureSlot(progression.id),
+        highlightKey: toOptionalFeatureSlot(progression.id),
+      });
+    }
   }
 
   return issues;

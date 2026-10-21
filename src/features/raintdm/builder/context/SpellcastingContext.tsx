@@ -4,34 +4,40 @@ import {
   useMemo,
   type ReactNode,
 } from "react";
+import type { Class, Subclass } from "@/shared/types";
 import { useCharacterBuilder } from "./CharacterBuilderContext";
 import { useSelectedClass, useSelectedSubclass } from "../hooks/useBuilderSelections";
-import { useOptionalFeatureSpellGrants } from "../hooks/useOptionalFeatureSpellGrants";
 import { useCantripPoolCatalogs } from "../hooks/useCantripPools";
 import { useEffectiveAbilityScores } from "../hooks/useEffectiveAbilityScores";
 import {
-  useSpellcasting,
+  computeSpellcasting,
   type SpellcastingInfo,
 } from "../hooks/useSpellcasting";
-import {
-  buildClassLevelEntries,
-} from "../utils/multiclass.utils";
 import { resolveOptionalFeatureProgressions } from "../utils/class-optional-features.utils";
 import {
   resolveBonusCantripPools,
   type CantripPoolDefinition,
 } from "../utils/cantrip-pools.utils";
+import { resolveClassOptionalFeatureSpellGrants } from "../utils/optional-feature-spells.utils";
 import type { SubclassSpellGrant } from "../utils/subclass-spells.utils";
+
+/** Spellcasting of one additional class (multiclass entry). */
+export interface MulticlassSpellcastingInfo {
+  /** Index in `multiclassEntries`. */
+  index: number;
+  classData: Class;
+  subclassData: Subclass | null;
+  spellcasting: SpellcastingInfo;
+}
 
 export interface SpellcastingContextValue {
   optionalFeatureSpellGrants: SubclassSpellGrant[];
   bonusCantripPools: CantripPoolDefinition[];
-  primaryBonusCantripPools: CantripPoolDefinition[];
   cantripPoolsReady: boolean;
-  /** Completeness, export, and general builder use (character level). */
+  /** Primary class spellcasting at its class level (picker, completeness, export). */
   spellcasting: SpellcastingInfo;
-  /** Center panel spell picker (primary class level + multiclass progression). */
-  centerPanelSpellcasting: SpellcastingInfo;
+  /** One entry per additional class with loaded data, each at its own class level. */
+  multiclassSpellcasting: MulticlassSpellcastingInfo[];
 }
 
 const SpellcastingContext = createContext<SpellcastingContextValue | null>(null);
@@ -41,13 +47,7 @@ export function SpellcastingProvider({ children }: Readonly<{ children: ReactNod
   const { classData } = useSelectedClass();
   const subclassData = useSelectedSubclass();
   const effectiveAbilities = useEffectiveAbilityScores();
-
-  const optionalFeatureSpellGrants = useOptionalFeatureSpellGrants(
-    builder.optionalFeatureSelections ?? {},
-    builder.character.level,
-    classData,
-    subclassData,
-  );
+  const optionalFeatureSelections = builder.optionalFeatureSelections ?? {};
 
   const cantripPoolOptions = useMemo(
     () => ({
@@ -69,17 +69,9 @@ export function SpellcastingProvider({ children }: Readonly<{ children: ReactNod
   const { optionalCatalog, featCatalog, ready: cantripPoolsReady } =
     useCantripPoolCatalogs();
 
+  // Multiclass: spells known/prepared are chosen per class "as if single-classed",
+  // so the primary class progression uses its own class level.
   const progressions = useMemo(
-    () =>
-      resolveOptionalFeatureProgressions(
-        classData,
-        subclassData,
-        builder.character.level,
-      ).map((entry) => entry.progression),
-    [classData, subclassData, builder.character.level],
-  );
-
-  const primaryProgressions = useMemo(
     () =>
       resolveOptionalFeatureProgressions(
         classData,
@@ -89,35 +81,27 @@ export function SpellcastingProvider({ children }: Readonly<{ children: ReactNod
     [classData, subclassData, builder.primaryClassLevel],
   );
 
+  const optionalFeatureSpellGrants = useMemo(
+    () =>
+      resolveClassOptionalFeatureSpellGrants(
+        optionalFeatureSelections,
+        progressions,
+        optionalCatalog,
+        builder.primaryClassLevel,
+      ),
+    [
+      optionalFeatureSelections,
+      progressions,
+      optionalCatalog,
+      builder.primaryClassLevel,
+    ],
+  );
+
   const bonusCantripPools = useMemo(() => {
     if (!cantripPoolsReady) return [];
     return resolveBonusCantripPools({
-      optionalFeatureSelections: builder.optionalFeatureSelections ?? {},
+      optionalFeatureSelections,
       progressions,
-      optionalCatalog,
-      featCatalog,
-      classData,
-      subclass: subclassData,
-      level: builder.character.level,
-      ...cantripPoolOptions,
-    });
-  }, [
-    cantripPoolsReady,
-    builder.optionalFeatureSelections,
-    progressions,
-    optionalCatalog,
-    featCatalog,
-    classData,
-    subclassData,
-    builder.character.level,
-    cantripPoolOptions,
-  ]);
-
-  const primaryBonusCantripPools = useMemo(() => {
-    if (!cantripPoolsReady) return [];
-    return resolveBonusCantripPools({
-      optionalFeatureSelections: builder.optionalFeatureSelections ?? {},
-      progressions: primaryProgressions,
       optionalCatalog,
       featCatalog,
       classData,
@@ -127,8 +111,8 @@ export function SpellcastingProvider({ children }: Readonly<{ children: ReactNod
     });
   }, [
     cantripPoolsReady,
-    builder.optionalFeatureSelections,
-    primaryProgressions,
+    optionalFeatureSelections,
+    progressions,
     optionalCatalog,
     featCatalog,
     classData,
@@ -137,73 +121,93 @@ export function SpellcastingProvider({ children }: Readonly<{ children: ReactNod
     cantripPoolOptions,
   ]);
 
-  const spellcasting = useSpellcasting(
-    classData,
-    subclassData,
-    builder.character.level,
-    effectiveAbilities,
-    builder.spellSelections ?? {},
-    builder.optionalFeatureSelections ?? {},
-    optionalFeatureSpellGrants,
-    builder.faction,
-    builder.character.level,
-    undefined,
-    bonusCantripPools,
-  );
-
-  const multiclassClassEntries = useMemo(
+  const spellcasting = useMemo(
     () =>
-      builder.multiclassEnabled
-        ? buildClassLevelEntries(
-            builder.class,
-            classData,
-            builder.primaryClassLevel,
-            builder.subclass,
-            builder.multiclassEntries,
-            builder.multiclassClassData,
-          )
-        : undefined,
+      computeSpellcasting(
+        classData,
+        subclassData,
+        builder.primaryClassLevel,
+        effectiveAbilities,
+        builder.spellSelections ?? {},
+        optionalFeatureSpellGrants,
+        builder.faction,
+        bonusCantripPools,
+      ),
     [
-      builder.multiclassEnabled,
-      builder.class,
       classData,
+      subclassData,
       builder.primaryClassLevel,
-      builder.subclass,
-      builder.multiclassEntries,
-      builder.multiclassClassData,
+      effectiveAbilities,
+      builder.spellSelections,
+      optionalFeatureSpellGrants,
+      builder.faction,
+      bonusCantripPools,
     ],
   );
 
-  const centerPanelSpellcasting = useSpellcasting(
-    classData,
-    subclassData,
-    builder.character.level,
-    effectiveAbilities,
-    builder.spellSelections ?? {},
-    builder.optionalFeatureSelections ?? {},
-    optionalFeatureSpellGrants,
-    builder.faction,
-    builder.primaryClassLevel,
-    multiclassClassEntries,
-    primaryBonusCantripPools,
+  // Additional classes keep their spells on the entry; feat / faction spell
+  // pools stay with the primary class.
+  const multiclassSpellcasting = useMemo(
+    () =>
+      builder.multiclassContexts.map((ctx): MulticlassSpellcastingInfo => {
+        const classProgressions = ctx.progressions.map((r) => r.progression);
+        const level = ctx.entry.level;
+        const pools = cantripPoolsReady
+          ? resolveBonusCantripPools({
+              optionalFeatureSelections,
+              progressions: classProgressions,
+              optionalCatalog,
+              featCatalog,
+              classData: ctx.classData,
+              subclass: ctx.subclassData,
+              level,
+            })
+          : [];
+        return {
+          index: ctx.index,
+          classData: ctx.classData,
+          subclassData: ctx.subclassData,
+          spellcasting: computeSpellcasting(
+            ctx.classData,
+            ctx.subclassData,
+            level,
+            effectiveAbilities,
+            ctx.entry.spellSelections ?? {},
+            resolveClassOptionalFeatureSpellGrants(
+              optionalFeatureSelections,
+              classProgressions,
+              optionalCatalog,
+              level,
+            ),
+            null,
+            pools,
+          ),
+        };
+      }),
+    [
+      builder.multiclassContexts,
+      cantripPoolsReady,
+      optionalFeatureSelections,
+      optionalCatalog,
+      featCatalog,
+      effectiveAbilities,
+    ],
   );
 
   const value = useMemo(
     (): SpellcastingContextValue => ({
       optionalFeatureSpellGrants,
       bonusCantripPools,
-      primaryBonusCantripPools,
       cantripPoolsReady,
       spellcasting,
-      centerPanelSpellcasting,
+      multiclassSpellcasting,
     }),
     [
       optionalFeatureSpellGrants,
       bonusCantripPools,
-      primaryBonusCantripPools,
       cantripPoolsReady,
       spellcasting,
-      centerPanelSpellcasting,
+      multiclassSpellcasting,
     ],
   );
 

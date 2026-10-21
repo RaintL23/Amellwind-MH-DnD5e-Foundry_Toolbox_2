@@ -321,6 +321,26 @@ export function buildCharacterProvenance({
       });
     }
   }
+  if (builder.multiclassEnabled) {
+    builder.multiclassEntries.forEach((entry, index) => {
+      if (!entry.classRef) return;
+      const className = entry.classRef.name;
+      for (const [key, selections] of Object.entries(entry.spellSelections ?? {})) {
+        const poolLevel = Number(key);
+        for (const selection of selections ?? []) {
+          spells.push({
+            id: selection.id,
+            name: selection.name,
+            level: selection.level,
+            source: selection.source,
+            grantedBy: `${className} (class ${index + 2}): ${
+              poolLevel === 0 ? "class cantrip" : "class spell"
+            }`,
+          });
+        }
+      }
+    });
+  }
   const grantedSpells = optionalFeatureSpellGrants
     .filter((grant) => grant.unlockedAtLevel <= totalLevel)
     .map((grant) => ({

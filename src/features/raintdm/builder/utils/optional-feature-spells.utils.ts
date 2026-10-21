@@ -197,3 +197,30 @@ function parseUnlockLevel(key: string, fallback: number): number {
   const n = parseInt(key, 10);
   return Number.isNaN(n) ? 1 : n;
 }
+
+/**
+ * Spells granted by one class's optional-feature picks (invocations, feature
+ * choices). Only picks of `progressions` count, so each class of a multiclass
+ * build gets its own grants.
+ */
+export function resolveClassOptionalFeatureSpellGrants(
+  optionalFeatureSelections: BuilderOptionalFeatureSelections,
+  progressions: OptionalFeatureProgression[],
+  optionalCatalog: DndOptionalFeature[],
+  classLevel: number,
+): SubclassSpellGrant[] {
+  const picks = progressions.flatMap((progression) =>
+    (optionalFeatureSelections[progression.id] ?? []).filter(
+      (pick): pick is BuilderOptionalFeatureSelection => pick !== null,
+    ),
+  );
+  return [
+    ...resolveOptionalFeatureSpells(optionalCatalog, picks, classLevel),
+    ...resolveFeatureChoiceSpellGrants(
+      optionalFeatureSelections,
+      progressions,
+      optionalCatalog,
+      classLevel,
+    ),
+  ];
+}

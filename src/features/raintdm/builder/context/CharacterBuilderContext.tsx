@@ -19,7 +19,13 @@ import {
   persistUseAmellwindHomebrew,
 } from "../storage/builder.storage";
 import { clearBuilderAutosave } from "../storage/builder-autosave.storage";
-import type { AbilityKey, AbilityScores, DndBackground } from "@/shared/types";
+import type {
+  AbilityKey,
+  AbilityScores,
+  BuilderMulticlassEntry,
+  CharacterSelectionRef,
+  DndBackground,
+} from "@/shared/types";
 import {
   composeAlignment,
   parseAlignmentAxes,
@@ -27,7 +33,13 @@ import {
   type LawChaosAxis,
 } from "../utils/alignment.utils";
 import { Character } from "../models/Character";
-import { getPrimaryClassLevel } from "../utils/multiclass.utils";
+import {
+  createEmptyMulticlassEntry,
+  getPrimaryClassLevel,
+  MAX_MULTICLASS_ENTRIES,
+  resolveMulticlassEntryContexts,
+} from "../utils/multiclass.utils";
+import { isSubclassLevelReached } from "../utils/builder-class.utils";
 import { getArtificerLevel } from "../utils/attunement.utils";
 import { getArtificerBonusMaterialSlots } from "@/shared/utils/artificer-material-slots.utils";
 import { computeEffectiveAbilityScores } from "../utils/effective-ability-scores";
@@ -46,6 +58,8 @@ import { useEquipmentSlice } from "./slices/useEquipmentSlice";
 export type { CharacterBuilderContextValue } from "./character-builder.types";
 
 const CharacterBuilderContext = createContext<CharacterBuilderContextValue | null>(null);
+
+const NO_MULTICLASS_ENTRIES: BuilderMulticlassEntry[] = [];
 
 /**
  * New builds in Simple mode start on Standard Array with every score unassigned
@@ -117,10 +131,38 @@ export function CharacterBuilderProvider({ children }: Readonly<{ children: Reac
     useAmellwindHomebrew,
   });
 
+  // Class features (optional features, spells) follow the primary class level.
+  const primaryClassLevel = identity.multiclassEnabled
+    ? getPrimaryClassLevel(character.level, identity.multiclassEntries)
+    : character.level;
+
+  const activeMulticlassEntries = identity.multiclassEnabled
+    ? identity.multiclassEntries
+    : NO_MULTICLASS_ENTRIES;
+  const multiclassContexts = useMemo(
+    () =>
+      resolveMulticlassEntryContexts(
+        activeMulticlassEntries,
+        identity.multiclassClassData,
+      ),
+    [activeMulticlassEntries, identity.multiclassClassData],
+  );
+  const multiclassProgressions = useMemo(
+    () => multiclassContexts.flatMap((ctx) => ctx.progressions),
+    [multiclassContexts],
+  );
+  const multiclassReady = activeMulticlassEntries.every(
+    (entry, i) =>
+      !entry.classRef ||
+      identity.multiclassClassData[i]?.id === entry.classRef.id,
+  );
+
   const spell = useSpellSlice({
     classData: identity.classData,
     subclass: identity.subclass,
-    characterLevel: character.level,
+    characterLevel: primaryClassLevel,
+    multiclassProgressions,
+    multiclassReady,
   });
 
   const proficiency = useProficiencySlice({
@@ -277,12 +319,15 @@ export function CharacterBuilderProvider({ children }: Readonly<{ children: Reac
     });
   }, []);
 
+  // ─── Class levels (multiclass) ──────────────────────────────────────────────
+  // Per-class levels are the source of truth; total level = primary + entries.
+
   const syncTotalLevel = useCallback(
     (primaryLevel: number, entries: typeof identity.multiclassEntries) => {
       const additional = entries.reduce((sum, e) => sum + e.level, 0);
       const total = Math.min(20, Math.max(1, primaryLevel + additional));
       setCharacter((prev) => prev.withUpdates({ level: total }));
-      identity.trimFeatSelectionsForLevel(total);
+      identity.trimFeatSelectionsForLevel(total, entries);
       return total;
     },
     [identity.trimFeatSelectionsForLevel],
@@ -300,7 +345,7 @@ export function CharacterBuilderProvider({ children }: Readonly<{ children: Reac
         return;
       }
       setCharacter((prev) => prev.withUpdates({ level }));
-      identity.trimFeatSelectionsForLevel(level);
+      identity.trimFeatSelectionsForLevel(level, []);
     },
     [
       identity.multiclassEnabled,
@@ -311,55 +356,147 @@ export function CharacterBuilderProvider({ children }: Readonly<{ children: Reac
   );
 
   const setPrimaryClassLevel = useCallback(
-    (primaryLevel: number) => {
-      syncTotalLevel(primaryLevel, identity.multiclassEntries);
+    (level: number) => {
+      const additional = identity.multiclassEntries.reduce(
+        (sum, e) => sum + e.level,
+        0,
+      );
+      const clamped = Math.max(1, Math.min(20 - additional, level));
+      syncTotalLevel(clamped, identity.multiclassEntries);
     },
     [identity.multiclassEntries, syncTotalLevel],
   );
 
   const setMulticlassEntryLevel = useCallback(
     (index: number, level: number) => {
-      const clamped = Math.max(0, Math.min(19, level));
-      const entries = identity.multiclassEntries.map((entry, i) =>
-        i === index ? { ...entry, level: clamped } : entry,
+      const current = identity.multiclassEntries[index];
+      if (!current) return;
+      const othersTotal = identity.multiclassEntries.reduce(
+        (sum, e, i) => (i === index ? sum : sum + e.level),
+        0,
+      );
+      const clamped = Math.max(
+        1,
+        Math.min(20 - primaryClassLevel - othersTotal, level),
       );
       identity.setMulticlassEntryLevel(index, clamped);
-      const primaryLevel = getPrimaryClassLevel(
-        character.level,
-        identity.multiclassEntries,
+
+      // Subclass picked at a class level the entry no longer reaches.
+      const entryClassData = identity.multiclassClassData[index];
+      if (
+        current.subclass &&
+        entryClassData &&
+        entryClassData.id === current.classRef?.id &&
+        !isSubclassLevelReached(entryClassData, clamped)
+      ) {
+        identity.setMulticlassEntrySubclass(index, null);
+      }
+
+      syncTotalLevel(
+        primaryClassLevel,
+        identity.multiclassEntries.map((entry, i) =>
+          i === index ? { ...entry, level: clamped } : entry,
+        ),
       );
-      const newTotal = Math.min(
-        20,
-        primaryLevel + entries.reduce((sum, e) => sum + e.level, 0),
-      );
-      setCharacter((prev) => prev.withUpdates({ level: newTotal }));
-      identity.trimFeatSelectionsForLevel(newTotal);
     },
     [
-      character.level,
+      primaryClassLevel,
       identity.multiclassEntries,
+      identity.multiclassClassData,
       identity.setMulticlassEntryLevel,
-      identity.trimFeatSelectionsForLevel,
+      identity.setMulticlassEntrySubclass,
+      syncTotalLevel,
+    ],
+  );
+
+  /**
+   * A new entry starts at level 1 on top of the current levels; at level 20
+   * that level comes from the primary class instead.
+   */
+  const addMulticlassEntry = useCallback(() => {
+    const entries = identity.multiclassEnabled ? identity.multiclassEntries : [];
+    if (entries.length >= MAX_MULTICLASS_ENTRIES) return;
+    const next = [...entries, createEmptyMulticlassEntry()];
+    const additional = next.reduce((sum, e) => sum + e.level, 0);
+    const primaryLevel = Math.min(primaryClassLevel, 20 - additional);
+    if (primaryLevel < 1) return;
+    identity.addMulticlassEntry();
+    syncTotalLevel(primaryLevel, next);
+  }, [
+    identity.multiclassEnabled,
+    identity.multiclassEntries,
+    identity.addMulticlassEntry,
+    primaryClassLevel,
+    syncTotalLevel,
+  ]);
+
+  // Multiclass grants are appended after the primary class grants
+  // (buildClassGrantPayload), so only those choice indices are dropped.
+  const resetMulticlassChoices = useCallback(() => {
+    proficiency.resetMulticlassChoices({
+      skill: identity.classData?.skillChoiceGrants.length ?? 0,
+      tool: identity.classData?.toolGrants.length ?? 0,
+      weapon: identity.classData?.weaponGrants.length ?? 0,
+    });
+  }, [proficiency.resetMulticlassChoices, identity.classData]);
+
+  /** Removing a class drops its levels; the other classes keep theirs. */
+  const removeMulticlassEntry = useCallback(
+    (index: number) => {
+      identity.removeMulticlassEntry(index);
+      resetMulticlassChoices();
+      syncTotalLevel(
+        primaryClassLevel,
+        identity.multiclassEntries.filter((_, i) => i !== index),
+      );
+    },
+    [
+      identity.removeMulticlassEntry,
+      identity.multiclassEntries,
+      primaryClassLevel,
+      resetMulticlassChoices,
+      syncTotalLevel,
+    ],
+  );
+
+  const setMulticlassEntryClass = useCallback(
+    (index: number, selection: CharacterSelectionRef | null) => {
+      if (identity.multiclassEntries[index]?.classRef?.id === selection?.id) {
+        return;
+      }
+      identity.setMulticlassEntryClass(index, selection);
+      resetMulticlassChoices();
+    },
+    [
+      identity.multiclassEntries,
+      identity.setMulticlassEntryClass,
+      resetMulticlassChoices,
     ],
   );
 
   const setMulticlassEnabled = useCallback(
     (enabled: boolean) => {
-      identity.setMulticlassEnabled(enabled);
-      if (enabled && identity.multiclassEntries.length === 0) {
-        identity.addMulticlassEntry();
+      if (enabled) {
+        if (identity.multiclassEnabled) return;
+        identity.setMulticlassEnabled(true);
+        addMulticlassEntry();
+        return;
       }
+      // The primary class keeps its levels; additional class levels are dropped.
+      identity.setMulticlassEnabled(false);
+      resetMulticlassChoices();
+      setCharacter((prev) => prev.withUpdates({ level: primaryClassLevel }));
+      identity.trimFeatSelectionsForLevel(primaryClassLevel, []);
     },
     [
+      identity.multiclassEnabled,
       identity.setMulticlassEnabled,
-      identity.multiclassEntries.length,
-      identity.addMulticlassEntry,
+      identity.trimFeatSelectionsForLevel,
+      addMulticlassEntry,
+      primaryClassLevel,
+      resetMulticlassChoices,
     ],
   );
-
-  const primaryClassLevel = identity.multiclassEnabled
-    ? getPrimaryClassLevel(character.level, identity.multiclassEntries)
-    : character.level;
 
   const setAbilityScore = useCallback((ability: AbilityKey, value: number) => {
     const clamped = Math.max(1, Math.min(30, value));
@@ -464,12 +601,16 @@ export function CharacterBuilderProvider({ children }: Readonly<{ children: Reac
       multiclassClassData: identity.multiclassClassData,
       primaryClassLevel,
       setMulticlassEnabled,
-      addMulticlassEntry: identity.addMulticlassEntry,
-      removeMulticlassEntry: identity.removeMulticlassEntry,
-      setMulticlassEntryClass: identity.setMulticlassEntryClass,
+      addMulticlassEntry,
+      removeMulticlassEntry,
+      setMulticlassEntryClass,
       setMulticlassEntryLevel,
       setMulticlassEntrySubclass: identity.setMulticlassEntrySubclass,
       setPrimaryClassLevel,
+      restoreMulticlassEntries: identity.restoreMulticlassEntries,
+      multiclassContexts,
+      addMulticlassSpell: identity.addMulticlassSpell,
+      removeMulticlassSpell: identity.removeMulticlassSpell,
       setSpeciesOriginFeat: identity.setSpeciesOriginFeat,
       speciesSpellGroupChoice: identity.speciesSpellGroupChoice,
       setSpeciesSpellGroupChoice: identity.setSpeciesSpellGroupChoice,

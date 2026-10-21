@@ -1,4 +1,6 @@
 import { PACT_SPELL_SLOT } from "../pact-magic.utils";
+import { toMulticlassSpellSlot } from "../multiclass.utils";
+import type { SpellcastingInfo } from "../../hooks/useSpellcasting";
 import type { BuildCompletenessInput, BuildCompletenessIssue } from "../build-completeness.types";
 import { collectStartingEquipmentIssues } from "./helpers";
 import { resolveStartingEquipmentOffers } from "../amellwind-starting-equipment.utils";
@@ -67,33 +69,64 @@ export function evaluateEquipmentAndSpellsCompleteness(
     });
   }
 
-  const spellcasting = input.spellcasting;
-  if (spellcasting) {
-    for (const pool of spellcasting.bonusCantripPools) {
-      if (pool.needsSpellListChoice) {
-        issues.push({
-          id: `spells-list-${pool.poolId}`,
-          section: "spells",
-          message: `Choose a spell list for ${pool.label}`,
-          slot: pool.slot,
-          highlightKey: "cantrips",
-        });
-        continue;
-      }
-      if (pool.selectedCount >= pool.maxCount) continue;
-      const missing = pool.maxCount - pool.selectedCount;
-      const unit = pool.spellLevel === 0 ? "cantrip" : "spell";
-      issues.push({
-        id: `spells-cantrips-${pool.poolId}`,
-        section: "spells",
-        message: `Choose ${missing} more ${unit}${missing === 1 ? "" : "s"} for ${pool.label} (${pool.selectedCount}/${pool.maxCount})`,
-        slot: pool.slot,
-        highlightKey: "cantrips",
-      });
-    }
+  if (input.spellcasting) {
+    issues.push(...evaluateSpellcastingIssues(input.spellcasting, PRIMARY_SCOPE));
+  }
+  for (const mc of input.multiclassSpellcasting ?? []) {
+    issues.push(
+      ...evaluateSpellcastingIssues(mc.spellcasting, {
+        idPrefix: `multiclass-${mc.index}-`,
+        messagePrefix: `${mc.className}: `,
+        toSlot: (slot) => toMulticlassSpellSlot(mc.index, slot),
+      }),
+    );
   }
 
-  if (spellcasting?.isSpellcaster) {
+  return issues;
+}
+
+interface SpellIssueScope {
+  idPrefix: string;
+  messagePrefix: string;
+  toSlot: (slot: string) => BuildCompletenessIssue["slot"];
+}
+
+const PRIMARY_SCOPE: SpellIssueScope = {
+  idPrefix: "",
+  messagePrefix: "",
+  toSlot: (slot) => slot as BuildCompletenessIssue["slot"],
+};
+
+/** Cantrip / prepared-spell gaps of one class (primary or additional). */
+function evaluateSpellcastingIssues(
+  spellcasting: SpellcastingInfo,
+  scope: SpellIssueScope,
+): BuildCompletenessIssue[] {
+  const issues: BuildCompletenessIssue[] = [];
+  for (const pool of spellcasting.bonusCantripPools) {
+    if (pool.needsSpellListChoice) {
+      issues.push({
+        id: `${scope.idPrefix}spells-list-${pool.poolId}`,
+        section: "spells",
+        message: `${scope.messagePrefix}Choose a spell list for ${pool.label}`,
+        slot: scope.toSlot(pool.slot),
+        highlightKey: "cantrips",
+      });
+      continue;
+    }
+    if (pool.selectedCount >= pool.maxCount) continue;
+    const missing = pool.maxCount - pool.selectedCount;
+    const unit = pool.spellLevel === 0 ? "cantrip" : "spell";
+    issues.push({
+      id: `${scope.idPrefix}spells-cantrips-${pool.poolId}`,
+      section: "spells",
+      message: `${scope.messagePrefix}Choose ${missing} more ${unit}${missing === 1 ? "" : "s"} for ${pool.label} (${pool.selectedCount}/${pool.maxCount})`,
+      slot: scope.toSlot(pool.slot),
+      highlightKey: "cantrips",
+    });
+  }
+
+  if (spellcasting.isSpellcaster) {
     const classCantripsSelected = spellcasting.classCantripsSelected;
 
     if (
@@ -102,10 +135,10 @@ export function evaluateEquipmentAndSpellsCompleteness(
     ) {
       const missing = spellcasting.cantripCount - classCantripsSelected;
       issues.push({
-        id: "spells-cantrips-class",
+        id: `${scope.idPrefix}spells-cantrips-class`,
         section: "spells",
-        message: `Choose ${missing} more class cantrip${missing === 1 ? "" : "s"} (${classCantripsSelected}/${spellcasting.cantripCount})`,
-        slot: "spell-level-0",
+        message: `${scope.messagePrefix}Choose ${missing} more class cantrip${missing === 1 ? "" : "s"} (${classCantripsSelected}/${spellcasting.cantripCount})`,
+        slot: scope.toSlot("spell-level-0"),
         highlightKey: "cantrips",
       });
     } else if (
@@ -114,10 +147,10 @@ export function evaluateEquipmentAndSpellsCompleteness(
     ) {
       const excess = classCantripsSelected - spellcasting.cantripCount;
       issues.push({
-        id: "spells-cantrips-class-excess",
+        id: `${scope.idPrefix}spells-cantrips-class-excess`,
         section: "spells",
-        message: `Remove ${excess} extra class cantrip${excess === 1 ? "" : "s"} (${classCantripsSelected}/${spellcasting.cantripCount})`,
-        slot: "spell-level-0",
+        message: `${scope.messagePrefix}Remove ${excess} extra class cantrip${excess === 1 ? "" : "s"} (${classCantripsSelected}/${spellcasting.cantripCount})`,
+        slot: scope.toSlot("spell-level-0"),
         highlightKey: "cantrips",
       });
     }
@@ -127,12 +160,12 @@ export function evaluateEquipmentAndSpellsCompleteness(
       spellcasting.selectedSpellCount < spellcasting.maxPreparedOrKnown
     ) {
       issues.push({
-        id: "spells-prepared",
+        id: `${scope.idPrefix}spells-prepared`,
         section: "spells",
-        message: `Choose ${spellcasting.maxPreparedOrKnown - spellcasting.selectedSpellCount} more spell${spellcasting.maxPreparedOrKnown - spellcasting.selectedSpellCount === 1 ? "" : "s"} (${spellcasting.selectedSpellCount}/${spellcasting.maxPreparedOrKnown})`,
-        slot: spellcasting.usesUnifiedPactPool
-          ? PACT_SPELL_SLOT
-          : "spell-level-1",
+        message: `${scope.messagePrefix}Choose ${spellcasting.maxPreparedOrKnown - spellcasting.selectedSpellCount} more spell${spellcasting.maxPreparedOrKnown - spellcasting.selectedSpellCount === 1 ? "" : "s"} (${spellcasting.selectedSpellCount}/${spellcasting.maxPreparedOrKnown})`,
+        slot: scope.toSlot(
+          spellcasting.usesUnifiedPactPool ? PACT_SPELL_SLOT : "spell-level-1",
+        ),
         highlightKey: "spells",
       });
     }

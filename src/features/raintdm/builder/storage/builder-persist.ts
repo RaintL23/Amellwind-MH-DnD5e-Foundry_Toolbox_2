@@ -100,16 +100,11 @@ export function rehydrateBuilderState(
   if (saved.identity.species) builder.setSpecies(saved.identity.species);
   if (saved.identity.background) builder.setBackground(saved.identity.background);
 
-  // Multiclass (best-effort; entry mutations use functional state updates).
+  // Multiclass entries are set as-is (the interactive setters re-sync levels
+  // and drop choices from stale state).
   const mc = saved.multiclass;
   if (mc.enabled && mc.entries.length > 0) {
-    builder.setMulticlassEnabled(true);
-    for (let i = 1; i < mc.entries.length; i += 1) builder.addMulticlassEntry();
-    mc.entries.forEach((entry, index) => {
-      if (entry.classRef) builder.setMulticlassEntryClass(index, entry.classRef);
-      if (entry.subclass) builder.setMulticlassEntrySubclass(index, entry.subclass);
-      builder.setMulticlassEntryLevel(index, entry.level);
-    });
+    builder.restoreMulticlassEntries(mc.entries);
   }
 
   // Core character fields.

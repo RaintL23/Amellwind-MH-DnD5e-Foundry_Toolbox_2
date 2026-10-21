@@ -1,5 +1,10 @@
 import { describe, expect, it } from "vitest";
-import type { Class, EquippedArmor, Species } from "@/shared/types";
+import type {
+  BuilderMulticlassEntry,
+  Class,
+  EquippedArmor,
+  Species,
+} from "@/shared/types";
 import { AMELLWIND_BACKGROUND_ORIGIN_FEAT_GRANT } from "../origin-feat.constants";
 import type { SpellcastingInfo } from "../../hooks/useSpellcasting";
 import { evaluateBuildCompleteness } from "../build-completeness.utils";
@@ -600,5 +605,101 @@ describe("evaluateBuildCompleteness — Amellwind species and gear", () => {
       createEmptyCompletenessInput({ armor, useAmellwindHomebrew: false }),
     );
     expect(hasIssueId(dnd.issues, "armor-rarity-property-1")).toBe(false);
+  });
+});
+
+describe("evaluateBuildCompleteness — multiclass", () => {
+  // Subclass at class level 3 (Fighter) / 2 (Wizard).
+  const subclassAt = (level: number) => [
+    { level, features: [{ gainSubclassFeature: true }] },
+  ];
+  const fighter = minimalClass({ progression: subclassAt(3) } as Partial<Class>);
+  const wizard = minimalClass({
+    id: "wizard|xphb",
+    name: "Wizard",
+    progression: subclassAt(2),
+  } as Partial<Class>);
+  const ref = (cls: Class) => ({ id: cls.id, name: cls.name });
+
+  function input(entries: BuilderMulticlassEntry[], primaryClassLevel: number) {
+    return createEmptyCompletenessInput({
+      classSelection: ref(fighter),
+      classData: fighter,
+      species: { id: "human|xphb", name: "Human" },
+      background: { id: "soldier|xphb", name: "Soldier" },
+      level: primaryClassLevel + entries.reduce((s, e) => s + e.level, 0),
+      primaryClassLevel,
+      multiclassEntries: entries,
+      multiclassClassData: entries.map((e) => (e.classRef ? wizard : null)),
+    });
+  }
+
+  it("uses the primary class level for its subclass and feat slots", () => {
+    const result = evaluateBuildCompleteness(
+      input([{ classRef: ref(wizard), level: 3, subclass: null }], 2),
+    );
+    expect(hasIssueId(result.issues, "identity-subclass")).toBe(false);
+    expect(hasIssueId(result.issues, "feat-slot-0")).toBe(false);
+    expect(hasIssueId(result.issues, "identity-multiclass-subclass-0")).toBe(true);
+  });
+
+  it("scopes additional class spell issues to that class's slots", () => {
+    const result = evaluateBuildCompleteness({
+      ...input([{ classRef: ref(wizard), level: 1, subclass: null }], 3),
+      multiclassSpellcasting: [
+        {
+          index: 0,
+          className: "Wizard",
+          spellcasting: spellcastingStub({ cantripCount: 3, maxPreparedOrKnown: 4 }),
+        },
+      ],
+    });
+    const cantrips = result.issues.find(
+      (issue) => issue.id === "multiclass-0-spells-cantrips-class",
+    );
+    expect(cantrips?.slot).toBe("multiclass-0:spell-level-0");
+    expect(cantrips?.message).toMatch(/^Wizard: /);
+    expect(hasIssueId(result.issues, "multiclass-0-spells-prepared")).toBe(true);
+  });
+
+  it("asks for optional features of additional classes", () => {
+    const warlock = minimalClass({
+      id: "warlock|xphb",
+      name: "Warlock",
+      progression: subclassAt(3),
+      optionalFeatureProgressions: [
+        {
+          id: "class_warlock_xphb_EI",
+          name: "Eldritch Invocations",
+          featureTypes: ["EI"],
+          catalog: "optionalfeature",
+          scope: "class",
+          progression: Array.from({ length: 20 }, () => 1),
+        },
+      ],
+    } as Partial<Class>);
+    const result = evaluateBuildCompleteness(
+      createEmptyCompletenessInput({
+        classSelection: ref(fighter),
+        classData: fighter,
+        species: { id: "human|xphb", name: "Human" },
+        background: { id: "soldier|xphb", name: "Soldier" },
+        level: 3,
+        primaryClassLevel: 2,
+        multiclassEntries: [{ classRef: ref(warlock), level: 1, subclass: null }],
+        multiclassClassData: [warlock],
+      }),
+    );
+    const issue = result.issues.find(
+      (i) => i.id === "optional-feature-class_warlock_xphb_EI",
+    );
+    expect(issue?.message).toMatch(/^Warlock: Choose 1 more Eldritch Invocations/);
+  });
+
+  it("asks for an empty additional class", () => {
+    const result = evaluateBuildCompleteness(
+      input([{ classRef: null, level: 1, subclass: null }], 3),
+    );
+    expect(hasIssueId(result.issues, "identity-multiclass-class-0")).toBe(true);
   });
 });

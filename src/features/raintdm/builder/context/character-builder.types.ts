@@ -25,6 +25,7 @@ import type {
 } from "@/shared/types/character.types";
 import type { OriginFeatGrant } from "@/shared/utils/origin-feat-grant.parser";
 import type { OptionalFeatureOriginFeatSlot } from "../utils/optional-feature-feat-grants.utils";
+import type { MulticlassEntryContext } from "../utils/multiclass.utils";
 import type { StandaloneShieldItem } from "../data/shield.data";
 import type { RuleViolation } from "@/features/amellwind/runes/utils/build.validation";
 import type { OffHandBlockReason } from "@/features/amellwind/weapons/utils/weapon-hands.utils";
@@ -127,6 +128,16 @@ export interface CharacterBuilderContextValue {
     selection: CharacterSelectionRef | null,
   ) => void;
   setPrimaryClassLevel: (level: number) => void;
+  /** Restore path (autosave / JSON import): sets entries without cascading resets. */
+  restoreMulticlassEntries: (entries: BuilderMulticlassEntry[]) => void;
+  /** Additional classes with loaded data, resolved at their own class level. */
+  multiclassContexts: MulticlassEntryContext[];
+  addMulticlassSpell: (
+    index: number,
+    level: number,
+    spell: BuilderSpellSelection,
+  ) => void;
+  removeMulticlassSpell: (index: number, level: number, spellId: string) => void;
 
   setSpeciesOriginFeat: (selection: BuilderFeatSelection | null) => void;
   /** Name of the chosen named-spell-group (e.g. "Abyssal" for Tiefling). Null = not chosen yet. */

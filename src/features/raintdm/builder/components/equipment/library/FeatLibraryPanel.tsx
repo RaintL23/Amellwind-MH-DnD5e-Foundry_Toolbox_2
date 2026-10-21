@@ -129,7 +129,7 @@ export function FeatLibraryPanel({
   } = useCharacterBuilder();
   const effectiveAbilities = useEffectiveAbilityScores();
   const subclassData = useSelectedSubclass();
-  const { spellcasting, centerPanelSpellcasting } = useSpellcastingContext();
+  const { spellcasting } = useSpellcastingContext();
 
   const identityBookNames = useBookSourceNames();
   const sourceCatalog = useSourceCatalog();
@@ -358,7 +358,7 @@ export function FeatLibraryPanel({
       : character.level;
 
   const hasSpellcasting = useMemo(() => {
-    if (spellcasting.isSpellcaster || centerPanelSpellcasting.isSpellcaster) {
+    if (spellcasting.isSpellcaster) {
       return true;
     }
     if (isCharacterSpellcaster(classData, subclassData)) return true;
@@ -368,7 +368,6 @@ export function FeatLibraryPanel({
     );
   }, [
     spellcasting.isSpellcaster,
-    centerPanelSpellcasting.isSpellcaster,
     classData,
     subclassData,
     multiclassClassData,

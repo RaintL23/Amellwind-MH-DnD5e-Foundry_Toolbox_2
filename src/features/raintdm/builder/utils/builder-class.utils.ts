@@ -7,6 +7,7 @@ import type { BuilderFeatSlot } from "@/shared/types";
 
 const STANDARD_ASI_LEVELS = [4, 8, 12, 16, 19] as const;
 const FIGHTER_EXTRA_ASI_LEVELS = [6, 14] as const;
+const ROGUE_EXTRA_ASI_LEVELS = [10] as const;
 
 export const ABILITY_SCORE_IMPROVEMENT = {
   id: "asi",
@@ -56,11 +57,20 @@ export function isSubclassLevelReached(
   return gainLevel !== null && level >= gainLevel;
 }
 
-export function getFeatSlotLevels(className: string, level: number): number[] {
+/** Class levels that grant an ASI / feat (Fighter 6 & 14, Rogue 10 extra). */
+export function getClassAsiLevels(className: string): number[] {
+  const name = className.toLowerCase();
   const extras =
-    className.toLowerCase() === "fighter" ? [...FIGHTER_EXTRA_ASI_LEVELS] : [];
-  const all = [...STANDARD_ASI_LEVELS, ...extras].sort((a, b) => a - b);
-  return all.filter((l) => l <= level);
+    name === "fighter"
+      ? FIGHTER_EXTRA_ASI_LEVELS
+      : name === "rogue"
+        ? ROGUE_EXTRA_ASI_LEVELS
+        : [];
+  return [...STANDARD_ASI_LEVELS, ...extras].sort((a, b) => a - b);
+}
+
+export function getFeatSlotLevels(className: string, level: number): number[] {
+  return getClassAsiLevels(className).filter((l) => l <= level);
 }
 
 export function isFeatSlotSelection(

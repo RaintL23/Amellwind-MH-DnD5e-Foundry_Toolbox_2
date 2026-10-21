@@ -7,6 +7,7 @@ import {
   Dices,
   Eye,
   FileJson,
+  RotateCcw,
   ScrollText,
   Upload,
 } from "lucide-react";
@@ -33,6 +34,23 @@ export function NextStepCard() {
   if (!liveResult.hasStarted) return <BuilderWelcomeCard />;
   if (!nextStep) return <BuildReadyCard />;
   return <PendingStepCard />;
+}
+
+/** Always-visible way to wipe the build (asks for confirmation once started). */
+function StartOverButton({ className }: Readonly<{ className?: string }>) {
+  const { reset } = useBuilderCharacterActions();
+  return (
+    <Button
+      type="button"
+      size="sm"
+      variant="outline"
+      className={cn("h-8 gap-1.5 text-xs", className)}
+      onClick={reset}
+    >
+      <RotateCcw className="h-3.5 w-3.5" aria-hidden />
+      Start over
+    </Button>
+  );
 }
 
 function PendingStepCard() {
@@ -75,6 +93,7 @@ function PendingStepCard() {
             this step
           </span>
         )}
+        <StartOverButton className="ml-auto" />
       </div>
     </section>
   );
@@ -137,6 +156,7 @@ function BuildReadyCard() {
             <FileJson className="h-3.5 w-3.5" aria-hidden />
             Save JSON
           </Button>
+          <StartOverButton className="border-emerald-500/40 bg-transparent hover:bg-emerald-500/15" />
         </div>
       </div>
     </section>

@@ -10,7 +10,12 @@ import type {
   BuilderOptionalFeatureSelections,
 } from "@/shared/types";
 import { getAllDndOptionalFeatures } from "@/features/dnd/optionalfeatures/services/dnd-optionalfeature.service";
-import { resolveOptionalFeatureProgressions, getProgressionPicks, getAutoGrantSelections } from "../../utils/class-optional-features.utils";
+import {
+  resolveOptionalFeatureProgressions,
+  getProgressionPicks,
+  getAutoGrantSelections,
+  type ResolvedOptionalFeatureProgression,
+} from "../../utils/class-optional-features.utils";
 import {
   resolveOptionalFeatureOriginFeatSlots,
   type OptionalFeatureOriginFeatSlot,
@@ -24,13 +29,44 @@ export interface SpellSliceInput {
   classData: Class | null;
   subclass: CharacterSelectionRef | null;
   characterLevel: number;
+  /**
+   * Optional-feature progressions of additional classes. Their picks share
+   * `optionalFeatureSelections` (progression ids are class-scoped), so primary
+   * class resets must keep them.
+   */
+  multiclassProgressions: ResolvedOptionalFeatureProgression[];
+  /** False while an additional class is still loading (its picks must not be pruned yet). */
+  multiclassReady: boolean;
 }
 
 export function useSpellSlice({
   classData,
   subclass,
   characterLevel,
+  multiclassProgressions,
+  multiclassReady,
 }: SpellSliceInput) {
+  const multiclassProgressionIdsKey = multiclassProgressions
+    .map(({ progression, slotCount }) => `${progression.id}:${slotCount}`)
+    .join("|");
+  const multiclassProgressionIds = useMemo(
+    () => new Set(multiclassProgressions.map((r) => r.progression.id)),
+    // Keyed by ids/slot counts so a new array per render does not re-run.
+    [multiclassProgressionIdsKey],
+  );
+
+  /** Keeps only additional-class picks (used when the primary class changes). */
+  const keepMulticlassPicks = useCallback(
+    (prev: BuilderOptionalFeatureSelections): BuilderOptionalFeatureSelections => {
+      const next: BuilderOptionalFeatureSelections = {};
+      for (const [key, picks] of Object.entries(prev)) {
+        if (multiclassProgressionIds.has(key)) next[key] = picks;
+      }
+      return next;
+    },
+    [multiclassProgressionIds],
+  );
+
   const [spellSelections, setSpellSelections] = useState<BuilderSpellSelections>({});
   const [optionalFeatureSelections, setOptionalFeatureSelections] =
     useState<BuilderOptionalFeatureSelections>({});
@@ -129,22 +165,24 @@ export function useSpellSlice({
     [],
   );
 
+  /** Primary subclass changed: drop its subclass picks, keep additional classes'. */
   const clearSubclassOptionalFeatures = useCallback(() => {
     setOptionalFeatureSelections((prev) => {
       const next: BuilderOptionalFeatureSelections = { ...prev };
       for (const key of Object.keys(next)) {
+        if (multiclassProgressionIds.has(key)) continue;
         if (key.startsWith("subclass_") || key.startsWith("fc_subclass_")) {
           delete next[key];
         }
       }
       return next;
     });
-  }, []);
+  }, [multiclassProgressionIds]);
 
   const resetOnClassChange = useCallback(() => {
     setSpellSelections({});
-    setOptionalFeatureSelections({});
-  }, []);
+    setOptionalFeatureSelections(keepMulticlassPicks);
+  }, [keepMulticlassPicks]);
 
   const resetSpellSlice = useCallback(() => {
     setSpellSelections({});
@@ -155,15 +193,18 @@ export function useSpellSlice({
   }, []);
 
   useEffect(() => {
-    if (!classData) return;
+    if (!classData || !multiclassReady) return;
     const subclassData = subclass
       ? (classData.subclasses.find((sc) => sc.id === subclass.id) ?? null)
       : null;
-    const resolved = resolveOptionalFeatureProgressions(
-      classData,
-      subclassData,
-      characterLevel,
-    );
+    const resolved = [
+      ...resolveOptionalFeatureProgressions(
+        classData,
+        subclassData,
+        characterLevel,
+      ),
+      ...multiclassProgressions,
+    ];
     setOptionalFeatureSelections((prev) => {
       const next = { ...prev };
       let changed = false;
@@ -200,7 +241,14 @@ export function useSpellSlice({
 
       return changed ? next : prev;
     });
-  }, [classData, subclass?.id, characterLevel]);
+    // Multiclass progressions are keyed by ids/slot counts.
+  }, [
+    classData,
+    subclass?.id,
+    characterLevel,
+    multiclassProgressionIdsKey,
+    multiclassReady,
+  ]);
 
   useEffect(() => {
     let cancelled = false;

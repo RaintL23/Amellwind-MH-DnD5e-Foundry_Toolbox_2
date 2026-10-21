@@ -13,7 +13,6 @@ import { collectAmellwindAcBonuses } from "../utils/amellwind-ac-bonuses.utils";
 
 export function useCharacterArmorClass(): CharacterAcBreakdown {
   const {
-    character,
     armor,
     integratedShieldAcBonus,
     standaloneShieldAcBonus,
@@ -23,6 +22,8 @@ export function useCharacterArmorClass(): CharacterAcBreakdown {
     trinket1,
     trinket2,
     useAmellwindHomebrew,
+    primaryClassLevel,
+    multiclassContexts,
   } = useCharacterBuilder();
   const { classData } = useSelectedClass();
   const resolvedSpecies = useResolvedSpecies();
@@ -40,7 +41,7 @@ export function useCharacterArmorClass(): CharacterAcBreakdown {
     () =>
       getCharacterAcBreakdown({
         modifiers: modifiers as Record<AbilityKey, number>,
-        level: character.level,
+        level: primaryClassLevel,
         armor,
         integratedShieldAcBonus,
         standaloneShieldAcBonus,
@@ -55,10 +56,16 @@ export function useCharacterArmorClass(): CharacterAcBreakdown {
           trinket2,
           useAmellwindHomebrew,
         }),
+        additionalClasses: multiclassContexts.map((ctx) => ({
+          classData: ctx.classData,
+          level: ctx.entry.level,
+          subclass: ctx.subclassData,
+        })),
       }),
     [
       modifiers,
-      character.level,
+      primaryClassLevel,
+      multiclassContexts,
       armor,
       integratedShieldAcBonus,
       standaloneShieldAcBonus,

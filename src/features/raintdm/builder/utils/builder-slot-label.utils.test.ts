@@ -30,6 +30,7 @@ describe("formatBuilderSlotLabel", () => {
     expect(formatBuilderSlotLabel("spell-feat-magic-initiate")).toBe("Bonus Spells");
     expect(formatBuilderSlotLabel("multiclass-class-0")).toBe("Multiclass");
     expect(formatBuilderSlotLabel("multiclass-subclass-1")).toBe("Multiclass Subclass");
+    expect(formatBuilderSlotLabel("multiclass-0:spell-level-0")).toBe("Class 2 · Cantrips");
   });
 
   it("humanizes plain slot ids", () => {

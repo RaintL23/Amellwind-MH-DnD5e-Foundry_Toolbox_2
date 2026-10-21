@@ -14,6 +14,11 @@ import { getPendingDefenseChoiceGrants } from "@/shared/utils/defense-grant.pars
 import { getPendingNamedChoiceGrants } from "@/shared/utils/named-proficiency.parser";
 import { getPendingChoiceGrants } from "../compute-character-proficiencies";
 import type { BuildCompletenessInput, BuildCompletenessIssue } from "../build-completeness.types";
+import { getFeatSlotLevels } from "../builder-class.utils";
+import {
+  buildClassLevelEntries,
+  getFeatSlotLevelsForBuild,
+} from "../multiclass.utils";
 
 export type PendingSkillGrant = ReturnType<typeof getPendingChoiceGrants>[number];
 
@@ -230,4 +235,30 @@ export function hasBuildStarted(input: BuildCompletenessInput): boolean {
   }
 
   return false;
+}
+
+/** Primary class level: drives subclass, optional features, and spells. */
+export function getCompletenessPrimaryLevel(input: BuildCompletenessInput): number {
+  return input.primaryClassLevel ?? input.level;
+}
+
+/** Character levels with a feat slot (per-class ASIs when multiclassed). */
+export function getCompletenessFeatSlotLevels(
+  input: BuildCompletenessInput,
+): number[] {
+  const entries = input.multiclassEntries ?? [];
+  if (entries.length === 0) {
+    return getFeatSlotLevels(input.classSelection?.name ?? "", input.level);
+  }
+  return getFeatSlotLevelsForBuild(
+    buildClassLevelEntries(
+      input.classSelection,
+      input.classData,
+      getCompletenessPrimaryLevel(input),
+      input.subclass,
+      entries,
+      input.multiclassClassData ?? [],
+    ),
+    input.level,
+  );
 }

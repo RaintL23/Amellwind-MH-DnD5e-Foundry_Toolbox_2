@@ -1,8 +1,7 @@
-import { useMemo } from "react";
 import type { BackgroundFaction, Class, ClassTableGroup, Subclass } from "@/shared/types";
 import { resolveFactionExpandedSpellFilters } from "../data/faction-spells.data";
 import type { AbilityScores } from "@/shared/types";
-import type { BuilderSpellSelections, BuilderOptionalFeatureSelections } from "@/shared/types";
+import type { BuilderSpellSelections } from "@/shared/types";
 import {
   resolveSubclassSpells,
   type ExpandedSpellFilter,
@@ -16,14 +15,8 @@ import {
   getPactMagicProgression,
   pactPoolSelectedCount,
 } from "../utils/pact-magic.utils";
-import type { BuilderClassLevelEntry } from "../utils/multiclass.utils";
 import type { CantripPoolDefinition } from "../utils/cantrip-pools.utils";
 import { countClassCantripSelections } from "../utils/cantrip-pools.utils";
-import {
-  getMulticlassCasterLevel,
-  getMulticlassSpellSlotLevels,
-  hasMultipleSpellcastingClasses,
-} from "../utils/multiclass.utils";
 
 // ─── Types ────────────────────────────────────────────────────────────────────
 
@@ -308,219 +301,135 @@ function getSpellsKnownFromTable(
   return 0;
 }
 
-// ─── Hook ─────────────────────────────────────────────────────────────────────
+// ─── Compute ──────────────────────────────────────────────────────────────────
 
-export function useSpellcasting(
+/**
+ * Spellcasting of one class at its own class level (multiclass: spells are
+ * chosen per class "as if single-classed").
+ */
+export function computeSpellcasting(
   classData: Class | null,
   subclassData: Subclass | null,
   level: number,
   abilities: AbilityScores,
   spellSelections: BuilderSpellSelections = {},
-  optionalFeatureSelections: BuilderOptionalFeatureSelections = {},
   optionalFeatureSpellGrants: SubclassSpellGrant[] = [],
   faction: BackgroundFaction | null = null,
-  classLevelForProgression?: number,
-  multiclassClassEntries?: BuilderClassLevelEntry[],
   bonusCantripPools: CantripPoolDefinition[] = [],
 ): SpellcastingInfo {
-  return useMemo((): SpellcastingInfo => {
-    const bonusPools: CantripPoolInfo[] = bonusCantripPools.map((pool) => ({
-      ...pool,
-      selectedCount: (spellSelections ?? {})[pool.selectionLevel]?.length ?? 0,
-    }));
-    const bonusCantripTotal = bonusPools.reduce(
-      (sum, pool) => sum + pool.maxCount,
+  const bonusPools: CantripPoolInfo[] = bonusCantripPools.map((pool) => ({
+    ...pool,
+    selectedCount: (spellSelections ?? {})[pool.selectionLevel]?.length ?? 0,
+  }));
+  const bonusCantripTotal = bonusPools.reduce(
+    (sum, pool) => sum + pool.maxCount,
+    0,
+  );
+
+  const none: SpellcastingInfo = {
+    isSpellcaster: false,
+    availableSpellLevels: [],
+    cantripCount: 0,
+    bonusCantripPools: [],
+    maxPreparedOrKnown: 0,
+    isPreparedCaster: false,
+    spellcastingAbility: null,
+    sectionLabel: "Spellcasting",
+    isPactMagic: false,
+    usesUnifiedPactPool: false,
+    pactMaxSpellLevel: 0,
+    pactSlotCount: 0,
+    selectedSpellCount: 0,
+    selectedCantripCount: 0,
+    classCantripsSelected: 0,
+    availableSpellSlotLevels: [],
+    subclassAlwaysPrepared: [],
+    subclassBonusKnown: [],
+    optionalFeatureGranted: [],
+    expandedSpellFilters: [],
+    subclassName: null,
+    subclassShortName: null,
+    spellcastingFromSubclass: false,
+  };
+
+  if (!classData) {
+    if (bonusPools.length === 0) return none;
+    const bonusCantripsSelected = bonusPools.reduce(
+      (sum, pool) => sum + pool.selectedCount,
       0,
     );
-
-    const none: SpellcastingInfo = {
-      isSpellcaster: false,
-      availableSpellLevels: [],
-      cantripCount: 0,
-      bonusCantripPools: [],
-      maxPreparedOrKnown: 0,
-      isPreparedCaster: false,
-      spellcastingAbility: null,
-      sectionLabel: "Spellcasting",
-      isPactMagic: false,
-      usesUnifiedPactPool: false,
-      pactMaxSpellLevel: 0,
-      pactSlotCount: 0,
-      selectedSpellCount: 0,
-      selectedCantripCount: 0,
-      classCantripsSelected: 0,
-      availableSpellSlotLevels: [],
-      subclassAlwaysPrepared: [],
-      subclassBonusKnown: [],
-      optionalFeatureGranted: [],
-      expandedSpellFilters: [],
-      subclassName: null,
-      subclassShortName: null,
-      spellcastingFromSubclass: false,
+    return {
+      ...none,
+      bonusCantripPools: bonusPools,
+      availableSpellLevels: [0],
+      selectedCantripCount: bonusCantripsSelected,
     };
+  }
 
-    if (!classData) {
-      if (bonusPools.length === 0) return none;
-      const bonusCantripsSelected = bonusPools.reduce(
-        (sum, pool) => sum + pool.selectedCount,
-        0,
-      );
-      return {
-        ...none,
-        bonusCantripPools: bonusPools,
-        availableSpellLevels: [0],
-        selectedCantripCount: bonusCantripsSelected,
-      };
-    }
+  const effective = resolveEffectiveSpellcasting(classData, subclassData);
+  if (!effective) {
+    if (bonusPools.length === 0) return none;
+    const bonusCantripsSelected = bonusPools.reduce(
+      (sum, pool) => sum + pool.selectedCount,
+      0,
+    );
+    return {
+      ...none,
+      bonusCantripPools: bonusPools,
+      availableSpellLevels: [0],
+      selectedCantripCount: bonusCantripsSelected,
+    };
+  }
 
-    const effective = resolveEffectiveSpellcasting(classData, subclassData);
-    if (!effective) {
-      if (bonusPools.length === 0) return none;
-      const bonusCantripsSelected = bonusPools.reduce(
-        (sum, pool) => sum + pool.selectedCount,
-        0,
-      );
-      return {
-        ...none,
-        bonusCantripPools: bonusPools,
-        availableSpellLevels: [0],
-        selectedCantripCount: bonusCantripsSelected,
-      };
-    }
+  const rowIndex = level - 1;
+  const selections = spellSelections ?? {};
+  const isPactMagic =
+    !effective.fromSubclass && isPactMagicClass(classData);
+  const sectionLabel = getSpellcastingSectionLabel(classData);
+  const subclassSpells = resolveSubclassSpells(subclassData, level);
+  const factionSpellFilters = resolveFactionExpandedSpellFilters(faction);
+  const expandedSpellFilters = [
+    ...subclassSpells.expandedFilters,
+    ...factionSpellFilters,
+  ];
+  const {
+    spellProgression,
+    cantripProgression,
+    preparedSpells,
+    preparedSpellsProgression,
+    spellsKnownProgressionFixed,
+    spellcastingAbility,
+  } = effective;
 
-    const progressionLevel = classLevelForProgression ?? level;
-    const rowIndex = progressionLevel - 1;
-    const selections = spellSelections ?? {};
-    const isPactMagic =
-      !effective.fromSubclass && isPactMagicClass(classData);
-    const sectionLabel = getSpellcastingSectionLabel(classData);
-    const subclassSpells = resolveSubclassSpells(subclassData, progressionLevel);
-    const factionSpellFilters = resolveFactionExpandedSpellFilters(faction);
-    const expandedSpellFilters = [
-      ...subclassSpells.expandedFilters,
-      ...factionSpellFilters,
-    ];
-    const {
-      spellProgression,
-      cantripProgression,
-      preparedSpells,
-      preparedSpellsProgression,
-      spellsKnownProgressionFixed,
-      spellcastingAbility,
-    } = effective;
+  if (isPactMagic) {
+    const pact =
+      getPactMagicProgression(spellProgression, rowIndex) ??
+      ({
+        cantripCount:
+          cantripProgression?.[rowIndex] ??
+          getCantripCountFromTable(spellProgression, rowIndex),
+        preparedSpellCount:
+          preparedSpellsProgression?.[rowIndex] ??
+          spellsKnownProgressionFixed?.[rowIndex] ??
+          (getPreparedSpellsFromTable(spellProgression, rowIndex) ||
+            getSpellsKnownFromTable(spellProgression, rowIndex)),
+        pactSlotCount: 0,
+        pactSlotLevel: 0,
+        usesPreparedSpells: !!preparedSpellsProgression?.length,
+      } satisfies import("../utils/pact-magic.utils").PactMagicProgression);
 
-    if (isPactMagic) {
-      const pact =
-        getPactMagicProgression(spellProgression, rowIndex) ??
-        ({
-          cantripCount:
-            cantripProgression?.[rowIndex] ??
-            getCantripCountFromTable(spellProgression, rowIndex),
-          preparedSpellCount:
-            preparedSpellsProgression?.[rowIndex] ??
-            spellsKnownProgressionFixed?.[rowIndex] ??
-            (getPreparedSpellsFromTable(spellProgression, rowIndex) ||
-              getSpellsKnownFromTable(spellProgression, rowIndex)),
-          pactSlotCount: 0,
-          pactSlotLevel: 0,
-          usesPreparedSpells: !!preparedSpellsProgression?.length,
-        } satisfies import("../utils/pact-magic.utils").PactMagicProgression);
-
-      const cantripCount = pact.cantripCount;
-      const maxPreparedOrKnown = pact.preparedSpellCount;
-      const availableSpellLevels: number[] = [];
-      if (cantripCount > 0 || bonusCantripTotal > 0) availableSpellLevels.push(0);
-
-      if (
-        cantripCount === 0 &&
-        bonusCantripTotal === 0 &&
-        maxPreparedOrKnown === 0 &&
-        pact.pactSlotLevel === 0
-      ) {
-        return none;
-      }
-
-      const classCantripsSelected = countClassCantripSelections(selections[0]);
-      const bonusCantripsSelected = bonusPools.reduce(
-        (sum, pool) => sum + pool.selectedCount,
-        0,
-      );
-
-      return {
-        isSpellcaster: true,
-        availableSpellLevels,
-        cantripCount,
-        bonusCantripPools: bonusPools,
-        maxPreparedOrKnown,
-        isPreparedCaster: pact.usesPreparedSpells,
-        spellcastingAbility,
-        sectionLabel,
-        isPactMagic: true,
-        usesUnifiedPactPool: true,
-        pactMaxSpellLevel: pact.pactSlotLevel,
-        pactSlotCount: pact.pactSlotCount,
-        selectedSpellCount: pactPoolSelectedCount(selections),
-        selectedCantripCount: classCantripsSelected + bonusCantripsSelected,
-        classCantripsSelected,
-        availableSpellSlotLevels:
-          pact.pactSlotLevel > 0 ? [pact.pactSlotLevel] : [],
-        subclassAlwaysPrepared: subclassSpells.alwaysPrepared,
-        subclassBonusKnown: subclassSpells.bonusKnown,
-        optionalFeatureGranted: optionalFeatureSpellGrants,
-        expandedSpellFilters,
-        subclassName: subclassData?.name ?? null,
-        subclassShortName: subclassData?.shortName ?? null,
-        spellcastingFromSubclass: effective.fromSubclass,
-      };
-    }
-
-    const cantripCount =
-      cantripProgression?.[rowIndex] ??
-      getCantripCountFromTable(spellProgression, rowIndex);
-
-    let slotLevels = getAvailableSlotLevels(spellProgression, progressionLevel);
-
-    if (
-      multiclassClassEntries &&
-      hasMultipleSpellcastingClasses(multiclassClassEntries)
-    ) {
-      const casterLevel = getMulticlassCasterLevel(multiclassClassEntries);
-      slotLevels = getMulticlassSpellSlotLevels(casterLevel);
-    }
-
+    const cantripCount = pact.cantripCount;
+    const maxPreparedOrKnown = pact.preparedSpellCount;
     const availableSpellLevels: number[] = [];
     if (cantripCount > 0 || bonusCantripTotal > 0) availableSpellLevels.push(0);
-    availableSpellLevels.push(...slotLevels);
 
-    if (availableSpellLevels.length === 0) return none;
-
-    const preparedFromTable = getPreparedSpellsFromTable(
-      spellProgression,
-      rowIndex,
-    );
-    const isPreparedCaster =
-      !!preparedSpells ||
-      (preparedSpellsProgression?.length ?? 0) > 0 ||
-      preparedFromTable > 0;
-
-    let maxPreparedOrKnown = 0;
-    if (isPreparedCaster) {
-      if (preparedSpells) {
-        maxPreparedOrKnown = evaluatePreparedFormula(
-          preparedSpells,
-          progressionLevel,
-          abilities,
-        );
-      } else if (preparedSpellsProgression) {
-        maxPreparedOrKnown =
-          preparedSpellsProgression[rowIndex] ?? preparedFromTable;
-      } else {
-        maxPreparedOrKnown = preparedFromTable;
-      }
-    } else if (spellsKnownProgressionFixed) {
-      maxPreparedOrKnown = spellsKnownProgressionFixed[rowIndex] ?? 0;
-    } else {
-      maxPreparedOrKnown = getSpellsKnownFromTable(spellProgression, rowIndex);
+    if (
+      cantripCount === 0 &&
+      bonusCantripTotal === 0 &&
+      maxPreparedOrKnown === 0 &&
+      pact.pactSlotLevel === 0
+    ) {
+      return none;
     }
 
     const classCantripsSelected = countClassCantripSelections(selections[0]);
@@ -528,9 +437,6 @@ export function useSpellcasting(
       (sum, pool) => sum + pool.selectedCount,
       0,
     );
-    const selectedSpellCount = Object.entries(selections)
-      .filter(([lvl]) => Number(lvl) > 0)
-      .reduce((sum, [, spells]) => sum + spells.length, 0);
 
     return {
       isSpellcaster: true,
@@ -538,17 +444,18 @@ export function useSpellcasting(
       cantripCount,
       bonusCantripPools: bonusPools,
       maxPreparedOrKnown,
-      isPreparedCaster,
+      isPreparedCaster: pact.usesPreparedSpells,
       spellcastingAbility,
       sectionLabel,
-      isPactMagic: false,
-      usesUnifiedPactPool: false,
-      pactMaxSpellLevel: 0,
-      pactSlotCount: 0,
-      selectedSpellCount,
+      isPactMagic: true,
+      usesUnifiedPactPool: true,
+      pactMaxSpellLevel: pact.pactSlotLevel,
+      pactSlotCount: pact.pactSlotCount,
+      selectedSpellCount: pactPoolSelectedCount(selections),
       selectedCantripCount: classCantripsSelected + bonusCantripsSelected,
       classCantripsSelected,
-      availableSpellSlotLevels: slotLevels,
+      availableSpellSlotLevels:
+        pact.pactSlotLevel > 0 ? [pact.pactSlotLevel] : [],
       subclassAlwaysPrepared: subclassSpells.alwaysPrepared,
       subclassBonusKnown: subclassSpells.bonusKnown,
       optionalFeatureGranted: optionalFeatureSpellGrants,
@@ -557,19 +464,83 @@ export function useSpellcasting(
       subclassShortName: subclassData?.shortName ?? null,
       spellcastingFromSubclass: effective.fromSubclass,
     };
-  }, [
-    classData,
-    subclassData,
-    level,
-    classLevelForProgression,
-    multiclassClassEntries,
-    abilities,
-    spellSelections,
-    optionalFeatureSelections,
-    optionalFeatureSpellGrants,
-    faction,
-    bonusCantripPools,
-  ]);
+  }
+
+  const cantripCount =
+    cantripProgression?.[rowIndex] ??
+    getCantripCountFromTable(spellProgression, rowIndex);
+
+  const slotLevels = getAvailableSlotLevels(spellProgression, level);
+
+  const availableSpellLevels: number[] = [];
+  if (cantripCount > 0 || bonusCantripTotal > 0) availableSpellLevels.push(0);
+  availableSpellLevels.push(...slotLevels);
+
+  if (availableSpellLevels.length === 0) return none;
+
+  const preparedFromTable = getPreparedSpellsFromTable(
+    spellProgression,
+    rowIndex,
+  );
+  const isPreparedCaster =
+    !!preparedSpells ||
+    (preparedSpellsProgression?.length ?? 0) > 0 ||
+    preparedFromTable > 0;
+
+  let maxPreparedOrKnown = 0;
+  if (isPreparedCaster) {
+    if (preparedSpells) {
+      maxPreparedOrKnown = evaluatePreparedFormula(
+        preparedSpells,
+        level,
+        abilities,
+      );
+    } else if (preparedSpellsProgression) {
+      maxPreparedOrKnown =
+        preparedSpellsProgression[rowIndex] ?? preparedFromTable;
+    } else {
+      maxPreparedOrKnown = preparedFromTable;
+    }
+  } else if (spellsKnownProgressionFixed) {
+    maxPreparedOrKnown = spellsKnownProgressionFixed[rowIndex] ?? 0;
+  } else {
+    maxPreparedOrKnown = getSpellsKnownFromTable(spellProgression, rowIndex);
+  }
+
+  const classCantripsSelected = countClassCantripSelections(selections[0]);
+  const bonusCantripsSelected = bonusPools.reduce(
+    (sum, pool) => sum + pool.selectedCount,
+    0,
+  );
+  const selectedSpellCount = Object.entries(selections)
+    .filter(([lvl]) => Number(lvl) > 0)
+    .reduce((sum, [, spells]) => sum + spells.length, 0);
+
+  return {
+    isSpellcaster: true,
+    availableSpellLevels,
+    cantripCount,
+    bonusCantripPools: bonusPools,
+    maxPreparedOrKnown,
+    isPreparedCaster,
+    spellcastingAbility,
+    sectionLabel,
+    isPactMagic: false,
+    usesUnifiedPactPool: false,
+    pactMaxSpellLevel: 0,
+    pactSlotCount: 0,
+    selectedSpellCount,
+    selectedCantripCount: classCantripsSelected + bonusCantripsSelected,
+    classCantripsSelected,
+    availableSpellSlotLevels: slotLevels,
+    subclassAlwaysPrepared: subclassSpells.alwaysPrepared,
+    subclassBonusKnown: subclassSpells.bonusKnown,
+    optionalFeatureGranted: optionalFeatureSpellGrants,
+    expandedSpellFilters,
+    subclassName: subclassData?.name ?? null,
+    subclassShortName: subclassData?.shortName ?? null,
+    spellcastingFromSubclass: effective.fromSubclass,
+  };
 }
 
 export { PACT_SPELL_POOL_LEVEL } from "../utils/pact-magic.utils";

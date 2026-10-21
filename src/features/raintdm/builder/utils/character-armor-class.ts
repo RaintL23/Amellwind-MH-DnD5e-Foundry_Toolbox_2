@@ -228,6 +228,15 @@ export function getCharacterAcBreakdown(input: {
   speciesName?: string | null;
   /** Flat bonuses added to whichever AC method wins (Amellwind gear). */
   extraBonuses?: { label: string; amount: number }[];
+  /**
+   * Multiclass entries at their class level. Unarmored Defense never stacks:
+   * the first class that grants it (primary first) is used.
+   */
+  additionalClasses?: {
+    classData: Class;
+    level: number;
+    subclass: Subclass | null;
+  }[];
 }): CharacterAcBreakdown {
   const {
     modifiers,
@@ -241,6 +250,7 @@ export function getCharacterAcBreakdown(input: {
     speciesTraits = [],
     speciesName,
     extraBonuses = [],
+    additionalClasses = [],
   } = input;
 
   const dexMod = modifiers.dex;
@@ -254,12 +264,24 @@ export function getCharacterAcBreakdown(input: {
     speciesName ?? "Species",
   );
 
-  const unarmoredDefense = getUnarmoredDefenseRule(
-    classData,
-    className ?? classData?.name,
-    level,
-    subclass,
-  );
+  const unarmoredDefense =
+    getUnarmoredDefenseRule(
+      classData,
+      className ?? classData?.name,
+      level,
+      subclass,
+    ) ??
+    additionalClasses.reduce<UnarmoredDefenseRule | null>(
+      (found, extra) =>
+        found ??
+        getUnarmoredDefenseRule(
+          extra.classData,
+          extra.classData.name,
+          extra.level,
+          extra.subclass,
+        ),
+      null,
+    );
 
   const unarmoredDefenseActive =
     unarmoredDefense !== null &&

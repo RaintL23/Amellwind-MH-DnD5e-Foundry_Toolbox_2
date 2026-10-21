@@ -3,6 +3,7 @@ import type { BuilderMulticlassEntry } from "@/shared/types";
 import { detectExpertiseGrants } from "./expertise-detection.utils";
 import { buildClassLanguageGrants } from "./class-language-grants.utils";
 import { EMPTY_CLASS_GRANTS } from "./grant-sync.constants";
+import { resolveSubclassData } from "./multiclass.utils";
 
 export function buildClassGrantPayload(
   classData: Class | null,
@@ -14,7 +15,8 @@ export function buildClassGrantPayload(
 ) {
   if (!classData) return EMPTY_CLASS_GRANTS;
 
-  const expertiseGrants = detectExpertiseGrants(classData, level);
+  let expertiseGrants = detectExpertiseGrants(classData, level);
+  let languageGrants = buildClassLanguageGrants(classData, level, activeSubclass);
 
   let skillGrants = [...classData.skillChoiceGrants];
   let toolGrants = [...classData.toolGrants];
@@ -34,6 +36,20 @@ export function buildClassGrantPayload(
         armorGrants = [...armorGrants, ...mc.armorGrants];
         weaponGrants = [...weaponGrants, ...mc.weaponGrants];
       }
+      // Class features still apply at the entry's class level (Expertise,
+      // Thieves' Cant, Druidic…); starting proficiencies and saves do not.
+      expertiseGrants = [
+        ...expertiseGrants,
+        ...detectExpertiseGrants(entryClassData, entry.level),
+      ];
+      languageGrants = [
+        ...languageGrants,
+        ...buildClassLanguageGrants(
+          entryClassData,
+          entry.level,
+          resolveSubclassData(entryClassData, entry.subclass),
+        ),
+      ];
     }
   }
 
@@ -45,6 +61,6 @@ export function buildClassGrantPayload(
     toolGrants,
     armorGrants,
     weaponGrants,
-    languageGrants: buildClassLanguageGrants(classData, level, activeSubclass),
+    languageGrants,
   };
 }

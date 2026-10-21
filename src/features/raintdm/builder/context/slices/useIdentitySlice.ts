@@ -14,6 +14,8 @@ import type {
   CharacterSelectionRef,
   BuilderFeatSelection,
   BuilderMulticlassEntry,
+  BuilderSpellSelection,
+  BuilderSpellSelections,
 } from "@/shared/types";
 import { getBackgroundById } from "@/features/amellwind/backgrounds/services/background.service";
 import { getClassById } from "@/features/dnd/classes/services/class.service";
@@ -405,31 +407,46 @@ export function useIdentitySlice({
     [],
   );
 
-  const trimFeatSelectionsForLevel = useCallback((level: number) => {
-    setFeatSelections((prev) => {
-      const maxSlots = multiclassEnabled
-        ? getFeatSlotLevelsForBuild(
-            buildClassLevelEntries(
-              classRef,
-              classData,
-              getPrimaryClassLevel(level, multiclassEntries),
-              subclass,
-              multiclassEntries,
-              multiclassClassData,
-            ),
-            level,
-          ).length
-        : getFeatSlotLevels(classRef?.name ?? "", level).length;
-      return prev.slice(0, maxSlots);
-    });
-  }, [
-    classRef?.name,
-    classData,
-    subclass,
-    multiclassEnabled,
-    multiclassEntries,
-    multiclassClassData,
-  ]);
+  /**
+   * Drops feat picks beyond the slots available at `level`. Pass the
+   * multiclass entries being applied in the same update (state is stale then);
+   * an empty list means single-class.
+   */
+  const trimFeatSelectionsForLevel = useCallback(
+    (level: number, entries?: BuilderMulticlassEntry[]) => {
+      const activeEntries = entries ?? (multiclassEnabled ? multiclassEntries : []);
+      setFeatSelections((prev) => {
+        const maxSlots =
+          activeEntries.length > 0
+            ? getFeatSlotLevelsForBuild(
+                buildClassLevelEntries(
+                  classRef,
+                  classData,
+                  getPrimaryClassLevel(level, activeEntries),
+                  subclass,
+                  activeEntries,
+                  activeEntries.map((entry, i) =>
+                    entry.classRef?.id &&
+                    multiclassClassData[i]?.id === entry.classRef.id
+                      ? multiclassClassData[i]
+                      : null,
+                  ),
+                ),
+                level,
+              ).length
+            : getFeatSlotLevels(classRef?.name ?? "", level).length;
+        return prev.slice(0, maxSlots);
+      });
+    },
+    [
+      classRef,
+      classData,
+      subclass,
+      multiclassEnabled,
+      multiclassEntries,
+      multiclassClassData,
+    ],
+  );
 
   // ─── Multiclass ─────────────────────────────────────────────────────────────
 
@@ -462,12 +479,53 @@ export function useIdentitySlice({
           ...next[index],
           classRef: selection,
           subclass: null,
+          spellSelections: undefined,
         };
         return next;
       });
-      onClassChange();
     },
-    [onClassChange],
+    [],
+  );
+
+  const updateMulticlassSpells = useCallback(
+    (
+      index: number,
+      update: (prev: BuilderSpellSelections) => BuilderSpellSelections,
+    ) => {
+      setMulticlassEntries((prev) => {
+        const current = prev[index];
+        if (!current) return prev;
+        const before = current.spellSelections ?? {};
+        const after = update(before);
+        if (after === before) return prev;
+        const next = [...prev];
+        next[index] = { ...current, spellSelections: after };
+        return next;
+      });
+    },
+    [],
+  );
+
+  const addMulticlassSpell = useCallback(
+    (index: number, level: number, spell: BuilderSpellSelection) => {
+      updateMulticlassSpells(index, (prev) => {
+        const existing = prev[level] ?? [];
+        if (existing.some((s) => s.id === spell.id)) return prev;
+        return { ...prev, [level]: [...existing, spell] };
+      });
+    },
+    [updateMulticlassSpells],
+  );
+
+  const removeMulticlassSpell = useCallback(
+    (index: number, level: number, spellId: string) => {
+      updateMulticlassSpells(index, (prev) => {
+        const existing = prev[level] ?? [];
+        if (!existing.some((s) => s.id === spellId)) return prev;
+        return { ...prev, [level]: existing.filter((s) => s.id !== spellId) };
+      });
+    },
+    [updateMulticlassSpells],
   );
 
   const setMulticlassEntryLevel = useCallback(
@@ -475,7 +533,7 @@ export function useIdentitySlice({
       setMulticlassEntries((prev) => {
         const next = [...prev];
         if (!next[index]) return prev;
-        next[index] = { ...next[index], level: Math.max(0, level) };
+        next[index] = { ...next[index], level: Math.max(1, level) };
         return next;
       });
     },
@@ -490,17 +548,19 @@ export function useIdentitySlice({
         next[index] = { ...next[index], subclass: selection };
         return next;
       });
-      clearSubclassOptionalFeatures();
     },
-    [clearSubclassOptionalFeatures],
+    [],
   );
 
-  const setPrimaryClassLevel = useCallback(
-    (primaryLevel: number) => {
-      const additional = multiclassEntries.reduce((s, e) => s + e.level, 0);
-      return Math.min(20, Math.max(1 + additional, primaryLevel + additional));
+  /** Restore path (autosave / JSON import / undo): no cascading resets. */
+  const restoreMulticlassEntries = useCallback(
+    (entries: BuilderMulticlassEntry[]) => {
+      setMulticlassEnabledState(entries.length > 0);
+      setMulticlassEntries(
+        entries.map((entry) => ({ ...entry, level: Math.max(1, entry.level) })),
+      );
     },
-    [multiclassEntries],
+    [],
   );
 
   const setSpeciesAbilityChoice = useCallback(
@@ -1043,7 +1103,9 @@ export function useIdentitySlice({
       setMulticlassEntryClass,
       setMulticlassEntryLevel,
       setMulticlassEntrySubclass,
-      setPrimaryClassLevel,
+      restoreMulticlassEntries,
+      addMulticlassSpell,
+      removeMulticlassSpell,
       trimFeatSelectionsForLevel,
       resetIdentitySlice,
       clearAmellwindIdentity,
@@ -1114,7 +1176,9 @@ export function useIdentitySlice({
       setMulticlassEntryClass,
       setMulticlassEntryLevel,
       setMulticlassEntrySubclass,
-      setPrimaryClassLevel,
+      restoreMulticlassEntries,
+      addMulticlassSpell,
+      removeMulticlassSpell,
       trimFeatSelectionsForLevel,
       resetIdentitySlice,
       clearAmellwindIdentity,

@@ -1,8 +1,5 @@
 import type { AbilityKey, BuilderFeatSelection } from "@/shared/types";
-import {
-  getFeatSlotLevels,
-  isAsiFeatSelection,
-} from "./builder-class.utils";
+import { isAsiFeatSelection } from "./builder-class.utils";
 import type { AbilityScoreBreakdown } from "./species-ability-bonuses";
 
 function addBonus(
@@ -18,10 +15,9 @@ function addBonus(
 export function applyFeatAsiBonuses(
   bonusMap: Record<AbilityKey, AbilityScoreBreakdown>,
   featSelections: (BuilderFeatSelection | null)[],
-  className: string,
-  level: number,
+  /** Character level of each feat slot (labels only). */
+  slotLevels: number[],
 ): void {
-  const slotLevels = getFeatSlotLevels(className, level);
 
   featSelections.forEach((feat, index) => {
     if (!feat) return;

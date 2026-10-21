@@ -7,6 +7,7 @@ import {
   getListClasses,
 } from "@/features/dnd/classes/services/class.service";
 import { subclassesForClassVariant } from "@/features/dnd/classes/utils/class-subclass.utils";
+import { formatMulticlassRequirements } from "@/features/dnd/classes/mappers/class-multiclass.mapper";
 import { useCharacterBuilder } from "@/features/raintdm/builder/context/CharacterBuilderContext";
 import { useBuilderUndo } from "@/features/raintdm/builder/context/BuilderUndoContext";
 import { useClassVariants } from "@/features/raintdm/builder/hooks/useClassVariants";
@@ -20,6 +21,7 @@ import {
   buildCurrentClassesForMulticlassPicker,
   getMulticlassCandidatePrerequisiteFailures,
   formatPrerequisiteFailureReason,
+  resolveSubclassData,
 } from "@/features/raintdm/builder/utils/multiclass.utils";
 import { useEffectiveAbilityScores } from "@/features/raintdm/builder/hooks/useEffectiveAbilityScores";
 import { isClothingArmor } from "@/features/raintdm/builder/data/armor.data";
@@ -64,7 +66,6 @@ export function ClassLibraryPanel({
   const [browsing, setBrowsing] = useState(false);
 
   const {
-    character,
     mainHand,
     offHand,
     armor,
@@ -195,14 +196,19 @@ export function ClassLibraryPanel({
   const classFiltered = useMemo(() => {
     if (!isClassSlot && !isMulticlassClassPicker) return [];
     let options = filterLibraryOptions(classOptions, q);
-    if (isMulticlassClassPicker) {
-      const takenIds = new Set(
-        [
-          classSelection?.id,
-          ...multiclassEntries.map((e) => e.classRef?.id),
-        ].filter(Boolean),
+    // A class already in the build (any source edition) cannot be taken twice.
+    const taken = [
+      isMulticlassClassPicker ? classSelection : null,
+      ...multiclassEntries
+        .filter((_, i) => i !== multiclassClassIndex)
+        .map((e) => e.classRef),
+    ].filter((ref): ref is NonNullable<typeof ref> => !!ref);
+    if (taken.length > 0) {
+      const takenIds = new Set(taken.map((ref) => ref.id));
+      const takenNames = new Set(taken.map((ref) => ref.name.toLowerCase()));
+      options = options.filter(
+        (o) => !takenIds.has(o.id) && !takenNames.has(o.name.toLowerCase()),
       );
-      options = options.filter((o) => !takenIds.has(o.id));
     }
     if (sourceFilter.length > 0) {
       options = options.filter((option) =>
@@ -219,8 +225,9 @@ export function ClassLibraryPanel({
     classOptions,
     isClassSlot,
     isMulticlassClassPicker,
+    multiclassClassIndex,
     q,
-    classSelection?.id,
+    classSelection,
     multiclassEntries,
     sourceFilter,
     catalog,
@@ -233,29 +240,56 @@ export function ClassLibraryPanel({
 
   const equippedArmorItem = armor?.armor ?? null;
 
+  // Multiclass prerequisites warn instead of blocking: scores are often
+  // assigned later, and the DM may waive them.
+  const getMulticlassPrerequisiteWarning = useCallback(
+    (option: LibraryListOption): string | null => {
+      const cls = classById.get(option.id);
+      if (!cls || multiclassClassIndex === null) return null;
+      const currentEntries = buildCurrentClassesForMulticlassPicker(
+        classSelection,
+        classData,
+        primaryClassLevel,
+        subclass,
+        multiclassEntries,
+        multiclassClassData,
+        multiclassClassIndex,
+      );
+      const failures = getMulticlassCandidatePrerequisiteFailures(
+        cls,
+        currentEntries,
+        effectiveAbilityScores,
+      );
+      return failures.length > 0
+        ? formatPrerequisiteFailureReason(failures)
+        : null;
+    },
+    [
+      classById,
+      multiclassClassIndex,
+      classSelection,
+      classData,
+      primaryClassLevel,
+      subclass,
+      multiclassEntries,
+      multiclassClassData,
+      effectiveAbilityScores,
+    ],
+  );
+
+  const getMulticlassRequirementStats = useCallback(
+    (option: LibraryListOption): string => {
+      const groups = classById.get(option.id)?.multiclassRequirements;
+      return groups?.length
+        ? `Requires ${formatMulticlassRequirements(groups)}`
+        : "";
+    },
+    [classById],
+  );
+
   const getClassDisabledReason = useCallback(
     (option: LibraryListOption): string | null => {
       const cls = classById.get(option.id);
-
-      if (isMulticlassClassPicker && cls && multiclassClassIndex !== null) {
-        const currentEntries = buildCurrentClassesForMulticlassPicker(
-          classSelection,
-          classData,
-          primaryClassLevel,
-          subclass,
-          multiclassEntries,
-          multiclassClassData,
-          multiclassClassIndex,
-        );
-        const failures = getMulticlassCandidatePrerequisiteFailures(
-          cls,
-          currentEntries,
-          effectiveAbilityScores,
-        );
-        if (failures.length > 0) {
-          return formatPrerequisiteFailureReason(failures);
-        }
-      }
 
       const hasEquippedGear =
         !!mainHand ||
@@ -274,21 +308,7 @@ export function ClassLibraryPanel({
         cls.toolGrants,
       );
     },
-    [
-      classById,
-      isMulticlassClassPicker,
-      multiclassClassIndex,
-      classSelection,
-      classData,
-      primaryClassLevel,
-      subclass,
-      multiclassEntries,
-      multiclassClassData,
-      effectiveAbilityScores,
-      mainHand,
-      offHand,
-      equippedArmorItem,
-    ],
+    [classById, mainHand, offHand, equippedArmorItem],
   );
 
   const subclassEntities = useMemo(() => {
@@ -359,17 +379,50 @@ export function ClassLibraryPanel({
   const showSubclassDetail =
     isSubclassSlot && !!subclass && !!activeSubclass && !browsing;
 
+  // Additional class slots show the chosen class / subclass at its own level.
+  const pickerEntryIndex = multiclassClassIndex ?? multiclassSubclassIndex;
+  const pickerEntry =
+    pickerEntryIndex !== null ? (multiclassEntries[pickerEntryIndex] ?? null) : null;
+  const pickerEntryData =
+    pickerEntryIndex !== null &&
+    pickerEntry?.classRef &&
+    multiclassClassData[pickerEntryIndex]?.id === pickerEntry.classRef.id
+      ? multiclassClassData[pickerEntryIndex]
+      : null;
+  const pickerEntrySubclass = resolveSubclassData(
+    pickerEntryData,
+    pickerEntry?.subclass ?? null,
+  );
+  const pickerLevel = pickerEntry ? pickerEntry.level : primaryClassLevel;
+  const showMulticlassClassDetail =
+    isMulticlassClassPicker && !!pickerEntryData && !browsing;
+  const showMulticlassSubclassDetail =
+    isMulticlassSubclassPicker && !!pickerEntrySubclass && !browsing;
+
   useEffect(() => {
     setBrowsing(false);
-  }, [selectedSlot, classSelection?.id, subclass?.id]);
+  }, [
+    selectedSlot,
+    classSelection?.id,
+    subclass?.id,
+    pickerEntry?.classRef?.id,
+    pickerEntry?.subclass?.id,
+  ]);
 
   useEffect(() => {
     if (!needsClassCatalog) return;
-    onSearchHiddenChange?.(showClassDetail || showSubclassDetail);
+    onSearchHiddenChange?.(
+      showClassDetail ||
+        showSubclassDetail ||
+        showMulticlassClassDetail ||
+        showMulticlassSubclassDetail,
+    );
   }, [
     needsClassCatalog,
     showClassDetail,
     showSubclassDetail,
+    showMulticlassClassDetail,
+    showMulticlassSubclassDetail,
     onSearchHiddenChange,
   ]);
 
@@ -407,7 +460,7 @@ export function ClassLibraryPanel({
       <ClassLibraryDetail
         classData={previewClass}
         subclass={null}
-        level={character.level}
+        level={pickerLevel}
         bookNames={bookNames}
         inline
       />
@@ -420,7 +473,7 @@ export function ClassLibraryPanel({
     return (
       <SubclassLibraryDetail
         subclass={previewSubclass}
-        level={character.level}
+        level={pickerLevel}
         bookNames={identityBookNames}
         inline
       />
@@ -442,7 +495,7 @@ export function ClassLibraryPanel({
             <ClassLibraryDetail
               classData={classData}
               subclass={activeSubclass}
-              level={character.level}
+              level={pickerLevel}
               variants={classVariants}
               varyingFields={varyingFields}
               bookNames={bookNames}
@@ -481,7 +534,7 @@ export function ClassLibraryPanel({
           />
           <SubclassLibraryDetail
             subclass={activeSubclass}
-            level={character.level}
+            level={pickerLevel}
             sourceVariants={subclassSourceVariants}
             activeSourceId={subclass?.id}
             onSourceSelect={handleSubclassSourceSelect}
@@ -515,6 +568,22 @@ export function ClassLibraryPanel({
   }
 
   if (isMulticlassClassPicker) {
+    if (showMulticlassClassDetail && pickerEntryData) {
+      return (
+        <div>
+          <LibraryBackToListButton
+            label="Change selection"
+            onClick={() => setBrowsing(true)}
+          />
+          <ClassLibraryDetail
+            classData={pickerEntryData}
+            subclass={pickerEntrySubclass}
+            level={pickerLevel}
+            bookNames={identityBookNames}
+          />
+        </div>
+      );
+    }
     return (
       <LibraryList
         loading={classLoading}
@@ -524,7 +593,8 @@ export function ClassLibraryPanel({
           multiclassEntries[multiclassClassIndex!]?.classRef?.name ?? null
         }
         icon={<GraduationCap className="h-3.5 w-3.5 text-orange-400" />}
-        getDisabledReason={getClassDisabledReason}
+        stats={getMulticlassRequirementStats}
+        getWarning={getMulticlassPrerequisiteWarning}
         onSelect={handleSelectMulticlassClass}
         renderDetails={renderClassPreview}
       />
@@ -544,10 +614,25 @@ export function ClassLibraryPanel({
     if (!entryClassData) {
       return <EmptyState text="Choose the additional class first." />;
     }
+    if (showMulticlassSubclassDetail && pickerEntrySubclass) {
+      return (
+        <div>
+          <LibraryBackToListButton
+            label="Change selection"
+            onClick={() => setBrowsing(true)}
+          />
+          <SubclassLibraryDetail
+            subclass={pickerEntrySubclass}
+            level={pickerLevel}
+            bookNames={identityBookNames}
+          />
+        </div>
+      );
+    }
 
     return (
       <LibraryList
-        loading={classDetailLoading}
+        loading={false}
         options={subclassFiltered}
         selectedId={entrySubclass?.id ?? null}
         selectedName={entrySubclass?.name ?? null}

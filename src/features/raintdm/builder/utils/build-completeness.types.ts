@@ -4,6 +4,7 @@ import type {
   AbilityScores,
   BackgroundAsiMode,
   BuilderFeatSelection,
+  BuilderMulticlassEntry,
   BuilderOptionalFeatureSelections,
   CartEntry,
   Class,
@@ -57,7 +58,20 @@ export interface BuildCompletenessInput {
   background: { id: string; name: string } | null;
   classSelection: { id: string; name: string } | null;
   subclass: { id: string; name: string } | null;
+  /** Total character level. */
   level: number;
+  /** Primary class level when multiclassed (defaults to `level`). */
+  primaryClassLevel?: number;
+  /** Additional classes; empty or omitted when single-class. */
+  multiclassEntries?: BuilderMulticlassEntry[];
+  /** Loaded class data aligned with `multiclassEntries`. */
+  multiclassClassData?: (Class | null)[];
+  /** Spellcasting of each additional class (`index` into `multiclassEntries`). */
+  multiclassSpellcasting?: {
+    index: number;
+    className: string;
+    spellcasting: SpellcastingInfo;
+  }[];
   abilityScoreMethod: AbilityScoreGenerationMethod;
   /** Base scores before species/background/feat bonuses. */
   baseAbilities: AbilityScores;

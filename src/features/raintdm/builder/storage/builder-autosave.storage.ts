@@ -19,6 +19,7 @@ import {
   normalizeBuilderSnapshot,
   type BuilderChoiceSnapshot,
 } from "../foundry-export/builder-snapshot";
+import { normalizeMulticlassEntries } from "../foundry-export/builder-snapshot-validators";
 
 const STORAGE_KEY = "mh-builder-autosave";
 
@@ -124,13 +125,7 @@ export function normalizeBuilderPersistedBuild(
     ABILITY_KEYS.map((key) => [key, clampInt(rawAbilities[key], 1, 30, 10)]),
   ) as unknown as AbilityScores;
 
-  const entries: BuilderMulticlassEntry[] = Array.isArray(multiclass.entries)
-    ? multiclass.entries.filter(isRecord).map((entry) => ({
-        classRef: ref(entry.classRef, "Multiclass class"),
-        subclass: ref(entry.subclass, "Multiclass subclass"),
-        level: clampInt(entry.level, 0, 19, 1),
-      }))
-    : [];
+  const entries = normalizeMulticlassEntries(multiclass.entries, warn);
 
   return {
     identity: {

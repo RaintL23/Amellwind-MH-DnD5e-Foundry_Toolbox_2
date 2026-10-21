@@ -21,8 +21,10 @@ import {
   applyBaseScores,
   buildAbilityBonusMap,
 } from "./species-ability-bonuses";
+import { getFeatSlotLevels } from "./builder-class.utils";
 import {
   buildClassLevelEntries,
+  getFeatSlotLevelsForBuild,
   getPrimaryClassLevel,
 } from "./multiclass.utils";
 
@@ -76,17 +78,12 @@ export function computeEffectiveAbilityScores(
     backgroundAsiPlus1: input.backgroundAsiPlus1,
   });
 
-  const classNames = classEntries
-    .filter((e) => e.classData)
-    .map((e) => e.classData!.name)
-    .join("/");
+  const slotLevels =
+    input.multiclassEnabled && input.multiclassEntries.length > 0
+      ? getFeatSlotLevelsForBuild(classEntries, input.level)
+      : getFeatSlotLevels(input.classSelection?.name ?? "", input.level);
 
-  applyFeatAsiBonuses(
-    bonusMap,
-    input.featSelections,
-    classNames || input.classSelection?.name || "",
-    input.level,
-  );
+  applyFeatAsiBonuses(bonusMap, input.featSelections, slotLevels);
 
   const totals = applyBaseScores(bonusMap, input.baseScores);
   return ABILITY_KEYS.reduce((acc, key) => {

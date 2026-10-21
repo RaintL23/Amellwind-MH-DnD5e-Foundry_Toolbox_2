@@ -25,6 +25,7 @@ function LibraryListRow({
   isSelected,
   rowStats,
   disabledReason,
+  warning = null,
   trailingLabel,
   trailingTitle,
   onSelect,
@@ -35,6 +36,8 @@ function LibraryListRow({
   isSelected: boolean;
   rowStats: string;
   disabledReason: string | null;
+  /** Non-blocking notice (row stays selectable). */
+  warning?: string | null;
   trailingLabel?: string;
   trailingTitle?: string;
   onSelect: (id: string, name: string) => void;
@@ -84,9 +87,9 @@ function LibraryListRow({
               {rowStats}
             </div>
           )}
-          {disabledReason && (
+          {(disabledReason ?? warning) && (
             <div className="pl-5 text-[10px] leading-snug text-amber-500">
-              {disabledReason}
+              {disabledReason ?? warning}
             </div>
           )}
         </button>
@@ -123,6 +126,7 @@ export function LibraryList({
   icon,
   stats,
   getDisabledReason,
+  getWarning,
   onSelect,
   renderDetails,
 }: {
@@ -133,6 +137,8 @@ export function LibraryList({
   icon: React.ReactNode;
   stats?: (option: LibraryListOption) => string;
   getDisabledReason?: (option: LibraryListOption) => string | null;
+  /** Amber notice under the row that does not block selection. */
+  getWarning?: (option: LibraryListOption) => string | null;
   onSelect: (id: string, name: string) => void;
   /** Details shown inline (accordion) under the row, without selecting it. */
   renderDetails?: (option: LibraryListOption) => React.ReactNode;
@@ -174,6 +180,7 @@ export function LibraryList({
             isSelected={isSelected}
             rowStats={stats?.(option) ?? ""}
             disabledReason={disabledReason}
+            warning={getWarning?.(option) ?? null}
             trailingLabel={variantTrailing?.label ?? sourceLabel}
             trailingTitle={
               variantTrailing?.title ??

@@ -16,6 +16,7 @@ export function useClassGrantSync() {
     multiclassEnabled,
     multiclassEntries,
     multiclassClassData,
+    multiclassContexts,
     primaryClassLevel,
     applyIdentityGrants,
     optionalFeatureSelections,
@@ -75,15 +76,33 @@ export function useClassGrantSync() {
       multiclassClassData,
     );
 
-    const featureChoiceGrants = computeAllClassEquipmentGrants(
-      optionalFeatureSelections ?? {},
-      progressions,
-      classData,
-      activeSubclass,
-      level,
-      optionalCatalog,
-      featCatalog,
-    );
+    const featureChoiceGrants = [
+      computeAllClassEquipmentGrants(
+        optionalFeatureSelections ?? {},
+        progressions,
+        classData,
+        activeSubclass,
+        level,
+        optionalCatalog,
+        featCatalog,
+      ),
+      ...multiclassContexts.map((ctx) =>
+        computeAllClassEquipmentGrants(
+          optionalFeatureSelections ?? {},
+          ctx.progressions.map((r) => r.progression),
+          ctx.classData,
+          ctx.subclassData,
+          ctx.entry.level,
+          optionalCatalog,
+          featCatalog,
+        ),
+      ),
+    ].reduce((acc, grants) => ({
+      armorGrants: [...acc.armorGrants, ...grants.armorGrants],
+      weaponGrants: [...acc.weaponGrants, ...grants.weaponGrants],
+      toolGrants: [...acc.toolGrants, ...grants.toolGrants],
+      cantripBonus: acc.cantripBonus + grants.cantripBonus,
+    }));
 
     applyIdentityGrants({
       ...base,
@@ -97,6 +116,7 @@ export function useClassGrantSync() {
     multiclassEnabled,
     multiclassEntries,
     multiclassClassData,
+    multiclassContexts,
     activeSubclass,
     applyIdentityGrants,
     optionalFeatureSelections,

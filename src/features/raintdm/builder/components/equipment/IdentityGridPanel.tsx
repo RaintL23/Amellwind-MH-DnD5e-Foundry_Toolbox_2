@@ -211,6 +211,20 @@ export function IdentityGridPanel({
             : undefined
         }
       />
+      {showSubclass && (
+        <HighlightedGridSlot
+          highlightKey="subclass"
+          label={subclassLabel}
+          icon={<Sparkles className="h-5 w-5 text-emerald-400" />}
+          equipped={subclass ? { name: subclass.name } : null}
+          onClickEquip={() => onSelectSlot("subclass")}
+          onClickDetails={() => onSelectSlot("subclass")}
+          onUnequip={subclass ? () => onUnequipSlot("subclass") : undefined}
+          isSelected={selectedSlot === "subclass"}
+          disabled={!classSelection}
+          disabledHint={!classSelection ? "Choose a class first" : undefined}
+        />
+      )}
       {multiclassEnabled &&
         multiclassEntries.map((entry, index) => {
           const classSlot = toMulticlassClassSlot(index);
@@ -264,20 +278,6 @@ export function IdentityGridPanel({
             </div>
           );
         })}
-      {showSubclass && (
-        <HighlightedGridSlot
-          highlightKey="subclass"
-          label={subclassLabel}
-          icon={<Sparkles className="h-5 w-5 text-emerald-400" />}
-          equipped={subclass ? { name: subclass.name } : null}
-          onClickEquip={() => onSelectSlot("subclass")}
-          onClickDetails={() => onSelectSlot("subclass")}
-          onUnequip={subclass ? () => onUnequipSlot("subclass") : undefined}
-          isSelected={selectedSlot === "subclass"}
-          disabled={!classSelection}
-          disabledHint={!classSelection ? "Choose a class first" : undefined}
-        />
-      )}
       <OptionalFeatureGridPanel
         progressions={optionalProgressions}
         selections={optionalFeatureSelections}

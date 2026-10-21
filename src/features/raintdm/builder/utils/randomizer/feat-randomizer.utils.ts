@@ -320,7 +320,7 @@ function featSelectionFor(
 }
 
 /**
- * Level feat slots (4, 8, 12, 16, 19; Fighter 6, 14) following a stat plan:
+ * Level feat slots (4, 8, 12, 16, 19; Fighter 6, 14; Rogue 10) following a stat plan:
  * 1. Level 19: best Epic Boon whose +1 can go to the primary (cap 30).
  * 2. Primary below 20 and odd: a good half-feat for the archetype that raises
  *    the primary, else ASI +1 primary / +1 secondary.

@@ -30,7 +30,7 @@ import {
   type CompletenessStep,
   type NextCompletenessStep,
 } from "../utils/build-completeness/group-completeness-steps.utils";
-import { getFeatSlotLevels } from "../utils/builder-class.utils";
+import { getCompletenessFeatSlotLevels } from "../utils/build-completeness/helpers";
 import { persistBuilderExportGate } from "../storage/builder-export-gate.storage";
 import { useBuilderSlotSelection } from "../hooks/useBuilderSlotSelection";
 import {
@@ -99,7 +99,7 @@ export function BuildCompletenessProvider({
   const { species: speciesData } = useSelectedSpecies();
   const { dndBackground } = useSelectedDndBackground();
   const amellwindBackground = useSelectedBackground();
-  const { spellcasting } = useSpellcastingContext();
+  const { spellcasting, multiclassSpellcasting } = useSpellcastingContext();
   const layout = useBuilderLayoutOptional();
   const isMobileLayout = layout?.isMobileLayout ?? false;
   const setActiveTab = layout?.setActiveTab;
@@ -112,6 +112,16 @@ export function BuildCompletenessProvider({
       classSelection: builder.class,
       subclass: builder.subclass,
       level: builder.character.level,
+      primaryClassLevel: builder.primaryClassLevel,
+      multiclassEntries: builder.multiclassEnabled ? builder.multiclassEntries : [],
+      multiclassClassData: builder.multiclassEnabled
+        ? builder.multiclassClassData
+        : [],
+      multiclassSpellcasting: multiclassSpellcasting.map((mc) => ({
+        index: mc.index,
+        className: mc.classData.name,
+        spellcasting: mc.spellcasting,
+      })),
       abilityScoreMethod: builder.abilityScoreMethod,
       baseAbilities: builder.character.abilities,
       classData,
@@ -179,6 +189,7 @@ export function BuildCompletenessProvider({
       amellwindBackground,
       inventory.items,
       spellcasting,
+      multiclassSpellcasting,
     ],
   );
 
@@ -193,16 +204,19 @@ export function BuildCompletenessProvider({
   const hasFeatSlots =
     deferredInput.featSelections.length > 0 ||
     (deferredClassName !== null &&
-      getFeatSlotLevels(deferredClassName, deferredInput.level).length > 0);
+      getCompletenessFeatSlotLevels(deferredInput).length > 0);
 
+  const isAnySpellcaster =
+    (spellcasting?.isSpellcaster ?? false) ||
+    multiclassSpellcasting.some((mc) => mc.spellcasting.isSpellcaster);
   const liveSteps = useMemo(
     () =>
       groupCompletenessSteps(liveResult, {
-        isSpellcaster: spellcasting?.isSpellcaster ?? false,
+        isSpellcaster: isAnySpellcaster,
         hasClass: deferredClassName !== null,
         hasFeatSlots,
       }),
-    [liveResult, spellcasting?.isSpellcaster, deferredClassName, hasFeatSlots],
+    [liveResult, isAnySpellcaster, deferredClassName, hasFeatSlots],
   );
 
   const liveProgress = useMemo(

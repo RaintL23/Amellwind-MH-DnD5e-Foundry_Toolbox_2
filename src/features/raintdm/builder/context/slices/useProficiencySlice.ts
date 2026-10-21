@@ -322,6 +322,27 @@ export function useProficiencySlice({
     setClassLanguageChoicesState({});
   }, []);
 
+  /**
+   * Multiclass grants are appended after the primary class grants, so their
+   * choices live at indices >= the primary counts. Drops only those, keeping
+   * the primary class picks when an additional class changes.
+   */
+  const resetMulticlassChoices = useCallback(
+    (primaryCounts: { skill: number; tool: number; weapon: number }) => {
+      const keepBelow = <T,>(limit: number) => (prev: Record<number, T>) => {
+        const keys = Object.keys(prev).map(Number);
+        if (!keys.some((k) => k >= limit)) return prev;
+        const next: Record<number, T> = {};
+        for (const k of keys) if (k < limit) next[k] = prev[k];
+        return next;
+      };
+      setClassSkillChoicesState(keepBelow<SkillKey[]>(primaryCounts.skill));
+      setClassToolChoicesState(keepBelow<string[]>(primaryCounts.tool));
+      setClassWeaponChoicesState(keepBelow<string[]>(primaryCounts.weapon));
+    },
+    [],
+  );
+
   const resetProficiencySlice = useCallback(() => {
     setClassSkillGrants([]);
     setBgSkillGrants([]);
@@ -724,6 +745,7 @@ export function useProficiencySlice({
       resetOnSpeciesChange,
       resetOnBackgroundChange,
       resetOnClassChange,
+      resetMulticlassChoices,
       resetProficiencySlice,
     }),
     [
@@ -773,6 +795,7 @@ export function useProficiencySlice({
       resetOnSpeciesChange,
       resetOnBackgroundChange,
       resetOnClassChange,
+      resetMulticlassChoices,
       resetProficiencySlice,
     ],
   );

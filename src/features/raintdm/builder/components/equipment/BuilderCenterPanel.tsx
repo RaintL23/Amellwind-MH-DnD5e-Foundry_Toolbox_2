@@ -23,8 +23,10 @@ import {
 } from "../../utils/builder-class.utils";
 import {
   isMulticlassClassSlot,
+  isMulticlassSpellSlot,
   isMulticlassSubclassSlot,
   parseMulticlassClassSlotIndex,
+  parseMulticlassSpellSlot,
   parseMulticlassSubclassSlotIndex,
 } from "../../utils/multiclass.utils";
 import {
@@ -39,6 +41,7 @@ import { RuneAssignmentPanel } from "./RuneAssignmentPanel";
 import { IdentityGridPanel } from "./IdentityGridPanel";
 import { EquipmentGridPanel } from "./EquipmentGridPanel";
 import { SpellcastingGridPanel } from "./SpellcastingGridPanel";
+import { MulticlassClassGridPanel } from "./MulticlassClassGridPanel";
 import { useSpeciesSpellGrantUi } from "./SpeciesInnateSpellsPanel";
 import { SpellLibraryPanel } from "./SpellLibraryPanel";
 import { OptionalFeatureLibraryPanel } from "./OptionalFeatureLibraryPanel";
@@ -109,9 +112,12 @@ export function BuilderCenterPanel() {
     multiclassEnabled,
     multiclassEntries,
     multiclassClassData,
+    multiclassContexts,
     primaryClassLevel,
     setMulticlassEntryClass,
     setMulticlassEntrySubclass,
+    addMulticlassSpell,
+    removeMulticlassSpell,
     setSpeciesOriginFeat,
     setBackgroundOriginFeat,
     setOptionalFeatureOriginFeatAtIndex,
@@ -145,7 +151,8 @@ export function BuilderCenterPanel() {
     loading: spellsLoading,
     spellLevelByName,
   } = useSpellCatalog();
-  const { centerPanelSpellcasting: spellcastingInfo } = useSpellcastingContext();
+  const { spellcasting: spellcastingInfo, multiclassSpellcasting } =
+    useSpellcastingContext();
   const speciesSpellGrants = useSpeciesSpellGrantUi();
   const hasSpeciesSpellsInSelections = useMemo(
     () =>
@@ -200,15 +207,23 @@ export function BuilderCenterPanel() {
       ),
     [classData, subclassData, primaryClassLevel],
   );
+  // Every class's progressions: Fighting Style picks must differ across classes.
+  const allOptionalProgressions = useMemo(
+    () => [
+      ...optionalProgressions,
+      ...multiclassContexts.flatMap((ctx) => ctx.progressions),
+    ],
+    [optionalProgressions, multiclassContexts],
+  );
   const progressionNames = useMemo(
     () =>
       Object.fromEntries(
-        optionalProgressions.map(({ progression }) => [
+        allOptionalProgressions.map(({ progression }) => [
           progression.id,
           progression.name,
         ]),
       ),
-    [optionalProgressions],
+    [allOptionalProgressions],
   );
   const editingSlotLabel = formatBuilderSlotLabel(selectedSlot, progressionNames);
 
@@ -232,6 +247,7 @@ export function BuilderCenterPanel() {
     selectedSlot !== "subclass" &&
     !isMulticlassClassSlot(selectedSlot) &&
     !isMulticlassSubclassSlot(selectedSlot) &&
+    !isMulticlassSpellSlot(selectedSlot) &&
     selectedSlot !== "origin-feat" &&
     !isOptionalOriginFeatSlot(selectedSlot) &&
     !isFeatSlotSelection(selectedSlot) &&
@@ -400,8 +416,51 @@ export function BuilderCenterPanel() {
         spellLevelByName,
         allSpells,
       ));
+  // Additional class spell slot: `multiclass-<i>:<inner slot>`.
+  const multiclassSpellTarget = (() => {
+    if (!selectedSlot || !isMulticlassSpellSlot(selectedSlot)) return null;
+    const { index, innerSlot } = parseMulticlassSpellSlot(selectedSlot);
+    const info = multiclassSpellcasting.find((mc) => mc.index === index);
+    const entry = multiclassEntries[index];
+    if (!info || !entry || !isSpellPickerSlot(innerSlot as BuilderSlotSelection)) {
+      return null;
+    }
+    const slot = innerSlot as Parameters<typeof SpellLibraryPanel>[0]["selectedSlot"];
+    const selections = entry.spellSelections ?? {};
+    const allowPicks = isSpellSlotChoosable(slot, info.spellcasting);
+    const visible =
+      allowPicks ||
+      spellSlotNeedsSpellListChoice(slot, info.spellcasting) ||
+      spellSlotHasLockedGrants(
+        slot,
+        info.spellcasting,
+        selections,
+        spellLevelByName,
+        allSpells,
+      );
+    return visible ? { index, slot, info, entry, selections, allowPicks } : null;
+  })();
+
   const showOptionalFeatureLibrary =
     selectedSlot !== null && isOptionalFeatureSlot(selectedSlot);
+  // Owner class of the selected optional-feature slot (primary or additional).
+  const optionalFeatureOwner = (() => {
+    if (!selectedSlot || !isOptionalFeatureSlot(selectedSlot)) return null;
+    const progressionId = parseOptionalFeatureSlot(selectedSlot)?.progressionId;
+    const owner = multiclassContexts.find((ctx) =>
+      ctx.progressions.some((p) => p.progression.id === progressionId),
+    );
+    if (owner) {
+      return {
+        classData: owner.classData,
+        subclass: owner.subclassData,
+        level: owner.entry.level,
+      };
+    }
+    return classData
+      ? { classData, subclass: subclassData, level: primaryClassLevel }
+      : null;
+  })();
 
   // Generic catalog library: empty slots, or identity/gear slots that stay pickable when filled.
   const showLibrary =
@@ -409,6 +468,7 @@ export function BuilderCenterPanel() {
     selectedSlot !== "backstory" &&
     selectedSlot !== "faction" &&
     !isSpellPickerSlot(selectedSlot) &&
+    !isMulticlassSpellSlot(selectedSlot) &&
     !isOptionalFeatureSlot(selectedSlot) &&
     (!isSlotOccupied(selectedSlot) ||
       selectedSlot === "species" ||
@@ -428,6 +488,7 @@ export function BuilderCenterPanel() {
     showBackstoryPanel ||
     showFactionPanel ||
     showSpellLibrary ||
+    !!multiclassSpellTarget ||
     showOptionalFeatureLibrary ||
     showLibrary ||
     showRunePanel;
@@ -470,7 +531,7 @@ export function BuilderCenterPanel() {
             "Character"
           }
           speciesName={species?.name}
-          characterLevel={character.level}
+          characterLevel={primaryClassLevel}
           spellcastingInfo={spellcastingInfo}
           spellSelections={spellSelections}
           allSpells={allSpells}
@@ -482,15 +543,36 @@ export function BuilderCenterPanel() {
         />
       )}
 
+      {multiclassSpellTarget && (
+        <SpellLibraryPanel
+          key={selectedSlot}
+          selectedSlot={multiclassSpellTarget.slot}
+          className={multiclassSpellTarget.info.classData.name}
+          characterLevel={multiclassSpellTarget.entry.level}
+          spellcastingInfo={multiclassSpellTarget.info.spellcasting}
+          spellSelections={multiclassSpellTarget.selections}
+          allSpells={allSpells}
+          spellsLoading={spellsLoading}
+          spellLevelByName={spellLevelByName}
+          allowSpellPicks={multiclassSpellTarget.allowPicks}
+          onAddSpell={(level, spell) =>
+            addMulticlassSpell(multiclassSpellTarget.index, level, spell)
+          }
+          onRemoveSpell={(level, spellId) =>
+            removeMulticlassSpell(multiclassSpellTarget.index, level, spellId)
+          }
+        />
+      )}
+
       {showOptionalFeatureLibrary &&
         isOptionalFeatureSlot(selectedSlot) &&
-        classData && (
+        optionalFeatureOwner && (
           <OptionalFeatureLibraryPanel
             selectedSlot={selectedSlot}
-            progressions={optionalProgressions}
-            classData={classData}
-            subclass={subclassData}
-            level={character.level}
+            progressions={allOptionalProgressions}
+            classData={optionalFeatureOwner.classData}
+            subclass={optionalFeatureOwner.subclass}
+            level={optionalFeatureOwner.level}
             selections={optionalFeatureSelections}
             onSetSelections={setOptionalFeaturesForProgression}
             weaponProficiencies={resolvedWeaponItems}
@@ -651,6 +733,22 @@ export function BuilderCenterPanel() {
           )}
         </BuilderPanel>
       )}
+
+      {multiclassContexts.map((ctx) => (
+        <MulticlassClassGridPanel
+          key={`${ctx.index}-${ctx.classData.id}`}
+          context={ctx}
+          spellcasting={multiclassSpellcasting.find((mc) => mc.index === ctx.index)}
+          optionalFeatureSelections={optionalFeatureSelections}
+          proficiencyBonus={character.getProficiencyBonus()}
+          getAbilityModifier={(key) => getAbilityModifier(effectiveScores[key])}
+          spellLevelByName={spellLevelByName}
+          allSpells={allSpells}
+          selectedSlot={selectedSlot}
+          onSelectSlot={selectSlot}
+          onUnequipSlot={handleUnequipSlot}
+        />
+      ))}
 
       {/* ─── Contextual panels (mutually driven by selectedSlot) ─── */}
       {isMobileLayout ? (
