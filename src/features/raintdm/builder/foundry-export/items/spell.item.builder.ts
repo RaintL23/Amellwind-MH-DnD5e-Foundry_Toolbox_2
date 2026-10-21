@@ -167,6 +167,8 @@ export interface SpellItemInput {
   damageTypes?: string[];
   /** Foundry `img` (5etools fluff URL or school fallback path). */
   img?: string;
+  /** Class identifier the spell is cast through (`system.sourceClass`, multiclass). */
+  sourceClass?: string;
 }
 
 function buildSpellActivities(input: SpellItemInput): Record<string, unknown> {
@@ -382,7 +384,7 @@ export function buildSpellItem(input: SpellItemInput): FoundryItem {
     },
     uses: { spent: 0, max: "", recovery: [] },
     activities: buildSpellActivities(input),
-    sourceClass: "",
+    sourceClass: input.sourceClass ?? "",
   };
   return wrapItem({
     name: input.name,

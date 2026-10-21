@@ -66,12 +66,23 @@ export function buildSizeAdvancement(size: string): Record<string, unknown> {
   };
 }
 
-export function buildHitPointsAdvancement(): Record<string, unknown> {
+/**
+ * HitPoints advancement with one value per class level: "max" at level 1 of
+ * the character's first class, "avg" otherwise (the builder's fixed-HP rule).
+ */
+export function buildHitPointsAdvancement(
+  levels = 0,
+  isOriginalClass = true,
+): Record<string, unknown> {
+  const value: Record<string, string> = {};
+  for (let level = 1; level <= levels; level++) {
+    value[String(level)] = level === 1 && isOriginalClass ? "max" : "avg";
+  }
   return {
     _id: foundryId(),
     type: "HitPoints",
     configuration: {},
-    value: {},
+    value,
     title: "Hit Points",
   };
 }

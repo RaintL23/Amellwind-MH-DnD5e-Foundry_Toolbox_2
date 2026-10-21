@@ -27,7 +27,6 @@ import {
   getArmorTrainingProficiencies,
   getClassFeaturesExport,
   getSpeciesTraitsExport,
-  getSpellSlotTotals,
   getXpForLevel,
   hasShieldEquipped,
   loadFeatExportLookups,
@@ -39,6 +38,10 @@ import { BACKGROUND_FACTION_LABELS } from "@/shared/types";
 import { downloadCharacterImages } from "../utils/image-download.utils";
 import { formatAlignmentLabel, parseAlignmentAxes } from "../utils/alignment.utils";
 import { useArmorRarityBonuses } from "./useArmorRarityBonuses";
+import {
+  getBuildSpellSlotTotals,
+  mergeSpellExports,
+} from "../utils/character-sheet-export/pdf-multiclass.utils";
 
 /** Generated sheet bytes plus the base name used for the PDF and images. */
 export interface CharacterSheetPdfFile {
@@ -62,7 +65,7 @@ export function useCharacterSheetExport() {
   const armorClass = useCharacterArmorClass();
   const speed = useCharacterSpeed();
   const { allSpells } = useSpellCatalog();
-  const { spellcasting } = useSpellcastingContext();
+  const { spellcasting, multiclassSpellcasting } = useSpellcastingContext();
   const effectiveScores = useEffectiveAbilityScores();
   const armorBonuses = useArmorRarityBonuses();
   const [exporting, setExporting] = useState(false);
@@ -79,15 +82,25 @@ export function useCharacterSheetExport() {
     const exportCharacter = character.withUpdates({ abilities: effectiveScores });
 
     const prof = character.getProficiencyBonus();
+    // Multiclass: the first class that casts (primary first) fills the header.
+    const sheetSpellcastingAbility =
+      spellcasting.spellcastingAbility ??
+      multiclassSpellcasting.find((mc) => mc.spellcasting.spellcastingAbility)
+        ?.spellcasting.spellcastingAbility ??
+      null;
     const {
       spellSaveDc,
       spellAttackBonus,
       spellcastingMod,
     } = computeSpellcastingAttackStats(
-      spellcasting.spellcastingAbility,
+      sheetSpellcastingAbility,
       prof,
       (key) => getAbilityModifier(effectiveScores[key]),
     );
+    const additionalClasses = multiclassSpellcasting.map((mc) => ({
+      mc,
+      entry: builder.multiclassEntries[mc.index],
+    }));
 
     const combatMainHand = builder.combat?.mainHand;
     const unarmedWeaponSource = combatMainHand?.sources.find(
@@ -110,12 +123,25 @@ export function useCharacterSheetExport() {
       combatMainHandBreakdown: builder.useUnarmedStrike ? combatMainHand : null,
     });
 
-    const spellList = buildSpellListExport({
-      spellSelections: builder.spellSelections ?? {},
-      spellcasting,
-      allSpells,
-      characterLevel: character.level,
-    });
+    const spellList = mergeSpellExports([
+      buildSpellListExport({
+        spellSelections: builder.spellSelections ?? {},
+        spellcasting,
+        allSpells,
+        characterLevel: builder.primaryClassLevel,
+      }),
+      ...additionalClasses.map(({ mc, entry }) =>
+        buildSpellListExport({
+          spellSelections: entry?.spellSelections ?? {},
+          spellcasting: mc.spellcasting,
+          allSpells,
+          characterLevel: entry?.level ?? 1,
+        }).map((spell) => ({
+          ...spell,
+          notes: [spell.notes, mc.classData.name].filter(Boolean).join(" · "),
+        })),
+      ),
+    ]);
 
     function formatSkillChoices(keys: SkillKey[]): string {
       return keys.map((k) => SKILL_LABELS[k] ?? k).join(", ");
@@ -175,13 +201,24 @@ export function useCharacterSheetExport() {
       saveProficiencies[abilityKey] = true;
     }
 
-    const classFeatures = getClassFeaturesExport(
-      classData,
-      subclassData,
-      character.level,
-      builder.optionalFeatureSelections ?? {},
-      optDescMap,
-    );
+    const classFeatures = [
+      ...getClassFeaturesExport(
+        classData,
+        subclassData,
+        builder.primaryClassLevel,
+        builder.optionalFeatureSelections ?? {},
+        optDescMap,
+      ),
+      ...additionalClasses.flatMap(({ mc, entry }) =>
+        getClassFeaturesExport(
+          mc.classData,
+          mc.subclassData,
+          entry?.level ?? 1,
+          builder.optionalFeatureSelections ?? {},
+          optDescMap,
+        ),
+      ),
+    ];
 
     const savingThrows: Record<string, string> = {};
     for (const key of ABILITY_KEYS) {
@@ -217,8 +254,21 @@ export function useCharacterSheetExport() {
       ]
         .filter(Boolean)
         .join(" · "),
-      className: builder.class?.name ?? "",
-      subclass: builder.subclass?.name ?? "",
+      className:
+        additionalClasses.length > 0
+          ? [
+              `${builder.class?.name ?? ""} ${builder.primaryClassLevel}`,
+              ...additionalClasses.map(
+                ({ mc, entry }) => `${mc.classData.name} ${entry?.level ?? 1}`,
+              ),
+            ].join(" / ")
+          : (builder.class?.name ?? ""),
+      subclass: [
+        builder.subclass?.name,
+        ...additionalClasses.map(({ entry }) => entry?.subclass?.name),
+      ]
+        .filter(Boolean)
+        .join(" / "),
       level: character.level,
       xp: getXpForLevel(character.level),
       size: character.size === "S" ? "S" : "M",
@@ -262,16 +312,24 @@ export function useCharacterSheetExport() {
       }),
       weapons,
       spells: spellList,
-      spellcastingAbility: spellcasting.spellcastingAbility ?? undefined,
+      spellcastingAbility: sheetSpellcastingAbility ?? undefined,
       spellcastingMod,
       spellSaveDc,
       spellAttackBonus,
-      spellSlotTotals: getSpellSlotTotals(
-        classData,
-        subclassData,
-        character.level,
-        spellcasting,
-      ),
+      spellSlotTotals: getBuildSpellSlotTotals([
+        {
+          classData,
+          subclassData,
+          level: builder.primaryClassLevel,
+          spellcasting,
+        },
+        ...additionalClasses.map(({ mc, entry }) => ({
+          classData: mc.classData,
+          subclassData: mc.subclassData,
+          level: entry?.level ?? 1,
+          spellcasting: mc.spellcasting,
+        })),
+      ]),
       hasShield: hasShieldEquipped({
         equippedShield: builder.equippedShield,
         mainHand: builder.mainHand,
@@ -300,6 +358,7 @@ export function useCharacterSheetExport() {
     inventory.items,
     inventory.weapons,
     spellcasting,
+    multiclassSpellcasting,
     subclassData,
     speed.display,
   ]);

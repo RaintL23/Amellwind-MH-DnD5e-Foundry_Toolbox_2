@@ -2,6 +2,7 @@ import type {
   AbilityKey,
   AbilityScores,
   ArmorItem,
+  BuilderMulticlassEntry,
   CartEntry,
   DamageType,
   EquippedWeapon,
@@ -24,6 +25,11 @@ export interface FeatureInput {
    * origin on the Foundry sheet instead of "Other Features".
    */
   originKind?: "class" | "subclass" | "race" | "background";
+  /**
+   * Class identifier owning a `class` / `subclass` origin (multiclass picks
+   * group under their own class). Defaults to the primary class.
+   */
+  originClass?: string;
 }
 
 export interface ClassInfoInput {
@@ -51,6 +57,12 @@ export interface SubclassInfoInput {
   description?: string;
   img?: string;
   features: FeatureInput[];
+}
+
+/** An additional class (multiclass) with its optional subclass. */
+export interface AdditionalClassInput {
+  classInfo: ClassInfoInput;
+  subclassInfo: SubclassInfoInput | null;
 }
 
 export interface RaceInfoInput {
@@ -112,6 +124,13 @@ export interface FoundryExportInput {
   biography: string;
   classInfo: ClassInfoInput | null;
   subclassInfo: SubclassInfoInput | null;
+  /** Multiclass entries, in level order after the primary class. */
+  additionalClasses: AdditionalClassInput[];
+  /**
+   * Multiclass Spellcaster table slots (two or more spellcasting classes);
+   * null uses `casterProgression` + `casterLevel`.
+   */
+  spellSlotOverride: Record<number, number> | null;
   raceInfo: RaceInfoInput | null;
   backgroundInfo: BackgroundInfoInput | null;
   feats: FeatureInput[];
@@ -134,5 +153,7 @@ export interface FoundryExportInput {
   itemImages?: Record<string, string>;
   /** Lossless builder choice snapshot embedded as a namespaced actor flag. */
   builderSnapshot?: BuilderChoiceSnapshot;
+  /** Multiclass entries (with their spells) embedded next to the snapshot. */
+  builderMulticlass?: BuilderMulticlassEntry[];
 }
 

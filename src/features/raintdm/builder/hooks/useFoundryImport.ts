@@ -1,6 +1,7 @@
 import { useCallback, useState } from "react";
 import type {
   ArmorItem,
+  BuilderMulticlassEntry,
   CartEntry,
   Class,
   Weapon,
@@ -25,6 +26,7 @@ import {
 import { getAllForgeWeapons } from "@/features/raintdm/weapon-forge/services/weapon-forge.service";
 import { MH_ARMOR_CATALOG } from "../utils/cart-equipment.resolver";
 import { getFeatSlotLevels } from "../utils/builder-class.utils";
+import { MAX_MULTICLASS_ENTRIES } from "../utils/multiclass.utils";
 import { parseFoundryActor } from "../foundry-import";
 import type {
   FoundryImportSummary,
@@ -104,6 +106,38 @@ export function useFoundryImport() {
         } else {
           unmatched.push(`Class: ${parsed.className}`);
         }
+      }
+
+      // ── Multiclass: lossless entries from this app, else the class items ──
+      if (parsed.builderMulticlass.length > 0) {
+        builder.restoreMulticlassEntries(parsed.builderMulticlass);
+        matched.push(
+          `Multiclass: ${parsed.builderMulticlass
+            .map((e) => `${e.classRef?.name ?? "?"} ${e.level}`)
+            .join(", ")}`,
+        );
+      } else if (parsed.additionalClasses.length > 0) {
+        const entries: BuilderMulticlassEntry[] = [];
+        for (const extra of parsed.additionalClasses.slice(0, MAX_MULTICLASS_ENTRIES)) {
+          const [match] = await getClassesByName(extra.name);
+          if (!match) {
+            unmatched.push(`Multiclass: ${extra.name}`);
+            continue;
+          }
+          const sub = extra.subclassName
+            ? match.subclasses?.find((s) => namesEqual(s.name, extra.subclassName!))
+            : undefined;
+          if (extra.subclassName && !sub) {
+            unmatched.push(`Subclass: ${extra.subclassName}`);
+          }
+          entries.push({
+            classRef: { id: match.id, name: match.name },
+            level: Math.max(1, extra.levels),
+            subclass: sub ? { id: sub.id, name: sub.name } : null,
+          });
+          matched.push(`Multiclass: ${match.name} ${extra.levels}`);
+        }
+        if (entries.length > 0) builder.restoreMulticlassEntries(entries);
       }
 
       // ── Identity: species (handles subraces by linking to their parent) ──

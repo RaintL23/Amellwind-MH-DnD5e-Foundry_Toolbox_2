@@ -49,7 +49,11 @@ import {
   buildFeatureItems,
   itemGrantsByLevel,
 } from "./actor-feature-advancement";
-import type { FoundryExportInput } from "./actor-export.types";
+import type {
+  ClassInfoInput,
+  FoundryExportInput,
+  SubclassInfoInput,
+} from "./actor-export.types";
 
 export type {
   FeatureInput,
@@ -81,70 +85,81 @@ export function buildFoundryActor(input: FoundryExportInput): FoundryActor {
 
   // ─── Class / subclass / race / background ───────────────────────────────────
 
-  // Class + class features
-  if (input.classInfo) {
-    const { items: featureItems, byLevel } = buildFeatureItems(
-      input.classInfo.features,
-    );
+  // Class + subclass items per class (primary first, then multiclass entries).
+  const classIdByIdentifier = new Map<string, string>();
+  const subclassIdByClass = new Map<string, string>();
+  const classEntries: { classInfo: ClassInfoInput; subclassInfo: SubclassInfoInput | null }[] = [
+    ...(input.classInfo
+      ? [{ classInfo: input.classInfo, subclassInfo: input.subclassInfo }]
+      : []),
+    ...(input.additionalClasses ?? []),
+  ];
+  classEntries.forEach(({ classInfo, subclassInfo }, index) => {
+    const isOriginalClass = index === 0 && !!input.classInfo;
+    const { items: featureItems, byLevel } = buildFeatureItems(classInfo.features);
     items.push(...featureItems);
 
     const itemGrants = itemGrantsByLevel(byLevel);
     const advancement: Record<string, unknown>[] = [
-      buildHitPointsAdvancement(),
-      buildTraitAdvancement(
-        "Saving Throws",
-        input.classInfo.saveProficiencies.map((a) => `saves:${a}`),
-        input.classInfo.saveProficiencies.map((a) => `saves:${a}`),
-        1,
-        "primary",
-      ),
-      ...buildScaleValueAdvancements(input.classInfo.identifier),
+      buildHitPointsAdvancement(classInfo.levels, isOriginalClass),
+      ...(classInfo.saveProficiencies.length > 0
+        ? [
+            buildTraitAdvancement(
+              "Saving Throws",
+              classInfo.saveProficiencies.map((a) => `saves:${a}`),
+              classInfo.saveProficiencies.map((a) => `saves:${a}`),
+              1,
+              "primary",
+            ),
+          ]
+        : []),
+      ...buildScaleValueAdvancements(classInfo.identifier),
       ...itemGrants,
     ];
 
     const classItem = buildClassItem({
-      name: input.classInfo.name,
-      identifier: input.classInfo.identifier,
-      source: input.classInfo.source,
-      levels: input.classInfo.levels,
-      hitDie: input.classInfo.hitDie,
-      spellcastingProgression: input.classInfo.spellcastingProgression,
-      spellcastingAbility: input.classInfo.spellcastingAbility,
-      primaryAbilities: input.classInfo.primaryAbilities,
-      description: input.classInfo.description,
-      img: input.classInfo.img,
+      name: classInfo.name,
+      identifier: classInfo.identifier,
+      source: classInfo.source,
+      levels: classInfo.levels,
+      hitDie: classInfo.hitDie,
+      spellcastingProgression: classInfo.spellcastingProgression,
+      spellcastingAbility: classInfo.spellcastingAbility,
+      primaryAbilities: classInfo.primaryAbilities,
+      description: classInfo.description,
+      img: classInfo.img,
       advancement,
     });
-    classId = classItem._id;
-    stampAdvancementOrigins(featureItems, itemGrants, classId);
+    if (isOriginalClass) classId = classItem._id;
+    classIdByIdentifier.set(classInfo.identifier, classItem._id);
+    stampAdvancementOrigins(featureItems, itemGrants, classItem._id);
     items.push(classItem);
-  }
 
-  // Subclass + subclass features
-  if (input.subclassInfo) {
-    const { items: featureItems, byLevel } = buildFeatureItems(
-      input.subclassInfo.features.map((f) => ({
+    if (!subclassInfo) return;
+    const subclassFeatures = buildFeatureItems(
+      subclassInfo.features.map((f) => ({
         ...f,
         subtype: f.subtype === "class" ? "subclass" : f.subtype,
       })),
     );
-    items.push(...featureItems);
-    const itemGrants = itemGrantsByLevel(byLevel);
+    items.push(...subclassFeatures.items);
+    const subclassGrants = itemGrantsByLevel(subclassFeatures.byLevel);
     const subclassItem = buildSubclassItem({
-      name: input.subclassInfo.name,
-      identifier: input.subclassInfo.identifier,
-      classIdentifier: input.subclassInfo.classIdentifier,
-      source: input.subclassInfo.source,
-      spellcastingProgression: input.subclassInfo.spellcastingProgression,
-      spellcastingAbility: input.subclassInfo.spellcastingAbility,
-      description: input.subclassInfo.description,
-      img: input.subclassInfo.img,
-      advancement: itemGrants,
+      name: subclassInfo.name,
+      identifier: subclassInfo.identifier,
+      classIdentifier: subclassInfo.classIdentifier,
+      source: subclassInfo.source,
+      spellcastingProgression: subclassInfo.spellcastingProgression,
+      spellcastingAbility: subclassInfo.spellcastingAbility,
+      description: subclassInfo.description,
+      img: subclassInfo.img,
+      advancement: subclassGrants,
     });
-    subclassId = subclassItem._id;
-    stampAdvancementOrigins(featureItems, itemGrants, subclassId);
+    if (isOriginalClass) subclassId = subclassItem._id;
+    subclassIdByClass.set(classInfo.identifier, subclassItem._id);
+    stampAdvancementOrigins(subclassFeatures.items, subclassGrants, subclassItem._id);
     items.push(subclassItem);
-  }
+  });
 
   // Race + traits
   if (input.raceInfo) {
@@ -203,9 +218,16 @@ export function buildFoundryActor(input: FoundryExportInput): FoundryActor {
   // Standalone feats (origin feats, ASI feats, optional-feature picks, …)
   for (const feat of input.feats) {
     let advancementOrigin: string | undefined;
-    if (feat.originKind === "class" && classId) advancementOrigin = classId;
-    else if (feat.originKind === "subclass" && subclassId) {
-      advancementOrigin = subclassId;
+    const ownerClassId = feat.originClass
+      ? classIdByIdentifier.get(feat.originClass)
+      : undefined;
+    const ownerSubclassId = feat.originClass
+      ? subclassIdByClass.get(feat.originClass)
+      : undefined;
+    if (feat.originKind === "class" && (ownerClassId ?? classId)) {
+      advancementOrigin = ownerClassId ?? classId ?? undefined;
+    } else if (feat.originKind === "subclass" && (ownerSubclassId ?? subclassId)) {
+      advancementOrigin = ownerSubclassId ?? subclassId ?? undefined;
     } else if (feat.originKind === "race" && raceId) advancementOrigin = raceId;
     else if (feat.originKind === "background" && backgroundId) {
       advancementOrigin = backgroundId;
@@ -460,7 +482,10 @@ export function buildFoundryActor(input: FoundryExportInput): FoundryActor {
         ] ?? []
       : [];
   for (let lvl = 1; lvl <= 9; lvl++) {
-    spells[`spell${lvl}`] = { value: slotArray[lvl - 1] ?? 0, override: null };
+    const value = input.spellSlotOverride
+      ? (input.spellSlotOverride[lvl] ?? 0)
+      : (slotArray[lvl - 1] ?? 0);
+    spells[`spell${lvl}`] = { value, override: null };
   }
   spells.pact = input.pactSlots
     ? { value: input.pactSlots.count, override: null }
@@ -497,7 +522,7 @@ export function buildFoundryActor(input: FoundryExportInput): FoundryActor {
   const tokenSrc = input.tokenImage || input.portraitImage || DEFAULT_ART;
 
   const snapshotFlags = input.builderSnapshot
-    ? toBuilderSnapshotFlags(input.builderSnapshot)
+    ? toBuilderSnapshotFlags(input.builderSnapshot, input.builderMulticlass)
     : {};
   const snapshotNs = snapshotFlags[TOOLBOX_FLAG_NAMESPACE];
   const snapshotNsObj =

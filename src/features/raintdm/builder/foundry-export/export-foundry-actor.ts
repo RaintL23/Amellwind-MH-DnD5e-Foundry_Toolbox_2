@@ -1,9 +1,10 @@
-import type { Spell } from "@/shared/types";
+import type { BuilderSpellSelections, Spell } from "@/shared/types";
 import type { DndItem } from "@/shared/types/dnd-item.types";
 import { getAllDndItems } from "@/features/dnd/items/services/dnd-item.service";
 import {
   downloadFoundryJson,
   FOUNDRY_ITEM_ICONS,
+  kebab,
   mapAbilityLabel,
   resolveItemIcon,
 } from "@/shared/foundry";
@@ -32,7 +33,12 @@ import {
   buildRaceIdentityDescription,
   buildSubclassIdentityDescription,
 } from "./identity-description";
-import { parseWeightLb, type InventoryCatalogMeta } from "./item.builders";
+import {
+  parseWeightLb,
+  type InventoryCatalogMeta,
+  type SpellItemInput,
+} from "./item.builders";
+import type { SpellcastingInfo } from "../hooks/useSpellcasting";
 import { buildSpellExportList } from "./spell-export.utils";
 
 /** Full runtime context for async Foundry actor export. */
@@ -127,25 +133,28 @@ function attachItemFluffImages(input: FoundryExportInput): void {
   input.itemImages = itemImages;
 }
 
-function attachSpellExportList(
-  input: FoundryExportInput,
-  ctx: ExportFoundryActorContext,
-): void {
-  const { builder, allSpells, spellcasting } = ctx;
-  const spellAbilityKey = mapAbilityLabel(spellcasting.spellcastingAbility);
-  const selections = Object.values(builder.spellSelections ?? {}).flat();
-  input.spells = buildSpellExportList({
+/** Spell items cast through one class (`sourceClass` = its identifier). */
+function classSpellExportList(
+  allSpells: Spell[],
+  spellcasting: SpellcastingInfo,
+  spellSelections: BuilderSpellSelections,
+  className: string,
+  subclassName: string | null,
+  classLevel: number,
+): SpellItemInput[] {
+  const sourceClass = kebab(className);
+  return buildSpellExportList({
     allSpells,
-    selections,
+    selections: Object.values(spellSelections).flat(),
     isPreparedCaster: spellcasting.isPreparedCaster,
     isPactMagic: spellcasting.isPactMagic,
-    spellAbilityKey,
+    spellAbilityKey: mapAbilityLabel(spellcasting.spellcastingAbility),
     listContext: {
-      className: builder.class?.name ?? "",
-      subclassName: builder.subclass?.name ?? null,
+      className,
+      subclassName,
       subclassShortName: spellcasting.subclassShortName,
       expandedFilters: spellcasting.expandedSpellFilters,
-      characterLevel: builder.character.level,
+      characterLevel: classLevel,
       availableSpellSlotLevels: spellcasting.availableSpellSlotLevels,
       spellcastingFromSubclass: spellcasting.spellcastingFromSubclass,
     },
@@ -153,7 +162,47 @@ function attachSpellExportList(
     bonusKnown: spellcasting.subclassBonusKnown,
     optionalFeatureGranted: spellcasting.optionalFeatureGranted,
     resolveFluffImg: (name, source) => getSpellFluffImgSync(name, source),
-  });
+  }).map((spell) => (className ? { ...spell, sourceClass } : spell));
+}
+
+function attachSpellExportList(
+  input: FoundryExportInput,
+  ctx: ExportFoundryActorContext,
+): void {
+  const { builder, allSpells, spellcasting, multiclassSpellcasting } = ctx;
+  const lists = [
+    classSpellExportList(
+      allSpells,
+      spellcasting,
+      builder.spellSelections ?? {},
+      builder.class?.name ?? "",
+      builder.subclass?.name ?? null,
+      builder.primaryClassLevel,
+    ),
+    ...multiclassSpellcasting.map((mc) => {
+      const entry = builder.multiclassEntries[mc.index];
+      return classSpellExportList(
+        allSpells,
+        mc.spellcasting,
+        entry?.spellSelections ?? {},
+        mc.classData.name,
+        entry?.subclass?.name ?? null,
+        entry?.level ?? 1,
+      );
+    }),
+  ];
+
+  // A spell known by two classes is kept once, preferring a prepared copy.
+  const merged = new Map<string, SpellItemInput>();
+  for (const spell of lists.flat()) {
+    const key = spell.name.trim().toLowerCase();
+    const existing = merged.get(key);
+    if (existing && (existing.prepared || !spell.prepared)) continue;
+    merged.set(key, spell);
+  }
+  input.spells = [...merged.values()].sort(
+    (a, b) => a.level - b.level || a.name.localeCompare(b.name),
+  );
 }
 
 async function enrichIdentityDescriptions(
@@ -220,6 +269,39 @@ async function enrichIdentityDescriptions(
     if (html) input.raceInfo.description = html;
     if (raceFluff.img) input.raceInfo.img = raceFluff.img;
   }
+  // Additional classes (multiclass): same class / subclass fluff as the primary.
+  await Promise.all(
+    (input.additionalClasses ?? []).map(async ({ classInfo, subclassInfo }, i) => {
+      const mc = ctx.multiclassSpellcasting[i];
+      if (!mc) return;
+      const [mcClassFluff, mcSubclassFluff] = await Promise.all([
+        resolveClassFluffForFoundry(classInfo.name, classInfo.source ?? ""),
+        subclassInfo
+          ? resolveSubclassFluffForFoundry(
+              subclassInfo.name,
+              subclassInfo.source ?? "",
+              classInfo.name,
+              classInfo.source,
+            )
+          : Promise.resolve({ html: "", img: undefined }),
+      ]);
+      const classHtml = buildClassIdentityDescription({
+        fluff: mcClassFluff,
+        classData: mc.classData,
+      });
+      if (classHtml) classInfo.description = classHtml;
+      if (mcClassFluff.img) classInfo.img = mcClassFluff.img;
+      if (subclassInfo && mc.subclassData) {
+        const subclassHtml = buildSubclassIdentityDescription({
+          fluff: mcSubclassFluff,
+          subclassData: mc.subclassData,
+        });
+        if (subclassHtml) subclassInfo.description = subclassHtml;
+        if (mcSubclassFluff.img) subclassInfo.img = mcSubclassFluff.img;
+      }
+    }),
+  );
+
   if (input.backgroundInfo) {
     const html = buildBackgroundIdentityDescription({
       fluff: backgroundFluff,

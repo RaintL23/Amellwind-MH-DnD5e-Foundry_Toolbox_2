@@ -22,7 +22,7 @@ export function useFoundryExport() {
   const hitPoints = useCharacterHitPoints();
   const speed = useCharacterSpeed();
   const { allSpells } = useSpellCatalog();
-  const { spellcasting } = useSpellcastingContext();
+  const { spellcasting, multiclassSpellcasting } = useSpellcastingContext();
   const effectiveAbilities = useEffectiveAbilityScores();
 
   const [exporting, setExporting] = useState(false);
@@ -38,6 +38,7 @@ export function useFoundryExport() {
       hitPoints,
       speed,
       spellcasting,
+      multiclassSpellcasting,
       effectiveAbilities,
       allSpells,
     }),
@@ -51,6 +52,7 @@ export function useFoundryExport() {
       inventory,
       speed,
       spellcasting,
+      multiclassSpellcasting,
       subclassData,
     ],
   );

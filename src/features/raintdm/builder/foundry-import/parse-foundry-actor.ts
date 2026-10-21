@@ -1,6 +1,9 @@
 import type { AbilityScores } from "@/shared/types";
 import { ABILITY_KEYS } from "@/shared/constants/dnd";
-import { readBuilderSnapshot } from "../foundry-export/builder-snapshot";
+import {
+  readBuilderMulticlass,
+  readBuilderSnapshot,
+} from "../foundry-export/builder-snapshot";
 import type {
   ParsedFoundryActor,
   ParsedFoundryArmor,
@@ -88,11 +91,11 @@ export function parseFoundryActor(raw: unknown): ParsedFoundryActor {
   const system = raw.system;
   const items = Array.isArray(raw.items) ? raw.items : [];
 
-  let className: string | null = null;
-  let subclassName: string | null = null;
+  const classItems: { id: string; name: string; identifier: string; levels: number }[] =
+    [];
+  const subclassItems: { name: string; classIdentifier: string }[] = [];
   let raceName: string | null = null;
   let backgroundName: string | null = null;
-  let classLevels: number | null = null;
   const featNames: string[] = [];
   const spells: ParsedFoundrySpell[] = [];
   const weapons: ParsedFoundryWeapon[] = [];
@@ -108,11 +111,20 @@ export function parseFoundryActor(raw: unknown): ParsedFoundryActor {
 
     switch (itemType) {
       case "class":
-        className = name;
-        classLevels = asNumber(getPath(item, "system.levels"));
+        classItems.push({
+          id: asString(item._id),
+          name,
+          identifier:
+            asString(getPath(item, "system.identifier")) ||
+            name.toLowerCase().replace(/\s+/g, "-"),
+          levels: asNumber(getPath(item, "system.levels")) ?? 1,
+        });
         break;
       case "subclass":
-        subclassName = name;
+        subclassItems.push({
+          name,
+          classIdentifier: asString(getPath(item, "system.classIdentifier")),
+        });
         break;
       case "race":
         raceName = name;
@@ -173,6 +185,16 @@ export function parseFoundryActor(raw: unknown): ParsedFoundryActor {
     }
   }
 
+  // Multiclass actors carry one class item per class; the first class taken is
+  // `details.originalClass`.
+  const originalClassId = asString(getPath(system, "details.originalClass"));
+  const primaryClass =
+    classItems.find((c) => c.id && c.id === originalClassId) ?? classItems[0] ?? null;
+  const subclassFor = (cls: (typeof classItems)[number]): string | null =>
+    subclassItems.find((s) => s.classIdentifier === cls.identifier)?.name ??
+    (classItems.length === 1 ? (subclassItems[0]?.name ?? null) : null);
+  const totalLevel = classItems.reduce((sum, c) => sum + c.levels, 0);
+
   const sizeCode = asString(getPath(system, "traits.size")).toLowerCase();
   const size: "M" | "S" = sizeCode === "sm" ? "S" : "M";
 
@@ -182,11 +204,14 @@ export function parseFoundryActor(raw: unknown): ParsedFoundryActor {
     name: asString(raw.name).trim(),
     size,
     alignment: asString(getPath(system, "details.alignment")).trim(),
-    level: classLevels ?? 1,
+    level: Math.min(20, Math.max(1, totalLevel || 1)),
     abilities: parseAbilities(system),
     biography: stripHtml(biographyHtml),
-    className,
-    subclassName,
+    className: primaryClass?.name ?? null,
+    subclassName: primaryClass ? subclassFor(primaryClass) : null,
+    additionalClasses: classItems
+      .filter((c) => c !== primaryClass)
+      .map((c) => ({ name: c.name, levels: c.levels, subclassName: subclassFor(c) })),
     raceName,
     backgroundName,
     featNames,
@@ -198,5 +223,6 @@ export function parseFoundryActor(raw: unknown): ParsedFoundryActor {
     portraitImage: dataUrlOnly(raw.img),
     tokenImage: dataUrlOnly(getPath(raw, "prototypeToken.texture.src")),
     builderSnapshot: readBuilderSnapshot(raw.flags),
+    builderMulticlass: readBuilderMulticlass(raw.flags),
   };
 }

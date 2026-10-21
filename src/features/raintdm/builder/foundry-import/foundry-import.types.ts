@@ -1,4 +1,4 @@
-import type { AbilityScores } from "@/shared/types";
+import type { AbilityScores, BuilderMulticlassEntry } from "@/shared/types";
 import type { BuilderChoiceSnapshot } from "../foundry-export/builder-snapshot";
 
 /** A weapon item extracted from a Foundry actor JSON. */
@@ -49,8 +49,11 @@ export interface ParsedFoundryActor {
   abilities: Partial<AbilityScores>;
   /** Plain-text biography (HTML tags stripped). */
   biography: string;
+  /** Primary class (`details.originalClass`, else the first class item). */
   className: string | null;
   subclassName: string | null;
+  /** Other class items (multiclass), in actor order. */
+  additionalClasses: ParsedFoundryClass[];
   raceName: string | null;
   backgroundName: string | null;
   /** Standalone feat names (Foundry feat items whose subtype is "feat"). */
@@ -69,6 +72,14 @@ export interface ParsedFoundryActor {
    * when the JSON was produced by this app. Null for Foundry-authored actors.
    */
   builderSnapshot: BuilderChoiceSnapshot | null;
+  /** Multiclass entries saved by this app (with per-class spells); [] otherwise. */
+  builderMulticlass: BuilderMulticlassEntry[];
+}
+
+export interface ParsedFoundryClass {
+  name: string;
+  levels: number;
+  subclassName: string | null;
 }
 
 /** Summary of what the import was (or was not) able to map back into the Builder. */

@@ -17,6 +17,7 @@ import type {
   BackgroundAsiMode,
   BackgroundFaction,
   BuilderFeatSelection,
+  BuilderMulticlassEntry,
   BuilderOptionalFeatureSelections,
   BuilderSpellSelections,
   CartEntry,
@@ -47,6 +48,7 @@ import {
   normalizeEquippedArmor,
   normalizeEquippedWeapon,
   normalizeFeatSelection,
+  normalizeMulticlassEntries,
   normalizeOptionalFeature,
   normalizeShield,
   normalizeTrinket,
@@ -143,11 +145,20 @@ export interface BuilderChoiceSnapshot {
   equipment: BuilderSnapshotEquipment;
 }
 
-/** Wraps a snapshot in the namespaced flag object placed on the exported actor. */
+/**
+ * Wraps a snapshot (and the multiclass entries, which carry each additional
+ * class's spells) in the namespaced flag object placed on the exported actor.
+ */
 export function toBuilderSnapshotFlags(
   snapshot: BuilderChoiceSnapshot,
+  multiclassEntries: BuilderMulticlassEntry[] = [],
 ): Record<string, unknown> {
-  return { [TOOLBOX_FLAG_NAMESPACE]: { builderSnapshot: snapshot } };
+  return {
+    [TOOLBOX_FLAG_NAMESPACE]: {
+      builderSnapshot: snapshot,
+      ...(multiclassEntries.length > 0 ? { builderMulticlass: multiclassEntries } : {}),
+    },
+  };
 }
 
 // ─── Normalization ────────────────────────────────────────────────────────────
@@ -301,6 +312,14 @@ export function normalizeBuilderSnapshot(
  * Reads and version-checks a builder snapshot from a Foundry document's `flags`.
  * Returns `null` when the flag is missing or the version is unsupported.
  */
+/** Additional classes saved by this app on an exported actor ([] when absent). */
+export function readBuilderMulticlass(flags: unknown): BuilderMulticlassEntry[] {
+  if (!isRecord(flags)) return [];
+  const namespaced = flags[TOOLBOX_FLAG_NAMESPACE];
+  if (!isRecord(namespaced)) return [];
+  return normalizeMulticlassEntries(namespaced.builderMulticlass, () => {});
+}
+
 export function readBuilderSnapshot(flags: unknown): BuilderChoiceSnapshot | null {
   if (!isRecord(flags)) return null;
   const namespaced = flags[TOOLBOX_FLAG_NAMESPACE];

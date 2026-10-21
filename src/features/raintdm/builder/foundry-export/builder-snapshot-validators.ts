@@ -12,9 +12,11 @@ import type {
   BackgroundFaction,
   BuilderFeatSelection,
   BuilderFeatSource,
+  BuilderMulticlassEntry,
   BuilderOptionalFeatureSelection,
   BuilderSpellSelection,
   CartEntry,
+  CharacterSelectionRef,
   DamageType,
   EquippedArmor,
   EquippedTrinket,
@@ -439,4 +441,48 @@ export function inventoryOf(value: unknown, warn: SnapshotWarn): CartEntry[] {
     else warn(`Inventory: invalid entry ${describe(item)} was dropped.`);
   }
   return out;
+}
+
+// ─── Multiclass entries ──────────────────────────────────────────────────────
+
+function selectionRef(value: unknown): CharacterSelectionRef | null {
+  if (!isRecord(value)) return null;
+  if (typeof value.id !== "string" || typeof value.name !== "string") return null;
+  return {
+    id: value.id,
+    name: value.name,
+    subraceId: typeof value.subraceId === "string" ? value.subraceId : null,
+    subraceName: typeof value.subraceName === "string" ? value.subraceName : null,
+  };
+}
+
+/** Additional classes (class/subclass refs, level 1–19, spells per class). */
+export function normalizeMulticlassEntries(
+  value: unknown,
+  warn: SnapshotWarn,
+): BuilderMulticlassEntry[] {
+  if (!Array.isArray(value)) return [];
+  return value.filter(isRecord).map((entry, index) => {
+    const label = `Multiclass #${index + 1}`;
+    const ref = (raw: unknown, refLabel: string) => {
+      const normalized = selectionRef(raw);
+      if (!normalized && raw !== null && raw !== undefined) {
+        warn(`${refLabel}: invalid reference (needs "id" and "name") was dropped.`);
+      }
+      return normalized;
+    };
+    const rawLevel = typeof entry.level === "number" ? Math.round(entry.level) : 1;
+    const spellSelections = recordOfLists(
+      entry.spellSelections,
+      (list, listLabel) => listOf(list, isSpellSelection, listLabel, warn),
+      `${label} spells`,
+      warn,
+    );
+    return {
+      classRef: ref(entry.classRef, `${label} class`),
+      subclass: ref(entry.subclass, `${label} subclass`),
+      level: Math.min(19, Math.max(1, Number.isFinite(rawLevel) ? rawLevel : 1)),
+      ...(Object.keys(spellSelections).length > 0 ? { spellSelections } : {}),
+    };
+  });
 }

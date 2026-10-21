@@ -26,13 +26,25 @@ import type { CharacterBuilderContextValue } from "../context/character-builder.
 import type { CharacterHitPointBreakdown } from "../utils/character-hit-points";
 import type { CharacterSpeedBreakdown } from "../utils/character-speed";
 import type { SpellcastingInfo } from "../hooks/useSpellcasting";
+import type { MulticlassSpellcastingInfo } from "../context/SpellcastingContext";
+import {
+  getMulticlassCasterLevel,
+  getMulticlassSpellSlotCounts,
+  hasMultipleSpellcastingClasses,
+} from "@/shared/utils/multiclass-spell-slots.utils";
 import {
   kebab,
   mapAbilityLabel,
   mapCasterProgression,
   slugify,
 } from "@/shared/foundry";
-import type { FeatureInput, FoundryExportInput } from "./actor-export.types";
+import type {
+  AdditionalClassInput,
+  ClassInfoInput,
+  FeatureInput,
+  FoundryExportInput,
+  SubclassInfoInput,
+} from "./actor-export.types";
 import { renderFiveToolsEntries } from "./fluff-description";
 import { gatherBuilderSnapshot } from "./gather-builder-snapshot";
 import type { CartItemKind } from "../utils/cart-equipment.resolver";
@@ -128,6 +140,94 @@ function resolveOptionalDescription(
   return optDescMap.get(pickId) ?? [];
 }
 
+/** Foundry spellcasting fields of one class (EK / AT cast through the subclass). */
+function resolveClassCasting(
+  info: SpellcastingInfo,
+  classData: Class | null,
+  subclassData: Subclass | null,
+) {
+  const fromSubclass = info.spellcastingFromSubclass;
+  const abilityKey = mapAbilityLabel(info.spellcastingAbility);
+  let progression = "none";
+  if (info.isPactMagic) {
+    progression = "pact";
+  } else if (info.spellcastingAbility) {
+    const source = fromSubclass ? subclassData : classData;
+    progression = mapCasterProgression(source?.casterProgression);
+  }
+  return {
+    abilityKey,
+    progression,
+    classProgression: fromSubclass ? "none" : progression,
+    subclassProgression: fromSubclass ? progression : "none",
+    classAbility: fromSubclass ? "" : abilityKey,
+    subclassAbility: fromSubclass ? abilityKey : "",
+  };
+}
+
+/** Class + subclass items of one class at its own class level. */
+function buildClassExportInfo(options: {
+  name: string;
+  classData: Class;
+  subclassName: string | null;
+  subclassData: Subclass | null;
+  level: number;
+  casting: ReturnType<typeof resolveClassCasting>;
+  /** Saving throws only come from the first class. */
+  saveProficiencies: ClassInfoInput["saveProficiencies"];
+}): AdditionalClassInput {
+  const { name, classData, subclassName, subclassData, level, casting } = options;
+  const handledNames = progressionHandledNames([
+    ...(classData.optionalFeatureProgressions ?? []),
+    ...(subclassData?.optionalFeatureProgressions ?? []),
+  ]);
+  const classInfo: ClassInfoInput = {
+    name,
+    identifier: kebab(name),
+    source: classData.source,
+    hitDie: classData.hitDie,
+    levels: level,
+    spellcastingProgression: casting.classProgression,
+    spellcastingAbility: casting.classAbility,
+    primaryAbilities: [],
+    description: classData.summary,
+    saveProficiencies: options.saveProficiencies,
+    features: extractFeatures(
+      classData.progression,
+      level,
+      "class",
+      false,
+      handledNames,
+    ),
+  };
+  const subclassInfo: SubclassInfoInput | null =
+    subclassName && subclassData
+      ? {
+          name: subclassName,
+          identifier: kebab(subclassName),
+          classIdentifier: kebab(name),
+          source: subclassData.source,
+          spellcastingProgression: casting.subclassProgression,
+          spellcastingAbility: casting.subclassAbility,
+          description: subclassData.shortName,
+          features: extractFeatures(
+            subclassData.progression.map((row) => ({
+              ...row,
+              features: row.features.map((f) => ({
+                ...f,
+                isSubclassFeature: true,
+              })),
+            })),
+            level,
+            "subclass",
+            true,
+            handledNames,
+          ),
+        }
+      : null;
+  return { classInfo, subclassInfo };
+}
+
 /** Inventory slice used when assembling Foundry export input. */
 export interface FoundryExportInventorySource {
   items: CartEntry[];
@@ -147,6 +247,8 @@ export interface BuildFoundryExportInputContext {
   hitPoints: CharacterHitPointBreakdown | null;
   speed: CharacterSpeedBreakdown;
   spellcasting: SpellcastingInfo;
+  /** Spellcasting of each additional class (multiclass). */
+  multiclassSpellcasting: MulticlassSpellcastingInfo[];
   /** Final ability scores including origin bonuses and ASI. */
   effectiveAbilities: AbilityScores;
 }
@@ -171,10 +273,12 @@ export function buildFoundryExportInput(
     hitPoints,
     speed,
     spellcasting,
+    multiclassSpellcasting,
     effectiveAbilities,
   } = ctx;
   const { character } = builder;
   const level = character.level;
+  const primaryClassLevel = builder.primaryClassLevel;
 
   // ── Skill proficiencies (1 = proficient, 2 = expertise) ──
   const skillProficiencies: Partial<Record<SkillKey, 1 | 2>> = {};
@@ -187,84 +291,132 @@ export function buildFoundryExportInput(
   }
 
   // ── Spellcasting derivation ──
-  const subFromSubclass = spellcasting.spellcastingFromSubclass;
-  const spellAbilityKey = mapAbilityLabel(spellcasting.spellcastingAbility);
-  let casterProgression = "none";
-  if (spellcasting.isPactMagic) {
-    casterProgression = "pact";
-  } else if (spellcasting.spellcastingAbility) {
-    const source = subFromSubclass ? subclassData : classData;
-    casterProgression = mapCasterProgression(source?.casterProgression);
-  }
-  const classProgression = subFromSubclass ? "none" : casterProgression;
-  const subProgression = subFromSubclass ? casterProgression : "none";
+  const primaryCasting = resolveClassCasting(spellcasting, classData, subclassData);
+  const additionalCasting = multiclassSpellcasting.map((mc) => ({
+    mc,
+    level: builder.multiclassEntries[mc.index]?.level ?? 1,
+    subclassName: builder.multiclassEntries[mc.index]?.subclass?.name ?? null,
+    casting: resolveClassCasting(mc.spellcasting, mc.classData, mc.subclassData),
+  }));
 
-  // ── AC calculation mode ──
-  const className = (builder.class?.name ?? "").toLowerCase();
+  let spellAbilityKey = primaryCasting.abilityKey;
+  let casterProgression = primaryCasting.progression;
+  let casterLevel = primaryClassLevel;
+  let pactSlots: FoundryExportInput["pactSlots"] = spellcasting.isPactMagic
+    ? {
+        count: spellcasting.pactSlotCount,
+        level: spellcasting.pactMaxSpellLevel,
+      }
+    : null;
+  let spellSlotOverride: FoundryExportInput["spellSlotOverride"] = null;
+
+  if (additionalCasting.length > 0) {
+    if (!spellAbilityKey) {
+      spellAbilityKey =
+        additionalCasting.find((c) => c.casting.abilityKey)?.casting.abilityKey ?? "";
+    }
+    const pactCaster = additionalCasting.find(
+      (c) => c.mc.spellcasting.isPactMagic,
+    );
+    if (!pactSlots && pactCaster) {
+      pactSlots = {
+        count: pactCaster.mc.spellcasting.pactSlotCount,
+        level: pactCaster.mc.spellcasting.pactMaxSpellLevel,
+      };
+    }
+    const casterEntries = [
+      {
+        classData,
+        level: primaryClassLevel,
+        subclassName: builder.subclass?.name ?? null,
+      },
+      ...additionalCasting.map((c) => ({
+        classData: c.mc.classData,
+        level: c.level,
+        subclassName: c.subclassName,
+      })),
+    ];
+    if (hasMultipleSpellcastingClasses(casterEntries)) {
+      // Multiclass Spellcaster table (Pact Magic slots stay separate).
+      const combined = getMulticlassCasterLevel(casterEntries);
+      spellSlotOverride = getMulticlassSpellSlotCounts(combined);
+    } else if (casterProgression === "none" || casterProgression === "pact") {
+      const slotCaster = additionalCasting.find(
+        (c) => c.casting.progression !== "none" && c.casting.progression !== "pact",
+      );
+      if (slotCaster) {
+        casterProgression = slotCaster.casting.progression;
+        casterLevel = slotCaster.level;
+      }
+    }
+  }
+
+  // ── AC calculation mode (first class with Unarmored Defense wins) ──
+  const classNames = [
+    builder.class?.name ?? "",
+    ...additionalCasting.map((c) => c.mc.classData.name),
+  ].map((name) => name.toLowerCase());
   let acCalc = "default";
   if (!builder.armor) {
-    if (className.includes("monk")) acCalc = "unarmoredMonk";
-    else if (className.includes("barbarian")) acCalc = "unarmoredBarb";
+    const unarmoredClass = classNames.find(
+      (name) => name.includes("monk") || name.includes("barbarian"),
+    );
+    if (unarmoredClass?.includes("monk")) acCalc = "unarmoredMonk";
+    else if (unarmoredClass?.includes("barbarian")) acCalc = "unarmoredBarb";
   }
 
   // ── Optional-feature progressions (Fighting Style, Invocations, etc.) ──
-  const allProgressions: OptionalFeatureProgression[] = [
-    ...(classData?.optionalFeatureProgressions ?? []),
-    ...(subclassData?.optionalFeatureProgressions ?? []),
+  const progressionOwners: {
+    identifier: string;
+    progressions: OptionalFeatureProgression[];
+  }[] = [
+    {
+      identifier: kebab(builder.class?.name ?? ""),
+      progressions: [
+        ...(classData?.optionalFeatureProgressions ?? []),
+        ...(subclassData?.optionalFeatureProgressions ?? []),
+      ],
+    },
+    ...additionalCasting.map((c) => ({
+      identifier: kebab(c.mc.classData.name),
+      progressions: [
+        ...(c.mc.classData.optionalFeatureProgressions ?? []),
+        ...(c.mc.subclassData?.optionalFeatureProgressions ?? []),
+      ],
+    })),
   ];
-  const handledNames = progressionHandledNames(allProgressions);
+  const allProgressions = progressionOwners.flatMap((o) => o.progressions);
 
   // ── Identity: class / subclass / race / background ──
   // Descriptions are placeholders; exportFoundry replaces them with full
   // 5etools fluff HTML + art when available.
-  const classInfo: FoundryExportInput["classInfo"] =
+  const primaryClass =
     builder.class && classData
-      ? {
+      ? buildClassExportInfo({
           name: builder.class.name,
-          identifier: kebab(builder.class.name),
-          source: classData.source,
-          hitDie: classData.hitDie,
-          levels: level,
-          spellcastingProgression: classProgression,
-          spellcastingAbility: subFromSubclass ? "" : spellAbilityKey,
-          primaryAbilities: [],
-          description: classData.summary,
+          classData,
+          subclassName: builder.subclass?.name ?? null,
+          subclassData,
+          level: primaryClassLevel,
+          casting: primaryCasting,
           saveProficiencies: classData.saveProficiencies,
-          features: extractFeatures(
-            classData.progression,
-            level,
-            "class",
-            false,
-            handledNames,
-          ),
-        }
+        })
       : null;
-
+  const classInfo: FoundryExportInput["classInfo"] = primaryClass?.classInfo ?? null;
   const subclassInfo: FoundryExportInput["subclassInfo"] =
-    builder.subclass && subclassData
-      ? {
-          name: builder.subclass.name,
-          identifier: kebab(builder.subclass.name),
-          classIdentifier: kebab(builder.class?.name ?? ""),
-          source: subclassData.source,
-          spellcastingProgression: subProgression,
-          spellcastingAbility: subFromSubclass ? spellAbilityKey : "",
-          description: subclassData.shortName,
-          features: extractFeatures(
-            subclassData.progression.map((row) => ({
-              ...row,
-              features: row.features.map((f) => ({
-                ...f,
-                isSubclassFeature: true,
-              })),
-            })),
-            level,
-            "subclass",
-            true,
-            handledNames,
-          ),
-        }
-      : null;
+    primaryClass?.subclassInfo ?? null;
+
+  const additionalClasses: AdditionalClassInput[] = additionalCasting.map((c) =>
+    buildClassExportInfo({
+      name: c.mc.classData.name,
+      classData: c.mc.classData,
+      subclassName: c.subclassName,
+      subclassData: c.mc.subclassData,
+      level: c.level,
+      casting: c.casting,
+      saveProficiencies: [],
+    }),
+  );
 
   const speciesData = builder.speciesData;
   const raceInfo: FoundryExportInput["raceInfo"] =
@@ -335,26 +487,29 @@ export function buildFoundryExportInput(
 
   // Selected optional features become standalone feat items with descriptions.
   const optionalSelections = builder.optionalFeatureSelections ?? {};
-  for (const progression of allProgressions) {
-    const picks = (optionalSelections[progression.id] ?? []).filter(
-      (pick): pick is NonNullable<typeof pick> => pick !== null,
-    );
-    for (const pick of picks) {
-      const key = pick.name.toLowerCase();
-      if (featNameSeen.has(key)) continue;
-      featNameSeen.add(key);
-      const baseDescription = joinDescription(
-        resolveOptionalDescription(progression, pick.id, optDescMap),
+  for (const owner of progressionOwners) {
+    for (const progression of owner.progressions) {
+      const picks = (optionalSelections[progression.id] ?? []).filter(
+        (pick): pick is NonNullable<typeof pick> => pick !== null,
       );
-      const marker = `<p><em>Toolbox choice: selected for "${progression.name}".</em></p>`;
-      feats.push({
-        name: pick.name,
-        description: `${baseDescription ?? ""}${marker}`,
-        subtype: "feat",
-        level: 0,
-        // Group Metamagic / Fighting Style / etc. under the class section.
-        originKind: "class",
-      });
+      for (const pick of picks) {
+        const key = pick.name.toLowerCase();
+        if (featNameSeen.has(key)) continue;
+        featNameSeen.add(key);
+        const baseDescription = joinDescription(
+          resolveOptionalDescription(progression, pick.id, optDescMap),
+        );
+        const marker = `<p><em>Toolbox choice: selected for "${progression.name}".</em></p>`;
+        feats.push({
+          name: pick.name,
+          description: `${baseDescription ?? ""}${marker}`,
+          subtype: "feat",
+          level: 0,
+          // Group Metamagic / Fighting Style / etc. under the owning class.
+          originKind: "class",
+          originClass: owner.identifier,
+        });
+      }
     }
   }
 
@@ -500,17 +655,14 @@ export function buildFoundryExportInput(
     currency: { pp: 0, gp: Math.floor(goldGp), ep: 0, sp: 0, cp: 0 },
     spellcastingAbility: spellAbilityKey,
     casterProgression,
-    casterLevel: level,
-    pactSlots: spellcasting.isPactMagic
-      ? {
-          count: spellcasting.pactSlotCount,
-          level: spellcasting.pactMaxSpellLevel,
-        }
-      : null,
+    casterLevel,
+    pactSlots,
+    spellSlotOverride,
     attunementMax: attunement.attunementSlots,
     biography: builder.backstoryNotes,
     classInfo,
     subclassInfo,
+    additionalClasses,
     raceInfo,
     backgroundInfo,
     feats,
@@ -525,5 +677,6 @@ export function buildFoundryExportInput(
     itemDescriptions,
     itemCatalog,
     builderSnapshot: gatherBuilderSnapshot(builder, inventory),
+    builderMulticlass: builder.multiclassEnabled ? builder.multiclassEntries : [],
   };
 }
