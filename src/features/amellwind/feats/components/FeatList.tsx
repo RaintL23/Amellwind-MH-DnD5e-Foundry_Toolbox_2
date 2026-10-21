@@ -1,4 +1,7 @@
-import { ListAreaLoading } from "@/shared/components/ListAreaLoading";
+import {
+  DeferredListResults,
+  ListEmptyState,
+} from "@/shared/components/DeferredListResults";
 import { useCallback, useEffect, useMemo, useState } from "react";
 import { Feat } from "@/shared/types";
 import { getAllFeats } from "../services/feat.service";
@@ -93,7 +96,7 @@ export function FeatList() {
       result = result.filter((f) => f.prerequisites.length > 0);
     }
 
-    return [...result].sort((a, b) => a.name.localeCompare(b.name));
+    return result;
   }, [feats, appliedSearch, filter]);
 
   function handleSelect(item: Feat) {
@@ -142,16 +145,19 @@ export function FeatList() {
       </div>
 
       <div className="flex-1 overflow-y-auto px-4 py-4 md:px-6 md:py-6">
-        {loading || isSearchPending ? (
-          <ListAreaLoading />
-        ) : filtered.length === 0 ? (
-          <div className="flex flex-col items-center justify-center h-48 text-muted-foreground gap-2">
-            <Award className="h-10 w-10 opacity-20" />
-            <p className="text-sm">No feats found with those filters.</p>
-          </div>
-        ) : (
+        <DeferredListResults
+          loading={loading}
+          updating={isSearchPending}
+          isEmpty={filtered.length === 0}
+          empty={
+            <ListEmptyState
+              icon={Award}
+              message="No feats found with those filters."
+            />
+          }
+        >
           <FeatDataTable feats={filtered} onRowClick={handleSelect} />
-        )}
+        </DeferredListResults>
       </div>
 
       {dialogOpen && selected && (

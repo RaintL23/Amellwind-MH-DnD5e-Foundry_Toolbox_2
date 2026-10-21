@@ -1,16 +1,13 @@
 import { useCallback } from "react";
 import type { SiegeWeapon } from "@/shared/types";
 import { DataTable } from "@/components/data-table/data-table";
+import { getEntityRowId } from "@/components/data-table/data-table-columns";
 import { CompendiumMobileCard } from "@/shared/components/CompendiumMobileCard";
 import { siegeWeaponColumns } from "./siege-weapon-columns";
 
 interface SiegeWeaponDataTableProps {
   weapons: SiegeWeapon[];
   onRowClick: (weapon: SiegeWeapon) => void;
-}
-
-function getSiegeWeaponRowId(row: SiegeWeapon): string {
-  return row.id;
 }
 
 export function SiegeWeaponDataTable({
@@ -43,9 +40,8 @@ export function SiegeWeaponDataTable({
     <DataTable
       columns={siegeWeaponColumns}
       data={weapons}
-      getRowId={getSiegeWeaponRowId}
+      getRowId={getEntityRowId}
       onRowClick={onRowClick}
-      emptyMessage="No siege weapons found."
       pageSize={25}
       enableSearchToolbar={false}
       renderMobileRow={renderMobileRow}

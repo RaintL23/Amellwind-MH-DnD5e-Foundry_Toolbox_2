@@ -1,16 +1,13 @@
 import { useCallback } from "react";
 import type { Species } from "@/shared/types";
 import { DataTable } from "@/components/data-table/data-table";
+import { getEntityRowId } from "@/components/data-table/data-table-columns";
 import { CompendiumMobileCard } from "@/shared/components/CompendiumMobileCard";
 import { SpeciesCategoryBadge, speciesColumns } from "./species-columns";
 
 interface SpeciesDataTableProps {
   species: Species[];
   onRowClick: (species: Species) => void;
-}
-
-function getSpeciesRowId(row: Species): string {
-  return row.id;
 }
 
 export function SpeciesDataTable({ species, onRowClick }: SpeciesDataTableProps) {
@@ -36,9 +33,8 @@ export function SpeciesDataTable({ species, onRowClick }: SpeciesDataTableProps)
     <DataTable
       columns={speciesColumns}
       data={species}
-      getRowId={getSpeciesRowId}
+      getRowId={getEntityRowId}
       onRowClick={onRowClick}
-      emptyMessage="No species found with those filters."
       pageSize={25}
       enableSearchToolbar={false}
       renderMobileRow={renderMobileRow}

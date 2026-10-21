@@ -6,9 +6,9 @@ import {
 } from "@/shared/types";
 import { DataTableColumnHeader } from "@/components/data-table/data-table-column-header";
 import { Badge } from "@/components/ui/badge";
+import { createResourceRarityColumn } from "@/shared/components/ResourceRarityBadge";
 import { cn } from "@/shared/utils/cn";
 import { Link2 } from "lucide-react";
-import { MATERIAL_EFFECT_RARITIES } from "../constants/material-effect.constants";
 
 export function MaterialEffectSlotBadge({ slot }: { slot: MaterialEffect["slot"] }) {
   return (
@@ -22,21 +22,6 @@ export function MaterialEffectSlotBadge({ slot }: { slot: MaterialEffect["slot"]
       )}
     >
       {MATERIAL_EFFECT_SLOT_LABELS[slot]}
-    </Badge>
-  );
-}
-
-export function MaterialEffectRarityBadge({
-  rarity,
-}: {
-  rarity: MaterialEffect["rarity"];
-}) {
-  return (
-    <Badge
-      variant="outline"
-      className={cn("text-xs", RESOURCE_RARITY_STYLES[rarity].badge)}
-    >
-      {rarity}
     </Badge>
   );
 }
@@ -84,14 +69,5 @@ export const materialEffectColumns: ColumnDef<MaterialEffect>[] = [
     ),
     cell: ({ row }) => <MaterialEffectSlotBadge slot={row.original.slot} />,
   },
-  {
-    accessorKey: "rarity",
-    header: ({ column }) => (
-      <DataTableColumnHeader column={column} title="Rarity" />
-    ),
-    cell: ({ row }) => <MaterialEffectRarityBadge rarity={row.original.rarity} />,
-    sortingFn: (a, b) =>
-      MATERIAL_EFFECT_RARITIES.indexOf(a.original.rarity) -
-      MATERIAL_EFFECT_RARITIES.indexOf(b.original.rarity),
-  },
+  createResourceRarityColumn<MaterialEffect>(),
 ];

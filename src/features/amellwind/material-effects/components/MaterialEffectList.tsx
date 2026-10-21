@@ -1,4 +1,7 @@
-import { ListAreaLoading } from "@/shared/components/ListAreaLoading";
+import {
+  DeferredListResults,
+  ListEmptyState,
+} from "@/shared/components/DeferredListResults";
 import { useDebouncedListSearch } from "@/shared/hooks/useDebouncedListSearch";
 import { useListSessionFilters } from "@/shared/hooks/useListSessionFilters";
 import { useEffect, useMemo, useState, useCallback, useRef } from "react";
@@ -165,14 +168,17 @@ export function MaterialEffectList() {
       </div>
 
       <div className="flex-1 overflow-y-auto px-6 py-6">
-        {loading || isSearchPending ? (
-          <ListAreaLoading />
-        ) : filtered.length === 0 ? (
-          <div className="flex flex-col items-center justify-center h-48 text-muted-foreground gap-2">
-            <Sparkles className="h-10 w-10 opacity-20" />
-            <p className="text-sm">No material effects match your filters.</p>
-          </div>
-        ) : (
+        <DeferredListResults
+          loading={loading}
+          updating={isSearchPending}
+          isEmpty={filtered.length === 0}
+          empty={
+            <ListEmptyState
+              icon={Sparkles}
+              message="No material effects match your filters."
+            />
+          }
+        >
           <MaterialEffectDataTable
             effects={filtered}
             pagination={pagination}
@@ -182,7 +188,7 @@ export function MaterialEffectList() {
               setDialogOpen(true);
             }}
           />
-        )}
+        </DeferredListResults>
       </div>
 
       {dialogOpen && selected && (

@@ -1,6 +1,7 @@
 import { ColumnDef } from "@tanstack/react-table";
 import { Species, SPECIES_CATEGORY_LABELS } from "@/shared/types";
 import { DataTableColumnHeader } from "@/components/data-table/data-table-column-header";
+import { createSourcePageColumn } from "@/components/data-table/data-table-columns";
 import { cn } from "@/shared/utils/cn";
 import { Eye, Shield } from "lucide-react";
 
@@ -121,16 +122,5 @@ export const speciesColumns: ColumnDef<Species>[] = [
       );
     },
   },
-  {
-    accessorKey: "source",
-    header: "Source",
-    enableSorting: false,
-    meta: { hideBelowMd: true },
-    cell: ({ row }) => (
-      <span className="whitespace-nowrap text-xs text-muted-foreground">
-        {row.original.source}
-        {row.original.page !== undefined ? ` · p. ${row.original.page}` : ""}
-      </span>
-    ),
-  },
+  createSourcePageColumn<Species>(),
 ];

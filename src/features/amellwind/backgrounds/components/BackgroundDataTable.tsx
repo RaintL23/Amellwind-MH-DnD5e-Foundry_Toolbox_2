@@ -1,16 +1,13 @@
 import { useCallback } from "react";
 import type { Background } from "@/shared/types";
 import { DataTable } from "@/components/data-table/data-table";
+import { getEntityRowId } from "@/components/data-table/data-table-columns";
 import { CompendiumMobileCard } from "@/shared/components/CompendiumMobileCard";
 import { FactionBadge, backgroundColumns } from "./background-columns";
 
 interface BackgroundDataTableProps {
   backgrounds: Background[];
   onRowClick: (background: Background) => void;
-}
-
-function getBackgroundRowId(row: Background): string {
-  return row.id;
 }
 
 export function BackgroundDataTable({
@@ -33,9 +30,8 @@ export function BackgroundDataTable({
     <DataTable
       columns={backgroundColumns}
       data={backgrounds}
-      getRowId={getBackgroundRowId}
+      getRowId={getEntityRowId}
       onRowClick={onRowClick}
-      emptyMessage="No backgrounds found with those filters."
       pageSize={25}
       enableSearchToolbar={false}
       renderMobileRow={renderMobileRow}

@@ -1,6 +1,7 @@
 import { useState, useMemo, useCallback } from "react";
 import {
   RESOURCE_CATEGORY_ICONS,
+  RESOURCE_RARITIES,
   RESOURCE_RARITY_STYLES,
   type Resource,
   type ResourceCategory,
@@ -8,14 +9,16 @@ import {
 } from "@/shared/types";
 import { getAllResourceTables, searchResources } from "../services/resource.service";
 import { cn } from "@/shared/utils/cn";
-import { Hammer } from "lucide-react";
-import { ListAreaLoading } from "@/shared/components/ListAreaLoading";
+import { Gem, Hammer } from "lucide-react";
+import {
+  DeferredListResults,
+  ListEmptyState,
+} from "@/shared/components/DeferredListResults";
 import { ClearableSearchInput } from "@/shared/components/list-filters";
 import { useDebouncedListSearch } from "@/shared/hooks/useDebouncedListSearch";
 import { useListSessionFilters } from "@/shared/hooks/useListSessionFilters";
 import { ResourceDataTable } from "./ResourceDataTable";
 import { ResourceDetailDialog } from "./ResourceDetailDialog";
-import { RESOURCE_RARITIES } from "./resource-columns";
 
 const CATEGORIES: ResourceCategory[] = ["Bonepiles", "Fish", "Insects", "Minerals", "Mushrooms", "Plants"];
 
@@ -164,18 +167,17 @@ export function ResourcePage() {
           </div>
         )}
 
-        {isSearchPending ? (
-          <ListAreaLoading />
-        ) : filteredResources.length === 0 ? (
-          <div className="text-center py-12 text-muted-foreground">
-            <p className="text-sm">No resources found.</p>
-          </div>
-        ) : (
+        <DeferredListResults
+          loading={false}
+          updating={isSearchPending}
+          isEmpty={filteredResources.length === 0}
+          empty={<ListEmptyState icon={Gem} message="No resources found." />}
+        >
           <ResourceDataTable
             resources={filteredResources}
             onRowClick={handleRowClick}
           />
-        )}
+        </DeferredListResults>
       </div>
 
       <ResourceDetailDialog

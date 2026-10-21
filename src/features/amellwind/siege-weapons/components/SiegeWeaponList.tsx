@@ -1,4 +1,7 @@
-import { ListAreaLoading } from "@/shared/components/ListAreaLoading";
+import {
+  DeferredListResults,
+  ListEmptyState,
+} from "@/shared/components/DeferredListResults";
 import { useCallback, useEffect, useMemo, useState } from "react";
 import type { SiegeWeapon } from "@/shared/types";
 import { getAllSiegeWeapons } from "../services/siege-weapon.service";
@@ -67,7 +70,7 @@ export function SiegeWeaponList() {
       );
     }
 
-    return [...result].sort((a, b) => a.name.localeCompare(b.name));
+    return result;
   }, [weapons, appliedSearch]);
 
   function handleSelect(item: SiegeWeapon) {
@@ -107,16 +110,16 @@ export function SiegeWeaponList() {
       </div>
 
       <div className="flex-1 overflow-y-auto px-6 py-6">
-        {loading || isSearchPending ? (
-          <ListAreaLoading />
-        ) : filtered.length === 0 ? (
-          <div className="flex flex-col items-center justify-center h-48 text-muted-foreground gap-2">
-            <Crosshair className="h-10 w-10 opacity-20" />
-            <p className="text-sm">No siege weapons found.</p>
-          </div>
-        ) : (
+        <DeferredListResults
+          loading={loading}
+          updating={isSearchPending}
+          isEmpty={filtered.length === 0}
+          empty={
+            <ListEmptyState icon={Crosshair} message="No siege weapons found." />
+          }
+        >
           <SiegeWeaponDataTable weapons={filtered} onRowClick={handleSelect} />
-        )}
+        </DeferredListResults>
       </div>
 
       {dialogOpen && selected && (

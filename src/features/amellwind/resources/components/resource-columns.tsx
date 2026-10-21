@@ -3,31 +3,11 @@ import {
   RESOURCE_CATEGORY_ICONS,
   RESOURCE_RARITY_STYLES,
   type Resource,
-  type ResourceRarity,
 } from "@/shared/types";
 import { DataTableColumnHeader } from "@/components/data-table/data-table-column-header";
-import { Badge } from "@/components/ui/badge";
+import { createResourceRarityColumn } from "@/shared/components/ResourceRarityBadge";
 import { cn } from "@/shared/utils/cn";
 import { Hammer } from "lucide-react";
-
-export const RESOURCE_RARITIES: ResourceRarity[] = [
-  "Common",
-  "Uncommon",
-  "Rare",
-  "Very Rare",
-  "Legendary",
-];
-
-export function ResourceRarityBadge({ rarity }: { rarity: ResourceRarity }) {
-  return (
-    <Badge
-      variant="outline"
-      className={cn("text-xs", RESOURCE_RARITY_STYLES[rarity].badge)}
-    >
-      {rarity}
-    </Badge>
-  );
-}
 
 export function getResourceRowId(resource: Resource): string {
   return `${resource.category}-${resource.name}`;
@@ -70,16 +50,7 @@ export const resourceColumns: ColumnDef<Resource>[] = [
       </span>
     ),
   },
-  {
-    accessorKey: "rarity",
-    header: ({ column }) => (
-      <DataTableColumnHeader column={column} title="Rarity" />
-    ),
-    cell: ({ row }) => <ResourceRarityBadge rarity={row.original.rarity} />,
-    sortingFn: (a, b) =>
-      RESOURCE_RARITIES.indexOf(a.original.rarity) -
-      RESOURCE_RARITIES.indexOf(b.original.rarity),
-  },
+  createResourceRarityColumn<Resource>(),
   {
     id: "details",
     header: "Details",

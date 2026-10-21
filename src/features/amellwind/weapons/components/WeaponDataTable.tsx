@@ -39,7 +39,6 @@ export function WeaponDataTable({ weapons, onRowClick }: WeaponDataTableProps) {
       data={weapons}
       getRowId={getWeaponRowId}
       onRowClick={onRowClick}
-      emptyMessage="No weapons found with those filters."
       pageSize={25}
       enableSearchToolbar={false}
       initialSorting={[]}

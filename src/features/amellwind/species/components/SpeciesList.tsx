@@ -1,4 +1,7 @@
-import { ListAreaLoading } from "@/shared/components/ListAreaLoading";
+import {
+  DeferredListResults,
+  ListEmptyState,
+} from "@/shared/components/DeferredListResults";
 import { useCallback, useEffect, useMemo, useState } from "react";
 import {
   Species,
@@ -211,16 +214,19 @@ export function SpeciesList() {
       </div>
 
       <div className="flex-1 overflow-y-auto px-4 py-4 md:px-6 md:py-6">
-        {loading || isSearchPending ? (
-          <ListAreaLoading />
-        ) : filtered.length === 0 ? (
-          <div className="flex flex-col items-center justify-center h-48 text-muted-foreground gap-2">
-            <Users className="h-10 w-10 opacity-20" />
-            <p className="text-sm">No species found with those filters.</p>
-          </div>
-        ) : (
+        <DeferredListResults
+          loading={loading}
+          updating={isSearchPending}
+          isEmpty={filtered.length === 0}
+          empty={
+            <ListEmptyState
+              icon={Users}
+              message="No species found with those filters."
+            />
+          }
+        >
           <SpeciesDataTable species={filtered} onRowClick={openSpecies} />
-        )}
+        </DeferredListResults>
       </div>
 
       {dialogOpen && selected && (

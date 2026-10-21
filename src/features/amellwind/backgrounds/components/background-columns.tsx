@@ -5,9 +5,13 @@ import {
   BackgroundFaction,
 } from "@/shared/types";
 import { DataTableColumnHeader } from "@/components/data-table/data-table-column-header";
+import {
+  createNameColumn,
+  createSourcePageColumn,
+} from "@/components/data-table/data-table-columns";
 import { cn } from "@/shared/utils/cn";
 
-export const FACTION_ACCENT: Record<BackgroundFaction, string> = {
+const FACTION_ACCENT: Record<BackgroundFaction, string> = {
   "helix-commission": "text-rose-400",
   "hunters-guild": "text-emerald-400",
   "royal-scrivener": "text-amber-400",
@@ -30,15 +34,7 @@ export function FactionBadge({ faction }: { faction: BackgroundFaction }) {
 }
 
 export const backgroundColumns: ColumnDef<Background>[] = [
-  {
-    accessorKey: "name",
-    header: ({ column }) => (
-      <DataTableColumnHeader column={column} title="Name" />
-    ),
-    cell: ({ row }) => (
-      <span className="font-medium text-foreground">{row.original.name}</span>
-    ),
-  },
+  createNameColumn<Background>(),
   {
     accessorKey: "faction",
     header: ({ column }) => (
@@ -72,16 +68,5 @@ export const backgroundColumns: ColumnDef<Background>[] = [
       </span>
     ),
   },
-  {
-    accessorKey: "source",
-    header: "Source",
-    enableSorting: false,
-    meta: { hideBelowMd: true },
-    cell: ({ row }) => (
-      <span className="whitespace-nowrap text-xs text-muted-foreground">
-        {row.original.source}
-        {row.original.page !== undefined ? ` · p. ${row.original.page}` : ""}
-      </span>
-    ),
-  },
+  createSourcePageColumn<Background>(),
 ];

@@ -1,4 +1,7 @@
-import { ListAreaLoading } from "@/shared/components/ListAreaLoading";
+import {
+  DeferredListResults,
+  ListEmptyState,
+} from "@/shared/components/DeferredListResults";
 import { useEffect, useMemo, useCallback, useState } from "react";
 import { Weapon } from "@/shared/types";
 import { getAllWeapons } from "../services/weapon.service";
@@ -148,22 +151,26 @@ export function WeaponList() {
       </div>
 
       <div className="flex-1 overflow-y-auto px-4 py-4 md:px-6 md:py-6">
-        {loading || isSearchPending ? (
-          <ListAreaLoading />
-        ) : filtered.length === 0 ? (
-          <div className="flex flex-col items-center justify-center h-48 text-muted-foreground gap-2">
-            <Swords className="h-10 w-10 opacity-20" />
-            <p className="text-sm">No weapons found with those filters.</p>
-            <button
-              onClick={clearFilters}
-              className="text-xs underline underline-offset-2 hover:text-foreground"
+        <DeferredListResults
+          loading={loading}
+          updating={isSearchPending}
+          isEmpty={filtered.length === 0}
+          empty={
+            <ListEmptyState
+              icon={Swords}
+              message="No weapons found with those filters."
             >
-              Clear filters
-            </button>
-          </div>
-        ) : (
+              <button
+                onClick={clearFilters}
+                className="text-xs underline underline-offset-2 hover:text-foreground"
+              >
+                Clear filters
+              </button>
+            </ListEmptyState>
+          }
+        >
           <WeaponDataTable weapons={filtered} onRowClick={handleSelect} />
-        )}
+        </DeferredListResults>
       </div>
 
       <WeaponDialog

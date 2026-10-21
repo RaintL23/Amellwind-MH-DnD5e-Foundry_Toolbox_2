@@ -1,17 +1,13 @@
 import { ColumnDef } from "@tanstack/react-table";
 import type { SiegeWeapon } from "@/shared/types";
 import { DataTableColumnHeader } from "@/components/data-table/data-table-column-header";
+import {
+  createNameColumn,
+  createSourcePageColumn,
+} from "@/components/data-table/data-table-columns";
 
 export const siegeWeaponColumns: ColumnDef<SiegeWeapon>[] = [
-  {
-    accessorKey: "name",
-    header: ({ column }) => (
-      <DataTableColumnHeader column={column} title="Name" />
-    ),
-    cell: ({ row }) => (
-      <span className="font-medium text-foreground">{row.original.name}</span>
-    ),
-  },
+  createNameColumn<SiegeWeapon>(),
   {
     accessorKey: "objectTypeLabel",
     header: ({ column }) => (
@@ -56,16 +52,5 @@ export const siegeWeaponColumns: ColumnDef<SiegeWeapon>[] = [
       </p>
     ),
   },
-  {
-    accessorKey: "source",
-    header: "Source",
-    enableSorting: false,
-    meta: { hideBelowMd: true },
-    cell: ({ row }) => (
-      <span className="whitespace-nowrap text-xs text-muted-foreground">
-        {row.original.source}
-        {row.original.page !== undefined ? ` · p. ${row.original.page}` : ""}
-      </span>
-    ),
-  },
+  createSourcePageColumn<SiegeWeapon>(),
 ];

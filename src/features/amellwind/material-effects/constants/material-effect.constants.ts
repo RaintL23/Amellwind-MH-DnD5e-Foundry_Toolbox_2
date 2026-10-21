@@ -1,5 +1,5 @@
 import type { MaterialEffectSlot } from "@/shared/types";
-import type { ResourceRarity } from "@/shared/types";
+import { RESOURCE_RARITIES, type ResourceRarity } from "@/shared/types";
 
 export type MaterialEffectFiltersState = {
   name: string;
@@ -7,13 +7,7 @@ export type MaterialEffectFiltersState = {
   rarity: ResourceRarity[];
 };
 
-export const MATERIAL_EFFECT_RARITIES: ResourceRarity[] = [
-  "Common",
-  "Uncommon",
-  "Rare",
-  "Very Rare",
-  "Legendary",
-];
+export const MATERIAL_EFFECT_RARITIES: ResourceRarity[] = RESOURCE_RARITIES;
 
 /** Always-on damage resistance in rune text (Armor of Resistance / Ring of Resistance). */
 export const INLINE_DAMAGE_RESISTANCE_RARITY: ResourceRarity = "Rare";

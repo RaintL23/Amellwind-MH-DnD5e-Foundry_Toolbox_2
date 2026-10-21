@@ -2,9 +2,10 @@ import { useCallback } from "react";
 import type { OnChangeFn, PaginationState } from "@tanstack/react-table";
 import type { MaterialEffect } from "@/shared/types";
 import { DataTable } from "@/components/data-table/data-table";
+import { getEntityRowId } from "@/components/data-table/data-table-columns";
 import { CompendiumMobileCard } from "@/shared/components/CompendiumMobileCard";
+import { ResourceRarityBadge } from "@/shared/components/ResourceRarityBadge";
 import {
-  MaterialEffectRarityBadge,
   MaterialEffectSlotBadge,
   materialEffectColumns,
 } from "./material-effect-columns";
@@ -14,10 +15,6 @@ interface MaterialEffectDataTableProps {
   pagination: PaginationState;
   onPaginationChange: OnChangeFn<PaginationState>;
   onRowClick: (effect: MaterialEffect) => void;
-}
-
-function getEffectRowId(row: MaterialEffect): string {
-  return row.id;
 }
 
 export function MaterialEffectDataTable({
@@ -33,7 +30,7 @@ export function MaterialEffectDataTable({
         onSelect={() => onRowClick(effect)}
         primary={
           <>
-            <MaterialEffectRarityBadge rarity={effect.rarity} />
+            <ResourceRarityBadge rarity={effect.rarity} />
             <MaterialEffectSlotBadge slot={effect.slot} />
           </>
         }
@@ -47,9 +44,8 @@ export function MaterialEffectDataTable({
     <DataTable
       columns={materialEffectColumns}
       data={effects}
-      getRowId={getEffectRowId}
+      getRowId={getEntityRowId}
       onRowClick={onRowClick}
-      emptyMessage="No material effects match your filters."
       enableSearchToolbar={false}
       initialSorting={[]}
       pagination={pagination}
