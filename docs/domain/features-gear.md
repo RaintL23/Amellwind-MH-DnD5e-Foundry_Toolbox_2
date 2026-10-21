@@ -189,3 +189,18 @@ Extiende `MHItem` (`name`, `source`, `type`, `typeLabel`, `rarity`, `valueCp`, `
 
 ---
 
+### Artificer Forge (RaintDM)
+
+**Ruta**: `/artificer-forge`
+**Fuente de datos**: estática, `src/features/raintdm/artificer-forge/data/artificer-forge.data.ts` (texto en inglés; fuente de verdad de la regla). Sin servicio ni IndexedDB. Cada nombre de Material Effect (tablas y texto, token `[[Nombre]]` en los datos) es un botón que abre `MaterialEffectDetailDialog` con el catálogo de `/material-effects` (`MaterialEffectLinkProvider`).
+
+Adaptación RaintDM del Artificiero 2024 (EFA) a Amellwind: **Replicate Material Effect** sustituye a Replicate Magic Item; los planos producen Material Effects (catálogo `/material-effects`) en vez de objetos mágicos. Mantiene tal cual los valores EFA de **Plans Known / Active Effects** (4/2 → 8/6 a niv. 2/6/10/14/18) y los +1 slot de material en arma y armadura a niv. 10/14/18.
+
+- **Lista única que evoluciona** (niv. 2, 6, 10, 14: 7, 18, 31 y 39 efectos disponibles). Una versión mejor (p. ej. Divine Blessing+) **sustituye** a la anterior y el plano conocido pasa solo a la nueva. La lista **no está atada a la rareza** del catálogo; la columna Rarity solo se usa en Drain.
+- **Duración como EFA**: hasta que el Artificiero decida retirarlo; desaparece si sustituye el plano, supera Active Effects (el más antiguo) o muere (1d4 días). En equipo ajeno cuenta como 2 Active Effects.
+- **Sin duplicados** (todas las versiones de un efecto cuentan como el mismo), **sin efectos con attunement**, usos limitados se recuperan en descanso largo (Guts: 1 por descanso largo).
+- **Magic Item Tinker (niv. 6)**: *Drain Material Effect* (acción adicional; espacio de conjuro por rareza del efecto: Common 1, Uncommon 2, Rare 2, Very Rare 3 — este último no existe en EFA) y *Transmute Material Effect* (acción de Magia, mismo tipo de equipo, 1/descanso largo). *Charge* no aplica.
+- No entran: generadores de botín, efectos de un tipo de arma, referencias a otra tabla, recursos de clase/atributos, efectos con attunement y los quitados por balance (Iron Wall, Good Luck, Honed Blade, Health Boost, Heat Guard, Stamina Surge+2, Ammo Saver+).
+
+---
+

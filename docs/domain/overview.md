@@ -63,6 +63,7 @@ Estado de cobertura del manual / features de la app:
 
 - [x] **Weapon Forge** — Catálogo curated RaintDM + armas custom (localStorage) y export Foundry Item; navegación en sección propia (Sidebar + Home), no bajo Amellwind Homebrew.
 - [x] **Items Forge** — Catálogo curated RaintDM (`public/data/raintdm-items/`); UI tabular tipo `/items` (sin carrito ni editor); v1: Magazines de Dual Repeaters.
+- [x] **Artificer Forge** — Página estática (`/artificer-forge`) con el Artificiero 2024 adaptado a Amellwind: Replicate Material Effect, lista única de planos por nivel (2/6/10/14) y Magic Item Tinker.
 
 ### Compendio D&D 5e — implementado
 
@@ -110,7 +111,8 @@ src/
 │   ├── raintdm/            # RaintDM
 │   │   ├── builder/        # Character Builder ALPHA (+ foundry-export/, foundry-import/)
 │   │   ├── weapon-forge/
-│   │   └── item-forge/
+│   │   ├── item-forge/
+│   │   └── artificer-forge/
 │   └── dnd/                # Compendio D&D 5e
 │       ├── spells/ classes/ races/ backgrounds/ feats/ items/
 │       ├── optionalfeatures/  # sin ruta; usado por builder/classes

@@ -24,8 +24,9 @@ Herramientas de juego y de mesa, más variantes de RaintDM sobre el homebrew 201
 | GM Tools | **Damage & Healing Calculator** | `/damage-calculator` | Calculadora de daño o healing esperado por turno comparando builds (persistida) |
 | Character Tools | **Builder** _(ALPHA)_ | `/builder` | Character Builder — stats, equipamiento, runas, DPT, **export/import Foundry VTT** y export de la hoja a PDF. Junta catálogos Amellwind, 5e y RaintDM. |
 | Character Tools | **Character Sheet** _(ALPHA)_ | `/sheet`, `/sheet/:characterId` | Hoja de juego en sesión: HP, acciones, conjuros, descansos, inventario y condiciones. Importa el JSON del Builder; optimizada para móvil y escritorio |
-| Items | **Items Forge** | `/item-forge` | Ítems curated de RaintDM y recetas tipo Combo List (magazines de Dual Repeaters, trampas de caza) |
-| Items | **Weapon Forge** | `/weapon-forge` | Armas de cazador curated de RaintDM más armas custom que creas, editas y exportas |
+| Forge | **Items Forge** | `/item-forge` | Ítems curated de RaintDM y recetas tipo Combo List (magazines de Dual Repeaters, trampas de caza) |
+| Forge | **Weapon Forge** | `/weapon-forge` | Armas de cazador curated de RaintDM más armas custom que creas, editas y exportas |
+| Forge | **Artificer Forge** | `/artificer-forge` | Artificiero 2024 adaptado a Amellwind: Replicate Material Effect, lista de planos por nivel y Magic Item Tinker |
 
 ### Amellwind Homebrew
 

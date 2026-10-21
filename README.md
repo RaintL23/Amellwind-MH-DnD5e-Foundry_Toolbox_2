@@ -24,8 +24,9 @@ Play and table tools, plus RaintDM variants on Amellwind’s 2014 Monster Hunter
 | GM Tools | **Damage & Healing Calculator** | `/damage-calculator` | Expected damage or healing per turn for comparing builds (persisted) |
 | Character Tools | **Builder** _(ALPHA)_ | `/builder` | Character Builder — stats, equipment, runes, DPR, **Foundry VTT export/import** and character-sheet PDF export. Aggregates Amellwind, 5e, and RaintDM catalogs. |
 | Character Tools | **Character Sheet** _(ALPHA)_ | `/sheet`, `/sheet/:characterId` | In-session play sheet: HP, actions, spells, rests, inventory, conditions. Imports Builder JSON; optimized for phone and desktop |
-| Items | **Items Forge** | `/item-forge` | Curated RaintDM items and Combo List recipes (Dual Repeaters magazines, hunter traps) |
-| Items | **Weapon Forge** | `/weapon-forge` | Curated RaintDM hunter weapons plus custom weapons you create, edit, and export |
+| Forge | **Items Forge** | `/item-forge` | Curated RaintDM items and Combo List recipes (Dual Repeaters magazines, hunter traps) |
+| Forge | **Weapon Forge** | `/weapon-forge` | Curated RaintDM hunter weapons plus custom weapons you create, edit, and export |
+| Forge | **Artificer Forge** | `/artificer-forge` | 2024 Artificer adapted to Amellwind: Replicate Material Effect, plan list by level, and Magic Item Tinker |
 
 ### Amellwind Homebrew
 

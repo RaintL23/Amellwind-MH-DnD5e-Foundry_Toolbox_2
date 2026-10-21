@@ -48,6 +48,7 @@ Todas las rutas de página se cargan con **`React.lazy`** y `<Suspense>` (fallba
 /weapon-forge/new          → Crear arma custom
 /weapon-forge/edit/:id     → Editar arma custom
 /item-forge                → Items Forge (catálogo curated RaintDM)
+/artificer-forge           → Artificer Forge (Artificiero 2024 adaptado: planos de Material Effects)
 
 ── Compendio D&D 5e ──
 /dnd-character-guide       → Guía de creación de personaje (PHB 2014 / 2024)
@@ -140,7 +141,7 @@ El equipo equipable del Builder proviene de ítems añadidos al carrito en Shops
 | Amellwind Homebrew  | NPCs and Companions           | Monstie Sidekick, NPC Generator                                             |
 | Amellwind (RaintDM) | GM Tools                     | Combat Tracker                                                              |
 | Amellwind (RaintDM) | Character                     | Builder, Damage Calculator                                                  |
-| Amellwind (RaintDM) | Weapons                       | Weapon Forge, Items Forge                                                   |
+| Amellwind (RaintDM) | Forge                         | Weapon Forge, Items Forge, Artificer Forge                                  |
 | D&D 5e Compendium   | Spells and Classes            | Spells, Classes                                                             |
 | D&D 5e Compendium   | Character Options             | Races, Backgrounds, Feats                                                   |
 | D&D 5e Compendium   | Bestiary                      | Bestiary                                                                    |
