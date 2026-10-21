@@ -36,6 +36,7 @@ import {
   Users,
   UtensilsCrossed,
   Wand2,
+  Wrench,
 } from "lucide-react";
 
 export type NavItemDef = {
@@ -104,7 +105,7 @@ export const NAV_SECTIONS: NavSectionDef[] = [
         ],
       },
       {
-        label: "Items",
+        label: "Forge",
         items: [
           {
             to: "/item-forge",
@@ -119,6 +120,13 @@ export const NAV_SECTIONS: NavSectionDef[] = [
             icon: Hammer,
             description:
               "Browse curated RaintDM weapons or create and edit custom ones for your table.",
+          },
+          {
+            to: "/artificer-forge",
+            label: "Artificer Forge",
+            icon: Wrench,
+            description:
+              "2024 Artificer adapted to Amellwind: replicate Material Effects from plans instead of magic items.",
           },
         ],
       },

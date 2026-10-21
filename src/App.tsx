@@ -104,6 +104,11 @@ const ItemForgeList = lazy(() =>
     default: m.ItemForgeList,
   })),
 );
+const ArtificerForgePage = lazy(() =>
+  import("@/features/raintdm/artificer-forge/components/ArtificerForgePage").then((m) => ({
+    default: m.ArtificerForgePage,
+  })),
+);
 const ResourcePage = lazy(() =>
   import("@/features/amellwind/resources/components/ResourcePage").then((m) => ({
     default: m.ResourcePage,
@@ -570,6 +575,14 @@ export default function App() {
                 element={
                   <Suspense fallback={<PageFallback />}>
                     <ItemForgeList />
+                  </Suspense>
+                }
+              />
+              <Route
+                path="artificer-forge"
+                element={
+                  <Suspense fallback={<PageFallback />}>
+                    <ArtificerForgePage />
                   </Suspense>
                 }
               />
