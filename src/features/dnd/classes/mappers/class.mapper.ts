@@ -221,9 +221,9 @@ export function mergeProgressionWithSubclass(
     // chosen they are replaced by the real subclass features.
     const classFeatures = row.features.filter((f) => !f.gainSubclassFeature);
 
-    const mergedFeatures: ClassFeatureEntry[] = subclass
-      ? [...classFeatures, ...subclassFeatures]
-      : row.features;
+    const mergedFeatures: ClassFeatureEntry[] = [
+      ...(subclass ? [...classFeatures, ...subclassFeatures] : row.features),
+    ].sort((a, b) => a.name.localeCompare(b.name, "en", { sensitivity: "base" }));
 
     const tableCells = tableGroups
       ? buildTableCellsForLevel(tableGroups, i)

@@ -233,7 +233,8 @@ export function ClassDetailPage() {
               aside={
                 <p className="text-[11px] text-muted-foreground">
                   Select a feature to jump to it ·{" "}
-                  <Eye className="inline h-3 w-3 align-[-2px]" /> hides it
+                  <Eye className="inline h-3 w-3 align-[-2px]" /> shows only
+                  that feature
                 </p>
               }
             >

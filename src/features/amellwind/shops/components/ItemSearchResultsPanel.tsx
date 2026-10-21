@@ -1,6 +1,7 @@
 import { Package, Search } from "lucide-react";
 import { MHItem } from "@/shared/types";
 import { ItemSearchGroup } from "../hooks/useItemSearch";
+import { hasItemRarity } from "../services/item.service";
 import { ItemRow } from "./ItemRow";
 
 export function ItemSearchResultsPanel({
@@ -34,7 +35,9 @@ export function ItemSearchResultsPanel({
         {total} item{total !== 1 ? "s" : ""} found across {results.length} type
         {results.length !== 1 ? "s" : ""}.
       </p>
-      {results.map(({ type, items }) => (
+      {results.map(({ type, items }) => {
+        const showRarity = items.some(hasItemRarity);
+        return (
         <div key={type} className="rounded-lg border border-border overflow-hidden">
           <div className="flex items-center gap-2 px-4 py-2.5 bg-muted/50 border-b border-border">
             <Package className="h-4 w-4 text-primary" />
@@ -50,9 +53,11 @@ export function ItemSearchResultsPanel({
                   <th className="px-4 py-2.5 text-left font-semibold text-muted-foreground text-xs">
                     Name
                   </th>
-                  <th className="px-4 py-2.5 text-left font-semibold text-muted-foreground text-xs">
-                    Rarity
-                  </th>
+                  {showRarity && (
+                    <th className="px-4 py-2.5 text-left font-semibold text-muted-foreground text-xs">
+                      Rarity
+                    </th>
+                  )}
                   <th className="px-4 py-2.5 text-left font-semibold text-muted-foreground text-xs">
                     Cost
                   </th>
@@ -67,6 +72,7 @@ export function ItemSearchResultsPanel({
                   <ItemRow
                     key={`${item.source}-${item.name}`}
                     item={item}
+                    showRarity={showRarity}
                     selected={selected?.name === item.name}
                     onSelect={() =>
                       onSelect(selected?.name === item.name ? null : item)
@@ -77,7 +83,8 @@ export function ItemSearchResultsPanel({
             </table>
           </div>
         </div>
-      ))}
+        );
+      })}
     </div>
   );
 }

@@ -131,20 +131,21 @@ export function DndConditionsDiseasesPage() {
         </p>
       </div>
 
-      <div className="shrink-0 border-b border-border bg-card/50 px-6 py-3">
-        <ClearableSearchInput
-          value={searchDraft}
-          onChange={setSearchDraft}
-          placeholder="Search conditions or diseases..."
-          compact
-          className="max-w-xs"
-          inputClassName="h-8 text-sm"
-        />
-      </div>
-
-      <div className="flex-1 overflow-y-auto px-6 py-5">
-        <Tabs value={tab} onValueChange={setTab}>
-          <TabsList className="mb-5">
+      <Tabs
+        value={tab}
+        onValueChange={setTab}
+        className="flex flex-1 min-h-0 flex-col"
+      >
+        <div className="shrink-0 flex flex-wrap items-center gap-3 border-b border-border bg-card/50 px-6 py-3">
+          <ClearableSearchInput
+            value={searchDraft}
+            onChange={setSearchDraft}
+            placeholder="Search conditions or diseases..."
+            compact
+            className="max-w-xs"
+            inputClassName="h-8 text-sm"
+          />
+          <TabsList>
             <TabsTrigger value="conditions">
               <AlertTriangle className="h-3.5 w-3.5 text-amber-400" />
               Conditions
@@ -164,7 +165,9 @@ export function DndConditionsDiseasesPage() {
               )}
             </TabsTrigger>
           </TabsList>
+        </div>
 
+        <div className="flex-1 overflow-y-auto px-6 py-5">
           <TabsContent value="conditions">
             {loading || isSearchPending ? (
               <ListAreaLoading />
@@ -208,8 +211,8 @@ export function DndConditionsDiseasesPage() {
               />
             )}
           </TabsContent>
-        </Tabs>
-      </div>
+        </div>
+      </Tabs>
 
       {conditionDialogOpen && selectedCondition && (
         <ConditionDetailDialog

@@ -9,10 +9,12 @@ export function ItemRow({
   item,
   selected,
   onSelect,
+  showRarity = true,
 }: {
   item: MHItem;
   selected: boolean;
   onSelect: () => void;
+  showRarity?: boolean;
 }) {
   const { addItem, items: cartItems } = useCart();
   const inCart = cartItems.some((c) => c.name === item.name);
@@ -26,9 +28,11 @@ export function ItemRow({
       onClick={onSelect}
     >
       <td className="px-4 py-3 font-medium text-foreground">{item.name}</td>
-      <td className="px-4 py-3">
-        <RarityBadge rarity={item.rarity} />
-      </td>
+      {showRarity && (
+        <td className="px-4 py-3">
+          <RarityBadge rarity={item.rarity} />
+        </td>
+      )}
       <td className="px-4 py-3 font-mono text-xs">
         {item.valueCp !== null ? (
           <span className="text-primary font-semibold">

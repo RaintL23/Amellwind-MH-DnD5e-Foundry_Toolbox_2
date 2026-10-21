@@ -1,17 +1,19 @@
 import { MHItem } from "@/shared/types";
+import { hasItemRarity } from "../services/item.service";
 import { ItemRow } from "./ItemRow";
 
 export function ItemsTable({
   items,
   selected,
   onSelect,
-  colSpan = 5,
 }: {
   items: MHItem[];
   selected: MHItem | null;
   onSelect: (item: MHItem | null) => void;
-  colSpan?: number;
 }) {
+  const showRarity = items.some(hasItemRarity);
+  const colSpan = showRarity ? 5 : 4;
+
   return (
     <div className="rounded-lg border border-border overflow-hidden">
       <div className="overflow-x-auto">
@@ -21,9 +23,11 @@ export function ItemsTable({
               <th className="px-4 py-3 text-left font-semibold text-muted-foreground">
                 Name
               </th>
-              <th className="px-4 py-3 text-left font-semibold text-muted-foreground">
-                Rarity
-              </th>
+              {showRarity && (
+                <th className="px-4 py-3 text-left font-semibold text-muted-foreground">
+                  Rarity
+                </th>
+              )}
               <th className="px-4 py-3 text-left font-semibold text-muted-foreground">
                 Cost
               </th>
@@ -48,6 +52,7 @@ export function ItemsTable({
                 <ItemRow
                   key={`${item.source}-${item.name}`}
                   item={item}
+                  showRarity={showRarity}
                   selected={selected?.name === item.name}
                   onSelect={() =>
                     onSelect(selected?.name === item.name ? null : item)

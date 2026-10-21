@@ -299,9 +299,14 @@ export function useClassDetailPage(classId: string) {
     setHiddenFeatureUids(new Set());
   }, [allFeatureUids]);
 
-  const toggleFeatureVisibility = useCallback((uid: string) => {
-    setHiddenFeatureUids((prev) => toggleHiddenFeature(prev, uid));
-  }, []);
+  const toggleFeatureVisibility = useCallback(
+    (uid: string) => {
+      setHiddenFeatureUids((prev) =>
+        toggleHiddenFeature(prev, uid, allFeatureUids),
+      );
+    },
+    [allFeatureUids],
+  );
 
   const showFeature = useCallback((uid: string) => {
     setHiddenFeatureUids((prev) => {

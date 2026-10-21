@@ -28,6 +28,10 @@ export function formatValueGp(valueCp: number | null): string {
   return formatGpFromCp(valueCp);
 }
 
+export function hasItemRarity(item: MHItem): boolean {
+  return item.rarity.toLowerCase() !== "none";
+}
+
 function mapItem(raw: RawItem): MHItem {
   const type = raw.type ?? "misc";
   return {

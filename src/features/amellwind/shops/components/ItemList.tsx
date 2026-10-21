@@ -7,7 +7,7 @@ import { useItemSearch } from "../hooks/useItemSearch";
 import { useDebouncedListSearch } from "@/shared/hooks/useDebouncedListSearch";
 import { useListSessionFilters } from "@/shared/hooks/useListSessionFilters";
 import { CartDrawer } from "./CartDrawer";
-import { ItemDetailPanel } from "./ItemDetailPanel";
+import { ItemDetailDialog } from "./ItemDetailDialog";
 import { ItemSearchResultsPanel } from "./ItemSearchResultsPanel";
 import { ItemsTable } from "./ItemsTable";
 import { ItemTabBar } from "./ItemTabBar";
@@ -138,16 +138,13 @@ export function ItemList() {
         </>
       )}
 
-      {selected && (
-        <>
-          <div
-            className="fixed inset-0 z-20"
-            onClick={handleClose}
-            aria-hidden
-          />
-          <ItemDetailPanel item={selected} onClose={handleClose} />
-        </>
-      )}
+      <ItemDetailDialog
+        item={selected}
+        open={selected !== null}
+        onOpenChange={(open) => {
+          if (!open) handleClose();
+        }}
+      />
 
       <CartDrawer />
     </div>
