@@ -153,3 +153,10 @@ Sus cachés se limpian en el bootstrap (`clearMaterialEffectCache`, `clearCondit
 
 Todos los listados de catálogo (no solo los de esta sección) se renderizan con `DataTable` (`src/components/data-table/`), nunca como grid de cards: Feats (MH y 5e), Backgrounds (MH), Species, Siege Weapons, Hunter Weapons, Material Effects, Resources y las pestañas Conditions / Diseases (MH y 5e). Patrón: la página conserva búsqueda y filtros (`ListSearchWithFilters`) y pasa el array filtrado a un `<X>DataTable` con `enableSearchToolbar={false}`; las columnas viven en `<x>-columns.tsx` y bajo `md` se usa `renderMobileRow` con `CompendiumMobileCard`. Conditions/Diseases comparten `ConditionEntryDataTable` (`src/shared/components/`). Excepción: Weapon Forge mantiene cards porque cada una lleva acciones (comparar, clonar, editar, borrar).
 
+Reutilización (no duplicar):
+
+- Loading / vacío / "actualizando": envolver la tabla en `DeferredListResults` con `ListEmptyState` (`src/shared/components/DeferredListResults.tsx`). La tabla queda montada mientras la búsqueda debounced se aplica, así no se pierde el orden ni la página elegida.
+- Columnas comunes: `createNameColumn`, `createSourcePageColumn` y `getEntityRowId` (`src/components/data-table/data-table-columns.tsx`); feats (MH y 5e) comparten `createFeatPrerequisitesColumn` / `createFeatAbilityColumn` (`src/shared/components/feat/feat-columns.tsx`); rareza de resources y material effects: `ResourceRarityBadge` / `createResourceRarityColumn` (`src/shared/components/ResourceRarityBadge.tsx`) con el orden de `RESOURCE_RARITIES`.
+- `DataTable` ya ordena por `name` por defecto: las páginas no pre-ordenan el array filtrado.
+- Conditions & Diseases (MH y 5e) usan un único `ConditionsDiseasesView` (`features/amellwind/conditions/components/`); cada página solo aporta `load`, textos de cabecera, `getConditionBadge` y, opcionalmente, `matchesCondition`. Los diálogos se abren a partir de `?condition=` / `?disease=`.
+
