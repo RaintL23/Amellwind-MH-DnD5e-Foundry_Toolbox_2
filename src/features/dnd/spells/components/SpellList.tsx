@@ -14,6 +14,7 @@ import {
 } from "@/shared/components/list-filters";
 import {
   DeferredListResults,
+  ListEmptyState,
   StickyListSearchBar,
 } from "@/shared/components/DeferredListResults";
 import {
@@ -194,10 +195,7 @@ export function SpellList() {
           updating={showUpdating}
           isEmpty={listSpells.length === 0}
           empty={
-            <div className="flex h-48 flex-col items-center justify-center gap-2 text-muted-foreground">
-              <Sparkles className="h-10 w-10 opacity-20" />
-              <p className="text-sm">No spells loaded.</p>
-            </div>
+            <ListEmptyState icon={Sparkles} message="No spells loaded." />
           }
         >
           <SpellDataTable spells={filtered} onRowClick={handleSelect} />

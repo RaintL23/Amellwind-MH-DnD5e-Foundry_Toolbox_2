@@ -1,4 +1,5 @@
 import { ListAreaLoading } from "@/shared/components/ListAreaLoading";
+import { ListEmptyState } from "@/shared/components/DeferredListResults";
 import { useCallback, useDeferredValue, useEffect, useMemo } from "react";
 import { useNavigate } from "react-router-dom";
 import { Swords } from "lucide-react";
@@ -247,10 +248,7 @@ export function BestiaryList() {
         {loading ? (
           <ListAreaLoading />
         ) : listCreatures.length === 0 ? (
-          <div className="flex flex-col items-center justify-center h-48 text-muted-foreground gap-2">
-            <Swords className="h-10 w-10 opacity-20" />
-            <p className="text-sm">No creatures loaded.</p>
-          </div>
+          <ListEmptyState icon={Swords} message="No creatures loaded." />
         ) : (
           <div
             className={cn(

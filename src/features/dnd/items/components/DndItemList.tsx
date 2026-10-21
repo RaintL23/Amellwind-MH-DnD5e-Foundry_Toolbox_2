@@ -19,6 +19,7 @@ import {
 } from "@/shared/components/list-filters";
 import {
   DeferredListResults,
+  ListEmptyState,
   StickyListSearchBar,
 } from "@/shared/components/DeferredListResults";
 import {
@@ -378,20 +379,18 @@ export function DndItemList() {
 
       <div className="flex-1 overflow-y-auto px-4 py-4 md:px-6 md:py-6">
         {error ? (
-          <div className="flex h-48 flex-col items-center justify-center gap-2 text-muted-foreground">
-            <Package className="h-10 w-10 opacity-20" />
-            <p className="text-sm text-destructive">{error}</p>
-          </div>
+          <ListEmptyState
+            icon={Package}
+            message={error}
+            messageClassName="text-destructive"
+          />
         ) : (
           <DeferredListResults
             loading={loading}
             updating={showUpdating}
             isEmpty={listItems.length === 0}
             empty={
-              <div className="flex h-48 flex-col items-center justify-center gap-2 text-muted-foreground">
-                <Package className="h-10 w-10 opacity-20" />
-                <p className="text-sm">No items loaded.</p>
-              </div>
+              <ListEmptyState icon={Package} message="No items loaded." />
             }
           >
             <DndItemDataTable items={filtered} onRowClick={handleSelect} />

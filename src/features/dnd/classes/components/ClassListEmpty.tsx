@@ -1,10 +1,6 @@
 import { User } from "lucide-react";
+import { ListEmptyState } from "@/shared/components/DeferredListResults";
 
 export function ClassListEmpty() {
-  return (
-    <div className="flex flex-col items-center justify-center h-48 text-muted-foreground gap-2">
-      <User className="h-10 w-10 opacity-20" />
-      <p className="text-sm">No classes loaded.</p>
-    </div>
-  );
+  return <ListEmptyState icon={User} message="No classes loaded." />;
 }

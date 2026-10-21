@@ -14,6 +14,7 @@ import {
 } from "@/shared/components/list-filters";
 import {
   DeferredListResults,
+  ListEmptyState,
   StickyListSearchBar,
 } from "@/shared/components/DeferredListResults";
 import { collectEntitySources } from "@/shared/services/source-catalog.service";
@@ -179,10 +180,7 @@ export function DndBackgroundList() {
           updating={showUpdating}
           isEmpty={listBackgrounds.length === 0}
           empty={
-            <div className="flex h-48 flex-col items-center justify-center gap-2 text-muted-foreground">
-              <ScrollText className="h-10 w-10 opacity-20" />
-              <p className="text-sm">No backgrounds loaded.</p>
-            </div>
+            <ListEmptyState icon={ScrollText} message="No backgrounds loaded." />
           }
         >
           <DndBackgroundDataTable
