@@ -1,8 +1,7 @@
 import { useMemo } from "react";
 import { Link } from "react-router-dom";
 import type { Class } from "@/shared/types";
-import type { AbilityKey } from "@/shared/types";
-import { ABILITY_NAMES } from "@/shared/constants/dnd";
+import { formatMulticlassRequirements } from "@/features/dnd/classes/mappers/class-multiclass.mapper";
 import {
   Table,
   TableBody,
@@ -16,9 +15,7 @@ import { Skeleton } from "@/components/ui/skeleton";
 
 function formatRequirements(cls: Class): string {
   if (!cls.multiclassRequirements) return "—";
-  return Object.entries(cls.multiclassRequirements)
-    .map(([ability, value]) => `${ABILITY_NAMES[ability as AbilityKey]} ${value}`)
-    .join(", ");
+  return formatMulticlassRequirements(cls.multiclassRequirements);
 }
 
 function formatProficiencies(cls: Class): string {

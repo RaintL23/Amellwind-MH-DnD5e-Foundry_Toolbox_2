@@ -77,6 +77,11 @@ export interface ClassMetaListGroup {
   items: string[];
 }
 
+/** One way to meet a multiclass prerequisite: every listed ability at its minimum. */
+export type MulticlassRequirementGroup = Partial<
+  Record<import("./actor.types").AbilityKey, number>
+>;
+
 export interface Class {
   id: string;
   name: string;
@@ -103,10 +108,12 @@ export interface Class {
   startingEquipment: string[];
   startingEquipmentOffers: import("./starting-equipment.types").StartingEquipmentOffers;
   multiclassing: string[];
-  /** Ability score minimums to multiclass into this class (e.g. str: 13). */
-  multiclassRequirements?: Partial<
-    Record<import("./actor.types").AbilityKey, number>
-  >;
+  /**
+   * Ability score minimums to multiclass into (or out of) this class. Any one
+   * group satisfies the prerequisite; every ability inside a group is required
+   * (Fighter: `[{ str: 13 }, { dex: 13 }]`, Paladin: `[{ str: 13, cha: 13 }]`).
+   */
+  multiclassRequirements?: MulticlassRequirementGroup[];
   /** Proficiencies gained when multiclassing into this class (not first class). */
   multiclassProficiencies?: {
     armorGrants: import("./proficiency.types").NamedProficiencyGrant[];
