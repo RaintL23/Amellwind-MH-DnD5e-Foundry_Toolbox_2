@@ -66,9 +66,31 @@ import {
 } from "@/features/raintdm/builder/utils/builder-library-filters";
 import { getClassFilterSourceCodes } from "@/features/dnd/classes/services/class.service";
 import { getDndFeatFilterSourceCodes } from "@/features/dnd/feats/services/dnd-feat.service";
+import {
+  readListSessionState,
+  writeListSessionState,
+  type ListSessionStoredState,
+} from "@/shared/utils/list-session-storage.utils";
 
 /** Book-source section id (see compendium-source-filter.utils). */
 const SOURCE_FILTER_SECTION_ID = "src";
+
+/** Overlays stored values onto defaults, only for sections shown right now. */
+function withStoredFilterValues(
+  defaults: ListFilterValues,
+  sections: ListFilterSectionConfig[],
+  stored: ListSessionStoredState | null,
+): ListFilterValues {
+  if (!stored) return defaults;
+  const next = { ...defaults };
+  for (const section of sections) {
+    const value = stored[section.id];
+    if (typeof value === "string" || Array.isArray(value)) {
+      next[section.id] = value;
+    }
+  }
+  return next;
+}
 
 interface BuilderLibraryPanelProps {
   selectedSlot: BuilderSlotSelection;
@@ -277,9 +299,37 @@ export function BuilderLibraryPanel({ selectedSlot }: BuilderLibraryPanelProps) 
     usesSourceFilterDefaults ? `src:${sourceSectionDefaultsKey}` : "",
   ].join("|");
 
+  // Applied filters persist per picker group (classes, species, feats, …) so
+  // a non-default selection such as UA sources survives reloads.
+  const filterStorageId = [
+    "builder-library",
+    isClassOrSubclassSlot
+      ? "class"
+      : isSpeciesSlot
+        ? "species"
+        : isBackgroundSlot
+          ? "background"
+          : isAnyOriginFeatSlotSelected
+            ? "origin-feat"
+            : isFeatPicker
+              ? "feat"
+              : isWeaponSlot
+                ? "weapon"
+                : isArmorSlot
+                  ? "armor"
+                  : "other",
+    useAmellwindHomebrew ? "hb" : "5e",
+  ].join(":");
+
   if (nextFilterResetKey !== filterResetKey) {
     setFilterResetKey(nextFilterResetKey);
-    setFilterValues(buildDefaultFilterValues(filterSections));
+    setFilterValues(
+      withStoredFilterValues(
+        buildDefaultFilterValues(filterSections),
+        filterSections,
+        readListSessionState(filterStorageId),
+      ),
+    );
   }
 
   useEffect(() => {
@@ -433,9 +483,11 @@ export function BuilderLibraryPanel({ selectedSlot }: BuilderLibraryPanelProps) 
                 sections={visibleFilterSections}
                 filterValues={filterValues}
                 // Merge so values of sections hidden in Simple mode survive.
-                onFiltersApply={(values) =>
-                  setFilterValues((prev) => ({ ...prev, ...values }))
-                }
+                onFiltersApply={(values) => {
+                  const next = { ...filterValues, ...values };
+                  setFilterValues(next);
+                  writeListSessionState(filterStorageId, next);
+                }}
                 dialogTitle={dialogTitle}
                 dialogDescription="Narrow the library list. Changes apply when you save."
               />
