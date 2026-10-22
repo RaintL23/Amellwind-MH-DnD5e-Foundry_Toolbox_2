@@ -323,6 +323,17 @@ function classifyTarget(
   }
 }
 
+/**
+ * "You must be proficient with the tool…" / "If you have proficiency with…"
+ * state a requirement or condition, not a grant.
+ */
+const REQUIREMENT_PREFIX_RE =
+  /\b(?:must(?:\s+be)?|if(?:\s+you)?(?:\s+already)?|unless(?:\s+you)?)\s+$/i;
+
+function isRequirementClause(text: string, matchIndex: number): boolean {
+  return REQUIREMENT_PREFIX_RE.test(text.slice(Math.max(0, matchIndex - 24), matchIndex));
+}
+
 const GAIN_NOUN_PROFICIENCY_RE =
   /\b(?:you\s+)?(?:also\s+)?gain\s+([^.;]*\bproficiency\b[^.;]*)/gi;
 
@@ -355,6 +366,7 @@ export function parseTextProficiencyGrantItems(text: string): TextProficiencyGra
   while ((match = PROFICIENCY_CLAUSE_RE.exec(text)) !== null) {
     const clause = match[1]?.trim() ?? "";
     if (!clause || CHOOSE_ONE_RE.test(clause)) continue;
+    if (isRequirementClause(text, match.index)) continue;
 
     for (const target of splitProficiencyTargets(clause)) {
       classifyTarget(target, result);

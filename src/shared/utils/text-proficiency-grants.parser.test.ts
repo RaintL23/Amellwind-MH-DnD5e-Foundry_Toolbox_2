@@ -157,4 +157,14 @@ describe("parseEntriesProficiencyGrants", () => {
       }),
     );
   });
+  it("ignores proficiency requirements and conditions", () => {
+    const grants = parseEntriesProficiencyGrants(
+      [
+        "You must be proficient with the tool to use it in this way.",
+        "If you have proficiency with Smith's Tools, you add double your proficiency bonus.",
+      ],
+      source,
+    );
+    expect(fixedItems(grants, "toolGrants")).toEqual([]);
+  });
 });
