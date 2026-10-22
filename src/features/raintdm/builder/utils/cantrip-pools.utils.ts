@@ -18,7 +18,9 @@ import {
   getFeatSpellListOptions,
   parseQualifierFromDisplayName,
   resolveFeatSpellBlock,
+  toInvocationOriginFeatPoolId,
 } from "./feat-spell-list.utils";
+import type { OptionalFeatureOriginFeatSlot } from "./optional-feature-feat-grants.utils";
 import { isSpeciesLineageSpell } from "./species-spell-grants.utils";
 
 /** Cantrips chosen for the class list in slot 0 (excludes species lineage grants). */
@@ -430,6 +432,9 @@ export function resolveBonusCantripPools(params: {
   speciesOriginFeatGrant?: OriginFeatGrant | null;
   backgroundOriginFeatGrant?: OriginFeatGrant | null;
   featSelections?: (BuilderFeatSelection | null)[];
+  /** Origin feats granted by optional features (e.g. Lessons of the First Ones). */
+  optionalFeatureOriginFeats?: (BuilderFeatSelection | null)[];
+  optionalFeatureOriginFeatSlots?: OptionalFeatureOriginFeatSlot[];
 }): CantripPoolDefinition[] {
   const {
     optionalFeatureSelections,
@@ -442,6 +447,8 @@ export function resolveBonusCantripPools(params: {
     speciesOriginFeatGrant,
     backgroundOriginFeatGrant,
     featSelections = [],
+    optionalFeatureOriginFeats = [],
+    optionalFeatureOriginFeatSlots = [],
   } = params;
 
   const fallbackClassName = classData?.name ?? "Wizard";
@@ -518,6 +525,29 @@ export function resolveBonusCantripPools(params: {
       feat,
       `Feat: ${selection.name}`,
       `feat-slot-${index}`,
+      parseQualifierFromDisplayName(selection.name),
+      fallbackClassName,
+      selection.spellListClassChoice,
+    );
+  }
+
+  // After feat slots so existing feat-slot pool selection levels stay stable.
+  for (const [index, selection] of optionalFeatureOriginFeats.entries()) {
+    if (!selection) continue;
+    const feat = featCatalog.find((candidate) => candidate.id === selection.id);
+    if (!feat) continue;
+    const slotMeta = optionalFeatureOriginFeatSlots[index];
+    const sourceLabel = slotMeta
+      ? slotMeta.duplicateIndex > 0
+        ? `${slotMeta.sourceFeatureName} (${slotMeta.duplicateIndex + 1})`
+        : slotMeta.sourceFeatureName
+      : `Origin Feat ${index + 1}`;
+    pushPoolsFromFeat(
+      pools,
+      seen,
+      feat,
+      `${sourceLabel}: ${selection.name}`,
+      toInvocationOriginFeatPoolId(index),
       parseQualifierFromDisplayName(selection.name),
       fallbackClassName,
       selection.spellListClassChoice,

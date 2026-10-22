@@ -152,6 +152,10 @@ export async function randomizeFeatsAndSpellsPhase(
     speciesOriginFeatGrant,
     backgroundOriginFeatGrant,
     featSelections,
+    optionalFeatureOriginFeats: state.invocationOriginFeatSlots.map(
+      (slot) => state.invocationOriginFeatBySlot.get(slot.slotIndex) ?? null,
+    ),
+    optionalFeatureOriginFeatSlots: state.invocationOriginFeatSlots,
   });
   const lineageSpells = randomizedSpeciesDetail
     ? buildSpeciesLineageSpellSelectionsFromCatalog(

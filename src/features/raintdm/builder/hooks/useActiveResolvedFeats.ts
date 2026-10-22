@@ -7,15 +7,19 @@ import { isAsiFeatSelection } from "../utils/builder-class.utils";
 
 /**
  * Resolves the character's currently active (non-ASI) feats to their full
- * {@link Feat} objects: the species/background origin feats plus every chosen
- * feat slot. This used to be copy-pasted (identically) inside the hit-points
+ * {@link Feat} objects: the species/background origin feats, every chosen
+ * feat slot, and origin feats granted by invocations (Lessons of the First Ones). This used to be copy-pasted (identically) inside the hit-points
  * and speed hooks; centralizing it gives the derived-combat layer a single
  * feat-resolution source. Consumers apply their own per-feat detection
  * (e.g. HP bonus by level, speed bonuses) over the returned list.
  */
 export function useActiveResolvedFeats(): Feat[] {
-  const { featSelections, speciesOriginFeat, backgroundOriginFeat } =
-    useCharacterBuilder();
+  const {
+    featSelections,
+    speciesOriginFeat,
+    backgroundOriginFeat,
+    optionalFeatureOriginFeats,
+  } = useCharacterBuilder();
   const [feats, setFeats] = useState<Feat[]>([]);
 
   useEffect(() => {
@@ -26,7 +30,7 @@ export function useActiveResolvedFeats(): Feat[] {
       ...(backgroundOriginFeat && !isAsiFeatSelection(backgroundOriginFeat)
         ? [backgroundOriginFeat]
         : []),
-      ...featSelections.filter(
+      ...[...featSelections, ...optionalFeatureOriginFeats].filter(
         (feat): feat is NonNullable<typeof feat> =>
           feat !== null && !isAsiFeatSelection(feat),
       ),
@@ -53,7 +57,12 @@ export function useActiveResolvedFeats(): Feat[] {
     return () => {
       cancelled = true;
     };
-  }, [featSelections, speciesOriginFeat, backgroundOriginFeat]);
+  }, [
+    featSelections,
+    speciesOriginFeat,
+    backgroundOriginFeat,
+    optionalFeatureOriginFeats,
+  ]);
 
   return feats;
 }

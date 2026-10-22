@@ -131,7 +131,12 @@ export function parseQualifierFromDisplayName(name: string): string | null {
 export type FeatSpellListOwner =
   | { kind: "species-origin" }
   | { kind: "background-origin" }
-  | { kind: "feat-slot"; index: number };
+  | { kind: "feat-slot"; index: number }
+  | { kind: "invocation-origin"; index: number };
+
+export function toInvocationOriginFeatPoolId(index: number): string {
+  return `origin-feat-invocation-${index}`;
+}
 
 export function resolveFeatOwnerFromPoolId(
   poolId: string,
@@ -143,6 +148,10 @@ export function resolveFeatOwnerFromPoolId(
   if (featMatch) {
     return { kind: "feat-slot", index: Number(featMatch[1]) };
   }
+  const invocationMatch = baseId.match(/^origin-feat-invocation-(\d+)$/);
+  if (invocationMatch) {
+    return { kind: "invocation-origin", index: Number(invocationMatch[1]) };
+  }
   return null;
 }
 
@@ -153,6 +162,7 @@ export function applyFeatSpellListChoice(
     speciesOriginFeat: BuilderFeatSelection | null;
     backgroundOriginFeat: BuilderFeatSelection | null;
     featSelections: (BuilderFeatSelection | null)[];
+    optionalFeatureOriginFeats: (BuilderFeatSelection | null)[];
   },
 ): BuilderFeatSelection | null {
   switch (owner.kind) {
@@ -166,6 +176,10 @@ export function applyFeatSpellListChoice(
         : null;
     case "feat-slot": {
       const feat = context.featSelections[owner.index] ?? null;
+      return feat ? { ...feat, spellListClassChoice: className } : null;
+    }
+    case "invocation-origin": {
+      const feat = context.optionalFeatureOriginFeats[owner.index] ?? null;
       return feat ? { ...feat, spellListClassChoice: className } : null;
     }
   }

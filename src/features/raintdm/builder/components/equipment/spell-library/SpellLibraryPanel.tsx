@@ -102,9 +102,11 @@ export function SpellLibraryPanel({
     speciesOriginFeat,
     backgroundOriginFeat,
     featSelections,
+    optionalFeatureOriginFeats,
     setSpeciesOriginFeat,
     setBackgroundOriginFeat,
     setFeatAtIndex,
+    setOptionalFeatureOriginFeatAtIndex,
     clearBonusCantripSpellSelections,
   } = useCharacterBuilder();
 
@@ -117,6 +119,7 @@ export function SpellLibraryPanel({
       speciesOriginFeat,
       backgroundOriginFeat,
       featSelections,
+      optionalFeatureOriginFeats,
     });
     if (!nextSelection) return;
 
@@ -130,6 +133,9 @@ export function SpellLibraryPanel({
         break;
       case "feat-slot":
         setFeatAtIndex(owner.index, nextSelection);
+        break;
+      case "invocation-origin":
+        setOptionalFeatureOriginFeatAtIndex(owner.index, nextSelection);
         break;
     }
   }
@@ -146,6 +152,11 @@ export function SpellLibraryPanel({
               return backgroundOriginFeat?.spellListClassChoice ?? null;
             case "feat-slot":
               return featSelections[owner.index]?.spellListClassChoice ?? null;
+            case "invocation-origin":
+              return (
+                optionalFeatureOriginFeats[owner.index]?.spellListClassChoice ??
+                null
+              );
           }
         })()
       : null;

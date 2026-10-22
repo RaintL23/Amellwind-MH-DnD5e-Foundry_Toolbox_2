@@ -56,6 +56,8 @@ export function SpellcastingProvider({ children }: Readonly<{ children: ReactNod
       speciesOriginFeatGrant: builder.speciesOriginFeatGrant,
       backgroundOriginFeatGrant: builder.backgroundOriginFeatGrant,
       featSelections: builder.featSelections,
+      optionalFeatureOriginFeats: builder.optionalFeatureOriginFeats,
+      optionalFeatureOriginFeatSlots: builder.optionalFeatureOriginFeatSlots,
     }),
     [
       builder.speciesOriginFeat,
@@ -63,6 +65,8 @@ export function SpellcastingProvider({ children }: Readonly<{ children: ReactNod
       builder.speciesOriginFeatGrant,
       builder.backgroundOriginFeatGrant,
       builder.featSelections,
+      builder.optionalFeatureOriginFeats,
+      builder.optionalFeatureOriginFeatSlots,
     ],
   );
 

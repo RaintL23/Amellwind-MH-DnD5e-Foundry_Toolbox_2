@@ -14,6 +14,7 @@ import {
   sumBonusCantripPoolCounts,
   type CantripPoolDefinition,
 } from "@/features/raintdm/builder/utils/cantrip-pools.utils";
+import type { OptionalFeatureOriginFeatSlot } from "@/features/raintdm/builder/utils/optional-feature-feat-grants.utils";
 
 export interface CantripPoolsState {
   bonusPools: CantripPoolDefinition[];
@@ -69,6 +70,8 @@ export function useCantripPools(
     speciesOriginFeatGrant?: OriginFeatGrant | null;
     backgroundOriginFeatGrant?: OriginFeatGrant | null;
     featSelections?: (BuilderFeatSelection | null)[];
+    optionalFeatureOriginFeats?: (BuilderFeatSelection | null)[];
+    optionalFeatureOriginFeatSlots?: OptionalFeatureOriginFeatSlot[];
   } = {},
 ): CantripPoolsState {
   const { optionalCatalog, featCatalog, ready } = useCantripPoolCatalogs();
@@ -96,6 +99,8 @@ export function useCantripPools(
       speciesOriginFeatGrant: options.speciesOriginFeatGrant,
       backgroundOriginFeatGrant: options.backgroundOriginFeatGrant,
       featSelections: options.featSelections,
+      optionalFeatureOriginFeats: options.optionalFeatureOriginFeats,
+      optionalFeatureOriginFeatSlots: options.optionalFeatureOriginFeatSlots,
     });
   }, [
     ready,
@@ -111,6 +116,8 @@ export function useCantripPools(
     options.speciesOriginFeatGrant,
     options.backgroundOriginFeatGrant,
     options.featSelections,
+    options.optionalFeatureOriginFeats,
+    options.optionalFeatureOriginFeatSlots,
   ]);
 
   return {
