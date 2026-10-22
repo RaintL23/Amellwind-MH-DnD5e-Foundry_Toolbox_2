@@ -32,7 +32,7 @@ import {
 } from "../utils/class-feature-entries.utils";
 
 /** Bump when mapped Class shape changes so in-memory cache is rebuilt. */
-const CLASS_CACHE_VERSION = 24;
+const CLASS_CACHE_VERSION = 25;
 
 let lookupCache: SubclassLookup | null = null;
 const loadedUaSources = new Set<string>();

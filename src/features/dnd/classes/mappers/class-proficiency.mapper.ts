@@ -1,5 +1,10 @@
 import type { ClassMetaListGroup } from "@/shared/types";
+import type {
+  NamedProficiencyGrant,
+  ProficiencySource,
+} from "@/shared/types/proficiency.types";
 import { parseFiveToolsMarkup } from "@/shared/utils/fivetools-parser";
+import { parseNamedProficiencyBlocks } from "@/shared/utils/named-proficiency.parser";
 import type {
   RawProficiencyBlock,
   RawProficiencyEntry,
@@ -93,12 +98,48 @@ function formatProficiencyEntry(entry: RawProficiencyEntry): string[] {
  * "one type of artisan's tools of your choice") alongside the structured
  * `toolProficiencies`; parsing both duplicates every grant.
  */
-export function classToolProficiencyBlocks(raw?: {
+function classToolProficiencyBlocks(raw?: {
   tools?: string[];
   toolProficiencies?: RawProficiencyBlock[];
 }): unknown[] {
   if (raw?.toolProficiencies?.length) return raw.toolProficiencies;
   return raw?.tools ?? [];
+}
+
+/**
+ * Class tool grants. Several structured blocks are alternatives (Monk: "one
+ * type of artisan's tools or a musical instrument"), so single-pick blocks
+ * merge into one pick over the union of their options.
+ */
+export function parseClassToolGrants(
+  raw: { tools?: string[]; toolProficiencies?: RawProficiencyBlock[] } | undefined,
+  source: ProficiencySource,
+): NamedProficiencyGrant[] {
+  const blocks = classToolProficiencyBlocks(raw);
+  if ((raw?.toolProficiencies?.length ?? 0) < 2) {
+    return parseNamedProficiencyBlocks(blocks, source);
+  }
+  const alternatives = blocks.map((block) => parseNamedProficiencyBlocks([block], source));
+  const picks = alternatives.flatMap((grants) =>
+    grants.length === 1 && grants[0].kind === "any" && grants[0].count === 1
+      ? [grants[0]]
+      : [],
+  );
+  if (picks.length !== alternatives.length) {
+    return parseNamedProficiencyBlocks(blocks, source);
+  }
+  const options = [...new Set(picks.flatMap((pick) => pick.options ?? []))];
+  return [
+    {
+      kind: "any",
+      count: 1,
+      label: picks
+        .map((pick, index) => (index === 0 ? pick.label : pick.label.toLowerCase()))
+        .join(" or "),
+      options: options.sort((a, b) => a.localeCompare(b)),
+      source,
+    },
+  ];
 }
 
 function mapProficiencyList(entries?: RawProficiencyEntry[]): string[] {

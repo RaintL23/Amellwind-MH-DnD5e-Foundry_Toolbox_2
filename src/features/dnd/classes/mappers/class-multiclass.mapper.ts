@@ -5,8 +5,8 @@ import { parseSkillProficiencyBlocks } from "@/shared/utils/skill-proficiency.pa
 import type { RawMulticlassing } from "../utils/class-raw.types";
 import { formatAbility } from "@/features/dnd/classes/mappers/class-table.mapper";
 import {
-  classToolProficiencyBlocks,
   mapStartingProficiencies,
+  parseClassToolGrants,
 } from "@/features/dnd/classes/mappers/class-proficiency.mapper";
 
 const ABILITY_LABELS: Record<string, string> = ABILITY_NAMES;
@@ -114,10 +114,7 @@ export function mapMulticlassProficiencyGrants(
     gained.weapons ?? [],
     classSource,
   );
-  const toolGrants = parseNamedProficiencyBlocks(
-    classToolProficiencyBlocks(gained),
-    classSource,
-  );
+  const toolGrants = parseClassToolGrants(gained, classSource);
   const skillChoiceGrants = parseSkillProficiencyBlocks(
     gained.skills ?? [],
     classSource,

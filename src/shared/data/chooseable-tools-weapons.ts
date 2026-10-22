@@ -238,6 +238,15 @@ export function resolveAnyProficiencyOptions(
   label: string,
   existingOptions?: readonly string[],
 ): string[] {
+  // "Artisan's tool or musical instrument": union of each alternative's catalog.
+  const alternatives = label.split(/\s+or\s+/i);
+  if (alternatives.length > 1) {
+    return sorted([
+      ...new Set(
+        alternatives.flatMap((part) => resolveAnyProficiencyOptions(part, existingOptions)),
+      ),
+    ]);
+  }
   const lower = label.toLowerCase();
   if (lower.includes("language")) {
     return existingOptions?.length ? [...existingOptions] : [];
