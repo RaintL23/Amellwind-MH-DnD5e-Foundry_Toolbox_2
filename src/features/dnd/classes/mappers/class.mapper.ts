@@ -29,6 +29,7 @@ import {
   proficiencyBonusAtLevel,
 } from "@/features/dnd/classes/mappers/class-table.mapper";
 import {
+  classToolProficiencyBlocks,
   mapStartingEquipment,
   mapStartingProficiencies,
 } from "@/features/dnd/classes/mappers/class-proficiency.mapper";
@@ -133,11 +134,10 @@ export function mapClass(
     raw.startingProficiencies?.skills ?? [],
     classSource,
   );
-  const toolBlocks = [
-    ...(raw.startingProficiencies?.toolProficiencies ?? []),
-    ...(raw.startingProficiencies?.tools ?? []),
-  ];
-  const toolGrants = parseNamedProficiencyBlocks(toolBlocks, classSource);
+  const toolGrants = parseNamedProficiencyBlocks(
+    classToolProficiencyBlocks(raw.startingProficiencies),
+    classSource,
+  );
   const armorGrants = parseNamedProficiencyBlocks(
     raw.startingProficiencies?.armor ?? [],
     classSource,

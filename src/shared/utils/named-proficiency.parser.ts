@@ -289,6 +289,37 @@ export function getPendingNamedChoiceGrants(
   );
 }
 
+function sameSource(a: ProficiencySource, b: ProficiencySource): boolean {
+  return a.type === b.type && a.name === b.name;
+}
+
+/**
+ * Resolves replacement picks (`ifAlreadyProficient`): each listed item the
+ * character already has from another source unlocks one pick; otherwise the
+ * grant drops to count 0. Grants keep their position so choice indices stay
+ * stable. `chosenItems` must exclude picks made in replacement grants.
+ */
+export function resolveConditionalNamedGrants(
+  grants: NamedProficiencyGrant[],
+  chosenItems: readonly string[],
+): NamedProficiencyGrant[] {
+  if (!grants.some((g) => g.kind !== "fixed" && g.ifAlreadyProficient)) {
+    return grants;
+  }
+  return grants.map((grant) => {
+    if (grant.kind === "fixed" || !grant.ifAlreadyProficient) return grant;
+    const held = new Set(chosenItems.map((item) => item.toLowerCase()));
+    for (const other of grants) {
+      if (other.kind !== "fixed" || sameSource(other.source, grant.source)) continue;
+      for (const item of other.items) held.add(item.toLowerCase());
+    }
+    const count = grant.ifAlreadyProficient.filter((item) =>
+      held.has(item.toLowerCase()),
+    ).length;
+    return count === grant.count ? grant : { ...grant, count };
+  });
+}
+
 export function resolveFixedNamedGrants(
   grants: NamedProficiencyGrant[],
 ): Array<{ item: string; source: ProficiencySource }> {

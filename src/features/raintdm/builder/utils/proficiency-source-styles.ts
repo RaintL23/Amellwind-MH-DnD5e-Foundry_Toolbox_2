@@ -67,10 +67,14 @@ export function dotStyleForSource(type: ProficiencySourceType): string {
   return DOT_STYLES[type] ?? DOT_STYLES.class;
 }
 
+export function sourceLabel(source: ProficiencySource): string {
+  return source.isSubclass ? SOURCE_LABELS.subclass : SOURCE_LABELS[source.type];
+}
+
 export function formatProficiencyTooltip(sources: ProficiencySource[]): string {
   if (!sources.length) return "Proficient";
   const parts = sources.map(
-    (s) => `${SOURCE_LABELS[s.type]}: ${s.name}`,
+    (s) => `${sourceLabel(s)}: ${s.name}`,
   );
   return `Proficient — ${parts.join(", ")}`;
 }

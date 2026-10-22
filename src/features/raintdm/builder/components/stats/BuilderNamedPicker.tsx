@@ -21,6 +21,7 @@ import {
   badgeStyleForSource,
   dominantSourceType,
   SOURCE_LABELS,
+  sourceLabel,
 } from "../../utils/proficiency-source-styles";
 import {
   PICKER_CONTAINER_CLASS,
@@ -250,7 +251,7 @@ export function BuilderGrantBadgeList({
           ? badgeStyleForSource(dominantSourceType(itemSources))
           : "border-border text-muted-foreground";
         const tooltip = itemSources.length
-          ? itemSources.map((s) => `${SOURCE_LABELS[s.type]}: ${s.name}`).join(", ")
+          ? itemSources.map((s) => `${sourceLabel(s)}: ${s.name}`).join(", ")
           : undefined;
 
         return (

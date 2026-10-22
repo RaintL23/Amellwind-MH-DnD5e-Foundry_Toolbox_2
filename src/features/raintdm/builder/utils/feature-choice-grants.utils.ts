@@ -42,9 +42,14 @@ function normalizeSelectionName(value: string): string {
 function detectGrantsFromEntries(
   entries: string[],
   sourceName: string,
+  isSubclass = false,
 ): FeatureChoiceGrants {
   const grants: FeatureChoiceGrants = {};
-  const source = { type: "class" as const, name: sourceName };
+  const source = {
+    type: "class" as const,
+    name: sourceName,
+    ...(isSubclass ? { isSubclass } : {}),
+  };
   const parsed = parseEntriesProficiencyGrants(entries, source);
 
   if (parsed.armorGrants.length) grants.armorGrants = parsed.armorGrants;
@@ -210,7 +215,10 @@ export function computeGrantedFeatureEquipmentGrants(
     const sourceName = feature.isSubclassFeature
       ? `${subclass?.name ?? "Subclass"}: ${feature.name}`
       : `${classData.name}: ${feature.name}`;
-    mergeGrants(result, detectGrantsFromEntries(entries, sourceName));
+    mergeGrants(
+      result,
+      detectGrantsFromEntries(entries, sourceName, feature.isSubclassFeature),
+    );
   }
 
   return result;

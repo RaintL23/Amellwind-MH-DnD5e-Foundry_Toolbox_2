@@ -70,9 +70,43 @@ function pushAnyProficiencyGrant(
   label: string,
   source: ProficiencySource,
   options?: string[],
+  ifAlreadyProficient?: string[],
 ): void {
   if (count <= 0) return;
-  grants.push({ kind: "any", count, label, options, source });
+  grants.push({
+    kind: "any",
+    count,
+    label,
+    options,
+    source,
+    ...(ifAlreadyProficient?.length ? { ifAlreadyProficient } : {}),
+  });
+}
+
+const ALREADY_PROFICIENT_RE = /\bif you already have\b/i;
+
+function sentenceBounds(text: string, index: number): { start: number; end: number } {
+  const start = text.lastIndexOf(".", index - 1) + 1;
+  const dot = text.indexOf(".", index);
+  return { start, end: dot === -1 ? text.length : dot };
+}
+
+/**
+ * "You gain proficiency with Smith's Tools. If you already have this
+ * proficiency, you gain proficiency with one other type of Artisan's Tools of
+ * your choice." → the items of the previous sentence that gate the pick.
+ */
+function alreadyProficientItems(
+  text: string,
+  sentence: { start: number; end: number },
+): string[] | undefined {
+  if (!ALREADY_PROFICIENT_RE.test(text.slice(sentence.start, sentence.end))) {
+    return undefined;
+  }
+  const prevStart = text.lastIndexOf(".", sentence.start - 2) + 1;
+  const previous = parseTextProficiencyGrantItems(text.slice(prevStart, sentence.start));
+  const items = [...previous.toolItems, ...previous.weaponItems];
+  return items.length ? items : undefined;
 }
 
 /** Parses "proficiency in two artisan's tools of your choice" style grants. */
@@ -87,12 +121,30 @@ export function parseChooseProficiencyGrantsFromText(
   const toolGrants: NamedProficiencyGrant[] = [];
   if (!text.trim()) return { weaponGrants, toolGrants };
 
+  // Feature text may repeat the same sentence (plain description + rendered
+  // content); each distinct sentence grants its pick once.
+  const seenSentences = new Set<string>();
+
   CHOOSE_PROFICIENCY_OF_CHOICE_RE.lastIndex = 0;
   for (const match of text.matchAll(CHOOSE_PROFICIENCY_OF_CHOICE_RE)) {
     const groups = match.groups as { countWord?: string; target?: string } | undefined;
-    const count = parseCountWord(groups?.countWord);
     const target = (groups?.target ?? "").trim().toLowerCase();
     if (!target) continue;
+
+    const bounds = sentenceBounds(text, match.index ?? 0);
+    const sentenceKey = text
+      .slice(bounds.start, bounds.end)
+      .replace(/\{@\w+\s+([^|}]*)[^}]*\}/g, "$1")
+      .replace(/\s+/g, " ")
+      .trim()
+      .toLowerCase();
+    if (seenSentences.has(sentenceKey)) continue;
+    seenSentences.add(sentenceKey);
+
+    const conditionItems = alreadyProficientItems(text, bounds);
+    // A replacement pick is unlocked per already-held item, so its count is
+    // resolved later against the character's proficiencies.
+    const count = conditionItems ? 1 : parseCountWord(groups?.countWord);
 
     if (
       /simple\s+or\s+martial\s+weapons?/.test(target) ||
@@ -105,6 +157,7 @@ export function parseChooseProficiencyGrantsFromText(
         count > 1 ? "Weapons" : "Weapon",
         source,
         [...getChooseableSimpleWeapons(), ...getChooseableMartialWeapons()],
+        conditionItems,
       );
       continue;
     }
@@ -116,6 +169,7 @@ export function parseChooseProficiencyGrantsFromText(
         `Artisan's tool${count > 1 ? "s" : ""}`,
         source,
         [...getChooseableArtisanTools()],
+        conditionItems,
       );
       continue;
     }
@@ -126,6 +180,7 @@ export function parseChooseProficiencyGrantsFromText(
         `Martial weapon${count > 1 ? "s" : ""}`,
         source,
         [...getChooseableMartialWeapons()],
+        conditionItems,
       );
       continue;
     }
@@ -136,6 +191,7 @@ export function parseChooseProficiencyGrantsFromText(
         `Simple weapon${count > 1 ? "s" : ""}`,
         source,
         [...getChooseableSimpleWeapons()],
+        conditionItems,
       );
       continue;
     }
@@ -146,6 +202,7 @@ export function parseChooseProficiencyGrantsFromText(
         `Musical instrument${count > 1 ? "s" : ""}`,
         source,
         [...getChooseableMusicalInstruments()],
+        conditionItems,
       );
     }
   }
@@ -262,7 +319,7 @@ function classifyTarget(
   }
 
   if (/\b(?:artisan'?s?\s+tools?|gaming\s+set|musical\s+instrument|tool(?:s)?|kit|supplies|instruments?)\b/i.test(normalized)) {
-    uniquePush(result.toolItems, normalized);
+    uniquePush(result.toolItems, normalized.replace(/^(?:the|a|an)\s+/i, ""));
   }
 }
 

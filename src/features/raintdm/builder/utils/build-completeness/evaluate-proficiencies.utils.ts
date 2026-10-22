@@ -383,7 +383,9 @@ export function evaluateProficienciesCompleteness(
       message: formatPickMessage(
         namedPickerProgress([grant], input.classToolChoices[grantIndex] ?? []),
         TOOL_NOUN,
-        withGroup(fromClass, grantIndex, pendingToolBySource.class.length),
+        grant.source.isSubclass
+          ? `from ${grant.source.name}`
+          : withGroup(fromClass, grantIndex, pendingToolBySource.class.length),
       ),
       highlightKey: `class-${grantIndex}`,
     });

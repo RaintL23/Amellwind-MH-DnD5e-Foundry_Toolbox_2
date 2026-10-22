@@ -84,7 +84,21 @@ export function BuilderOtherProficienciesPanel() {
     (g) => g.source.type === "feat",
   );
   const bgToolGrants = pendingTools.filter((g) => g.source.type === "background");
+  // Indices match `classToolChoices`; replacement grants resolved to count 0
+  // ("if you already have …" not met) stay in the list but are not rendered.
   const classToolGrants = pendingTools.filter((g) => g.source.type === "class");
+  const activeClassToolGrants = classToolGrants
+    .map((grant, grantIndex) => ({ grant, grantIndex }))
+    .filter(({ grant }) => grant.count > 0);
+  const classToolLabel = (isSubclass: boolean | undefined, grantIndex: number) => {
+    const group = activeClassToolGrants.filter(
+      ({ grant }) => !!grant.source.isSubclass === !!isSubclass,
+    );
+    const base = isSubclass ? "Subclass tools" : "Class tools";
+    if (group.length < 2) return base;
+    const position = group.findIndex((entry) => entry.grantIndex === grantIndex);
+    return `${base} (${position + 1}/${group.length})`;
+  };
   const featToolGrants = pendingTools.filter((g) => g.source.type === "feat");
   const hasWeaponPickers =
     speciesWeaponGrantPickers.length > 0 ||
@@ -93,11 +107,13 @@ export function BuilderOtherProficienciesPanel() {
   const hasToolPickers =
     speciesToolGrantPickers.length > 0 ||
     bgToolGrants.length > 0 ||
-    classToolGrants.length > 0 ||
+    activeClassToolGrants.length > 0 ||
     featToolGrants.length > 0;
   const hasPickers = hasWeaponPickers || hasToolPickers;
 
-  const classToolChoiceLists = Object.values(classToolChoices);
+  const classToolChoiceLists = activeClassToolGrants.map(
+    ({ grantIndex }) => classToolChoices[grantIndex] ?? [],
+  );
   const classWeaponChoiceLists = Object.values(classWeaponChoices);
   const featWeaponChoiceLists = Object.values(featWeaponChoices);
   const featToolChoiceLists = Object.values(featToolChoices);
@@ -282,7 +298,7 @@ export function BuilderOtherProficienciesPanel() {
                     pickerSourceType="feat"
                   />
                 ))}
-                {classToolGrants.map((grant, grantIndex) => (
+                {activeClassToolGrants.map(({ grant, grantIndex }) => (
                   <BuilderNamedPicker
                     key={`class-tool-${grantIndex}`}
                     grants={[grant]}
@@ -290,12 +306,8 @@ export function BuilderOtherProficienciesPanel() {
                     onChange={(items) =>
                       setClassToolChoicesAtIndex(grantIndex, items)
                     }
-                    label={
-                      classToolGrants.length > 1
-                        ? `Class tools (${grantIndex + 1}/${classToolGrants.length})`
-                        : "Class tools"
-                    }
-                    pickerSourceType="class"
+                    label={classToolLabel(grant.source.isSubclass, grantIndex)}
+                    pickerSourceType={grant.source.isSubclass ? "subclass" : "class"}
                   />
                 ))}
               </div>

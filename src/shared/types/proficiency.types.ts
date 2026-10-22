@@ -11,6 +11,11 @@ export type ProficiencySourceType =
 export interface ProficiencySource {
   type: ProficiencySourceType;
   name: string;
+  /**
+   * Granted by a subclass feature. Keeps `type: "class"` so class choice
+   * indices stay stable; only labels use it.
+   */
+  isSubclass?: boolean;
 }
 
 export type SkillProficiencyGrant =
@@ -41,11 +46,24 @@ export type SaveProficiencyGrant = {
   source: ProficiencySource;
 };
 
+/**
+ * Replacement pick ("If you already have this proficiency, you gain one other
+ * … of your choice"): the grant only applies for each listed item the
+ * character already has from another source. See
+ * `resolveConditionalNamedGrants`.
+ */
+type ConditionalPick = { ifAlreadyProficient?: string[] };
+
 /** Tool, language, gaming set, and similar non-skill proficiencies. */
 export type NamedProficiencyGrant =
   | { kind: "fixed"; items: string[]; source: ProficiencySource }
-  | { kind: "choose"; from: string[]; count: number; source: ProficiencySource }
-  | {
+  | ({
+      kind: "choose";
+      from: string[];
+      count: number;
+      source: ProficiencySource;
+    } & ConditionalPick)
+  | ({
       kind: "any";
       count: number;
       /** Display label, e.g. "Standard language" or "Artisan's tool". */
@@ -53,7 +71,7 @@ export type NamedProficiencyGrant =
       /** When set, player picks from this list; otherwise freeform entry. */
       options?: string[];
       source: ProficiencySource;
-    };
+    } & ConditionalPick);
 
 export type DefenseKind = "resistance" | "immunity";
 

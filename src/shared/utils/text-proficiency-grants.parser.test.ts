@@ -123,4 +123,38 @@ describe("parseEntriesProficiencyGrants", () => {
       }),
     );
   });
+  it("gates a replacement artisan pick on the already-held tool", () => {
+    const grants = parseEntriesProficiencyGrants(
+      [
+        "You gain proficiency with Smith's Tools. If you already have this proficiency, you gain proficiency with one other type of Artisan's Tools of your choice.",
+      ],
+      source,
+    );
+    expect(fixedItems(grants, "toolGrants")).toEqual(["Smith's Tools"]);
+    expect(grants.toolGrants).toHaveLength(2);
+    expect(grants.toolGrants[1]).toEqual(
+      expect.objectContaining({
+        kind: "any",
+        label: "Artisan's tool",
+        ifAlreadyProficient: ["Smith's Tools"],
+      }),
+    );
+  });
+
+  it("parses a sentence repeated as plain text and markup only once", () => {
+    const grants = parseEntriesProficiencyGrants(
+      [
+        "You gain proficiency with Alchemist's Supplies and the Herbalism Kit. If you already have one of these proficiencies, you gain proficiency with one other type of Artisan's Tools of your choice.",
+        "You gain proficiency with {@item Alchemist's Supplies|XPHB} and the {@item Herbalism Kit|XPHB}. If you already have one of these proficiencies, you gain proficiency with one other type of {@item Artisan's Tools|XPHB} of your choice.",
+      ],
+      source,
+    );
+    const picks = grants.toolGrants.filter((grant) => grant.kind === "any");
+    expect(picks).toHaveLength(1);
+    expect(picks[0]).toEqual(
+      expect.objectContaining({
+        ifAlreadyProficient: ["Alchemist's Supplies", "Herbalism Kit"],
+      }),
+    );
+  });
 });

@@ -18,7 +18,10 @@ import type {
   DefenseGrant,
   DefenseKind,
 } from "@/shared/types/proficiency.types";
-import { resolveFixedNamedGrants } from "@/shared/utils/named-proficiency.parser";
+import {
+  resolveConditionalNamedGrants,
+  resolveFixedNamedGrants,
+} from "@/shared/utils/named-proficiency.parser";
 import { resolveFixedDefenseGrants } from "@/shared/utils/defense-grant.parser";
 import {
   pruneChoicesByHierarchy,
@@ -84,7 +87,7 @@ export function useProficiencySlice({
     () => [...classSkillGrants, ...bgSkillGrants, ...speciesSkillGrants, ...featGrantsList],
     [classSkillGrants, bgSkillGrants, speciesSkillGrants, featGrantsList],
   );
-  const allToolGrants = useMemo(
+  const rawToolGrants = useMemo(
     () => [...classToolGrants, ...bgToolGrants, ...speciesToolGrants, ...featToolGrants],
     [classToolGrants, bgToolGrants, speciesToolGrants, featToolGrants],
   );
@@ -136,6 +139,36 @@ export function useProficiencySlice({
   const [speciesDefenseChoices, setSpeciesDefenseChoicesState] = useState<
     Record<number, DamageType[]>
   >({});
+
+  /** Replacement picks ("if you already have …") resolve against other tool picks. */
+  const allToolGrants = useMemo(() => {
+    const picksOutsideReplacements = (
+      type: "class" | "feat",
+      choices: Record<number, string[]>,
+    ) => {
+      const chooseGrants = rawToolGrants.filter(
+        (g) => g.kind !== "fixed" && g.source.type === type,
+      );
+      return Object.entries(choices).flatMap(([idx, items]) => {
+        const grant = chooseGrants[Number(idx)];
+        return grant && grant.kind !== "fixed" && !grant.ifAlreadyProficient
+          ? items
+          : [];
+      });
+    };
+    return resolveConditionalNamedGrants(rawToolGrants, [
+      ...picksOutsideReplacements("class", classToolChoices),
+      ...picksOutsideReplacements("feat", featToolChoices),
+      ...backgroundToolChoices,
+      ...speciesToolChoices,
+    ]);
+  }, [
+    rawToolGrants,
+    classToolChoices,
+    featToolChoices,
+    backgroundToolChoices,
+    speciesToolChoices,
+  ]);
 
   // ─── Apply grants from identity / feats ─────────────────────────────────────
 
@@ -507,18 +540,23 @@ export function useProficiencySlice({
       const classChooseGrants = grants.filter(
         (g) => g.kind !== "fixed" && g.source.type === "class",
       );
+      // Slicing to `count` drops picks of replacement grants that no longer apply.
       const fromClass = Object.entries(classChoices).flatMap(([idx, items]) => {
         const grant = classChooseGrants[Number(idx)];
-        if (!grant) return [];
-        return items.map((item) => ({ item, source: grant.source }));
+        if (!grant || grant.kind === "fixed") return [];
+        return items
+          .slice(0, grant.count)
+          .map((item) => ({ item, source: grant.source }));
       });
       const featChooseGrants = grants.filter(
         (g) => g.kind !== "fixed" && g.source.type === "feat",
       );
       const fromFeat = Object.entries(featChoices).flatMap(([idx, items]) => {
         const grant = featChooseGrants[Number(idx)];
-        if (!grant) return [];
-        return items.map((item) => ({ item, source: grant.source }));
+        if (!grant || grant.kind === "fixed") return [];
+        return items
+          .slice(0, grant.count)
+          .map((item) => ({ item, source: grant.source }));
       });
       const bgGrant = grants.find((g) => g.kind !== "fixed" && g.source.type === "background");
       const fromBackground = bgGrant

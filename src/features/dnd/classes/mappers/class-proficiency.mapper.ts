@@ -41,20 +41,14 @@ function mapProficiencyBlock(block: RawProficiencyBlock): string[] {
   for (const [key, value] of Object.entries(block)) {
     if (key === "choose" || key === "_") continue;
     if (value === true) parts.push(formatProficiencyLabel(key));
-    if (key === "anyArtisansTool" && typeof value === "number") {
-      parts.push(
-        `${value} artisan's tool${value > 1 ? "s" : ""} of your choice`,
-      );
-    }
-    if (key === "anyArtisanTool" && typeof value === "number") {
-      parts.push(
-        `${value} artisan's tool${value > 1 ? "s" : ""} of your choice`,
-      );
+    if (
+      (key === "anyArtisansTool" || key === "anyArtisanTool") &&
+      typeof value === "number"
+    ) {
+      parts.push(`Choose ${value} Artisan's Tool${value > 1 ? "s" : ""}`);
     }
     if (key === "anyMusicalInstrument" && typeof value === "number") {
-      parts.push(
-        `${value} musical instrument${value > 1 ? "s" : ""} of your choice`,
-      );
+      parts.push(`Choose ${value} Musical Instrument${value > 1 ? "s" : ""}`);
     }
   }
 
@@ -94,6 +88,19 @@ function formatProficiencyEntry(entry: RawProficiencyEntry): string[] {
   return mapProficiencyBlock(obj as RawProficiencyBlock);
 }
 
+/**
+ * Tool blocks for grant parsing. 5etools ships `tools` (display prose such as
+ * "one type of artisan's tools of your choice") alongside the structured
+ * `toolProficiencies`; parsing both duplicates every grant.
+ */
+export function classToolProficiencyBlocks(raw?: {
+  tools?: string[];
+  toolProficiencies?: RawProficiencyBlock[];
+}): unknown[] {
+  if (raw?.toolProficiencies?.length) return raw.toolProficiencies;
+  return raw?.tools ?? [];
+}
+
 function mapProficiencyList(entries?: RawProficiencyEntry[]): string[] {
   if (!entries?.length) return [];
   return entries.flatMap(formatProficiencyEntry).filter(Boolean);
@@ -115,9 +122,15 @@ export function mapStartingProficiencies(
     groups.push({ label: "Weapons", items: weaponItems });
   }
 
-  const toolItems = raw.tools?.length
-    ? raw.tools.map((tool) => parseFiveToolsMarkup(tool))
-    : (raw.toolProficiencies ?? []).flatMap(mapProficiencyBlock);
+  // A single structured block shows picks as "Choose 1 …" instead of prose that
+  // reads like a fixed item; several blocks are alternatives ("… or …"), which
+  // only the prose expresses.
+  const toolItems =
+    raw.toolProficiencies?.length === 1
+      ? mapProficiencyBlock(raw.toolProficiencies[0])
+      : raw.tools?.length
+        ? raw.tools.map((tool) => parseFiveToolsMarkup(tool))
+        : (raw.toolProficiencies ?? []).flatMap(mapProficiencyBlock);
 
   if (toolItems.length) {
     groups.push({ label: "Tools", items: toolItems });
