@@ -110,7 +110,7 @@ function parseToolLine(line) {
   if (!text || /^none$/i.test(text)) return undefined;
 
   if (/^one type of artisan'?s tools$/i.test(text)) {
-    return [{ choose: { from: ["anyArtisansTool"], count: 1 } }];
+    return [{ anyArtisansTool: 1 }];
   }
 
   const orChoice = text.match(/^(.+?)\s+or\s+(.+)$/i);
@@ -158,7 +158,7 @@ function parseToolLine(line) {
     return [
       {
         [andChoose[1].trim()]: true,
-        choose: { from: ["anyArtisansTool"], count: 1 },
+        anyArtisansTool: 1,
       },
     ];
   }

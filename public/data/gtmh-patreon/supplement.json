@@ -7815,12 +7815,7 @@
       "toolProficiencies": [
         {
           "Herbalism kit": true,
-          "choose": {
-            "from": [
-              "anyArtisansTool"
-            ],
-            "count": 1
-          }
+          "anyArtisansTool": 1
         }
       ],
       "fluff": {
@@ -9191,12 +9186,7 @@
       ],
       "toolProficiencies": [
         {
-          "choose": {
-            "from": [
-              "anyArtisansTool"
-            ],
-            "count": 1
-          }
+          "anyArtisansTool": 1
         }
       ],
       "languageProficiencies": [
