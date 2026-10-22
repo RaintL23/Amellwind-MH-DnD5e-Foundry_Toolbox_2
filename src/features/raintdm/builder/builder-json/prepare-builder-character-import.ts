@@ -380,6 +380,19 @@ async function attempt<T>(label: string, saved: T, step: () => Promise<T>, warn:
   }
 }
 
+/**
+ * Loads the on-demand UA / brew catalogs a build depends on, so its refs
+ * resolve (Builder JSON import, autosave rehydrate).
+ */
+export async function ensureBuildUaSourcesLoaded(sources: string[]): Promise<void> {
+  await Promise.all([
+    ensureClassUaSourcesLoaded(sources),
+    ensureDndRaceUaSourcesLoaded(sources),
+    ensureDndFeatUaSourcesLoaded(sources),
+    ensureSpellUaSourcesLoaded(sources),
+  ]);
+}
+
 export async function prepareBuilderCharacterImport(
   input: BuilderCharacterJson,
 ): Promise<PrepareBuilderCharacterImportResult> {
@@ -388,14 +401,7 @@ export async function prepareBuilderCharacterImport(
   const { identity, multiclass, snapshot } = input;
 
   const sources = [...new Set([...(input.meta?.sources ?? []), ...collectBuildSources(input)])];
-  await attempt("UA / homebrew sources", undefined, async () => {
-    await Promise.all([
-      ensureClassUaSourcesLoaded(sources),
-      ensureDndRaceUaSourcesLoaded(sources),
-      ensureDndFeatUaSourcesLoaded(sources),
-      ensureSpellUaSourcesLoaded(sources),
-    ]);
-  }, warn);
+  await attempt("UA / homebrew sources", undefined, () => ensureBuildUaSourcesLoaded(sources), warn);
 
   const primary = await attempt(
     "Class",

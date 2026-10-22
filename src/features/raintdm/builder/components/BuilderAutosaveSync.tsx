@@ -13,6 +13,8 @@ import {
   persistBuilderAutosave,
 } from "../storage/builder-autosave.storage";
 import { consumeBuilderArtHandoff } from "../storage/builder-art-handoff";
+import { collectBuildSources } from "../builder-json/builder-character-sources";
+import { ensureBuildUaSourcesLoaded } from "../builder-json/prepare-builder-character-import";
 import {
   clearPendingOriginFeatRestore,
   getPendingOriginFeatRestore,
@@ -45,34 +47,51 @@ export function BuilderAutosaveSync() {
   const hydratedRef = useRef(false);
   const lastWrittenRef = useRef<string | null>(null);
   const [hydrationSettled, setHydrationSettled] = useState(false);
+  const builderRef = useRef(builder);
+  builderRef.current = builder;
+  const inventoryRef = useRef(inventory);
+  inventoryRef.current = inventory;
 
   useEffect(() => {
     if (hydratedRef.current) return;
     hydratedRef.current = true;
     const saved = loadBuilderAutosave();
-    if (saved) {
-      // Re-applied after async origin-feat grant loaders finish — those
-      // loaders historically raced rehydrate and wiped the pick, then autosave
-      // persisted the empty slot. Import and Undo schedule the same restore.
-      scheduleOriginFeatRestore(saved.snapshot);
-      rehydrateBuilderState(builder, inventory, saved);
-      // Art is not autosaved; Edit in Builder hands it off in memory.
-      const art = consumeBuilderArtHandoff();
-      if (art) {
-        builder.setPortraitImage(art.portrait);
-        builder.setTokenImage(art.token);
-      }
-      lastWrittenRef.current = JSON.stringify({
-        identity: saved.identity,
-        core: saved.core,
-        multiclass: saved.multiclass,
-        snapshot: saved.snapshot,
-      });
+    if (!saved) {
+      setHydrationSettled(true);
+      return;
     }
-    // Wait one render so rehydrated state is reflected in the persist payload
-    // before any debounced save can overwrite a good autosave with empty state.
-    setHydrationSettled(true);
-  }, [builder, inventory]);
+    // UA / brew catalogs load on demand: without them a saved UA subclass
+    // (e.g. Hexblade UA) does not resolve and the stale-ref guards drop it.
+    // No cancel flag: hydratedRef blocks the StrictMode re-run, so this pass
+    // must finish.
+    void ensureBuildUaSourcesLoaded(collectBuildSources(saved))
+      .catch(() => {
+        /* restore anyway; refs that need the missing catalog are dropped */
+      })
+      .then(() => {
+        const liveBuilder = builderRef.current;
+        // Re-applied after async origin-feat grant loaders finish — those
+        // loaders historically raced rehydrate and wiped the pick, then autosave
+        // persisted the empty slot. Import and Undo schedule the same restore.
+        scheduleOriginFeatRestore(saved.snapshot);
+        rehydrateBuilderState(liveBuilder, inventoryRef.current, saved);
+        // Art is not autosaved; Edit in Builder hands it off in memory.
+        const art = consumeBuilderArtHandoff();
+        if (art) {
+          liveBuilder.setPortraitImage(art.portrait);
+          liveBuilder.setTokenImage(art.token);
+        }
+        lastWrittenRef.current = JSON.stringify({
+          identity: saved.identity,
+          core: saved.core,
+          multiclass: saved.multiclass,
+          snapshot: saved.snapshot,
+        });
+        // Wait one render so rehydrated state is reflected in the persist payload
+        // before any debounced save can overwrite a good autosave with empty state.
+        setHydrationSettled(true);
+      });
+  }, []);
 
   // Re-apply restored origin feats until a grant-loader cycle settles with the
   // pick in place (autosave remount, Builder JSON import, Undo).
