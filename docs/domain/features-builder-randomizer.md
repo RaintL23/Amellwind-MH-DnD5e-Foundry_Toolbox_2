@@ -3,7 +3,7 @@
 > Reglas que sigue el randomizador del Character Builder. Si cambias su comportamiento, actualiza este archivo. Contexto general del Builder: [`features-builder.md`](./features-builder.md).
 
 **Código**: `src/features/raintdm/builder/utils/randomizer/` (hook `hooks/useCharacterRandomizer.ts`). Pipeline: `randomize-character.pipeline.ts`.
-**Entradas**: botón dados del menú de progreso (`BuilderProgressBar`), `NextStepCard` y `BuilderCharacterActionsContext` (confirmación). Funciona en **ambos** modos (D&D y Amellwind).
+**Entradas**: "Randomize character" del menú **Options** (`BuilderProgressBar`), `NextStepCard` y `BuilderCharacterActionsContext` (confirmación). Funciona en **ambos** modos (D&D y Amellwind).
 
 ## Objetivo
 

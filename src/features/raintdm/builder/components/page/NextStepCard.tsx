@@ -7,7 +7,6 @@ import {
   Dices,
   Eye,
   FileJson,
-  RotateCcw,
   ScrollText,
   Upload,
 } from "lucide-react";
@@ -36,64 +35,75 @@ export function NextStepCard() {
   return <PendingStepCard />;
 }
 
-/** Always-visible way to wipe the build (asks for confirmation once started). */
-function StartOverButton({ className }: Readonly<{ className?: string }>) {
-  const { reset } = useBuilderCharacterActions();
-  return (
-    <Button
-      type="button"
-      size="sm"
-      variant="outline"
-      className={cn("h-8 gap-1.5 text-xs", className)}
-      onClick={reset}
-    >
-      <RotateCcw className="h-3.5 w-3.5" aria-hidden />
-      Start over
-    </Button>
-  );
-}
+const MAX_UPCOMING_CHOICES = 3;
 
 function PendingStepCard() {
   const { liveSteps, nextStep, goToIssue } = useBuildCompleteness();
   if (!nextStep) return null;
 
   const { step, position, issue } = nextStep;
-  const remainingInStep = step.issues.length - 1;
+  const upcoming = step.issues.filter((other) => other.id !== issue.id);
+  const visibleUpcoming = upcoming.slice(0, MAX_UPCOMING_CHOICES);
+  const hiddenCount = upcoming.length - visibleUpcoming.length;
 
   return (
-    <section
-      aria-labelledby="builder-next-step-title"
-      className={cn(CARD_CLASS, "border-primary/40 bg-primary/5")}
-    >
-      <p className="text-[11px] font-semibold uppercase tracking-wide text-primary">
-        Next step · {position} of {liveSteps.length}
-      </p>
-      <h2
-        id="builder-next-step-title"
-        className="mt-0.5 text-sm font-semibold text-foreground"
-      >
-        {step.label}
-      </h2>
-      <p className="mt-1 text-xs leading-relaxed text-muted-foreground">
-        {step.description}
-      </p>
-      <div className="mt-2.5 flex flex-wrap items-center gap-2">
+    <section aria-labelledby="builder-next-step-title">
+      <div className="flex flex-col gap-3 rounded-lg bg-primary/5 px-3 py-2.5 ring-1 ring-inset ring-primary/20 sm:flex-row sm:items-center sm:gap-4">
+        <div className="flex min-w-0 flex-1 items-start gap-3">
+          <span
+            className="flex h-8 w-8 shrink-0 items-center justify-center rounded-full bg-primary text-sm font-bold tabular-nums text-primary-foreground"
+            aria-hidden
+          >
+            {position}
+          </span>
+          <div className="min-w-0">
+            <p className="text-[10px] font-semibold uppercase tracking-wider text-primary">
+              Next step · {position} of {liveSteps.length}
+            </p>
+            <h2
+              id="builder-next-step-title"
+              className="text-sm font-semibold leading-tight text-foreground"
+            >
+              {step.label}
+            </h2>
+            <p className="mt-0.5 text-xs leading-snug text-muted-foreground">
+              {step.description}
+            </p>
+            {visibleUpcoming.length > 0 && (
+              <ul
+                className="mt-1.5 flex flex-wrap items-center gap-1"
+                aria-label="Other choices in this step"
+              >
+                <li className="text-[11px] text-muted-foreground">Then:</li>
+                {visibleUpcoming.map((other) => (
+                  <li key={other.id}>
+                    <button
+                      type="button"
+                      className="rounded-full border border-border/60 bg-background/50 px-2 py-0.5 text-[11px] text-muted-foreground transition-colors hover:border-primary/50 hover:text-foreground"
+                      onClick={() => goToIssue(other)}
+                    >
+                      {other.message}
+                    </button>
+                  </li>
+                ))}
+                {hiddenCount > 0 && (
+                  <li className="text-[11px] text-muted-foreground">
+                    +{hiddenCount} more
+                  </li>
+                )}
+              </ul>
+            )}
+          </div>
+        </div>
         <Button
           type="button"
           size="sm"
-          className="h-8 gap-1.5 text-xs"
+          className="h-auto min-h-8 shrink-0 gap-1.5 whitespace-normal py-1.5 text-left text-xs sm:max-w-xs"
           onClick={() => goToIssue(issue)}
         >
           {issue.message}
-          <ArrowRight className="h-3.5 w-3.5" aria-hidden />
+          <ArrowRight className="h-3.5 w-3.5 shrink-0" aria-hidden />
         </Button>
-        {remainingInStep > 0 && (
-          <span className="text-[11px] text-muted-foreground">
-            +{remainingInStep} more choice{remainingInStep === 1 ? "" : "s"} in
-            this step
-          </span>
-        )}
-        <StartOverButton className="ml-auto" />
       </div>
     </section>
   );
@@ -156,7 +166,6 @@ function BuildReadyCard() {
             <FileJson className="h-3.5 w-3.5" aria-hidden />
             Save JSON
           </Button>
-          <StartOverButton className="border-emerald-500/40 bg-transparent hover:bg-emerald-500/15" />
         </div>
       </div>
     </section>

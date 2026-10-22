@@ -1,6 +1,8 @@
 import {
+  Check,
   CheckCircle2,
   ChevronDown,
+  ChevronRight,
   Circle,
   Dices,
   Eye,
@@ -9,6 +11,7 @@ import {
   Lock,
   RotateCcw,
   ScrollText,
+  Settings2,
   Upload,
   type LucideIcon,
 } from "lucide-react";
@@ -19,6 +22,14 @@ import {
   PopoverContent,
   PopoverTrigger,
 } from "@/components/ui/popover";
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuLabel,
+  DropdownMenuSeparator,
+  DropdownMenuTrigger,
+} from "@/components/ui/dropdown-menu";
 import { Button } from "@/components/ui/button";
 import { cn } from "@/shared/utils/cn";
 import {
@@ -54,7 +65,143 @@ const STEP_STATUS_LABEL: Record<CompletenessStep["status"], string> = {
   locked: "unlocks after choosing a class",
 };
 
-function ActionRow({
+/** Checklist marker: number while pending, check when done, lock until a class. */
+function StepBadge({
+  status,
+  number,
+  current,
+}: Readonly<{
+  status: CompletenessStep["status"];
+  number: number;
+  current: boolean;
+}>) {
+  if (status === "complete") {
+    return (
+      <span className="flex h-5 w-5 shrink-0 items-center justify-center rounded-full bg-emerald-500/15 text-emerald-600 dark:text-emerald-400">
+        <Check className="h-3 w-3" aria-hidden />
+      </span>
+    );
+  }
+  if (status === "locked") {
+    return (
+      <span className="flex h-5 w-5 shrink-0 items-center justify-center rounded-full bg-muted text-muted-foreground">
+        <Lock className="h-2.5 w-2.5" aria-hidden />
+      </span>
+    );
+  }
+  return (
+    <span
+      className={cn(
+        "flex h-5 w-5 shrink-0 items-center justify-center rounded-full text-[10px] font-semibold tabular-nums",
+        current
+          ? "bg-primary text-primary-foreground"
+          : "border border-amber-500/60 text-amber-600 dark:text-amber-400",
+      )}
+      aria-hidden
+    >
+      {number}
+    </span>
+  );
+}
+
+function BuildChecklist({ onNavigate }: Readonly<{ onNavigate: () => void }>) {
+  const { liveResult, liveSteps, liveProgress, goToIssue } = useBuildCompleteness();
+  const firstPendingId = liveSteps.find((step) => step.status === "pending")?.id;
+  const isComplete = liveResult.hasStarted && liveResult.issues.length === 0;
+
+  return (
+    <div>
+      <div className="sticky top-0 z-10 border-b border-border/60 bg-popover px-3 py-2.5">
+        <div className="flex items-baseline justify-between gap-2">
+          <p className="text-xs font-semibold uppercase tracking-wide text-muted-foreground">
+            Creation checklist
+          </p>
+          <span className="text-[11px] tabular-nums text-muted-foreground">
+            {liveResult.hasStarted ? liveProgress.completed : 0} / {liveProgress.total}
+          </span>
+        </div>
+        <Progress
+          value={liveResult.hasStarted ? liveProgress.percent : 0}
+          className={cn("mt-2 h-1", isComplete && "[&>div]:bg-emerald-500")}
+          aria-hidden
+        />
+        {isComplete && (
+          <p className="mt-2 flex items-center gap-1.5 text-xs text-emerald-600 dark:text-emerald-400">
+            <CheckCircle2 className="h-3.5 w-3.5 shrink-0" aria-hidden />
+            Build complete — ready to export
+          </p>
+        )}
+      </div>
+      <ol className="space-y-1 p-2">
+        {liveSteps.map((step, index) => {
+          const isCurrent = step.id === firstPendingId;
+          return (
+            <li
+              key={step.id}
+              className={cn(
+                "rounded-md px-2 py-1.5",
+                isCurrent && "bg-primary/5 ring-1 ring-inset ring-primary/25",
+              )}
+            >
+              <div className="flex items-center gap-2">
+                <StepBadge
+                  status={step.status}
+                  number={index + 1}
+                  current={isCurrent}
+                />
+                <span
+                  className={cn(
+                    "min-w-0 flex-1 truncate text-xs font-medium",
+                    step.status === "pending"
+                      ? "text-foreground"
+                      : "text-muted-foreground",
+                  )}
+                >
+                  {step.label}
+                </span>
+                <span className="sr-only">({STEP_STATUS_LABEL[step.status]})</span>
+                {step.status === "locked" && (
+                  <span className="shrink-0 text-[10px] text-muted-foreground">
+                    Needs a class
+                  </span>
+                )}
+                {step.status === "complete" && (
+                  <span className="shrink-0 text-[10px] text-emerald-600 dark:text-emerald-400">
+                    Done
+                  </span>
+                )}
+              </div>
+              {step.issues.length > 0 && (
+                <ul className="ml-7 mt-1 space-y-0.5">
+                  {step.issues.map((issue) => (
+                    <li key={issue.id}>
+                      <button
+                        type="button"
+                        className="group flex w-full items-center gap-1.5 rounded px-1.5 py-1 text-left text-[11px] leading-snug text-muted-foreground transition-colors hover:bg-accent hover:text-foreground"
+                        onClick={() => {
+                          onNavigate();
+                          goToIssue(issue);
+                        }}
+                      >
+                        <span className="min-w-0 flex-1">{issue.message}</span>
+                        <ChevronRight
+                          className="h-3 w-3 shrink-0 opacity-0 transition-opacity group-hover:opacity-100"
+                          aria-hidden
+                        />
+                      </button>
+                    </li>
+                  ))}
+                </ul>
+              )}
+            </li>
+          );
+        })}
+      </ol>
+    </div>
+  );
+}
+
+function OptionItem({
   icon: Icon,
   label,
   onSelect,
@@ -70,81 +217,88 @@ function ActionRow({
   destructive?: boolean;
 }>) {
   return (
-    <button
-      type="button"
+    <DropdownMenuItem
       disabled={disabled}
-      onClick={onSelect}
+      onSelect={onSelect}
       className={cn(
-        "flex w-full items-center gap-2 rounded-md px-2 py-1.5 text-left text-xs transition-colors hover:bg-accent disabled:pointer-events-none disabled:opacity-50",
-        destructive && "text-destructive hover:bg-destructive/10",
+        "text-xs",
+        destructive && "text-destructive focus:bg-destructive/10 focus:text-destructive",
       )}
     >
-      <Icon
-        className={cn("h-3.5 w-3.5 shrink-0", spinning && "animate-spin")}
-        aria-hidden
-      />
+      <Icon className={cn("!size-3.5", spinning && "animate-spin")} aria-hidden />
       {label}
-    </button>
+    </DropdownMenuItem>
   );
 }
 
-function CharacterActionsSection({ onDone }: Readonly<{ onDone: () => void }>) {
+const OPTIONS_LABEL_CLASS =
+  "pb-1 text-[10px] font-semibold uppercase tracking-wide text-muted-foreground";
+
+/** Character-level actions (export, import, randomize, reset), apart from progress. */
+function BuilderOptionsMenu({ compact }: Readonly<{ compact: boolean }>) {
   const a = useBuilderCharacterActions();
-  const run = (fn: () => void) => () => {
-    onDone();
-    fn();
-  };
   return (
-    <div className="space-y-0.5 border-t border-border/60 pt-2">
-      <p className="px-2 pb-1 text-xs font-semibold uppercase tracking-wide text-muted-foreground">
-        Character
-      </p>
-      <ActionRow
-        icon={Eye}
-        label="Preview Character Sheet PDF"
-        disabled={a.previewing || !a.buildHasStarted}
-        onSelect={run(a.previewPdf)}
-      />
-      <ActionRow
-        icon={ScrollText}
-        label="Send to Character Sheet"
-        disabled={a.sendingToSheet}
-        onSelect={run(a.sendToSheet)}
-      />
-      {a.linkedId && (
-        <ActionRow
-          icon={ScrollText}
-          label="Update linked Sheet"
-          disabled={a.sendingToSheet}
-          onSelect={run(a.updateLinkedSheet)}
+    <DropdownMenu>
+      <DropdownMenuTrigger asChild>
+        <Button
+          type="button"
+          variant="outline"
+          size="sm"
+          className={cn("h-8 shrink-0 gap-1.5 text-xs", compact && "w-8 p-0")}
+          aria-label="Character options"
+        >
+          <Settings2 className="h-3.5 w-3.5" aria-hidden />
+          {!compact && (
+            <>
+              Options
+              <ChevronDown className="h-3 w-3 opacity-60" aria-hidden />
+            </>
+          )}
+        </Button>
+      </DropdownMenuTrigger>
+      <DropdownMenuContent align="end" className="w-60">
+        <DropdownMenuLabel className={OPTIONS_LABEL_CLASS}>Export</DropdownMenuLabel>
+        <OptionItem
+          icon={Eye}
+          label="Preview character sheet PDF"
+          disabled={a.previewing || !a.buildHasStarted}
+          onSelect={a.previewPdf}
         />
-      )}
-      <ActionRow
-        icon={FileJson}
-        label="Save as Builder JSON"
-        onSelect={run(a.exportJson)}
-      />
-      <ActionRow
-        icon={Upload}
-        label="Load Builder JSON"
-        disabled={a.importing}
-        onSelect={run(a.loadJson)}
-      />
-      <div className="my-1 border-t border-border/60" />
-      <ActionRow
-        icon={Dices}
-        label="Randomize character"
-        disabled={!a.canRandomize || a.isRandomizing}
-        spinning={a.isRandomizing}
-        onSelect={run(a.randomize)}
-      />
-      <ActionRow
-        icon={RotateCcw}
-        label="Reset character"
-        destructive
-        onSelect={run(a.reset)}
-      />
-    </div>
+        <OptionItem
+          icon={ScrollText}
+          label="Send to Character Sheet"
+          disabled={a.sendingToSheet}
+          onSelect={a.sendToSheet}
+        />
+        {a.linkedId && (
+          <OptionItem
+            icon={ScrollText}
+            label="Update linked Sheet"
+            disabled={a.sendingToSheet}
+            onSelect={a.updateLinkedSheet}
+          />
+        )}
+        <OptionItem icon={FileJson} label="Save as Builder JSON" onSelect={a.exportJson} />
+        <DropdownMenuSeparator />
+        <DropdownMenuLabel className={OPTIONS_LABEL_CLASS}>Import</DropdownMenuLabel>
+        <OptionItem
+          icon={Upload}
+          label="Load Builder JSON"
+          disabled={a.importing}
+          onSelect={a.loadJson}
+        />
+        <DropdownMenuSeparator />
+        <DropdownMenuLabel className={OPTIONS_LABEL_CLASS}>Build</DropdownMenuLabel>
+        <OptionItem
+          icon={Dices}
+          label="Randomize character"
+          disabled={!a.canRandomize || a.isRandomizing}
+          spinning={a.isRandomizing}
+          onSelect={a.randomize}
+        />
+        <OptionItem icon={RotateCcw} label="Start over" destructive onSelect={a.reset} />
+      </DropdownMenuContent>
+    </DropdownMenu>
   );
 }
 
@@ -212,13 +366,7 @@ export function BuilderProgressBar() {
 }
 
 function BuilderProgressBarContent() {
-  const {
-    liveResult,
-    liveSteps,
-    liveProgress,
-    nextStep,
-    goToIssue,
-  } = useBuildCompleteness();
+  const { liveResult, liveProgress, nextStep } = useBuildCompleteness();
   const isMobileLayout = useBuilderLayoutOptional()?.isMobileLayout ?? false;
   const [open, setOpen] = useState(false);
   const [guideOpen, setGuideOpen] = useState(true);
@@ -233,6 +381,14 @@ function BuilderProgressBarContent() {
         isMobileLayout ? "shrink-0" : "shrink-0 rounded-t-lg px-4",
       )}
     >
+      {(guideOpen || !hasStarted) && (
+        <div
+          id="builder-guide-panel"
+          className="mx-auto mb-2 w-full max-w-[1400px] [&>section]:border-0 [&>section]:bg-transparent [&>section]:p-0"
+        >
+          <NextStepCard />
+        </div>
+      )}
       <div className="mx-auto flex w-full max-w-[1400px] items-center gap-3">
         <Popover open={open} onOpenChange={setOpen}>
           <PopoverTrigger asChild>
@@ -255,65 +411,9 @@ function BuilderProgressBarContent() {
           </PopoverTrigger>
           <PopoverContent
             align="start"
-            className="max-h-[70vh] w-80 overflow-y-auto p-3"
+            className="max-h-[70vh] w-80 overflow-y-auto p-0"
           >
-            <div className="space-y-3">
-                {hasStarted && pendingIssues.length === 0 && (
-                  <div className="flex items-center gap-2 text-sm text-emerald-600 dark:text-emerald-400">
-                    <CheckCircle2 className="h-4 w-4 shrink-0" aria-hidden />
-                    Build complete — ready to export
-                  </div>
-                )}
-                <p className="text-xs font-semibold uppercase tracking-wide text-muted-foreground">
-                  Creation checklist
-                </p>
-                <ol className="space-y-2">
-                  {liveSteps.map((step, index) => (
-                    <li key={step.id} className="space-y-1">
-                      <div
-                        className={cn(
-                          "flex items-center gap-1.5 text-xs font-medium",
-                          step.status === "pending"
-                            ? "text-foreground"
-                            : "text-muted-foreground",
-                        )}
-                      >
-                        <StepStatusIcon status={step.status} />
-                        <span>
-                          {index + 1}. {step.label}
-                        </span>
-                        <span className="sr-only">
-                          ({STEP_STATUS_LABEL[step.status]})
-                        </span>
-                        {step.status === "locked" && (
-                          <span className="ml-auto text-[11px] font-normal">
-                            Needs a class
-                          </span>
-                        )}
-                      </div>
-                      {step.issues.length > 0 && (
-                        <ul className="ml-5 space-y-0.5">
-                          {step.issues.map((issue) => (
-                            <li key={issue.id}>
-                              <button
-                                type="button"
-                                className="text-left text-[11px] text-muted-foreground underline-offset-2 hover:text-foreground hover:underline"
-                                onClick={() => {
-                                  setOpen(false);
-                                  goToIssue(issue);
-                                }}
-                              >
-                                {issue.message}
-                              </button>
-                            </li>
-                          ))}
-                        </ul>
-                      )}
-                    </li>
-                  ))}
-                </ol>
-                <CharacterActionsSection onDone={() => setOpen(false)} />
-            </div>
+            <BuildChecklist onNavigate={() => setOpen(false)} />
           </PopoverContent>
         </Popover>
 
@@ -389,16 +489,9 @@ function BuilderProgressBarContent() {
           )}
         </div>
         <AutosaveIndicator />
+        <BuilderOptionsMenu compact={isMobileLayout} />
         {isMobileLayout && <BuilderMobileSettingsMenu />}
       </div>
-      {(guideOpen || !hasStarted) && (
-        <div
-          id="builder-guide-panel"
-          className="mx-auto mt-2 w-full max-w-[1400px] [&>section]:border-0 [&>section]:bg-transparent [&>section]:p-0"
-        >
-          <NextStepCard />
-        </div>
-      )}
       {isMobileLayout && hasStarted && <CombatSummaryStrip />}
     </div>
   );
