@@ -3,6 +3,8 @@ import {
   isUnlockListColumn,
   isWeaponAcBonusColumn,
   isWeaponFeatureColumn,
+  isWeaponScalarStatColumn,
+  isWeaponSpiritGainColumn,
 } from "@/shared/types";
 import {
   getAccumulatedUnlocks,
@@ -156,8 +158,12 @@ export function getRaritySlideStatEntries(row: WeaponRarityRow): {
       ac = value;
       continue;
     }
-    if (label.toLowerCase().trim() === "spirit gain") {
+    if (isWeaponSpiritGainColumn(label)) {
       genericHeader.push(`${value} Spirit Gain`);
+      continue;
+    }
+    if (isWeaponScalarStatColumn(label)) {
+      genericHeader.push(`${label} ${value}`);
       continue;
     }
     if (isSimpleBonusDisplay(value)) {

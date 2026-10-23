@@ -62,7 +62,10 @@ export function WeaponRarityProgression({
     const upgradeLinks = toUpgradeLinks(customFeatures);
 
     if (hasExplicitUpgradeLinks(upgradeLinks)) {
-      return buildColumnChains(weapon.rarityRows, { upgradeLinks });
+      return buildColumnChains(weapon.rarityRows, {
+        upgradeLinks,
+        featureLabels: weapon.featureLabels,
+      });
     }
 
     return columnChains;

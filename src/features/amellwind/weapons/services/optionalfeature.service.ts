@@ -3,6 +3,7 @@ import {
   PROPERTY_DESCRIPTIONS,
   PROPERTY_LABELS,
   Weapon,
+  getWeaponFeatureLabel,
   isWeaponFeatureColumn,
 } from "@/shared/types";
 import { mapOptionalFeature } from "../mappers/optionalfeature.mapper";
@@ -42,13 +43,19 @@ export function resolveWeaponBaseFeatures(
   const seen = new Set<string>();
   const result: OptionalFeature[] = [];
 
+  // Dedupe by display label: "Loading (HBG)" (optfeature) and the MHL
+  // property both show as "Loading".
   const add = (feat: OptionalFeature | undefined) => {
     if (!feat) return;
-    const key = feat.name.toLowerCase();
+    const key = getWeaponFeatureLabel(weapon, feat.name).toLowerCase();
     if (seen.has(key)) return;
     seen.add(key);
     result.push(feat);
   };
+
+  for (const name of weapon.baseFeatureNames) {
+    add(featuresMap.get(name.toLowerCase()));
+  }
 
   for (const prop of weapon.properties) {
     const description = PROPERTY_DESCRIPTIONS[prop];
@@ -60,10 +67,6 @@ export function resolveWeaponBaseFeatures(
       weaponName: weapon.name,
       paragraphs: [description],
     });
-  }
-
-  for (const name of weapon.baseFeatureNames) {
-    add(featuresMap.get(name.toLowerCase()));
   }
 
   if (includePrerequisiteMatches) {

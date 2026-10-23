@@ -8,15 +8,47 @@ import { parseFiveToolsMarkup } from "@/shared/utils/fivetools-parser";
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
 type Raw = Record<string, any>;
 
+/** Lowercase optfeature key → display text, filled while mapping one weapon. */
+type FeatureLabels = Record<string, string>;
+
+const OPTFEATURE_TAG_RE = /\{@optfeature ([^|}]+)(?:\|[^|}]*)?(?:\|([^}]+))?\}/g;
+
+/**
+ * Optfeature keys in a string, in order. The display text (third tag arg) is
+ * recorded in `labels` so lookups use the unique key ("Capacity Increase
+ * (HBG, Very Rare)") while the UI shows "Capacity Increase".
+ */
+function extractOptfeatureKeys(text: string, labels: FeatureLabels): string[] {
+  const keys: string[] = [];
+  for (const m of text.matchAll(OPTFEATURE_TAG_RE)) {
+    const key = m[1].trim();
+    if (!key) continue;
+    const label = m[2]?.trim();
+    if (label && label.toLowerCase() !== key.toLowerCase()) {
+      labels[key.toLowerCase()] = label;
+    }
+    keys.push(key);
+  }
+  return keys;
+}
+
 /**
  * Convierte el valor de una celda de tabla en un array de strings legibles.
  * Maneja strings con markup 5etools, tablas anidadas (Hunting Horn Notes,
  * Switch Axe Phials, Bowgun Ammo, etc.) y valores simples.
  */
-function cellToStrings(cell: unknown): string[] {
+function cellToStrings(cell: unknown, labels: FeatureLabels): string[] {
   if (cell === null || cell === undefined) return [];
 
   if (typeof cell === "string") {
+    const keys = extractOptfeatureKeys(cell, labels);
+    if (keys.length > 0) {
+      const rest = cell
+        .replace(OPTFEATURE_TAG_RE, "")
+        .split(",")
+        .flatMap((part) => cellToStrings(part.trim(), labels));
+      return [...keys, ...rest];
+    }
     const parsed = parseFiveToolsMarkup(cell);
     if (!parsed || parsed === "--" || parsed === "-") return [];
     // Split comma-separated entries ("Feature A, Feature B")
@@ -31,7 +63,11 @@ function cellToStrings(cell: unknown): string[] {
     if (obj.type === "table" && Array.isArray(obj.rows)) {
       return (obj.rows as unknown[][]).flatMap((row) =>
         row
-          .map((c) => (typeof c === "string" ? parseFiveToolsMarkup(c) : ""))
+          .flatMap((c) => {
+            if (typeof c !== "string") return [];
+            const keys = extractOptfeatureKeys(c, labels);
+            return keys.length > 0 ? keys : [parseFiveToolsMarkup(c)];
+          })
           .filter((s) => s && s !== "--" && s !== "-")
       );
     }
@@ -100,7 +136,11 @@ function parseWeaponAcBonus(raw: Raw): number | undefined {
   return undefined;
 }
 
-function parseRarityRows(colLabels: string[], rows: unknown[][]): WeaponRarityRow[] {
+function parseRarityRows(
+  colLabels: string[],
+  rows: unknown[][],
+  labels: FeatureLabels,
+): WeaponRarityRow[] {
   const extraLabel =
     rows.some((row) => row.length > colLabels.length)
       ? trailingUnlockLabel(colLabels)
@@ -113,12 +153,12 @@ function parseRarityRows(colLabels: string[], rows: unknown[][]): WeaponRarityRo
     const columns: Record<string, string | string[]> = {};
 
     for (let i = 2; i < colLabels.length; i++) {
-      setColumnValue(columns, colLabels[i], cellToStrings(row[i]));
+      setColumnValue(columns, colLabels[i], cellToStrings(row[i], labels));
     }
 
     if (extraLabel) {
       for (let i = colLabels.length; i < row.length; i++) {
-        setColumnValue(columns, extraLabel, cellToStrings(row[i]));
+        setColumnValue(columns, extraLabel, cellToStrings(row[i], labels));
       }
     }
 
@@ -146,20 +186,13 @@ function parseDescriptionEntries(entries: unknown[]): {
  * These represent base features that apply at every rarity (e.g. Melody on
  * the Hunting Horn).
  */
-function extractBaseFeatureNames(entries: unknown[]): string[] {
-  const names: string[] = [];
-  const pattern = /\{@optfeature ([^|}]+)/g;
-
-  for (const e of entries) {
-    if (typeof e !== "string") continue;
-    let m: RegExpExecArray | null;
-    pattern.lastIndex = 0;
-    while ((m = pattern.exec(e)) !== null) {
-      const name = m[1].trim();
-      if (name) names.push(name);
-    }
-  }
-
+function extractBaseFeatureNames(
+  entries: unknown[],
+  labels: FeatureLabels,
+): string[] {
+  const names = entries
+    .filter((e): e is string => typeof e === "string")
+    .flatMap((e) => extractOptfeatureKeys(e, labels));
   return [...new Set(names)];
 }
 
@@ -169,11 +202,16 @@ export function mapWeapon(raw: any): Weapon {
 
   const inset = findInset(entries);
   let rarityRows: WeaponRarityRow[] = [];
+  const featureLabels: FeatureLabels = {};
 
   if (inset && Array.isArray(inset.entries)) {
     const table = (inset.entries as Raw[]).find((e) => e.type === "table");
     if (table && Array.isArray(table.colLabels) && Array.isArray(table.rows)) {
-      rarityRows = parseRarityRows(table.colLabels as string[], table.rows as unknown[][]);
+      rarityRows = parseRarityRows(
+        table.colLabels as string[],
+        table.rows as unknown[][],
+        featureLabels,
+      );
     }
   }
 
@@ -182,7 +220,10 @@ export function mapWeapon(raw: any): Weapon {
   const insetTextEntries: unknown[] = inset && Array.isArray(inset.entries)
     ? (inset.entries as unknown[]).filter((e) => typeof e === "string")
     : [];
-  const baseFeatureNames = extractBaseFeatureNames(insetTextEntries);
+  const baseFeatureNames = extractBaseFeatureNames(
+    insetTextEntries,
+    featureLabels,
+  );
 
   const { description, supplementaryNotes } = parseDescriptionEntries(entries);
   const acBonus = parseWeaponAcBonus(raw);
@@ -206,5 +247,6 @@ export function mapWeapon(raw: any): Weapon {
     supplementaryNotes,
     rarityRows,
     baseFeatureNames,
+    ...(Object.keys(featureLabels).length > 0 ? { featureLabels } : {}),
   };
 }

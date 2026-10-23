@@ -4,9 +4,13 @@ import {
   isUnlockListColumn,
   isWeaponFeatureColumn,
 } from "@/shared/types";
+import { isPrimaryFeaturesColumn } from "./feature-columns";
 
 export interface FeatureAtRarity {
+  /** Rarity-column token (optfeature key / forge feature id or name). */
   name: string;
+  /** Display text when it differs from `name` (see `Weapon.featureLabels`). */
+  label?: string;
   rarityIndex: number;
 }
 
@@ -30,6 +34,11 @@ export interface FeatureUpgradeLink {
 
 export interface BuildColumnChainsOptions {
   upgradeLinks?: FeatureUpgradeLink[];
+  /**
+   * Lowercase key → display label (`Weapon.featureLabels`). Chains group by
+   * label so "Capacity Increase (HBG, Very Rare)" nests under the Rare one.
+   */
+  featureLabels?: Record<string, string>;
 }
 
 /** Strips " Upgrade [Roman/number]" suffixes to get the base feature name. */
@@ -240,7 +249,13 @@ function collectChainColumnSources(rarityRows: WeaponRarityRow[]): {
     if (!sources.includes(sourceLabel)) sources.push(sourceLabel);
   };
 
-  for (const label of featureLabels) {
+  // Rules first, then resource columns (Ammo, Coatings, …), even when the
+  // first rarity row only lists resources.
+  const orderedFeatureLabels = [
+    ...featureLabels.filter(isPrimaryFeaturesColumn),
+    ...featureLabels.filter((label) => !isPrimaryFeaturesColumn(label)),
+  ];
+  for (const label of orderedFeatureLabels) {
     addSource(featureDisplayBySource.get(label) ?? label, label);
   }
   for (const unlockLabel of unlockLabels) {
@@ -259,6 +274,7 @@ export function buildColumnChains(
 ): ColumnChains[] {
   const upgradeIndexes = buildUpgradeLinkIndexes(options.upgradeLinks);
   const hasExplicitLinks = upgradeIndexes.byId.size > 0;
+  const labelOf = (name: string) => options.featureLabels?.[name.toLowerCase()];
 
   const columnSources = collectChainColumnSources(rarityRows);
 
@@ -274,19 +290,23 @@ export function buildColumnChains(
 
         for (const name of items) {
           if (!name) continue;
+          const label = labelOf(name);
           const chainKey = hasExplicitLinks
             ? resolveFeatureChainKey(name, upgradeIndexes)
-            : getBaseFeatureName(name);
+            : getBaseFeatureName(label ?? name);
+          const feature: FeatureAtRarity = label
+            ? { name, label, rarityIndex: i }
+            : { name, rarityIndex: i };
 
           if (!chainMap.has(chainKey)) {
             chainMap.set(chainKey, {
               baseName: chainKey,
-              features: [{ name, rarityIndex: i }],
+              features: [feature],
               introducedAtIndex: i,
             });
           } else {
             const chain = chainMap.get(chainKey)!;
-            chain.features.push({ name, rarityIndex: i });
+            chain.features.push(feature);
             chain.introducedAtIndex = Math.min(chain.introducedAtIndex, i);
           }
         }

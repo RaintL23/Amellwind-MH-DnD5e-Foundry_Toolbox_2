@@ -66,6 +66,18 @@ export function useWeaponDialog(
     });
   }, [weapon, featuresMap, includePrerequisiteMatches]);
 
+  // Property-derived base features (MHL → Loading) are not optfeatures; expose
+  // them so Base-tier rows can resolve their description by name.
+  const displayFeaturesMap = useMemo(() => {
+    const missing = resolvedBaseFeatures.filter(
+      (f) => !featuresMap.has(f.name.toLowerCase()),
+    );
+    if (missing.length === 0) return featuresMap;
+    const merged = new Map(featuresMap);
+    for (const feat of missing) merged.set(feat.name.toLowerCase(), feat);
+    return merged;
+  }, [featuresMap, resolvedBaseFeatures]);
+
   const displayWeapon = useMemo(() => {
     if (!weapon) return null;
     return weaponWithDisplayRarityRows(weapon, resolvedBaseFeatures);
@@ -102,7 +114,12 @@ export function useWeaponDialog(
   const total = displayWeapon?.rarityRows.length ?? 0;
 
   const columnChains = useMemo(
-    () => (displayWeapon ? buildColumnChains(displayWeapon.rarityRows) : []),
+    () =>
+      displayWeapon
+        ? buildColumnChains(displayWeapon.rarityRows, {
+            featureLabels: displayWeapon.featureLabels,
+          })
+        : [],
     [displayWeapon],
   );
 
@@ -133,7 +150,7 @@ export function useWeaponDialog(
     setCurrent,
     total,
     displayWeapon,
-    featuresMap,
+    featuresMap: displayFeaturesMap,
     mhItemEffectsMap,
     columnChains,
     baseFeatures,

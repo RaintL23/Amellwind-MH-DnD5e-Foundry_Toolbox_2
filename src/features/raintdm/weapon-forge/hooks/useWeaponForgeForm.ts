@@ -7,6 +7,7 @@ import {
   resolveWeaponBaseFeatures,
 } from "@/features/amellwind/weapons/services/optionalfeature.service";
 import { populateBaseRarityFeatures } from "@/features/amellwind/weapons/utils/weapon-base-rarity.utils";
+import { localizeWeaponFeatureNames } from "@/features/amellwind/weapons/utils/weapon-feature-labels.utils";
 import {
   createFeatureDef,
   emptyFormValues,
@@ -101,7 +102,9 @@ export function useWeaponForgeForm() {
   );
 
   const applyBase = useCallback(
-    (weapon: Weapon, rarities: string[] | "all") => {
+    (sourceWeapon: Weapon, rarities: string[] | "all") => {
+      // Forge names are editable: copy display labels, not optfeature keys.
+      const { weapon } = localizeWeaponFeatureNames(sourceWeapon, new Map());
       const baseValues = weaponToFormValues(weapon);
       baseValues.rarityRows = mergeCopiedRarities(weapon, rarities);
       setValues((prev) => {
@@ -110,7 +113,9 @@ export function useWeaponForgeForm() {
         return baseValues;
       });
 
-      void getOptionalFeaturesMap().then((map) => {
+      void getOptionalFeaturesMap().then((catalogMap) => {
+        const map = localizeWeaponFeatureNames(sourceWeapon, catalogMap)
+          .featuresMap;
         const resolvedBase = resolveWeaponBaseFeatures(weapon, map);
         const baseNames = [
           ...weapon.baseFeatureNames,

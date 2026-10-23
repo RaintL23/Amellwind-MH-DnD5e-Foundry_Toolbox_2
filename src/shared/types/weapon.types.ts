@@ -82,6 +82,12 @@ export interface Weapon {
    * Single Note Melody on the Hunting Horn).
    */
   baseFeatureNames: string[];
+  /**
+   * Display labels for optfeature keys that differ from the shown text,
+   * keyed by lowercase key: `{@optfeature Ammo (HBG)|AGMH|Ammo}` →
+   * `{ "ammo (hbg)": "Ammo" }`. Rarity columns and baseFeatureNames hold keys.
+   */
+  featureLabels?: Record<string, string>;
   /** 5etools ammoType uid, e.g. arrow|phb */
   ammoType?: string;
   /** Foundry weapon mastery key (e.g. "vex", "topple"); from 2024 base weapons. */
@@ -235,9 +241,24 @@ export function isWeaponSpiritGainColumn(label: string): boolean {
   return label.toLowerCase().trim() === "spirit gain";
 }
 
+/** Numeric per-rarity stats shown as header chips (Spirit Gain, Chord Length). */
+export function isWeaponScalarStatColumn(label: string): boolean {
+  const lower = label.toLowerCase().trim();
+  return isWeaponSpiritGainColumn(label) || lower === "chord length";
+}
+
+/** Display text for a rarity-column feature key (see `Weapon.featureLabels`). */
+export function getWeaponFeatureLabel(
+  weapon: Pick<Weapon, "featureLabels">,
+  name: string,
+): string {
+  return weapon.featureLabels?.[name.toLowerCase()] ?? name;
+}
+
 /**
  * Feature and weapon-resource unlock columns on a rarity row.
- * Excludes Bonus* / *Bonus stats, Spirit Gain, and nested "Unlocked …" lists.
+ * Excludes Bonus* / *Bonus stats, scalar stats (Spirit Gain, Chord Length),
+ * and nested "Unlocked …" lists.
  * Any other column (including custom forge resource names) is treated as a
  * feature list.
  */
@@ -245,7 +266,7 @@ export function isWeaponFeatureColumn(label: string): boolean {
   const lower = label.toLowerCase();
   if (lower.startsWith(UNLOCK_COLUMN_PREFIX.toLowerCase())) return false;
   if (isWeaponStatBonusColumn(label)) return false;
-  if (isWeaponSpiritGainColumn(label)) return false;
+  if (isWeaponScalarStatColumn(label)) return false;
   return true;
 }
 

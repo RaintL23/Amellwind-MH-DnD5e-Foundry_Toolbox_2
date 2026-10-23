@@ -1,7 +1,7 @@
 import type { GuideSection, GuideTable } from "@/shared/types";
 
 export const ARTIFICER_FORGE_INTRO = [
-  "EFA is the official book Eberron: Forge of the Artificer, which contains the 2024 version of the Artificer class.",
+  "EFA is the official book \"Eberron: Forge of the Artificer\", which contains the 2024 version of the Artificer class.",
   "This version drops infusions in favor of Replicate Magic Item: you learn plans and create magic items from them. An Amellwind table has no magic items, so this Forge adaptation keeps the 2024 chassis and changes only what a plan produces: a Material Effect instead of a magic item.",
   "Plans Known, Active Effects, and unlock levels are exactly the 2024 numbers. The +1 material slot on weapon and armor at levels 10, 14, and 18 from the Amellwind Hunter's Guide is unchanged.",
 ];

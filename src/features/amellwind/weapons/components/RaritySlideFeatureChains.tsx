@@ -109,7 +109,8 @@ export function RaritySlideFeatureChains({
                                   feature?.name ?? feat.name,
                                   mhItemEffectsMap,
                                 );
-                          const displayName = feature?.name ?? feat.name;
+                          const displayName =
+                            feat.label ?? feature?.name ?? feat.name;
 
                           return (
                             <ExpandableFeatureRow
