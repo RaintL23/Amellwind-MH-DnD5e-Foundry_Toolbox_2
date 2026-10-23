@@ -224,12 +224,49 @@ const GTMH_GITHUB_ALIASES_COVERED_LOCALLY: Record<string, string[]> = {
   feat: ["Switchaxe Mastery"], // local: "Switch Axe Mastery"
 };
 
+function weaponNameKey(name: string): string {
+  return name.toLowerCase().replace(/[^a-z0-9]/g, "");
+}
+
+/**
+ * GitHub optfeatures whose prerequisite weapon is redefined by the Patreon
+ * overlay are stale ("Capacity Increase I (HBG)", "Switch Mode (SA)", …): the
+ * local weapon table never references them, but prerequisite matching would
+ * still surface them as extra Base features.
+ */
+function staleGithubWeaponFeatureNames(
+  github: unknown[],
+  localItems: unknown[],
+): string[] {
+  const localWeapons = new Set(
+    localItems
+      .filter((raw) => (raw as { type?: unknown })?.type === "HW")
+      .map((raw) => weaponNameKey(getRawMonsterName(raw))),
+  );
+  if (localWeapons.size === 0) return [];
+
+  return github.flatMap((raw) => {
+    const entry = (
+      raw as {
+        prerequisite?: { otherSummary?: { entry?: unknown } }[];
+      }
+    )?.prerequisite?.[0]?.otherSummary?.entry;
+    if (typeof entry !== "string") return [];
+    const weapon = entry.replace(/\s*\([^)]*\)\s*$/, "");
+    return localWeapons.has(weaponNameKey(weapon))
+      ? [getRawMonsterName(raw)]
+      : [];
+  });
+}
+
 async function persistMergedGtmhNamedList(options: {
   githubKey: string;
   dataKey: string;
   local: unknown[];
   githubFeed?: unknown[];
   extraCoveredNames?: string[];
+  /** Extra covered names derived from the GitHub list itself. */
+  coveredByGithub?: (github: unknown[]) => string[];
 }): Promise<unknown[]> {
   const github =
     options.githubFeed ??
@@ -244,11 +281,10 @@ async function persistMergedGtmhNamedList(options: {
     return Array.isArray(existing) && existing.length > 0 ? existing : github;
   }
 
-  const { items } = mergeNamedFeeds(
-    github,
-    options.local,
-    options.extraCoveredNames,
-  );
+  const { items } = mergeNamedFeeds(github, options.local, [
+    ...(options.extraCoveredNames ?? []),
+    ...(options.coveredByGithub?.(github) ?? []),
+  ]);
   await setStoreValue("GTMH_CURRENT", options.githubKey, github);
   await setStoreValue("GTMH_CURRENT", options.dataKey, items);
   return items;
@@ -279,6 +315,10 @@ async function persistMergedGtmhData(
       local,
       githubFeed: github,
       extraCoveredNames: GTMH_GITHUB_ALIASES_COVERED_LOCALLY[key.jsonKey],
+      coveredByGithub:
+        key.jsonKey === "optionalfeature"
+          ? (list) => staleGithubWeaponFeatureNames(list, overlay.item)
+          : undefined,
     });
   }
 
