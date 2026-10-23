@@ -47,41 +47,78 @@ Their infected mist not only contains a stronger version of the Frenzy Virus but
 
 Once Shagaru Magala is finished breeding in a territory, it'll leave the area for its next generation and begin to ;wander around the world randomly. They don't reproduce again for quite a while due to trying to prevent future monster generations from gaining a resistance against their virus while reproducing.
 
-Thus far, only three Shagaru Magala have been sighted, two of which have been killed. Many people believe that the Shagaru Magala and Gore Magala represent light and darkness. Frenzy Virus The Frenzy Virus is an infectious disease caused by the attacks and breath weapons of Gore Magala and Shagaru Magala, affecting both sentient races and monsters alike.
+Thus far, only three Shagaru Magala have been sighted, two of which have been killed. Many people believe that the Shagaru Magala and Gore Magala represent light and darkness.
 
-Signs and Symptoms In large creatures, the Frenzy Virus causes a notable discoloration of the skin, fur, feathers, or hide, resulting in a dark purple hue all over the body. In addition, the monster's eyes will become a bright red and it will begin to huff a dark purple smoke from its mouth as it exhales.
+### Disease: Frenzy Virus
+
+The Frenzy Virus is an infectious disease caused by the attacks and breath weapons of Gore Magala and Shagaru Magala, affecting both sentient races and monsters alike.
+
+#### Signs and Symptoms
+
+In large creatures, the Frenzy Virus causes a notable discoloration of the skin, fur, feathers, or hide, resulting in a dark purple hue all over the body. In addition, the monster's eyes will become a bright red and it will begin to huff a dark purple smoke from its mouth as it exhales.
 
 The Frenzy Virus causes massively heightened aggression, speed, and strength in monsters, making them dangerously short-tempered and ferocious. The Frenzy Virus also seems to affect a monster's vocal cords, rendering all vocalizations shrill and harsh. In sentient races, the Frenzy Virus effects are significantly different.
 
 Once infected, a person will experience a nullification of their natural healing abilities, making it impossible to recover health without the aid of magic. They additionally receive more damage from a frenzied monster's attacks and lose any absorption, immunity, or resistance they may have.
 
-They do gain some benefits while under the effects of the frenzied virus, their ferocity increases making it more likely to deal critical damage to a creature in addition to increasing the damage they would normally cause. Prognosis In sentient races, the virus is not known to be fatal, despite its harmful effects; once the infection has begun, its effects generally last for several minutes before vanishing.
+They do gain some benefits while under the effects of the frenzied virus, their ferocity increases making it more likely to deal critical damage to a creature in addition to increasing the damage they would normally cause.
 
-Most monsters, on the other hand, die from the Frenzy Virus within a matter of days if they are not killed by hunters first. The Apex State When monsters manage to overcome the Frenzy Virus, they will be able to suppress the Virus' fatal afflictions while retaining its benefits; and even use the virus itself and weaponize it for their own use, turning them into a completely new threat entirely.
+#### Prognosis
+
+In sentient races, the virus is not known to be fatal, despite its harmful effects; once the infection has begun, its effects generally last for several minutes before vanishing.
+
+Most monsters, on the other hand, die from the Frenzy Virus within a matter of days if they are not killed by hunters first.
+
+#### The Apex State
+
+When monsters manage to overcome the Frenzy Virus, they will be able to suppress the Virus' fatal afflictions while retaining its benefits; and even use the virus itself and weaponize it for their own use, turning them into a completely new threat entirely.
 
 This is referred to as the Apex State. Similarly to the Frenzy Virus, monsters affected by the Apex State will have a dark purple hue over their bodies with the addition of some reddish shades. Their eyes will also be red, and they will exhale a dark mist from their mouths. The main aesthetic difference from Frenzy Virus is that Apex monsters will be surrounded by a dark smoke-like aura at all times.
 
 A monster's roar will also be greatly distorted when affected by the Apex State. In full control of the Frenzy Virus with no ill effect, the monster under the Apex state is far more brutal, durable and relentless than they would be under the regular effects of the Virus. In addition to infecting unfortunate victims, some of the Apex monster's attacks may also be enhanced in this state with various upgrades such as longer range or increased damage.
 
-While under the Apex state, their skin is far more rigid and harder to damage, They gain resistance to cold, fire, lightning, and thunder damage in addition to immunity to bludgeoning, piercing, and slashing damage from nonmagical attacks. Infection of the Frenzy Virus The most common method of infection is a claw or bite attack by an infected creature, but it is also possible to contract by spores from a breath attack.
+While under the Apex state, their skin is far more rigid and harder to damage, They gain resistance to cold, fire, lightning, and thunder damage in addition to immunity to bludgeoning, piercing, and slashing damage from nonmagical attacks.
+
+#### Infection of the Frenzy Virus
+
+The most common method of infection is a claw or bite attack by an infected creature, but it is also possible to contract by spores from a breath attack.
 
 When a creature infected with the virus hit a creature with one of these abilities they gain a Frenzy Charge. When a creature gains 3 charges, they must make a Constitution saving throw, with a DC of 8 + the infected creature's proficiency bonus + the infected creature's Constitution modifier.
 
 On a failure, the creature is infected with the Frenzy Virus. A sentient creature can repeat this saving throw each day at Dawn to destroy the virus and recover from its effects. The virus can also be cured by a Greater Restoration spell. A monster can repeat this saving throw each day at Dawn.
 
-After succeeding on three of these saving throws, the creature's immune system suppresses the fatal afflictions but retains its benefits. After failing three of these saving throws, the creature dies. Sentient Races When a sentient creature contracts the frenzy virus, it gains the following effects.
+After succeeding on three of these saving throws, the creature's immune system suppresses the fatal afflictions but retains its benefits. After failing three of these saving throws, the creature dies.
 
-Improved Critical. The sentient creature weapon attacks score a critical hit on a roll of 19 or 20. Improved Damage. All spells and attacks deal an additional 1d4 damage. Impaired Healing. The creature cannot regain Hit Points except by magical means. Potions of healing are not considered magical for this effect.
+#### Sentient Races
 
-Suppressed Immunities. The creature no longer benefits from any resistance, absorption, or immunity for conditions or damage. Vulnerability If the sentient creature gains a frenzy charge while already infected with the Frenzy Virus, the creature takes an additional 3 (1d6) necrotic damage from the attack.
+When a sentient creature contracts the frenzy virus, it gains the following effects.
 
-Frenzy Virus Template A frenzied monster is any non-sentient creature that has succumbed to the frenzy virus. A frenzied monster appearance varies depending on its type. Typically, its eyes will become bright red and will huff a dark purple smoke from its mouth as it exhales. Infected Monster When a creature contracts the frenzy virus, it retains its statistics except as described below.
+- **Improved Critical.** The sentient creature weapon attacks score a critical hit on a roll of 19 or 20.
+- **Improved Damage.** All spells and attacks deal an additional 1d4 damage.
+- **Impaired Healing.** The creature cannot regain Hit Points except by magical means. Potions of healing are not considered magical for this effect.
+- **Suppressed Immunities.** The creature no longer benefits from any resistance, absorption, or immunity for conditions or damage.
+- **Vulnerability.** If the sentient creature gains a frenzy charge while already infected with the Frenzy Virus, the creature takes an additional 3 (1d6) necrotic damage from the attack.
 
-Abilities Scores. The Infected Monster Strength and Dexterity abilities scores are increased by 4. Speed. The infected monster normal, climbing, flying, and swim speed is increased by 10 feet. The Apex State When an infected creature overcomes the frenzy virus they are able to suppress the virus fatal afflictions while retaining its benefits; it retains its statistics except as described below.
+#### Frenzy Virus Template
 
-Infected. The apex creature gains all the same benefits as an Infected Monster. Viral Attack. One attack of the GM choice applies a frenzy charge on a hit. Damage Resistance. The apex creature has resistance to cold, fire, lightning, and thunder damage. Damage Immunity. The apex creature has immunity to bludgeoning, piercing, and slashing damage from nonmagical attacks.
+A frenzied monster is any non-sentient creature that has succumbed to the frenzy virus. A frenzied monster appearance varies depending on its type. Typically, its eyes will become bright red and will huff a dark purple smoke from its mouth as it exhales.
 
-Increased Range. All Melee Attacks reach increases by an additional 5 foot, Range Attacks are increased by 30 feet.
+##### Infected Monster
+
+When a creature contracts the frenzy virus, it retains its statistics except as described below.
+
+- **Abilities Scores.** The Infected Monster Strength and Dexterity abilities scores are increased by 4.
+- **Speed.** The infected monster normal, climbing, flying, and swim speed is increased by 10 feet.
+
+##### The Apex State
+
+When an infected creature overcomes the frenzy virus they are able to suppress the virus fatal afflictions while retaining its benefits; it retains its statistics except as described below.
+
+- **Infected.** The apex creature gains all the same benefits as an Infected Monster.
+- **Viral Attack.** One attack of the GM choice applies a frenzy charge on a hit.
+- **Damage Resistance.** The apex creature has resistance to cold, fire, lightning, and thunder damage.
+- **Damage Immunity.** The apex creature has immunity to bludgeoning, piercing, and slashing damage from nonmagical attacks.
+- **Increased Range.** All Melee Attacks reach increases by an additional 5 foot, Range Attacks are increased by 30 feet.
 
 ## Stat Block
 

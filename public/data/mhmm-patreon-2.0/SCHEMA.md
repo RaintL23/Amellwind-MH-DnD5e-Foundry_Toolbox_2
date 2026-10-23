@@ -64,11 +64,22 @@ Maps toward `docs/domain/entities-actor-monster.md` + `entities-rune.md` (Monste
 | `name`, `group`, `cr`, `pdfPage` | `Monster.name`, `group`, `cr`, `page` |
 | `size`, `creatureType`, `alignment` | Actor size/type/alignment |
 | `ac`, `hp`, `speed`, `abilities` | Actor core |
-| `bio[]` | `fluff.entries` strings |
+| `bio[]` | `fluff.entries` (5etools entries from markdown, see below) |
 | `traits` / `actions` / `bonusActions` / `legendaryActions` / `reactions` | `{ name, entries }` |
 | `lootRolls` | `Monster.loot.rolls` |
 | `loot[]` | inset loot table rows |
 | `materials[]` | `Rune` rows (`armorEffect` / `weaponEffect`) |
+
+### Markdown inside sheets (`## Bio`, named entries, conditions chapter)
+
+Parsed by `scripts/lib/markdown-entries.mjs`, shared by catalog and supplement:
+
+- Blank line → new paragraph (CRLF-safe).
+- `###`–`######` heading → nested `{ type: "entries", name }` section.
+- `- **Name.** text` → named list item; `- text` → plain list item.
+- `### Disease: Name` / `Condition: Name` / `Poison: Name` inside a bio is also
+  published as a standalone disease / condition (the conditions chapter wins on
+  name clashes); the bestiary shows it without the prefix.
 
 `slots` uses `A` (armor), `W` (weapon), `O` (other / trinket / consumable).
 The live `Rune` type only stores `A` and `W`; keep `O` in `otherEffect` until
