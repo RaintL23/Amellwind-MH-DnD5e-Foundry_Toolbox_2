@@ -25,6 +25,7 @@ import {
   PawPrint,
   ScrollText,
   Shield,
+  ShieldCheck,
   ShoppingBag,
   Skull,
   Sparkles,
@@ -297,6 +298,13 @@ export const NAV_SECTIONS: NavSectionDef[] = [
             label: "Guardian Template",
             icon: Gem,
             description: "Rules to turn monsters into Guardians.",
+          },
+          {
+            to: "/guild-knights",
+            label: "Guild Knights",
+            icon: ShieldCheck,
+            description:
+              "Guild Knight stat blocks in four ranks, from Apprentice to Commander.",
           },
           {
             to: "/npc-generator",

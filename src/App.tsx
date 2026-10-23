@@ -174,6 +174,11 @@ const GuardianTemplatePage = lazy(() =>
     (m) => ({ default: m.GuardianTemplatePage }),
   ),
 );
+const GuildKnightsPage = lazy(() =>
+  import("@/features/amellwind/guild-knights/components/GuildKnightsPage").then(
+    (m) => ({ default: m.GuildKnightsPage }),
+  ),
+);
 const NpcGeneratorPage = lazy(() =>
   import("@/features/amellwind/npc-generator/components/NpcGeneratorPage").then((m) => ({
     default: m.NpcGeneratorPage,
@@ -671,6 +676,14 @@ export default function App() {
                 element={
                   <Suspense fallback={<PageFallback />}>
                     <GuardianTemplatePage />
+                  </Suspense>
+                }
+              />
+              <Route
+                path="guild-knights"
+                element={
+                  <Suspense fallback={<PageFallback />}>
+                    <GuildKnightsPage />
                   </Suspense>
                 }
               />
