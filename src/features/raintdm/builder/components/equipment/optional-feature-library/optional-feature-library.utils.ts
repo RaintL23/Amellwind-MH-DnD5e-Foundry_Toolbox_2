@@ -21,6 +21,34 @@ export function isOptionalFeaturePicked(
   );
 }
 
+export function countOptionalFeaturePicks(
+  item: OptionalFeatureCatalogItem,
+  picked: BuilderOptionalFeatureSelection[],
+): number {
+  const target = normalizeName(item.name);
+  return picked.filter((p) => normalizeName(p.name) === target).length;
+}
+
+/**
+ * Drops every copy of a non-repeatable pick, but only the last copy of a
+ * repeatable one (e.g. a second Lessons of the First Ones).
+ */
+export function removeOptionalFeaturePick(
+  item: OptionalFeatureCatalogItem,
+  picked: BuilderOptionalFeatureSelection[],
+): BuilderOptionalFeatureSelection[] {
+  const target = normalizeName(item.name);
+  if (!item.isRepeatable) {
+    return picked.filter((p) => normalizeName(p.name) !== target);
+  }
+  for (let i = picked.length - 1; i >= 0; i--) {
+    if (normalizeName(picked[i].name) === target) {
+      return picked.filter((_, index) => index !== i);
+    }
+  }
+  return picked;
+}
+
 export function canAddOptionalFeature(
   item: OptionalFeatureCatalogItem,
   options: {
@@ -50,7 +78,8 @@ export function canAddOptionalFeature(
   } = options;
 
   if (isGrantAllFeatureChoice) return false;
-  if (isPicked) return true;
+  // Picked rows stay clickable (to remove); repeatable ones may still add a copy.
+  if (isPicked && !item.isRepeatable) return true;
   if (atCapacity) return false;
 
   if (item.catalog === "feature-choice") {

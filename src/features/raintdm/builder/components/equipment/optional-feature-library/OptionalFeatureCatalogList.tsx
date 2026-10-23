@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { Check, Swords } from "lucide-react";
+import { Check, Plus, Swords } from "lucide-react";
 import type { BookSourceNameMap } from "@/shared/services/source-catalog.service";
 import type { RpgbotLookupFn } from "@/features/raintdm/builder/data/rpgbot-ratings.utils";
 import { RpgbotRatingBadge } from "@/features/raintdm/builder/components/shared/RpgbotRatingBadge";
@@ -28,9 +28,11 @@ interface OptionalFeatureCatalogListProps {
   otherFightingStylePicks: BuilderOptionalFeatureSelection[];
   rpgbotOptionalLookup: RpgbotLookupFn | null;
   rpgbotOptionalReady: boolean;
-  isPicked: (item: OptionalFeatureCatalogItem) => boolean;
+  getPickCount: (item: OptionalFeatureCatalogItem) => number;
   canAdd: (item: OptionalFeatureCatalogItem) => boolean;
   onToggle: (item: OptionalFeatureCatalogItem) => void;
+  /** Adds one more copy of an already-picked repeatable option. */
+  onAddAgain: (item: OptionalFeatureCatalogItem) => void;
 }
 
 export function OptionalFeatureCatalogList({
@@ -41,9 +43,10 @@ export function OptionalFeatureCatalogList({
   otherFightingStylePicks,
   rpgbotOptionalLookup,
   rpgbotOptionalReady,
-  isPicked,
+  getPickCount,
   canAdd,
   onToggle,
+  onAddAgain,
 }: OptionalFeatureCatalogListProps) {
   const [expandedIds, setExpandedIds] = useState<ReadonlySet<string>>(
     () => new Set(),
@@ -69,9 +72,11 @@ export function OptionalFeatureCatalogList({
   return (
     <ul className="space-y-1.5">
       {items.map((item) => {
-        const selected = isPicked(item);
+        const pickCount = getPickCount(item);
+        const selected = pickCount > 0;
         const addable = canAdd(item);
         const disabled = !selected && !addable;
+        const canAddAgain = selected && !!item.isRepeatable && addable;
         const disabledHint =
           !addable && !selected
             ? isFightingStyle &&
@@ -164,8 +169,19 @@ export function OptionalFeatureCatalogList({
                 <div className="flex shrink-0 items-center gap-1.5 py-1.5 pr-2">
                   {selected && (
                     <span className="text-[10px] text-muted-foreground">
-                      Selected
+                      Selected{pickCount > 1 ? ` ×${pickCount}` : ""}
                     </span>
+                  )}
+                  {canAddAgain && (
+                    <button
+                      type="button"
+                      onClick={() => onAddAgain(item)}
+                      className="inline-flex items-center gap-0.5 rounded border border-violet-400/40 px-1.5 py-0.5 text-[10px] font-medium text-violet-300 hover:bg-violet-400/10"
+                      title={`Take ${item.name} again`}
+                    >
+                      <Plus className="h-2.5 w-2.5" />
+                      Again
+                    </button>
                   )}
                   <span
                     className="rounded border border-border/50 bg-muted/40 px-1.5 py-0.5 text-[10px] font-medium text-muted-foreground"

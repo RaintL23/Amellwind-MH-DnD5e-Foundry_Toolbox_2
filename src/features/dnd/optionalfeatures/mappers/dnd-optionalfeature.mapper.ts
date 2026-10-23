@@ -132,8 +132,24 @@ function mapFeatProgression(
   return result.length ? result : undefined;
 }
 
-function detectRepeatable(entries: string[]): boolean {
-  return entries.some((line) => /\brepeatable\b/i.test(line));
+// XPHB invocations mark this with a nested `{ name: "Repeatable" }` entry,
+// whose heading the plain-text renderer drops, so walk the raw entries too.
+function hasRepeatableEntry(entries: unknown[]): boolean {
+  return entries.some((entry) => {
+    if (typeof entry !== "object" || entry === null) return false;
+    const obj = entry as Raw;
+    if (typeof obj.name === "string" && /^repeatable$/i.test(obj.name.trim())) {
+      return true;
+    }
+    return Array.isArray(obj.entries) && hasRepeatableEntry(obj.entries);
+  });
+}
+
+function detectRepeatable(rawEntries: unknown[], entries: string[]): boolean {
+  return (
+    hasRepeatableEntry(rawEntries) ||
+    entries.some((line) => /\brepeatable\b/i.test(line))
+  );
 }
 
 function formatConsumes(raw: unknown): string | undefined {
@@ -148,9 +164,8 @@ function formatConsumes(raw: unknown): string | undefined {
 export function mapDndOptionalFeature(raw: Raw): DndOptionalFeature {
   const name = String(raw.name ?? "");
   const source = String(raw.source ?? "PHB");
-  const entries = Array.isArray(raw.entries)
-    ? renderEntries(raw.entries as unknown[])
-    : [];
+  const rawEntries = Array.isArray(raw.entries) ? (raw.entries as unknown[]) : [];
+  const entries = rawEntries.length ? renderEntries(rawEntries) : [];
 
   return {
     id: classId(name, source),
@@ -164,7 +179,7 @@ export function mapDndOptionalFeature(raw: Raw): DndOptionalFeature {
     prerequisites: mapPrerequisites(raw.prerequisite),
     additionalSpells: mapAdditionalSpells(raw.additionalSpells),
     featProgression: mapFeatProgression(raw.featProgression),
-    isRepeatable: detectRepeatable(entries),
+    isRepeatable: detectRepeatable(rawEntries, entries),
     consumes: formatConsumes(raw.consumes),
   };
 }

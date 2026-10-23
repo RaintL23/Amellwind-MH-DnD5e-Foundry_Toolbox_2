@@ -65,7 +65,9 @@ export function OptionalFeatureLibraryPanel({
     usesFeatCatalog,
     otherFightingStylePicks,
     isPicked,
+    getPickCount,
     canAdd,
+    handleAdd,
     handleToggle,
     handleRemove,
     handleClearAll,
@@ -146,11 +148,11 @@ export function OptionalFeatureLibraryPanel({
 
       {picked.length > 0 && (
         <div className="mb-2 flex flex-wrap gap-1">
-          {picked.map((selection) => (
+          {picked.map((selection, index) => (
             <button
-              key={selection.id}
+              key={`${selection.id}-${index}`}
               type="button"
-              onClick={() => handleRemove(selection)}
+              onClick={() => handleRemove(index)}
               className="inline-flex items-center gap-1 rounded-md border border-amber-700/50 bg-amber-950/30 px-1.5 py-0.5 text-[10px] text-amber-200 hover:border-rose-600/50 hover:bg-rose-950/30 hover:text-rose-200"
               title="Remove"
             >
@@ -206,9 +208,10 @@ export function OptionalFeatureLibraryPanel({
             otherFightingStylePicks={otherFightingStylePicks}
             rpgbotOptionalLookup={rpgbotOptionalLookup}
             rpgbotOptionalReady={rpgbotOptionalReady}
-            isPicked={isPicked}
+            getPickCount={getPickCount}
             canAdd={canAdd}
             onToggle={handleToggle}
+            onAddAgain={handleAdd}
           />
         )}
       </ScrollableWhenNeeded>

@@ -60,8 +60,9 @@ import {
 import { createSourceFilterMatcher } from "@/shared/utils/compendium-source-filter.utils";
 import {
   canAddOptionalFeature,
+  countOptionalFeaturePicks,
   isOptionalFeaturePicked,
-  normalizeName,
+  removeOptionalFeaturePick,
 } from "./optional-feature-library.utils";
 
 export function useOptionalFeatureLibraryPanelState({
@@ -339,6 +340,12 @@ export function useOptionalFeatureLibraryPanelState({
     [picked],
   );
 
+  const getPickCount = useCallback(
+    (item: OptionalFeatureCatalogItem) =>
+      countOptionalFeaturePicks(item, picked),
+    [picked],
+  );
+
   const canAdd = useCallback(
     (item: OptionalFeatureCatalogItem) => {
       if (!activeProgression || !parsed) return false;
@@ -369,21 +376,9 @@ export function useOptionalFeatureLibraryPanelState({
     ],
   );
 
-  const handleToggle = useCallback(
+  const handleAdd = useCallback(
     (item: OptionalFeatureCatalogItem) => {
-      if (!parsed) return;
-
-      if (isPicked(item)) {
-        onSetSelections(
-          parsed.progressionId,
-          picked.filter(
-            (p) => normalizeName(p.name) !== normalizeName(item.name),
-          ),
-        );
-        return;
-      }
-
-      if (!canAdd(item)) return;
+      if (!parsed || !canAdd(item)) return;
 
       if (item.catalog === "feature-choice") {
         const option = activeProgression!.progression.choiceOptions?.find(
@@ -418,7 +413,6 @@ export function useOptionalFeatureLibraryPanelState({
     },
     [
       parsed,
-      isPicked,
       canAdd,
       picked,
       onSetSelections,
@@ -430,12 +424,28 @@ export function useOptionalFeatureLibraryPanelState({
     ],
   );
 
+  const handleToggle = useCallback(
+    (item: OptionalFeatureCatalogItem) => {
+      if (!parsed) return;
+      if (isPicked(item)) {
+        onSetSelections(
+          parsed.progressionId,
+          removeOptionalFeaturePick(item, picked),
+        );
+        return;
+      }
+      handleAdd(item);
+    },
+    [parsed, isPicked, picked, onSetSelections, handleAdd],
+  );
+
+  // By index: repeatable picks share the same selection id.
   const handleRemove = useCallback(
-    (selection: BuilderOptionalFeatureSelection) => {
+    (index: number) => {
       if (!parsed || isGrantAllFeatureChoice) return;
       onSetSelections(
         parsed.progressionId,
-        picked.filter((p) => p.id !== selection.id),
+        picked.filter((_, i) => i !== index),
       );
     },
     [parsed, picked, onSetSelections, isGrantAllFeatureChoice],
@@ -472,7 +482,9 @@ export function useOptionalFeatureLibraryPanelState({
     usesFeatCatalog,
     otherFightingStylePicks,
     isPicked,
+    getPickCount,
     canAdd,
+    handleAdd,
     handleToggle,
     handleRemove,
     handleClearAll,
