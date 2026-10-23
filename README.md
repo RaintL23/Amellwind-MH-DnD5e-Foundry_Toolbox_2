@@ -32,7 +32,7 @@ Play and table tools, plus RaintDM variants on Amellwind’s 2014 Monster Hunter
 
 | Group | Section | Route | Description |
 | --- | --- | --- | --- |
-| Character | **Creation Guide** | `/character-guide` | Character creation guide from the manual (species, roles, skills, etc.) |
+| Character | **Creation Guide** | `/character-guide` | Character creation guide from the manual (higher-level starts, equipment rules, skills, hunt roles) |
 | Character | **Lore** | `/lore` | Myths, history, gods, and peoples of the Old World (Chapter 1) |
 | Character | **Species** | `/species` | Species and subraces from the Hunting Guide |
 | Character | **Backgrounds** | `/backgrounds` | Hunter backgrounds from the manual |
@@ -54,6 +54,7 @@ Play and table tools, plus RaintDM variants on Amellwind’s 2014 Monster Hunter
 | World and Exploration | **Downtime** | `/downtime` | Downtime activities from the manual |
 | NPCs and Companions | **Monstie Sidekick** | `/monstie-sidekick` | Rules and creator for Monstie sidekicks |
 | NPCs and Companions | **Guardian Template** | `/guardian-template` | Rules to apply the MHMM Guardian monster template |
+| NPCs and Companions | **Guild Knights** | `/guild-knights` | Guild Knight stat blocks in four ranks (GTMH Appendix C) |
 | NPCs and Companions | **NPC Generator** | `/npc-generator` | Humanoid NPC stat block generator |
 
 ### D&D 5e Compendium

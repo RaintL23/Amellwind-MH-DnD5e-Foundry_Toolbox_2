@@ -18,6 +18,7 @@ Todas las rutas de página se cargan con **`React.lazy`** y `<Suspense>` (fallba
 /character-guide           → Guía de creación de personajes
 /monstie-sidekick          → Reglas y creador de Monstie Sidekick
 /guardian-template         → Reglas del Monster Guardian Template (MHMM)
+/guild-knights             → Stat blocks de Guild Knights (GTMH Appendix C)
 /npc-generator             → Generador de NPCs humanoides
 /species                   → Especies y subrazas (GTMH)
 /backgrounds               → Trasfondos (GTMH)
@@ -138,7 +139,7 @@ El equipo equipable del Builder proviene de ítems añadidos al carrito en Shops
 | Amellwind Homebrew  | Species and Character Options | Species, Backgrounds, Feats                                                 |
 | Amellwind Homebrew  | Weapons, Runes, and Equipment | Weapons, Runes, Material Effects, Items                                     |
 | Amellwind Homebrew  | World and Exploration         | Hunt Planner, Environments, Resources, Shops, Cooking, Combo List, Downtime |
-| Amellwind Homebrew  | NPCs and Companions           | Monstie Sidekick, NPC Generator                                             |
+| Amellwind Homebrew  | NPCs and Companions           | Monstie Sidekick, Guardian Template, Guild Knights, NPC Generator           |
 | Amellwind (RaintDM) | GM Tools                     | Combat Tracker                                                              |
 | Amellwind (RaintDM) | Character                     | Builder, Damage Calculator                                                  |
 | Amellwind (RaintDM) | Forge                         | Weapon Forge, Items Forge, Artificer Forge                                  |

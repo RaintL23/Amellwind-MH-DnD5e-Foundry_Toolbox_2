@@ -36,7 +36,7 @@ Recursos recolectables en cacería (plantas, hongos, minerales, peces, insectos,
 **Ruta**: `/environments`
 **Fuente de datos**: `environment.data.ts` (estático).
 
-Biomas del sistema de cacería con reglas de exploración, clima y tablas por nivel de party.
+Biomas del sistema de cacería con reglas de exploración, clima y tablas por nivel de party. Incluye los 9 location stat blocks del Appendix A de GTMH (Ancestral Steppes, The Dunes, Jungle, Ocean, Rotten Vale, Snowy Mountains, Verdant Hills, Volcano, The Wetlands). Rotten Vale reemplaza el clima por Effluvium y en el Hunt Planner mapea a los tags `underdark` + `swamp`.
 
 #### Entidad `Environment`
 
@@ -44,9 +44,9 @@ Biomas del sistema de cacería con reglas de exploración, clima y tablas por ni
 | ------------------------------------------------ | --------------------------------------------------------------------------------------------------------------------------------- |
 | `name`, `biome`                                  | Identificación y tipo                                                                                                             |
 | `navigationDC`, `encounterDC`, `investigationDC` | DCs de exploración                                                                                                                |
-| `totalResources`                                 | Recursos disponibles en el bioma                                                                                                  |
+| `totalResources?`                                | Recursos disponibles en el bioma. Opcional: Rotten Vale no lo trae (la guía lo eliminó por los cambios del rol Spotter)          |
 | `commonWeather`                                  | Clima habitual                                                                                                                    |
-| `specialRules[]`                                 | Reglas especiales (`name` + `description`)                                                                                        |
+| `specialRules[]`                                 | Reglas especiales (`name` + `description`, opcional `items[]`, `table` con `footnote` y `notes[]`; p. ej. etapas de Effluvium)   |
 | `weatherTable[]`                                 | Tabla opcional de clima (roll + resultado)                                                                                        |
 | `levelTiers[]`                                   | Por rango de nivel: monstruos comunes, tabla de recursos (`ResourceColumn` + `ResourceRow`), tabla de encuentros (`EncounterRow`) |
 
@@ -62,6 +62,8 @@ Biomas del sistema de cacería con reglas de exploración, clima y tablas por ni
 ### Hunt Planner (habitat filter)
 
 **Ruta**: `/hunt`
+
+La pestaña **Rules** (`hunt-rules.data.ts`) cubre el capítulo 4: Creating a Hunt, Going on a Hunt, Example Hunt y **Traveling** completo (Travel Pace, Forced March, Mounts and Vehicles, Difficult Terrain, descansos en viaje, Random Encounters con las tablas de modificadores y Roles for the Journey).
 
 Compatible monsters/environments use `HUNT_ENVIRONMENT_MAPPINGS` (location → 5etools `environment` tags) in `hunt-roll.utils.ts`:
 
