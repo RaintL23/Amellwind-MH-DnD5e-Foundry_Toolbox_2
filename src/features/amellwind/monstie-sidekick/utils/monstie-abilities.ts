@@ -3,7 +3,6 @@ import {
   STANDARD_ARRAY,
   ABILITY_KEYS,
 } from "@/shared/utils/ability-scores";
-import { ABILITY_ABBREVIATIONS } from "@/shared/constants/dnd";
 
 /** Maps the original monster's ability order onto the sidekick standard array (15,14,13,12,10,8). */
 export function mapAbilitiesFromOriginal(original: AbilityScores): AbilityScores {
@@ -14,10 +13,4 @@ export function mapAbilitiesFromOriginal(original: AbilityScores): AbilityScores
     result[key] = scores[index];
   });
   return result;
-}
-
-export function formatAbilityScoresLine(abilities: AbilityScores): string {
-  return ABILITY_KEYS.map(
-    (k) => `${ABILITY_ABBREVIATIONS[k]} ${abilities[k]}`,
-  ).join(", ");
 }

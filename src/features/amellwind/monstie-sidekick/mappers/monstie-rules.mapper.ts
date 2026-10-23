@@ -134,7 +134,7 @@ function mapEntries(entries: unknown[]): MonstieRulesContent[] {
     if (e.type === "inset" && Array.isArray(e.entries)) {
       result.push({
         type: "section",
-        name: "Nota",
+        name: "Note",
         children: mapEntries(e.entries as unknown[]),
       });
       continue;

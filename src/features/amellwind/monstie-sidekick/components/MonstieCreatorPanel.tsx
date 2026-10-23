@@ -1,24 +1,22 @@
 import { useMemo } from "react";
-import { Dices, RotateCcw, Sparkles } from "lucide-react";
+import { Dices, Minus, Plus, RotateCcw, Sparkles } from "lucide-react";
 import { Input } from "@/components/ui/input";
 import { Select } from "@/components/ui/select";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { cn } from "@/shared/utils/cn";
-import type { SkillKey } from "@/shared/types";
+import { ABILITY_KEYS } from "@/shared/utils/ability-scores";
+import { formatModifier, getAbilityModifier } from "@/shared/utils/cr.utils";
+import { ABILITY_ABBREVIATIONS, SKILL_LABELS } from "@/shared/constants/dnd";
 import { MonsterStatBlock } from "@/features/amellwind/monsters/components/MonsterStatBlock";
 import { useMonstieCreator } from "../context/MonstieCreatorContext";
-import { formatAbilityScoresLine } from "../utils/monstie-abilities";
-import { mapAbilitiesFromOriginal } from "../utils/monstie-abilities";
+import { hasRulesSignatureAttack } from "../utils/monstie-actions";
 import {
-  getCreatureFeatureOptions,
-  getSignatureAttackOptions,
-  getTraitOptions,
-} from "../utils/monstie-actions";
-import { getSidekickProficiencyBonus } from "../utils/monstie-stats";
-import { SKILL_LABELS as CANONICAL_SKILL_LABELS } from "@/shared/constants/dnd";
-
-const SKILL_LABELS: Record<string, string> = CANONICAL_SKILL_LABELS;
+  getSidekickProficiencyBonus,
+  hasMonstieSavingThrows,
+  MONSTIE_ABILITY_CAP,
+  sumAbilityIncreases,
+} from "../utils/monstie-stats";
 
 function OptionChip({
   label,
@@ -49,51 +47,64 @@ function OptionChip({
   );
 }
 
+function SectionCard({
+  title,
+  badge,
+  hint,
+  children,
+}: {
+  title: string;
+  badge?: string;
+  hint?: string;
+  children: React.ReactNode;
+}) {
+  return (
+    <div className="rounded-lg border border-border bg-card p-4 space-y-3">
+      <div className="flex items-center justify-between gap-2">
+        <h4 className="text-sm font-semibold text-foreground">{title}</h4>
+        {badge && (
+          <Badge variant="outline" className="text-xs">
+            {badge}
+          </Badge>
+        )}
+      </div>
+      {hint && <p className="text-[11px] text-muted-foreground">{hint}</p>}
+      {children}
+    </div>
+  );
+}
+
 export function MonstieCreatorPanel() {
   const {
     loading,
     eligibleMonsters,
     draft,
     baseMonster,
+    choices,
     builtMonstie,
-    maxSkillSlots,
-    maxTraitSlots,
-    maxCreatureSlots,
     classFeatures,
     setDraft,
+    setLevel,
     selectBaseMonster,
     toggleSkill,
     toggleTrait,
     toggleCreatureFeature,
+    changeAbilityIncrease,
     generateRandom,
     resetDraft,
   } = useMonstieCreator();
-
-  const mappedAbilities = useMemo(
-    () =>
-      baseMonster ? mapAbilitiesFromOriginal(baseMonster.abilities) : null,
-    [baseMonster],
-  );
-
-  const signatureOptions = useMemo(
-    () => (baseMonster ? getSignatureAttackOptions(baseMonster) : []),
-    [baseMonster],
-  );
-
-  const traitOptions = useMemo(
-    () => (baseMonster ? getTraitOptions(baseMonster) : []),
-    [baseMonster],
-  );
-
-  const creatureOptions = useMemo(
-    () => (baseMonster ? getCreatureFeatureOptions(baseMonster) : []),
-    [baseMonster],
-  );
 
   const featuresForLevel = useMemo(
     () => classFeatures.filter((f) => f.level <= draft.level),
     [classFeatures, draft.level],
   );
+
+  const pointsUsed = choices ? sumAbilityIncreases(choices.abilityIncreases) : 0;
+  const rulesSignature = baseMonster ? hasRulesSignatureAttack(baseMonster) : true;
+  const showSaveFallback =
+    choices !== null &&
+    hasMonstieSavingThrows(choices.level) &&
+    !choices.baseHasSaves;
 
   if (loading) {
     return (
@@ -105,7 +116,7 @@ export function MonstieCreatorPanel() {
 
   return (
     <div className="grid grid-cols-1 xl:grid-cols-[1fr_380px] gap-6">
-      <div className="space-y-5">
+      <div className="space-y-5 min-w-0">
         <div className="flex flex-wrap gap-2">
           <Button type="button" size="sm" onClick={generateRandom}>
             <Dices className="h-4 w-4 mr-1.5" />
@@ -131,7 +142,7 @@ export function MonstieCreatorPanel() {
           <div className="grid gap-3 sm:grid-cols-2">
             <label className="space-y-1.5">
               <span className="text-xs font-medium text-muted-foreground">
-                Base monster (MHMM)
+                Original monster (MHMM)
               </span>
               <Select
                 value={draft.baseMonsterName}
@@ -146,8 +157,8 @@ export function MonstieCreatorPanel() {
                 ))}
               </Select>
               <p className="text-[11px] text-muted-foreground">
-                {eligibleMonsters.length} eligible monsters (without Elder
-                Dragon ni Paragon).
+                {eligibleMonsters.length} eligible monsters (no Elder Dragons,
+                Paragons or tempered versions).
               </p>
             </label>
 
@@ -168,7 +179,7 @@ export function MonstieCreatorPanel() {
               </span>
               <Select
                 value={String(draft.level)}
-                onChange={(e) => setDraft({ level: Number(e.target.value) })}
+                onChange={(e) => setLevel(Number(e.target.value))}
               >
                 {Array.from({ length: 20 }, (_, i) => i + 1).map((lvl) => (
                   <option key={lvl} value={lvl}>
@@ -181,6 +192,24 @@ export function MonstieCreatorPanel() {
 
             <label className="space-y-1.5">
               <span className="text-xs font-medium text-muted-foreground">
+                Attack (template action)
+              </span>
+              <Select
+                value={draft.baseAttackName}
+                onChange={(e) => setDraft({ baseAttackName: e.target.value })}
+                disabled={!choices || choices.baseAttackOptions.length === 0}
+              >
+                <option value="">— Choose —</option>
+                {choices?.baseAttackOptions.map((a) => (
+                  <option key={a.name} value={a.name}>
+                    {a.name}
+                  </option>
+                ))}
+              </Select>
+            </label>
+
+            <label className="space-y-1.5 sm:col-span-2">
+              <span className="text-xs font-medium text-muted-foreground">
                 Signature Attack
               </span>
               <Select
@@ -188,116 +217,184 @@ export function MonstieCreatorPanel() {
                 onChange={(e) =>
                   setDraft({ signatureAttackName: e.target.value })
                 }
-                disabled={!baseMonster}
+                disabled={!choices || choices.signatureOptions.length === 0}
               >
                 <option value="">— Choose —</option>
-                {signatureOptions.map((a) => (
+                {choices?.signatureOptions.map((a) => (
                   <option key={a.name} value={a.name}>
                     {a.name}
                   </option>
                 ))}
               </Select>
+              {!rulesSignature && (
+                <p className="text-[11px] text-amber-500">
+                  The original monster has no recharge or limited-use action.
+                  Agree on a signature attack with your DM.
+                </p>
+              )}
             </label>
           </div>
-
-          {mappedAbilities && (
-            <div className="rounded-md bg-muted/30 border border-border px-3 py-2">
-              <p className="text-xs text-muted-foreground mb-1">
-                Features (array 15, 14, 13, 12, 10, 8 according to the original
-                monster)
-              </p>
-              <p className="text-sm font-mono text-foreground">
-                {formatAbilityScoresLine(mappedAbilities)}
-              </p>
-            </div>
-          )}
         </div>
 
-        {baseMonster && (
+        {choices && (
           <>
-            <div className="rounded-lg border border-border bg-card p-4 space-y-3">
-              <div className="flex items-center justify-between gap-2">
-                <h4 className="text-sm font-semibold text-foreground">
-                  Skill Proficiencies
-                </h4>
-                <Badge variant="outline" className="text-xs">
-                  {draft.selectedSkills.length}/{maxSkillSlots}
-                </Badge>
+            <SectionCard
+              title="Ability Scores"
+              badge={`${pointsUsed}/${choices.abilityBudget} points`}
+              hint="Array 15, 14, 13, 12, 10, 8 placed like the original monster. Points come from Ability Score Improvements and feature fallbacks (max 20)."
+            >
+              <div className="grid grid-cols-3 sm:grid-cols-6 gap-2">
+                {ABILITY_KEYS.map((key) => {
+                  const bonus = choices.abilityIncreases[key] ?? 0;
+                  const score = choices.abilities[key];
+                  return (
+                    <div
+                      key={key}
+                      className="rounded-md border border-border bg-muted/30 px-2 py-1.5 text-center"
+                    >
+                      <p className="text-[11px] font-bold text-muted-foreground">
+                        {ABILITY_ABBREVIATIONS[key]}
+                      </p>
+                      <p className="text-sm font-semibold text-foreground">
+                        {score}{" "}
+                        <span className="text-xs text-muted-foreground font-normal">
+                          ({formatModifier(getAbilityModifier(score))})
+                        </span>
+                      </p>
+                      {choices.abilityBudget > 0 && (
+                        <div className="mt-1 flex items-center justify-center gap-1">
+                          <Button
+                            type="button"
+                            size="icon"
+                            variant="ghost"
+                            className="h-6 w-6"
+                            disabled={bonus <= 0}
+                            onClick={() => changeAbilityIncrease(key, -1)}
+                            aria-label={`Decrease ${ABILITY_ABBREVIATIONS[key]}`}
+                          >
+                            <Minus className="h-3 w-3" />
+                          </Button>
+                          <Button
+                            type="button"
+                            size="icon"
+                            variant="ghost"
+                            className="h-6 w-6"
+                            disabled={
+                              pointsUsed >= choices.abilityBudget ||
+                              score >= MONSTIE_ABILITY_CAP
+                            }
+                            onClick={() => changeAbilityIncrease(key, 1)}
+                            aria-label={`Increase ${ABILITY_ABBREVIATIONS[key]}`}
+                          >
+                            <Plus className="h-3 w-3" />
+                          </Button>
+                        </div>
+                      )}
+                    </div>
+                  );
+                })}
               </div>
+            </SectionCard>
+
+            <SectionCard
+              title="Monstie Proficiencies"
+              badge={`${choices.selectedSkills.length}/${choices.maxSkillSlots}`}
+            >
               <div className="flex flex-wrap gap-1.5">
-                {(Object.keys(baseMonster.skills) as SkillKey[]).map((key) => (
+                {choices.skillOptions.map((key) => (
                   <OptionChip
                     key={key}
                     label={SKILL_LABELS[key] ?? key}
-                    selected={draft.selectedSkills.includes(key)}
+                    selected={choices.selectedSkills.includes(key)}
                     disabled={
-                      !draft.selectedSkills.includes(key) &&
-                      draft.selectedSkills.length >= maxSkillSlots
+                      !choices.selectedSkills.includes(key) &&
+                      choices.selectedSkills.length >= choices.maxSkillSlots
                     }
                     onClick={() => toggleSkill(key)}
                   />
                 ))}
-                {Object.keys(baseMonster.skills).length === 0 && (
+                {choices.skillOptions.length === 0 && (
                   <p className="text-xs text-muted-foreground">
-                    The base monster has no skills in its stat block.
+                    The original monster has no skills in its stat block.
                   </p>
                 )}
               </div>
-            </div>
+            </SectionCard>
 
-            {maxTraitSlots > 0 && (
-              <div className="rounded-lg border border-border bg-card p-4 space-y-3">
-                <div className="flex items-center justify-between gap-2">
-                  <h4 className="text-sm font-semibold text-foreground">
-                    Monstie Traits
-                  </h4>
-                  <Badge variant="outline" className="text-xs">
-                    {draft.selectedTraits.length}/{maxTraitSlots}
-                  </Badge>
-                </div>
+            {choices.level >= 2 && (
+              <SectionCard
+                title="Monstie Traits"
+                badge={`${choices.selectedTraits.length}/${choices.maxTraitSlots}`}
+                hint={
+                  choices.traitOptions.length === 0
+                    ? "The original monster has no non-damage traits: each Monstie Trait grants +1 ability point instead."
+                    : undefined
+                }
+              >
                 <div className="flex flex-wrap gap-1.5">
-                  {traitOptions.map((t) => (
+                  {choices.traitOptions.map((t) => (
                     <OptionChip
                       key={t.name}
                       label={t.name}
-                      selected={draft.selectedTraits.includes(t.name)}
+                      selected={choices.selectedTraits.includes(t.name)}
                       disabled={
-                        !draft.selectedTraits.includes(t.name) &&
-                        draft.selectedTraits.length >= maxTraitSlots
+                        !choices.selectedTraits.includes(t.name) &&
+                        choices.selectedTraits.length >= choices.maxTraitSlots
                       }
                       onClick={() => toggleTrait(t.name)}
                     />
                   ))}
                 </div>
-              </div>
+              </SectionCard>
             )}
 
-            {maxCreatureSlots > 0 && (
-              <div className="rounded-lg border border-border bg-card p-4 space-y-3">
-                <div className="flex items-center justify-between gap-2">
-                  <h4 className="text-sm font-semibold text-foreground">
-                    Creature (traits / actions)
-                  </h4>
-                  <Badge variant="outline" className="text-xs">
-                    {draft.selectedCreatureFeatures.length}/{maxCreatureSlots}
-                  </Badge>
-                </div>
+            {choices.maxCreatureSlots > 0 && (
+              <SectionCard
+                title="Creature (traits / actions)"
+                badge={`${choices.selectedCreatureFeatures.length}/${choices.maxCreatureSlots}`}
+              >
                 <div className="flex flex-wrap gap-1.5">
-                  {creatureOptions.map((c) => (
+                  {choices.creatureOptions.map((c) => (
                     <OptionChip
                       key={c.name}
                       label={c.name}
-                      selected={draft.selectedCreatureFeatures.includes(c.name)}
+                      selected={choices.selectedCreatureFeatures.includes(c.name)}
                       disabled={
-                        !draft.selectedCreatureFeatures.includes(c.name) &&
-                        draft.selectedCreatureFeatures.length >=
-                          maxCreatureSlots
+                        !choices.selectedCreatureFeatures.includes(c.name) &&
+                        choices.selectedCreatureFeatures.length >=
+                          choices.maxCreatureSlots
                       }
                       onClick={() => toggleCreatureFeature(c.name)}
                     />
                   ))}
+                  {choices.creatureOptions.length === 0 && (
+                    <p className="text-xs text-muted-foreground">
+                      No remaining traits or actions qualify.
+                    </p>
+                  )}
                 </div>
-              </div>
+              </SectionCard>
+            )}
+
+            {showSaveFallback && (
+              <SectionCard
+                title="Saving Throws (7th level)"
+                hint="The original monster has no saving throw proficiencies: gain one of its condition immunities, or +2 ability points."
+              >
+                <Select
+                  value={draft.saveFallbackCondition}
+                  onChange={(e) =>
+                    setDraft({ saveFallbackCondition: e.target.value })
+                  }
+                >
+                  <option value="">+2 ability points</option>
+                  {choices.conditionImmunityOptions.map((c) => (
+                    <option key={c} value={c}>
+                      Immunity: {c}
+                    </option>
+                  ))}
+                </Select>
+              </SectionCard>
             )}
           </>
         )}
@@ -316,7 +413,7 @@ export function MonstieCreatorPanel() {
                   <p className="text-sm font-medium text-primary">
                     {f.name}{" "}
                     <span className="text-muted-foreground font-normal">
-                      (niv. {f.level})
+                      (lvl {f.level})
                     </span>
                   </p>
                   <p className="text-xs text-muted-foreground mt-0.5 line-clamp-3">
@@ -329,17 +426,22 @@ export function MonstieCreatorPanel() {
         )}
       </div>
 
-      <div className="xl:sticky xl:top-4 xl:self-start">
+      <div className="xl:sticky xl:top-4 xl:self-start min-w-0">
         <div className="rounded-lg border-2 border-amber-800/40 bg-gradient-to-b from-amber-950/20 to-card p-4">
-          <h3 className="text-sm font-bold text-amber-400 uppercase tracking-wider mb-3">
+          <h3 className="text-sm font-bold text-amber-400 uppercase tracking-wider mb-1">
             Preview
           </h3>
           {builtMonstie ? (
-            <MonsterStatBlock monster={builtMonstie} />
+            <>
+              <h2 className="text-lg font-bold text-foreground mb-2">
+                {builtMonstie.name}
+              </h2>
+              <MonsterStatBlock monster={builtMonstie} />
+            </>
           ) : (
             <p className="text-sm text-muted-foreground">
-              Choose a base monster from the Monster Manual to generate the stat
-              block of your monstie sidekick.
+              Choose an original monster from the Monster Manual to generate the
+              stat block of your monstie sidekick.
             </p>
           )}
         </div>

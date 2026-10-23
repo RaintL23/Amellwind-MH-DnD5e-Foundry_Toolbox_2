@@ -1,5 +1,5 @@
 import type { DowntimeTable } from "./downtime.types";
-import type { SkillKey } from "./actor.types";
+import type { AbilityKey, SkillKey } from "./actor.types";
 import type { Monster } from "./monster.types";
 
 export type MonstieRulesContent =
@@ -40,7 +40,13 @@ export interface MonstieDraft {
   baseMonsterName: string;
   /** Skill keys chosen from the base monster (max depends on level) */
   selectedSkills: SkillKey[];
+  /** Template action: one damaging attack of the original monster */
+  baseAttackName: string;
   signatureAttackName: string;
+  /** Points from ASI / trait / saving throw fallbacks, per ability (capped at 20) */
+  abilityIncreases: Partial<Record<AbilityKey, number>>;
+  /** 7th level, original without saves: chosen condition immunity ("" = +2 ability points) */
+  saveFallbackCondition: string;
   /** Trait names learned at L2 / L10 / L20 */
   selectedTraits: string[];
   /** Trait or action names from Creature feature (L3 / L11 / L18) */
