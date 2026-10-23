@@ -19,6 +19,10 @@ import {
 } from "node:fs";
 import path from "node:path";
 import { fileURLToPath } from "node:url";
+import {
+  markdownToEntries,
+  normalizeNewlines,
+} from "./lib/markdown-entries.mjs";
 
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
 const ROOT = path.resolve(__dirname, "..");
@@ -150,12 +154,8 @@ function splitSections(body) {
 }
 
 function parseBio(content) {
-  if (!content) return undefined;
-  const paragraphs = content
-    .split(/\n\n+/)
-    .map((p) => p.replace(/\s+/g, " ").trim())
-    .filter(Boolean);
-  return paragraphs.length > 0 ? paragraphs : undefined;
+  const entries = markdownToEntries(content);
+  return entries.length > 0 ? entries : undefined;
 }
 
 function parseNamedEntries(content) {
@@ -194,64 +194,10 @@ function parseNamedEntries(content) {
   return entries.length > 0 ? entries : undefined;
 }
 
-/**
- * Split a named-entry body into 5etools-shaped paragraphs and bullet lists.
- * Markdown `- **Name.** text` becomes `{ type: "list", items: [{ type: "item", ... }] }`.
- */
+/** Named-entry body → 5etools paragraphs and `- **Name.** text` lists. */
 function parseEntryBody(rawText) {
-  const text = String(rawText ?? "").replace(/\r\n/g, "\n").trim();
-  if (!text) return [""];
-
-  const result = [];
-  const lines = text.split("\n");
-  let paraLines = [];
-  let listItems = [];
-
-  const flushPara = () => {
-    const paragraph = paraLines.join(" ").replace(/\s+/g, " ").trim();
-    if (paragraph) result.push(paragraph);
-    paraLines = [];
-  };
-
-  const flushList = () => {
-    if (listItems.length === 0) return;
-    result.push({ type: "list", items: listItems });
-    listItems = [];
-  };
-
-  for (const line of lines) {
-    const bullet = line.match(/^\s*[-*]\s+(.*)$/);
-    if (bullet) {
-      flushPara();
-      const content = bullet[1].trim();
-      const named = content.match(/^\*\*(.+?)\*\*\.?\s*(.*)$/);
-      if (named) {
-        const itemName = named[1].trim().replace(/\.$/, "");
-        const itemBody = named[2].replace(/\s+/g, " ").trim();
-        listItems.push({
-          type: "item",
-          name: itemName,
-          entries: itemBody ? [itemBody] : [""],
-        });
-      } else {
-        listItems.push(content.replace(/\s+/g, " ").trim());
-      }
-      continue;
-    }
-
-    if (line.trim() === "") {
-      flushList();
-      flushPara();
-      continue;
-    }
-
-    flushList();
-    paraLines.push(line.trim());
-  }
-
-  flushList();
-  flushPara();
-  return result.length > 0 ? result : [text.replace(/\s+/g, " ").trim()];
+  const entries = markdownToEntries(rawText);
+  return entries.length > 0 ? entries : [""];
 }
 
 function parseStatBlockBullets(content) {
@@ -514,7 +460,7 @@ function main() {
   const parsedByFile = new Map();
   for (const relativeFile of targetFiles) {
     const fullPath = path.join(MONSTERS_DIR, relativeFile);
-    const content = readFileSync(fullPath, "utf8");
+    const content = normalizeNewlines(readFileSync(fullPath, "utf8"));
     const monster = buildMonsterFromMarkdown(relativeFile, content);
     parsedByFile.set(`monsters/${relativeFile}`, monster);
   }

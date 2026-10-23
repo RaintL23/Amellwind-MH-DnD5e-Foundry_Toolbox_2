@@ -12,6 +12,13 @@ import {
   getAppendixEnvironmentsForName,
   parseAppendixEnvironments,
 } from "./lib/parse-mm-appendix-environments.mjs";
+import {
+  findAfflictionSections,
+  markdownToEntries,
+  normalizeNewlines,
+  parseAfflictionHeading,
+  stripAfflictionPrefixes,
+} from "./lib/markdown-entries.mjs";
 
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
 const stagingDir = path.resolve(__dirname, "../public/data/mhmm-patreon-2.0");
@@ -71,12 +78,44 @@ function mapType(creatureType) {
   return { type: creatureType.trim().toLowerCase() };
 }
 
+const DAMAGE_QUALIFIER = /\s+((?:from|that|while|when|except)\b.*)$/;
+
+function splitWordList(text) {
+  return text
+    .split(/,|\s+and\s+(?![^(]*\))/)
+    .map((p) =>
+      p
+        .trim()
+        .replace(/^and\s+/, "")
+        .replace(/\s+damage$/, "")
+        .replace(/\.$/, "")
+        .trim(),
+    )
+    .filter((p) => p && p !== "—" && p !== "-");
+}
+
+/**
+ * `poison; bludgeoning, piercing, and slashing from nonmagical attacks` →
+ * `["poison", { resist: [...], note: "from nonmagical attacks", cond: true }]`
+ * (the app's `ConditionalDamage` shape for every damage list).
+ */
 function parseDamageList(raw) {
   if (!raw || typeof raw !== "string") return undefined;
   const parts = raw
-    .split(/[,;]/)
-    .map((p) => p.trim().toLowerCase())
-    .filter((p) => p && p !== "—" && p !== "-");
+    .toLowerCase()
+    .split(";")
+    .flatMap((group) => {
+      const text = group
+        .trim()
+        .replace(/\.$/, "")
+        .replace(/^\((.*)\)$/, "$1");
+      const qualifier = text.match(DAMAGE_QUALIFIER);
+      if (!qualifier) return splitWordList(text);
+      const types = splitWordList(text.slice(0, qualifier.index));
+      return types.length > 0
+        ? [{ resist: types, note: qualifier[1], cond: true }]
+        : [];
+    });
   return parts.length > 0 ? parts : undefined;
 }
 
@@ -122,62 +161,8 @@ function parseLanguages(raw) {
 }
 
 function textToEntries(text) {
-  const raw = String(text ?? "");
-  // Prefer structured parse when markdown bullets / paragraphs are present.
-  if (/^\s*[-*]\s+/m.test(raw) || /\n\n/.test(raw)) {
-    // Inline copy of catalog parseEntryBody for bullet support when only text is set.
-    const normalized = raw.replace(/\r\n/g, "\n").trim();
-    const result = [];
-    const lines = normalized.split("\n");
-    let paraLines = [];
-    let listItems = [];
-    const flushPara = () => {
-      const paragraph = paraLines.join(" ").replace(/\s+/g, " ").trim();
-      if (paragraph) result.push(paragraph);
-      paraLines = [];
-    };
-    const flushList = () => {
-      if (listItems.length === 0) return;
-      result.push({ type: "list", items: listItems });
-      listItems = [];
-    };
-    for (const line of lines) {
-      const bullet = line.match(/^\s*[-*]\s+(.*)$/);
-      if (bullet) {
-        flushPara();
-        const content = bullet[1].trim();
-        const named = content.match(/^\*\*(.+?)\*\*\.?\s*(.*)$/);
-        if (named) {
-          const itemName = named[1].trim().replace(/\.$/, "");
-          const itemBody = named[2].replace(/\s+/g, " ").trim();
-          listItems.push({
-            type: "item",
-            name: itemName,
-            entries: itemBody ? [itemBody] : [""],
-          });
-        } else {
-          listItems.push(content.replace(/\s+/g, " ").trim());
-        }
-        continue;
-      }
-      if (line.trim() === "") {
-        flushList();
-        flushPara();
-        continue;
-      }
-      flushList();
-      paraLines.push(line.trim());
-    }
-    flushList();
-    flushPara();
-    if (result.length > 0) return result;
-  }
-
-  const parts = raw
-    .split(/\n\n+/)
-    .map((part) => part.replace(/\s+/g, " ").trim())
-    .filter(Boolean);
-  return parts.length > 0 ? parts : [raw];
+  const entries = markdownToEntries(text);
+  return entries.length > 0 ? entries : [String(text ?? "")];
 }
 
 function mapNamedEntries(list) {
@@ -215,10 +200,8 @@ function namedEffectList(name, materials, field) {
 function buildFluff(monster) {
   const entries = [];
   if (Array.isArray(monster.bio)) {
-    for (const paragraph of monster.bio) {
-      if (typeof paragraph === "string" && paragraph.trim()) {
-        entries.push(paragraph.trim());
-      }
+    for (const entry of stripAfflictionPrefixes(monster.bio)) {
+      if (typeof entry === "string" ? entry.trim() : entry) entries.push(entry);
     }
   }
 
@@ -283,66 +266,56 @@ function mapCr(raw) {
   return first ? first[1] : text;
 }
 
-function parseConditionsMarkdown(md) {
-  const conditions = [];
-  const diseases = [];
-  const parts = md.split(/^## /m).slice(1);
-  for (const part of parts) {
-    const nl = part.indexOf("\n");
-    const heading = (nl === -1 ? part : part.slice(0, nl)).trim();
-    const body = (nl === -1 ? "" : part.slice(nl)).trim();
-    if (!heading) continue;
-
-    let name = heading;
-    let kind = "condition";
-    if (/^Disease:/i.test(heading)) {
-      kind = "disease";
-      name = heading.replace(/^Disease:\s*/i, "").trim();
-    } else if (/^Poison:/i.test(heading)) {
-      kind = "condition";
-      name = heading.replace(/^Poison:\s*/i, "").trim();
-    }
-
-    const entries = [];
-    if (/^Poison:/i.test(heading)) {
-      entries.push({
-        type: "homebrew",
-        entries: [
-          `${name} is considered a type of poison for the purposes of features that grant advantage on saves against or immunity to poisons.`,
-        ],
-      });
-    }
-    if (kind === "disease") {
-      entries.push({
-        type: "homebrew",
-        entries: [
-          `${name} is considered a type of disease for the purposes of features that grant advantage on saves against or immunity to diseases.`,
-        ],
-      });
-    }
-    if (body) entries.push(body.replace(/\s+/g, " ").trim());
-    const obj = { name, source: SOURCE, entries };
-    if (kind === "disease") diseases.push(obj);
-    else conditions.push(obj);
-  }
-  return { conditions, diseases };
+/** Same-name note the chapter adds to every poison / disease. */
+function afflictionTypeNote(kind, name) {
+  if (kind !== "poison" && kind !== "disease") return [];
+  return [
+    {
+      type: "homebrew",
+      entries: [
+        `${name} is considered a type of ${kind} for the purposes of features that grant advantage on saves against or immunity to ${kind}s.`,
+      ],
+    },
+  ];
 }
 
-function extractFrenzyVirus(catalogMonsters) {
-  const shagaru = catalogMonsters.find((m) => m && m.name === "Shagaru Magala");
-  const bio = Array.isArray(shagaru?.bio) ? shagaru.bio : [];
-  const start = bio.findIndex(
-    (p) =>
-      typeof p === "string" &&
-      /frenzy virus is an infectious disease/i.test(p),
+function toAfflictionEntry({ kind, name, entries }) {
+  return {
+    name,
+    source: SOURCE,
+    // Note last so list summaries show the affliction's own first paragraph.
+    entries: [...entries, ...afflictionTypeNote(kind, name)],
+  };
+}
+
+/** `## Name` / `## Disease: Name` / `## Poison: Name` chapter sections. */
+function parseConditionsMarkdown(md) {
+  const afflictions = markdownToEntries(md)
+    .filter((entry) => entry?.type === "entries")
+    .map((section) => ({
+      ...(parseAfflictionHeading(section.name) ?? {
+        kind: "condition",
+        name: section.name,
+      }),
+      entries: section.entries,
+    }));
+  return afflictions.map((found) => ({
+    kind: found.kind,
+    entry: toAfflictionEntry(found),
+  }));
+}
+
+/** Afflictions written as `### Disease: Name` inside a monster's lore. */
+function extractBioAfflictions(catalogMonsters) {
+  return catalogMonsters.flatMap((monster) =>
+    findAfflictionSections(monster?.bio).map((found) => ({
+      kind: found.kind,
+      entry: toAfflictionEntry({
+        ...found,
+        entries: stripAfflictionPrefixes(found.entries),
+      }),
+    })),
   );
-  if (start < 0) return null;
-  const paras = bio
-    .slice(start)
-    .filter((p) => typeof p === "string" && p.trim())
-    .map((p) => String(p).replace(/\s+/g, " ").trim());
-  if (paras.length === 0) return null;
-  return { name: "Frenzy Virus", source: SOURCE, entries: paras };
 }
 
 function toFiveToolsMonster(monster, envByNorm) {
@@ -426,14 +399,21 @@ const withEnvironment = monsters.filter(
   (m) => Array.isArray(m.environment) && m.environment.length > 0,
 ).length;
 
-const chapterMd = readFileSync(
-  path.join(stagingDir, "01-conditions-poisons-diseases.md"),
-  "utf8",
+const chapterMd = normalizeNewlines(
+  readFileSync(
+    path.join(stagingDir, "01-conditions-poisons-diseases.md"),
+    "utf8",
+  ),
 );
-const { conditions, diseases } = parseConditionsMarkdown(chapterMd);
-if (!diseases.some((d) => d.name === "Frenzy Virus")) {
-  const frenzy = extractFrenzyVirus(all);
-  if (frenzy) diseases.push(frenzy);
+// Chapter entries win over same-name sections found in monster lore.
+const conditions = [];
+const diseases = [];
+for (const { kind, entry } of [
+  ...parseConditionsMarkdown(chapterMd),
+  ...extractBioAfflictions(all),
+]) {
+  const list = kind === "disease" ? diseases : conditions;
+  if (!list.some((existing) => existing.name === entry.name)) list.push(entry);
 }
 
 const supplement = {

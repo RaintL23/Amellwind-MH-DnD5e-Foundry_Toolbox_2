@@ -9,7 +9,11 @@ export default defineConfig({
   },
   test: {
     environment: "node",
-    include: ["src/**/*.{test,spec}.{ts,tsx}", "scripts/gtmh/**/*.test.ts"],
+    include: [
+      "src/**/*.{test,spec}.{ts,tsx}",
+      "scripts/gtmh/**/*.test.ts",
+      "scripts/lib/**/*.test.ts",
+    ],
     clearMocks: true,
   },
 });
