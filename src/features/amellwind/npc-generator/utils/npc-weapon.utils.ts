@@ -2,6 +2,7 @@ import type { AbilityKey, Entry } from "@/shared/types";
 import {
   DMG_TYPE_LABELS,
   RARITY_ORDER,
+  getWeaponFeatureLabel,
   isWeaponAcBonusColumn,
   type OptionalFeature,
   type RarityTier,
@@ -50,6 +51,11 @@ export function getRarityTierAtIndex(index: number): RarityTier {
   return RARITY_ORDER[Math.min(RARITY_ORDER.length - 1, Math.max(0, index))];
 }
 
+/** "150/600" → "150/600 ft." (AGMH weapon ranges omit the unit). */
+function formatWeaponRange(range: string): string {
+  return /\bft\.?$|\bfeet$/i.test(range) ? range : `${range} ft.`;
+}
+
 function parseFlatBonus(bonus?: string): number {
   if (!bonus) return 0;
   const match = bonus.match(/[+-]?\d+/);
@@ -64,20 +70,25 @@ export function resolveNpcAttackFromWeapon(
   const row =
     weapon.rarityRows[rarityIndex] ??
     weapon.rarityRows[weapon.rarityRows.length - 1];
-  const toHitBonus = getRarityToHitBonus(row);
+  const toHitBonus = row ? getRarityToHitBonus(row) : undefined;
   const flatFromRarity = parseFlatBonus(toHitBonus);
-  const isRanged = Boolean(weapon.range?.trim());
-  const ability: AbilityKey =
-    weapon.properties.includes("F") && !weapon.properties.includes("2H")
-      ? "dex"
-      : attack.ability;
+  const range = weapon.range?.trim();
+  const isRanged = Boolean(range);
+  const ability: AbilityKey = isRanged ? "dex" : attack.kind === "rw" ? "str" : attack.ability;
 
   return {
     ...attack,
     name: weapon.name,
-    kind: isRanged ? "rw" : attack.kind,
+    kind: isRanged ? "rw" : "mw",
     ability,
-    reachOrRange: weapon.range?.trim() || attack.reachOrRange,
+    finesse: weapon.properties.includes("F"),
+    reachOrRange: range
+      ? formatWeaponRange(range)
+      : weapon.properties.includes("R")
+        ? "10 ft."
+        : attack.kind === "mw"
+          ? attack.reachOrRange
+          : "5 ft.",
     damageDice: weapon.dmg1 || attack.damageDice,
     flatDamageBonus:
       flatFromRarity !== 0 ? flatFromRarity : attack.flatDamageBonus,
@@ -111,7 +122,9 @@ function collectFeatureNamesAtRarity(
     names.push(name);
   };
 
-  for (const col of buildColumnChains(weapon.rarityRows)) {
+  for (const col of buildColumnChains(weapon.rarityRows, {
+    featureLabels: weapon.featureLabels,
+  })) {
     for (const chain of col.chains) {
       const eligible = chain.features.filter((f) => f.rarityIndex <= rarityIndex);
       if (eligible.length > 0) {
@@ -141,13 +154,14 @@ export function buildWeaponFeatureActions(
 
   const addFeature = (feat: OptionalFeature | undefined) => {
     if (!feat || actions.length >= maxFeatures) return;
-    const key = feat.name.toLowerCase();
+    const label = getWeaponFeatureLabel(weapon, feat.name);
+    const key = label.toLowerCase();
     if (seen.has(key)) return;
-    if (NPC_WEAPON_META_FEATURE.test(feat.name)) return;
+    if (NPC_WEAPON_META_FEATURE.test(label)) return;
     if (!featureAllowedAtRarity(feat, rarityIndex)) return;
     seen.add(key);
     actions.push({
-      name: feat.name,
+      name: label,
       entries: feat.paragraphs.map((p) => toNpcFeatureText(p, subjectRef)),
     });
   };

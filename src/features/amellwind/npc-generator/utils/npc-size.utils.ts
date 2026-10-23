@@ -5,10 +5,15 @@ import type { Species } from "@/shared/types";
 export const PLAYABLE_HIT_DIES: NpcHitDie[] = [6, 8, 10];
 
 export const HIT_DIE_TO_SIZE: Record<number, string> = {
+  4: "Tiny",
   6: "Small",
   8: "Medium",
   10: "Large",
+  12: "Huge",
+  20: "Gargantuan",
 };
+
+const SIZE_ORDER = ["Tiny", "Small", "Medium", "Large", "Huge", "Gargantuan"];
 
 /**
  * Derive the creature size from the chosen hit die, clamped to the species'
@@ -21,15 +26,14 @@ export function resolveNpcSize(hitDie: NpcHitDie, species?: Species): string {
 
   if (species.sizes.includes(fromDie as never)) return fromDie;
 
-  const ORDER = ["Small", "Medium", "Large"];
-  const dieIndex = ORDER.indexOf(fromDie);
+  const dieIndex = SIZE_ORDER.indexOf(fromDie);
 
   // Find the closest allowed size to the one implied by the hit die.
   let best = species.sizes[0] as string;
-  let bestDist = Math.abs(ORDER.indexOf(best) - dieIndex);
+  let bestDist = Math.abs(SIZE_ORDER.indexOf(best) - dieIndex);
 
   for (const s of species.sizes) {
-    const dist = Math.abs(ORDER.indexOf(s as string) - dieIndex);
+    const dist = Math.abs(SIZE_ORDER.indexOf(s as string) - dieIndex);
     if (dist < bestDist) {
       bestDist = dist;
       best = s as string;

@@ -45,6 +45,8 @@ export interface NpcAttackDefinition {
   mhWeaponName?: string;
   /** Flat bonus to attack rolls from hit-dice power scaling. */
   extraHitBonus?: number;
+  /** Finesse weapon: uses the higher of Strength and Dexterity. */
+  finesse?: boolean;
 }
 
 export interface NpcTemplate {

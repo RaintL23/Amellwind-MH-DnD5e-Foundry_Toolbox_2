@@ -22,6 +22,7 @@ import {
   loadNpcGeneratorData,
 } from "../services/npc-generator.service";
 import { clampHitDiceForTier } from "../utils/npc-power-scaling";
+import { resolveGender } from "../utils/npc-descriptor";
 
 interface NpcCreatorContextValue {
   loading: boolean;
@@ -61,8 +62,21 @@ export function NpcCreatorProvider({ children }: { children: ReactNode }) {
   const [abilityScores, setAbilityScores] = useState<number[]>(() =>
     rollAttributeArray("standard"),
   );
+  // "Random" gender is rolled once (and on randomize/reset), not on every rebuild.
+  const [rolledGender, setRolledGender] = useState(() => resolveGender("random"));
   const draftRef = useRef(draft);
   draftRef.current = draft;
+  const rolledGenderRef = useRef(rolledGender);
+  rolledGenderRef.current = rolledGender;
+
+  /** Draft with "random" gender pinned to the rolled value (names / descriptor agree). */
+  const withResolvedGender = useCallback(
+    (d: NpcDraft): NpcDraft => ({
+      ...d,
+      gender: d.gender === "random" ? rolledGenderRef.current : d.gender,
+    }),
+    [],
+  );
 
   useEffect(() => {
     loadNpcGeneratorData()
@@ -79,71 +93,73 @@ export function NpcCreatorProvider({ children }: { children: ReactNode }) {
   }, []);
 
   const setDraft = useCallback((patch: Partial<NpcDraft>) => {
-    setDraftState((prev) => {
-      const next = { ...prev, ...patch };
+    const prev = draftRef.current;
+    if (
+      patch.attributeArray !== undefined &&
+      patch.attributeArray !== prev.attributeArray
+    ) {
+      setAbilityScores(rollAttributeArray(patch.attributeArray));
+    }
+    if (patch.gender === "random" && prev.gender !== "random") {
+      setRolledGender(resolveGender("random"));
+    }
 
+    setDraftState((current) => {
+      const next = { ...current, ...patch };
       if (patch.templateId !== undefined) {
         const template = getNpcTemplateById(patch.templateId);
         if (template) {
           next.hitDiceCount = clampHitDiceForTier(
             template.tier,
-            patch.hitDiceCount ?? prev.hitDiceCount,
+            patch.hitDiceCount ?? current.hitDiceCount,
           );
         }
-      }
-
-      if (
-        patch.attributeArray !== undefined &&
-        patch.attributeArray !== prev.attributeArray
-      ) {
-        setAbilityScores(rollAttributeArray(patch.attributeArray));
       }
       return next;
     });
   }, []);
 
+  const applyRandomPatch = useCallback(
+    (patch: Partial<NpcDraft>, rerollScores: boolean) => {
+      if (rerollScores && patch.attributeArray) {
+        setAbilityScores(rollAttributeArray(patch.attributeArray));
+      }
+      setDraftState((prev) => ({ ...prev, ...patch }));
+    },
+    [],
+  );
+
   const randomizeField = useCallback(
     (field: keyof NpcDraft) => {
       void (async () => {
         const patch = await randomizeNpcDraft(
-          draftRef.current,
+          withResolvedGender(draftRef.current),
           species,
           backgrounds,
           field,
         );
-        setDraftState((prev) => {
-          const next = { ...prev, ...patch };
-          if (field === "attributeArray" && patch.attributeArray) {
-            setAbilityScores(rollAttributeArray(patch.attributeArray));
-          }
-          return next;
-        });
+        applyRandomPatch(patch, field === "attributeArray");
       })();
     },
-    [species, backgrounds],
+    [species, backgrounds, withResolvedGender, applyRandomPatch],
   );
 
   const randomizeAll = useCallback(() => {
     void (async () => {
       const patch = await randomizeNpcDraft(
-        draftRef.current,
+        withResolvedGender(draftRef.current),
         species,
         backgrounds,
       );
-      setDraftState((prev) => {
-        const next = { ...prev, ...patch };
-        if (patch.attributeArray) {
-          setAbilityScores(rollAttributeArray(patch.attributeArray));
-        }
-        return next;
-      });
+      applyRandomPatch(patch, true);
     })();
-  }, [species, backgrounds]);
+  }, [species, backgrounds, withResolvedGender, applyRandomPatch]);
 
   const resetDraft = useCallback(() => {
     const defaultDraft = createDefaultNpcDraft(species, backgrounds);
     setDraftState(defaultDraft);
     setAbilityScores(rollAttributeArray(defaultDraft.attributeArray));
+    setRolledGender(resolveGender("random"));
   }, [species, backgrounds]);
 
   const builtNpc = useMemo(() => {
@@ -152,8 +168,15 @@ export function NpcCreatorProvider({ children }: { children: ReactNode }) {
     if (!template || !sp) return null;
     const bg =
       backgrounds.find((b) => b.id === draft.backgroundId) ?? null;
-    return buildNpcFromDraft(draft, template, sp, bg, abilityScores, weaponContext);
-  }, [draft, species, backgrounds, abilityScores, weaponContext]);
+    return buildNpcFromDraft(
+      { ...draft, gender: draft.gender === "random" ? rolledGender : draft.gender },
+      template,
+      sp,
+      bg,
+      abilityScores,
+      weaponContext,
+    );
+  }, [draft, species, backgrounds, abilityScores, weaponContext, rolledGender]);
 
   const value = useMemo(
     () => ({

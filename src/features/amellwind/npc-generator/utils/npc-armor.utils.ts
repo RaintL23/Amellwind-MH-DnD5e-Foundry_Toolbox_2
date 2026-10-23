@@ -3,6 +3,33 @@ import type { Species } from "@/shared/types";
 import type { NpcTemplate } from "@/shared/types/npc.types";
 import { getAbilityModifier } from "@/shared/utils/cr.utils";
 import { detectNaturalArmorFromTraits } from "@/shared/utils/species-natural-armor";
+import { parseFiveToolsMarkup } from "@/shared/utils/fivetools-parser";
+
+const GENERIC_SHIELD_AC = 2;
+
+/** Worn armor named in `defaultAcFrom`: base AC and Dex cap (PHB). */
+const ARMOR_FORMULAS: Array<{ pattern: RegExp; base: number; dexCap: number }> = [
+  { pattern: /studded leather/i, base: 12, dexCap: Infinity },
+  { pattern: /\bleather armor\b/i, base: 11, dexCap: Infinity },
+  { pattern: /\bhide armor\b/i, base: 12, dexCap: 2 },
+  { pattern: /\bchain shirt\b/i, base: 13, dexCap: 2 },
+  { pattern: /\bfine clothes\b|\bunarmored\b/i, base: 10, dexCap: Infinity },
+];
+
+/** AC for formula templates ("unarmored-dex" / "unarmored-dex-max2"), honoring the named armor. */
+function getFormulaArmorAc(template: NpcTemplate, dexMod: number): number {
+  const armor = ARMOR_FORMULAS.find(({ pattern }) =>
+    pattern.test(template.defaultAcFrom),
+  );
+  let ac = armor
+    ? armor.base + Math.min(armor.dexCap, dexMod)
+    : template.defaultAc === "unarmored-dex"
+      ? 10 + dexMod
+      : 11 + Math.min(2, dexMod);
+  // Barkskin: AC can't be lower than 16.
+  if (/barkskin/i.test(template.defaultAcFrom)) ac = Math.max(ac, 16);
+  return ac;
+}
 
 /**
  * Compute the ArmorClass array for a generated NPC, taking into account:
@@ -40,18 +67,21 @@ export function resolveNpcArmorClass(
   }
 
   // No natural armor — use template formula + optional bonuses.
-  let ac: number;
-  if (template.defaultAc === "unarmored-dex") {
-    ac = 10 + dexMod;
-  } else if (template.defaultAc === "unarmored-dex-max2") {
-    ac = 11 + Math.min(2, dexMod);
-  } else {
-    ac = template.defaultAc;
-  }
+  let ac =
+    typeof template.defaultAc === "number"
+      ? template.defaultAc
+      : getFormulaArmorAc(template, dexMod);
 
-  const from: string[] = [template.defaultAcFrom];
+  const acFrom = parseFiveToolsMarkup(template.defaultAcFrom);
+  const templateHasShield = /\bshield\b/i.test(acFrom);
+  const from: string[] = [acFrom];
 
   if (shieldBonus > 0) {
+    // The MH weapon's shield replaces the template's generic +2 shield.
+    if (templateHasShield) {
+      ac -= GENERIC_SHIELD_AC;
+      from[0] = acFrom.replace(/,?\s*\bshield\b/i, "").trim();
+    }
     ac += shieldBonus;
     from.push(`+${shieldBonus} MH shield`);
   }

@@ -44,7 +44,6 @@ export function buildNpcActions(
     powerProfile,
   );
   const actions: Entry[] = [];
-  const roleLabel = template.name.toLowerCase();
   const subject = formatSubjectAtSentenceStart(subjectRef);
   const hitDiceCount = powerProfile.hitDiceCount;
 
@@ -63,7 +62,7 @@ export function buildNpcActions(
     primaryMhWeapon && isVariantPrimaryWeapon(primaryMhWeapon.name);
   const variantMultiattack =
     usesVariantPrimary && primaryMhWeapon
-      ? getVariantMultiattackText(primaryMhWeapon, roleLabel)
+      ? getVariantMultiattackText(primaryMhWeapon, subjectRef)
       : undefined;
 
   if (variantMultiattack && hitDiceCount >= template.multiattackAt) {
@@ -71,7 +70,11 @@ export function buildNpcActions(
       name: "Multiattack",
       entries: [variantMultiattack],
     });
-  } else if (hitDiceCount >= template.multiattackAt && !rapidFire) {
+  } else if (
+    primaryAttack &&
+    hitDiceCount >= template.multiattackAt &&
+    !rapidFire
+  ) {
     actions.push({
       name: "Multiattack",
       entries: [
@@ -95,7 +98,7 @@ export function buildNpcActions(
         abilities,
         pb,
         rarityIndex,
-        roleLabel,
+        subjectRef,
         weaponContext,
       ),
     );
@@ -108,7 +111,9 @@ export function buildNpcActions(
 
   for (const attack of secondaryAttacks) {
     actions.push({
-      name: `${attack.name} (Secondary)`,
+      name: /\(secondary\)\s*$/i.test(attack.name)
+        ? attack.name
+        : `${attack.name} (Secondary)`,
       entries: [formatAttackEntry(attack, abilities, pb)],
     });
   }

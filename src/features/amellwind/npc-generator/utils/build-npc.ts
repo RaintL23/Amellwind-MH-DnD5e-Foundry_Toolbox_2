@@ -20,7 +20,11 @@ import {
   parseSpeciesSpeed,
 } from "./npc-stats";
 import { resolveNpcPowerProfile } from "./npc-power-scaling";
-import { buildNpcTraits, parseBackgroundSkills } from "./npc-traits";
+import {
+  buildNpcTraits,
+  parseBackgroundSkills,
+  parseSpeciesSkills,
+} from "./npc-traits";
 import { resolveNpcSize } from "./npc-size.utils";
 import {
   resolveNpcArmorClass,
@@ -54,12 +58,15 @@ export function buildNpcFromDraft(
   const backgroundSkills = background
     ? parseBackgroundSkills(background.proficiencies.skills)
     : [];
+  const speciesSkills = draft.hideFeatures.includes("racial")
+    ? []
+    : parseSpeciesSkills(species);
 
   const skills = buildNpcSkills(
     template,
     abilities,
     pb,
-    backgroundSkills,
+    [...backgroundSkills, ...speciesSkills],
     powerProfile,
   );
   const prcMod = skills.prc ?? getAbilityModifier(abilities.wis);

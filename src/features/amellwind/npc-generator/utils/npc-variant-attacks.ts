@@ -1,7 +1,7 @@
 import { getAbilityModifier } from "@/shared/utils/cr.utils";
 import type { AbilityKey, AbilityScores, Entry, OptionalFeature } from "@/shared/types";
 import type { NpcAttackDefinition } from "@/shared/types/npc.types";
-import type { Weapon } from "@/shared/types";
+import { getWeaponFeatureLabel, type Weapon } from "@/shared/types";
 import { formatAttackEntry, rollAverage } from "./npc-attack.utils";
 import { parseFiveToolsMarkup } from "@/shared/utils/fivetools-parser";
 import { getAccumulatedUnlocks } from "@/shared/foundry/weapons";
@@ -14,6 +14,7 @@ import {
 } from "../data/npc-ammo-attacks.data";
 import type { NpcWeaponContext } from "./npc-weapon.utils";
 import { resolveNpcAttackFromWeapon } from "./npc-weapon.utils";
+import { formatSubjectAtSentenceStart } from "./npc-feature-text.utils";
 
 export { isVariantPrimaryWeapon } from "../data/npc-ammo-attacks.data";
 
@@ -93,15 +94,15 @@ function findFeatureByName(
   return undefined;
 }
 
-function noteToNpcText(text: string, roleLabel: string): string {
+function noteToNpcText(text: string, subjectRef: string): string {
   let result = parseFiveToolsMarkup(text);
-  result = result.replace(/\byour melody's radius\b/gi, "20 feet of the chanter");
-  result = result.replace(/\byou and all allies\b/gi, `the ${roleLabel} and each ally`);
-  result = result.replace(/\byou,\s*and all allies\b/gi, `the ${roleLabel} and each ally`);
-  result = result.replace(/\ballies in your melody's radius\b/gi, `the ${roleLabel} and each ally within 20 feet`);
-  result = result.replace(/\ballies within 20 feet of you\b/gi, `each ally within 20 feet of the ${roleLabel}`);
-  result = result.replace(/\byou\b/gi, `the ${roleLabel}`);
-  result = result.replace(/\byour\b/gi, `the ${roleLabel}'s`);
+  result = result.replace(/\ballies in your melody's radius\b/gi, `${subjectRef} and each ally within 20 feet`);
+  result = result.replace(/\byour melody's radius\b/gi, `20 feet of ${subjectRef}`);
+  result = result.replace(/\byou and all allies\b/gi, `${subjectRef} and each ally`);
+  result = result.replace(/\byou,\s*and all allies\b/gi, `${subjectRef} and each ally`);
+  result = result.replace(/\ballies within 20 feet of you\b/gi, `each ally within 20 feet of ${subjectRef}`);
+  result = result.replace(/\byou\b/gi, subjectRef);
+  result = result.replace(/\byour\b/gi, `${subjectRef}'s`);
   return result.charAt(0).toUpperCase() + result.slice(1);
 }
 
@@ -171,28 +172,28 @@ function buildAmmoActionEntry(
   abilities: AbilityScores,
   pb: number,
   rarityIndex: number,
-  roleLabel: string,
+  subjectRef: string,
 ): string {
   const saveAbility = spec.saveAbility ?? "dex";
+  const saveName =
+    saveAbility === "dex"
+      ? "Dexterity"
+      : saveAbility === "con"
+        ? "Constitution"
+        : "Strength";
   const dc = ammoSaveDc(abilities, pb, baseAttack.ability);
 
   if (spec.kind === "area-save" && spec.saveBaseDice) {
     const dice = scaleDiceAboveRare(spec.saveBaseDice, rarityIndex);
     const avg = rollAverage(dice);
     const type = spec.saveDamageType ?? "fire";
-    return `${spec.displayName}. ${spec.effect ?? ""} Dexterity saving throw DC ${dc}; ${avg} (${dice}) ${type} damage on a failed save, or half as much on a success.`.trim();
+    return `${spec.displayName}. ${spec.effect ?? ""} ${saveName} saving throw DC ${dc}; ${avg} (${dice}) ${type} damage on a failed save, or half as much on a success.`.trim();
   }
 
   if (spec.kind === "save" && spec.saveBaseDice) {
     const dice = scaleDiceAboveRare(spec.saveBaseDice, rarityIndex);
     const avg = rollAverage(dice);
     const type = spec.saveDamageType ?? "slashing";
-    const saveName =
-      saveAbility === "dex"
-        ? "Dexterity"
-        : saveAbility === "con"
-          ? "Constitution"
-          : "Strength";
     return `${spec.displayName}. ${spec.effect ?? ""} The target must succeed on a ${saveName} saving throw (DC ${dc}) or take ${avg} (${dice}) ${type} damage, or half as much on a success.`.trim();
   }
 
@@ -209,7 +210,7 @@ function buildAmmoActionEntry(
   }
 
   if (spec.effect) {
-    return `${hitLine} ${spec.effect.replace(/\bthe artillerist\b/gi, `the ${roleLabel}`)}`;
+    return `${hitLine} ${spec.effect.replace(/\bthe artillerist\b/gi, subjectRef)}`;
   }
 
   return hitLine;
@@ -221,10 +222,12 @@ function buildBowgunAmmoActions(
   abilities: AbilityScores,
   pb: number,
   rarityIndex: number,
-  roleLabel: string,
+  subjectRef: string,
 ): Entry[] {
   const unlocked = selectAmmoVariants(
-    getUnlockedItems(weapon, /^ammo$/i, rarityIndex),
+    getUnlockedItems(weapon, /^ammo$/i, rarityIndex).map((name) =>
+      getWeaponFeatureLabel(weapon, name),
+    ),
   );
   const actions: Entry[] = [];
 
@@ -238,7 +241,7 @@ function buildBowgunAmmoActions(
     actions.push({
       name: `${weapon.name} — ${spec.displayName}`,
       entries: [
-        buildAmmoActionEntry(spec, baseAttack, abilities, pb, rarityIndex, roleLabel),
+        buildAmmoActionEntry(spec, baseAttack, abilities, pb, rarityIndex, subjectRef),
       ],
     });
   }
@@ -252,7 +255,7 @@ function buildHuntingHornActions(
   abilities: AbilityScores,
   pb: number,
   rarityIndex: number,
-  roleLabel: string,
+  subjectRef: string,
   featuresMap: Map<string, OptionalFeature>,
 ): Entry[] {
   const actions: Entry[] = [];
@@ -265,7 +268,7 @@ function buildHuntingHornActions(
   actions.push({
     name: "Complete Melody",
     entries: [
-      `When the ${roleLabel} hits a creature with its hunting horn, it can weave notes into a melody. As an action, it completes the melody; the ${roleLabel} and each ally within 20 feet that can hear it gain the benefits of each note in that melody for 1 minute. It can instead slam the horn into the ground to activate a single note for 1 minute.`,
+      `When ${subjectRef} hits a creature with its hunting horn, it can weave notes into a melody. As an action, it completes the melody; ${subjectRef} and each ally within 20 feet that can hear it gain the benefits of each note in that melody for 1 minute. It can instead slam the horn into the ground to activate a single note for 1 minute.`,
     ],
   });
 
@@ -275,10 +278,11 @@ function buildHuntingHornActions(
     noteSlots,
   );
 
-  for (const noteName of notes) {
-    const feat = findFeatureByName(featuresMap, noteName);
+  for (const noteKey of notes) {
+    const noteName = getWeaponFeatureLabel(weapon, noteKey);
+    const feat = findFeatureByName(featuresMap, noteKey);
     const effectText = feat?.paragraphs[0]
-      ? noteToNpcText(feat.paragraphs[0], roleLabel)
+      ? noteToNpcText(feat.paragraphs[0], subjectRef)
       : `When included in a completed melody, this note grants a hunting party buff (see ${noteName}).`;
 
     actions.push({
@@ -296,7 +300,7 @@ export function buildVariantWeaponActions(
   abilities: AbilityScores,
   pb: number,
   rarityIndex: number,
-  roleLabel: string,
+  subjectRef: string,
   weaponContext: NpcWeaponContext,
 ): Entry[] {
   const resolved = resolveNpcAttackFromWeapon(primaryAttack, weapon, rarityIndex);
@@ -315,7 +319,7 @@ export function buildVariantWeaponActions(
       abilities,
       pb,
       rarityIndex,
-      roleLabel,
+      subjectRef,
       weaponContext.featuresMap,
     );
   }
@@ -327,7 +331,7 @@ export function buildVariantWeaponActions(
       abilities,
       pb,
       rarityIndex,
-      roleLabel,
+      subjectRef,
     );
   }
 
@@ -336,14 +340,14 @@ export function buildVariantWeaponActions(
 
 export function getVariantMultiattackText(
   weapon: Weapon,
-  roleLabel: string,
+  subjectRef: string,
 ): string | undefined {
   const key = weapon.name.toLowerCase();
   if (key === "heavy bowgun" || key === "light bowgun") {
-    return `The ${roleLabel} makes two ${weapon.name.toLowerCase()} attacks using any ammunition it carries.`;
+    return `${formatSubjectAtSentenceStart(subjectRef)} makes two ${weapon.name.toLowerCase()} attacks using any ammunition it carries.`;
   }
   if (key === "hunting horn") {
-    return `The ${roleLabel} makes two hunting horn attacks.`;
+    return `${formatSubjectAtSentenceStart(subjectRef)} makes two hunting horn attacks.`;
   }
   return undefined;
 }

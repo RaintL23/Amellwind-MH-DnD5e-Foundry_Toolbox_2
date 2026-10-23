@@ -145,7 +145,7 @@ export const NPC_AMMO_ATTACKS: Record<string, NpcAmmoAttackSpec> = {
 
 /** Meta HWF entries that should not appear as NPC action dumps. */
 export const NPC_WEAPON_META_FEATURE =
-  /^(ammo\s+\([^)]+\)|capacity increase\b.*|melody|single note melody)$/i;
+  /^(ammo(?:\s+\([^)]+\))?|capacity increase\b.*|melody|single note melody)$/i;
 
 export const NPC_VARIANT_WEAPON_NAMES = new Set([
   "heavy bowgun",

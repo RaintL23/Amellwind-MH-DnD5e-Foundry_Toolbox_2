@@ -1,5 +1,5 @@
-import type { AbilityScores, ArmorClass, HP, Speed } from "@/shared/types";
-import type { NpcHitDie, NpcTemplate } from "@/shared/types/npc.types";
+import type { AbilityScores, HP, Speed } from "@/shared/types";
+import type { NpcHitDie } from "@/shared/types/npc.types";
 import { getAbilityModifier } from "@/shared/utils/cr.utils";
 import { resolveNpcPowerProfile } from "./npc-power-scaling";
 
@@ -26,31 +26,14 @@ export function getNpcHitPoints(
   hitDie: NpcHitDie,
 ): HP {
   const conMod = getAbilityModifier(abilities.con);
-  const averagePerDie = Math.floor(hitDie / 2) + 1;
-  const average = hitDiceCount * averagePerDie + hitDiceCount * conMod;
-  const modPart = conMod >= 0 ? ` + ${hitDiceCount * conMod}` : ` ${hitDiceCount * conMod}`;
+  const conTotal = hitDiceCount * conMod;
+  const average = Math.floor((hitDiceCount * (hitDie + 1)) / 2) + conTotal;
+  const modPart =
+    conTotal === 0 ? "" : ` ${conTotal > 0 ? "+" : "-"} ${Math.abs(conTotal)}`;
   return {
     average: Math.max(1, average),
     formula: `${hitDiceCount}d${hitDie}${modPart}`,
   };
-}
-
-export function getNpcArmorClass(
-  template: NpcTemplate,
-  abilities: AbilityScores,
-): ArmorClass[] {
-  const dexMod = getAbilityModifier(abilities.dex);
-  let ac: number;
-
-  if (template.defaultAc === "unarmored-dex") {
-    ac = 10 + dexMod;
-  } else if (template.defaultAc === "unarmored-dex-max2") {
-    ac = 11 + Math.min(2, dexMod);
-  } else {
-    ac = template.defaultAc;
-  }
-
-  return [{ ac, from: [template.defaultAcFrom] }];
 }
 
 export function parseSpeciesSpeed(speedText: string): Speed {

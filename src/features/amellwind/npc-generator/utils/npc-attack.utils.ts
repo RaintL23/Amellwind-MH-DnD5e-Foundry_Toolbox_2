@@ -15,7 +15,7 @@ export function rollAverage(dice: string): number {
   if (!match) return 0;
   const count = Number(match[1]);
   const sides = Number(match[2]);
-  return count * (Math.floor(sides / 2) + 1);
+  return Math.floor((count * (sides + 1)) / 2);
 }
 
 export function formatDamageExpression(
@@ -25,7 +25,7 @@ export function formatDamageExpression(
 ): string {
   const totalBonus = abilityMod + flatBonus;
   if (totalBonus === 0) return damageDice;
-  return `${damageDice}${totalBonus >= 0 ? ` + ${totalBonus}` : ` ${totalBonus}`}`;
+  return `${damageDice} ${totalBonus > 0 ? "+" : "-"} ${Math.abs(totalBonus)}`;
 }
 
 export function formatAttackEntry(
@@ -33,10 +33,15 @@ export function formatAttackEntry(
   abilities: AbilityScores,
   pb: number,
 ): string {
-  const abilityMod = getAbilityModifier(abilities[attack.ability]);
+  const ability = attack.finesse
+    ? abilities.dex >= abilities.str
+      ? "dex"
+      : "str"
+    : attack.ability;
+  const abilityMod = getAbilityModifier(abilities[ability]);
   const hit = pb + abilityMod + (attack.extraHitBonus ?? 0);
   const flat = attack.flatDamageBonus ?? 0;
-  const avgDamage = rollAverage(attack.damageDice) + abilityMod + flat;
+  const avgDamage = Math.max(1, rollAverage(attack.damageDice) + abilityMod + flat);
   const attackLabel =
     attack.kind === "mw" ? "Melee Weapon Attack" : "Ranged Weapon Attack";
   const distanceLabel = attack.kind === "mw" ? "reach" : "range";

@@ -7,15 +7,6 @@ import {
 } from "@/shared/utils/ability-scores";
 import type { Species } from "@/shared/types";
 
-function shuffle<T>(arr: T[]): T[] {
-  const copy = [...arr];
-  for (let i = copy.length - 1; i > 0; i--) {
-    const j = Math.floor(Math.random() * (i + 1));
-    [copy[i], copy[j]] = [copy[j], copy[i]];
-  }
-  return copy;
-}
-
 export function rollAttributeArray(kind: NpcAttributeArray): number[] {
   if (kind === "standard") return [...STANDARD_ARRAY];
   if (kind === "heroic") return rollSixAbilityScores(true);
@@ -32,7 +23,8 @@ export function assignAbilitiesFromArray(
     ...priority,
     ...ABILITY_KEYS.filter((k) => !priority.includes(k)),
   ];
-  const pool = shuffle(scores);
+  // Highest scores go to the template's priority abilities.
+  const pool = [...scores].sort((a, b) => b - a);
   const base: AbilityScores = {
     str: 10,
     dex: 10,

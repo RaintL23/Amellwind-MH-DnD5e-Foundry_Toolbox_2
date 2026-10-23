@@ -4,6 +4,7 @@ import type { Species } from "@/shared/types";
 import type { NpcHideFeatures, NpcTemplate } from "@/shared/types/npc.types";
 import { getTemplateRoleNouns, toNpcFeatureText } from "./npc-feature-text.utils";
 import { SKILL_NAME_TO_KEY } from "@/shared/constants/dnd";
+import { mapStatBlockContentText } from "@/shared/utils/statblock-entries.mapper";
 
 const SKIP_SPECIES_TRAIT_NAMES = new Set([
   "Age",
@@ -13,7 +14,37 @@ const SKIP_SPECIES_TRAIT_NAMES = new Set([
   "Ability Score Increase",
   "Ability Scores",
   "Ability Modifiers",
+  "Alignment",
+  "Creature Type",
+  "Tool Proficiency",
 ]);
+
+const SKILL_TRAIT_NAME = /^skill (?:proficiency|proficiencies|versatility)$/i;
+
+/** Single fixed skill granted by a species trait ("You have proficiency in the Acrobatics skill"). */
+function getSpeciesTraitSkill(trait: Entry): SkillKey | null {
+  if (!SKILL_TRAIT_NAME.test(trait.name)) return null;
+  const skills = parseBackgroundSkills(trait.entries.join(" "));
+  return skills.length === 1 ? skills[0] : null;
+}
+
+export function parseSpeciesSkills(species: Species): SkillKey[] {
+  return species.traits
+    .map(getSpeciesTraitSkill)
+    .filter((key): key is SkillKey => key !== null);
+}
+
+/** Rewrites both text representations; the stat block renders `content` when present. */
+function toNpcEntry(entry: Entry, subjectRef: string): Entry {
+  const rewrite = (text: string) => toNpcFeatureText(text, subjectRef);
+  return {
+    name: entry.name,
+    entries: entry.entries.map(rewrite),
+    content: entry.content
+      ? mapStatBlockContentText(entry.content, rewrite)
+      : undefined,
+  };
+}
 
 export function parseBackgroundSkills(summary: string): SkillKey[] {
   const keys = new Set<SkillKey>();
@@ -52,11 +83,9 @@ export function buildNpcTraits(
   if (!hideFeatures.includes("racial")) {
     for (const trait of species.traits) {
       if (SKIP_SPECIES_TRAIT_NAMES.has(trait.name)) continue;
-      traits.push({
-        name: trait.name,
-        entries: trait.entries.map((e) => toNpcFeatureText(e, subjectRef)),
-        content: trait.content,
-      });
+      // Fixed skill grants are applied to the Skills line instead.
+      if (getSpeciesTraitSkill(trait)) continue;
+      traits.push(toNpcEntry(trait, subjectRef));
     }
 
     if (species.resistances.length > 0) {
@@ -80,9 +109,8 @@ export function buildNpcTraits(
 
     if (feature) {
       traits.push({
+        ...toNpcEntry(feature, subjectRef),
         name: feature.name.replace(/^Feature:\s*/i, ""),
-        entries: feature.entries.map((e) => toNpcFeatureText(e, subjectRef)),
-        content: feature.content,
       });
     }
   }
