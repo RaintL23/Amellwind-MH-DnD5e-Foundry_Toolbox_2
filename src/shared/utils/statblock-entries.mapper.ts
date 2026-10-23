@@ -94,6 +94,33 @@ export function statBlockContentToPlainText(block: StatBlockContent): string {
   }
 }
 
+/** Applies `fn` to every prose string (paragraphs and list text); tables are kept as-is. */
+export function mapStatBlockContentText(
+  blocks: StatBlockContent[],
+  fn: (text: string) => string,
+): StatBlockContent[] {
+  return blocks.map((block): StatBlockContent => {
+    switch (block.type) {
+      case "paragraph":
+        return { ...block, text: fn(block.text) };
+      case "section":
+        return { ...block, children: mapStatBlockContentText(block.children, fn) };
+      case "list":
+        return {
+          ...block,
+          items: block.items.map(
+            (item): StatBlockListItem =>
+              item.type === "text"
+                ? { ...item, text: fn(item.text) }
+                : { ...item, children: mapStatBlockContentText(item.children, fn) },
+          ),
+        };
+      default:
+        return block;
+    }
+  });
+}
+
 export function statBlockContentsToPlainText(
   blocks: StatBlockContent[],
   separator = "\n",

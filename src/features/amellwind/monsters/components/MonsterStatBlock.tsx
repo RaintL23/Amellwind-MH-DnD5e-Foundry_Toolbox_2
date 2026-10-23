@@ -4,6 +4,7 @@ import {
   ABILITY_KEYS,
   ABILITY_ABBREVIATIONS,
   SKILL_LABELS,
+  SKILL_NAME_TO_KEY,
 } from "@/shared/constants/dnd";
 import { StatBlockContentView } from "@/components/statblock/StatBlockContentView";
 import { SpellcastingBlockView } from "@/components/statblock/SpellcastingBlockView";
@@ -46,6 +47,21 @@ function formatAlignment(alignment: string[]): string {
     A: "Any alignment",
   };
   return alignment.map((a) => map[a] ?? a).join(" ");
+}
+
+function formatSkillLabel(key: string): string {
+  const skillKey =
+    key in SKILL_LABELS
+      ? (key as SkillKey)
+      : SKILL_NAME_TO_KEY[key.toLowerCase()];
+  return skillKey ? SKILL_LABELS[skillKey] : key;
+}
+
+/** Numeric skill totals (including +0) render as modifiers; raw text passes through. */
+function formatSkillValue(value: unknown): string {
+  if (value === undefined || value === null || value === "") return "";
+  const n = Number(value);
+  return Number.isFinite(n) ? formatModifier(n) : String(value);
 }
 
 function formatSenses(senses: Monster["senses"]): string {
@@ -195,7 +211,7 @@ export function MonsterStatBlock({ monster }: MonsterStatBlockProps) {
             <strong className="text-amber-400">Skills</strong>{" "}
             <span className="text-foreground">
               {Object.entries(monster.skills)
-                .map(([k, v]) => `${SKILL_LABELS[k as SkillKey] ?? k} ${v ? formatModifier(Number(v)) : ""}`)
+                .map(([k, v]) => `${formatSkillLabel(k)} ${formatSkillValue(v)}`.trim())
                 .join(", ")}
             </span>
           </p>
