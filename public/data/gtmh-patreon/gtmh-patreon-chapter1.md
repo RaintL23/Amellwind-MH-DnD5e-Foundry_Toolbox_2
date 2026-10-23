@@ -7,7 +7,7 @@ generatedBy: scripts/gtmh/format-raw-slices.py
 # Chapter 1 — Campaigns in Monster Hunter
 
 > Formatted staging slice of Amellwind's Guide to Monster Hunting (Patreon/GMBinder).
-> Canonical raw dump remains `public/data/gtmh-patreon/gtmh-patreon.md` for build scripts.
+> This slice is the source of truth for GTMH build scripts (edit here, not the raw dump).
 
 ## Campaigns in Monster Hunter
 

@@ -1,6 +1,6 @@
 {
   "source": "GTMH-Patreon",
-  "generatedFrom": "public/data/gtmh-patreon/gtmh-patreon.md",
+  "generatedFrom": "public/data/gtmh-patreon/gtmh-patreon-*.md",
   "policy": "local-wins-by-name",
   "item": [
     {
@@ -88,7 +88,7 @@
           "type": "inset",
           "name": "Charge Blade",
           "entries": [
-            "{@optfeature Switch Mode|AGMH}",
+            "{@optfeature Switch Mode (CB)|AGMH|Switch Mode}",
             {
               "type": "table",
               "colLabels": [
@@ -104,7 +104,7 @@
                   "1",
                   "-",
                   "-",
-                  "{@optfeature Switch Mode|AGMH}"
+                  "--"
                 ],
                 [
                   "Uncommon",
@@ -250,7 +250,7 @@
                   "Rare",
                   "3",
                   "+1",
-                  "{@optfeature Guard|AGMH}"
+                  "{@optfeature Guard (GS)|AGMH|Guard}"
                 ],
                 [
                   "Very Rare",
@@ -377,25 +377,25 @@
                   "Uncommon",
                   "2",
                   "-",
-                  "{@optfeature Mighty Weapon|AGMH}, {@optfeature Charge|AGMH}"
+                  "{@optfeature Mighty Weapon|AGMH}, {@optfeature Charge (H)|AGMH|Charge}"
                 ],
                 [
                   "Rare",
                   "3",
                   "+1",
-                  "{@optfeature Charge Upgrade|AGMH}"
+                  "{@optfeature Mighty Weapon Upgrade|AGMH}, {@optfeature Charge Upgrade (H)|AGMH|Charge Upgrade}"
                 ],
                 [
                   "Very Rare",
                   "4",
                   "+2",
-                  "{@optfeature Might Weapon Upgrade|AGMH}, {@optfeature Charge Upgrade (Very Rare)|AGMH|Charge Upgrade}"
+                  "{@optfeature Might Weapon Upgrade|AGMH}, {@optfeature Charge Upgrade (H, Very Rare)|AGMH|Charge Upgrade}"
                 ],
                 [
                   "Legendary",
                   "5",
                   "+3",
-                  "{@optfeature Mighty Weapon Upgrade|AGMH}, {@optfeature Charge Upgrade (Legendary)|AGMH|Charge Upgrade}"
+                  "{@optfeature Mighty Weapon Upgrade (Legendary)|AGMH|Mighty Weapon Upgrade}, {@optfeature Charge Upgrade (H, Legendary)|AGMH|Charge Upgrade}"
                 ]
               ]
             }
@@ -429,37 +429,49 @@
                 "Rarity",
                 "Slots",
                 "Bonus",
-                "Features"
+                "Chord Length",
+                "Features",
+                "Notes"
               ],
               "rows": [
                 [
                   "Common",
                   "1",
                   "-",
-                  "{@optfeature Melody|AGMH}, {@optfeature Single Note Melody|AGMH}, {@optfeature Damage up (s)|AGMH}, {@optfeature Movement up (s)|AGMH}, {@optfeature Skill up (s)|AGMH}"
+                  "2",
+                  "--",
+                  "{@optfeature Damage up (s)|AGMH}, {@optfeature Movement up (s)|AGMH}, {@optfeature Skill up (s)|AGMH}"
                 ],
                 [
                   "Uncommon",
                   "2",
                   "-",
+                  "3",
+                  "--",
                   "{@optfeature Cold Attack up (s)|AGMH}, {@optfeature Defense up (s)|AGMH}, {@optfeature Fire Attack up (s)|AGMH}, {@optfeature Lightning Attack up (s)|AGMH}, {@optfeature Poison Attack up (s)|AGMH}"
                 ],
                 [
                   "Rare",
                   "3",
                   "-",
+                  "4",
+                  "--",
                   "{@optfeature Acid Attack up (s)|AGMH}, {@optfeature Damage up (M)|AGMH}, {@optfeature Earplugs|AGMH}, {@optfeature Force Attack up (s)|AGMH}, {@optfeature Thunder Attack up (s)|AGMH}, {@optfeature Psychic Attack up (s)|AGMH}, {@optfeature Spell Save up (s)|AGMH}, {@optfeature Temperate|AGMH}"
                 ],
                 [
                   "Very Rare",
                   "4",
                   "+1",
+                  "5",
+                  "--",
                   "{@optfeature Defense up (L)|AGMH}, {@optfeature Movement up (L)|AGMH}, {@optfeature Necrotic Attack up (s)|AGMH}, {@optfeature Radiant Attack up (s)|AGMH}, {@optfeature Saving Throw up|AGMH}, {@optfeature Skill up (L)|AGMH}, {@optfeature Tremor Sense|AGMH}, {@optfeature Water Walking|AGMH}"
                 ],
                 [
                   "Legendary",
                   "5",
                   "+2",
+                  "-",
+                  "--",
                   "{@optfeature Affinity Up|AGMH}, {@optfeature Charm Resist|AGMH}, {@optfeature Damage up (L)|AGMH}, {@optfeature Death save Up|AGMH}, {@optfeature Elemental Damage Up|AGMH}, {@optfeature Frightened Resist|AGMH}, {@optfeature Paralysis Resist|AGMH}, {@optfeature Poison Resist|AGMH}, {@optfeature Stun Resist|AGMH}"
                 ]
               ]
@@ -482,6 +494,9 @@
       "dmgType": "S",
       "entries": [
         "{@i The insect glaive can be used to control a Kinsect, a small insect that harvests extracts from monsters to boost your abilities.}",
+        "{@b The Kinsect.} The Kinsect returns to you at the end of your turn, granting you the benefit of the essence it collected for 1 minute. This duration is refreshed each time the kinsect returns to you with the essence of a creature.",
+        "Upon collecting Red, White, and Orange essences, the kinsect will only collect green essence until the essence fades.",
+        "The kinsect does not gain bonus damage from essence, magical effects (including the bonus damage from this weapons rarity), or ability modifiers.",
         {
           "type": "inset",
           "name": "Insect Glaive",
@@ -493,38 +508,44 @@
                 "Rarity",
                 "Slots",
                 "Bonus",
-                "Features"
+                "Features",
+                "Essences"
               ],
               "rows": [
                 [
                   "Common",
                   "1",
                   "-",
-                  "{@optfeature Standing Leap|AGMH}"
+                  "--",
+                  "--"
                 ],
                 [
                   "Uncommon",
                   "2",
                   "-",
-                  "{@optfeature Kinsect|AGMH}"
+                  "{@optfeature Kinsect|AGMH}",
+                  "--"
                 ],
                 [
                   "Rare",
                   "3",
                   "+1",
-                  "{@optfeature Kinsect (Rare)|AGMH|Kinsect}, {@optfeature Red|AGMH}, {@optfeature White|AGMH}, {@optfeature Orange|AGMH}, {@optfeature Green|AGMH}"
+                  "{@optfeature Kinsect (Rare)|AGMH|Kinsect}",
+                  "{@optfeature Red|AGMH}, {@optfeature White|AGMH}, {@optfeature Orange|AGMH}, {@optfeature Green|AGMH}"
                 ],
                 [
                   "Very Rare",
                   "4",
                   "+2",
-                  "{@optfeature Kinsect (Very Rare)|AGMH|Kinsect}, {@optfeature Red (Very Rare)|AGMH|Red}, {@optfeature White (Very Rare)|AGMH|White}, {@optfeature Orange (Very Rare)|AGMH|Orange}, {@optfeature Green (Very Rare)|AGMH|Green}"
+                  "{@optfeature Kinsect (Very Rare)|AGMH|Kinsect}",
+                  "{@optfeature Red (Very Rare)|AGMH|Red}, {@optfeature White (Very Rare)|AGMH|White}, {@optfeature Orange (Very Rare)|AGMH|Orange}, {@optfeature Green (Very Rare)|AGMH|Green}"
                 ],
                 [
                   "Legendary",
                   "5",
                   "+3",
-                  "{@optfeature Kinsect (Legendary)|AGMH|Kinsect}, {@optfeature Red (Legendary)|AGMH|Red}, {@optfeature White (Legendary)|AGMH|White}, {@optfeature Orange (Legendary)|AGMH|Orange}, {@optfeature Green (Legendary)|AGMH|Green}"
+                  "{@optfeature Kinsect (Legendary)|AGMH|Kinsect}",
+                  "{@optfeature Red (Legendary)|AGMH|Red}, {@optfeature White (Legendary)|AGMH|White}, {@optfeature Orange (Legendary)|AGMH|Orange}, {@optfeature Green (Legendary)|AGMH|Green}"
                 ]
               ]
             }
@@ -580,21 +601,21 @@
                   "3",
                   "+1",
                   "+1",
-                  "{@optfeature Charge|AGMH}"
+                  "{@optfeature Charge (L)|AGMH|Charge}"
                 ],
                 [
                   "Very Rare",
                   "4",
                   "+2",
                   "+2",
-                  "{@optfeature Charge Upgrade|AGMH}, {@optfeature Powerguard Upgrade|AGMH}, {@optfeature Counter Thrust|AGMH}"
+                  "{@optfeature Charge Upgrade (L)|AGMH|Charge Upgrade}, {@optfeature Powerguard Upgrade|AGMH}, {@optfeature Counter Thrust|AGMH}"
                 ],
                 [
                   "Legendary",
                   "5",
                   "+2",
                   "+3",
-                  "{@optfeature Charge Upgrade (Legendary)|AGMH|Charge Upgrade}, {@optfeature Powerguard Upgrade (Legendary)|AGMH|Powerguard Upgrade}"
+                  "{@optfeature Charge Upgrade (L, Legendary)|AGMH|Charge Upgrade}, {@optfeature Powerguard Upgrade (Legendary)|AGMH|Powerguard Upgrade}"
                 ]
               ]
             }
@@ -650,13 +671,13 @@
                 [
                   "Very Rare",
                   "4",
-                  "-",
+                  "+2",
                   "{@optfeature Spirit Gauge Upgrade (Very Rare)|AGMH|Spirit Gauge Upgrade}"
                 ],
                 [
                   "Legendary",
                   "5",
-                  "-",
+                  "+3",
                   "{@optfeature Spirit Gauge Upgrade (Legendary)|AGMH|Spirit Gauge Upgrade}"
                 ]
               ]
@@ -684,7 +705,7 @@
           "type": "inset",
           "name": "Magnet Spike",
           "entries": [
-            "{@optfeature Switch Mode|AGMH}, {@optfeature Magnetic Field Gun|AGMH}, {@optfeature Magnetic Boost|AGMH}",
+            "{@optfeature Switch Mode (MS)|AGMH|Switch Mode}, {@optfeature Magnetic Field Gun|AGMH}, {@optfeature Magnetic Boost|AGMH}",
             {
               "type": "table",
               "colLabels": [
@@ -698,7 +719,7 @@
                   "Common",
                   "1",
                   "-",
-                  "{@optfeature Switch Mode|AGMH}, {@optfeature Magnetic Field Gun|AGMH}, {@optfeature Magnetic Boost|AGMH}"
+                  "--"
                 ],
                 [
                   "Uncommon",
@@ -744,6 +765,7 @@
       "dmgType": "B",
       "entries": [
         "{@i Used more for walking than striking a creature, the magus staves are finely crafted. Inlaid with gems and intricate carvings allowing the casting and storing of spells within them, the Magus Staff are the choice weapon for a spellcaster}",
+        "{@b Arcane Interference.} Due to the magical nature of this weapon, a creature cannot wield a shield while attuned to this weapon.",
         {
           "type": "inset",
           "name": "Magus Staff",
@@ -812,7 +834,7 @@
           "type": "inset",
           "name": "Splint Rapier",
           "entries": [
-            "{@optfeature Switch Mode|AGMH}",
+            "{@optfeature Switch Mode (SR)|AGMH|Switch Mode}",
             {
               "type": "table",
               "colLabels": [
@@ -826,13 +848,13 @@
                   "Common",
                   "1",
                   "-",
-                  "{@optfeature Switch Mode|AGMH}"
+                  "--"
                 ],
                 [
                   "Uncommon",
                   "2",
                   "+1",
-                  "{@optfeature Embolden|AGMH}, {@optfeature Fortify|AGMH}, {@optfeature Addle|AGMH}, {@optfeature Splint Stance|AGMH}"
+                  "{@optfeature Embolden|AGMH}, {@optfeature Fortify|AGMH}, {@optfeature Addle|AGMH}, {@optfeature Splint Stance|AGMH}, {@optfeature Stymie Stance|AGMH}, {@optfeature Saboteur Stance|AGMH}, {@optfeature Elemental Stance|AGMH}"
                 ],
                 [
                   "Rare",
@@ -879,45 +901,51 @@
           "type": "inset",
           "name": "Switch Axe",
           "entries": [
-            "{@optfeature Switch Mode|AGMH}",
+            "{@optfeature Switch Mode (SA)|AGMH|Switch Mode}",
             {
               "type": "table",
               "colLabels": [
                 "Rarity",
                 "Slots",
                 "Bonus",
-                "Features"
+                "Features",
+                "Phials"
               ],
               "rows": [
                 [
                   "Common",
                   "1",
                   "-",
-                  "{@optfeature Switch Mode|AGMH}"
+                  "--",
+                  "--"
                 ],
                 [
                   "Uncommon",
                   "2",
                   "+1",
-                  "{@optfeature Sword Gauge|AGMH}, {@optfeature Phials|AGMH}, {@optfeature Power Phial (Costs 2)|AGMH}"
+                  "{@optfeature Sword Gauge|AGMH}, {@optfeature Phials|AGMH}",
+                  "{@optfeature Power Phial (Costs 2)|AGMH}"
                 ],
                 [
                   "Rare",
                   "3",
                   "+2",
-                  "{@optfeature Sword Gauge Upgrade|AGMH}, {@optfeature Element Phial (Costs 3)|AGMH}, {@optfeature Poison Phial (Costs 2)|AGMH}"
+                  "{@optfeature Sword Gauge Upgrade|AGMH}, {@optfeature Power Phial Upgrade|AGMH}",
+                  "{@optfeature Element Phial (Costs 3)|AGMH}, {@optfeature Poison Phial (Costs 2)|AGMH}"
                 ],
                 [
                   "Very Rare",
                   "4",
                   "+2",
-                  "{@optfeature Sword Gauge Upgrade (Very Rare)|AGMH|Sword Gauge Upgrade}, {@optfeature Phials Upgrade|AGMH}, {@optfeature Paralysis Phial (Costs 7)|AGMH}, {@optfeature Element Phial Upgrade|AGMH}, {@optfeature Poison Phial Upgrade|AGMH}"
+                  "{@optfeature Sword Gauge Upgrade (Very Rare)|AGMH|Sword Gauge Upgrade}, {@optfeature Phials Upgrade|AGMH}, {@optfeature Element Phial Upgrade|AGMH}, {@optfeature Poison Phial Upgrade|AGMH}",
+                  "{@optfeature Paralysis Phial (Costs 7)|AGMH}"
                 ],
                 [
                   "Legendary",
                   "5",
                   "+3",
-                  "{@optfeature Sword Gauge Upgrade (Legendary)|AGMH|Sword Gauge Upgrade}, {@optfeature Dragon Phial (Costs 4)|AGMH}, {@optfeature Hex Phial (Costs 10)|AGMH}"
+                  "{@optfeature Sword Gauge Upgrade (Legendary)|AGMH|Sword Gauge Upgrade}",
+                  "{@optfeature Dragon Phial (Costs 4)|AGMH}, {@optfeature Hex Phial (Costs 10)|AGMH}"
                 ]
               ]
             }
@@ -1036,7 +1064,7 @@
                   "2",
                   "+1",
                   "-",
-                  "{@optfeature Dragon Spirit|AGMH}"
+                  "{@optfeature Dragon Spirit|AGMH}, {@optfeature Propel|AGMH}"
                 ],
                 [
                   "Rare",
@@ -1050,14 +1078,14 @@
                   "4",
                   "+2",
                   "+1",
-                  "{@optfeature Dragon Spirit Upgrade (Very Rare)|AGMH|Dragon Spirit Upgrade}, {@optfeature Propel Upgrade (Very Rare)|AGMH|Propel Upgrade}, {@optfeature Air Dash Upgrade|AGMH}, {@optfeature Dragon Spirit Piercing Attack Upgrade|AGMH}, {@optfeature Guard|AGMH}"
+                  "{@optfeature Dragon Spirit Upgrade (Very Rare)|AGMH|Dragon Spirit Upgrade}, {@optfeature Propel Upgrade (Very Rare)|AGMH|Propel Upgrade}, {@optfeature Air Dash Upgrade|AGMH}, {@optfeature Dragon Spirit Piercing Attack Upgrade|AGMH}, {@optfeature Guard (T)|AGMH|Guard}"
                 ],
                 [
                   "Legendary",
                   "5",
                   "+2",
                   "+2",
-                  "{@optfeature Dragon Spirit Upgrade (Legendary)|AGMH|Dragon Spirit Upgrade}, {@optfeature Propel Upgrade (Legendary)|AGMH|Propel Upgrade}, {@optfeature Dragon Spirit Piercing Attack Upgrade (Legendary)|AGMH|Dragon Spirit Piercing Attack Upgrade}, {@optfeature Guard (Legendary)|AGMH|Guard}"
+                  "{@optfeature Dragon Spirit Upgrade (Legendary)|AGMH|Dragon Spirit Upgrade}, {@optfeature Propel Upgrade (Legendary)|AGMH|Propel Upgrade}, {@optfeature Dragon Spirit Piercing Attack Upgrade (Legendary)|AGMH|Dragon Spirit Piercing Attack Upgrade}, {@optfeature Guard (T, Legendary)|AGMH|Guard}"
                 ]
               ]
             }
@@ -1161,7 +1189,7 @@
                   "Common",
                   "1",
                   "-",
-                  "{@optfeature Weapon of Returning|AGMH}, {@optfeature Power Gauntlets|AGMH}"
+                  "--"
                 ],
                 [
                   "Uncommon",
@@ -1219,38 +1247,44 @@
                 "Rarity",
                 "Slots",
                 "Bonus",
-                "Features"
+                "Features",
+                "Coatings"
               ],
               "rows": [
                 [
                   "Common",
                   "1",
                   "-",
-                  "{@optfeature Coating|AGMH}"
+                  "--",
+                  "--"
                 ],
                 [
                   "Uncommon",
                   "2",
                   "+1",
+                  "--",
                   "{@optfeature Close Range Coating|AGMH}, {@optfeature Power Coating|AGMH}"
                 ],
                 [
                   "Rare",
                   "3",
                   "+1",
-                  "{@optfeature Dragonpiercer|AGMH}, {@optfeature Blast Coating|AGMH}, {@optfeature Paralysis Coating|AGMH}, {@optfeature Poison Coating|AGMH}, {@optfeature Power Coating +2|AGMH}, {@optfeature Sleep Coating|AGMH}"
+                  "{@optfeature Dragonpiercer|AGMH}",
+                  "{@optfeature Blast Coating|AGMH}, {@optfeature Paralysis Coating|AGMH}, {@optfeature Poison Coating|AGMH}, {@optfeature Power Coating +2|AGMH}, {@optfeature Sleep Coating|AGMH}"
                 ],
                 [
                   "Very Rare",
                   "4",
                   "+2",
-                  "{@optfeature Charging Sidestep|AGMH}, {@optfeature Dragonpiercer Upgrade|AGMH}, {@optfeature Power Coating +3|AGMH}"
+                  "{@optfeature Charging Sidestep|AGMH}, {@optfeature Dragonpiercer Upgrade|AGMH}",
+                  "{@optfeature Power Coating +3|AGMH}"
                 ],
                 [
                   "Legendary",
                   "5",
                   "+3",
-                  "{@optfeature Dragonpiercer Upgrade (Legendary)|AGMH|Dragonpiercer Upgrade}"
+                  "{@optfeature Power Shot|AGMH}, {@optfeature Dragonpiercer Upgrade (Legendary)|AGMH|Dragonpiercer Upgrade}",
+                  "--"
                 ]
               ]
             }
@@ -1281,45 +1315,51 @@
           "type": "inset",
           "name": "Dual Repeaters",
           "entries": [
-            "{@optfeature Ammo|AGMH}, {@optfeature Chamber|AGMH}, {@optfeature Sidearm|AGMH}, {@optfeature Special|AGMH}",
+            "{@optfeature Ammo (DR)|AGMH|Ammo}, {@optfeature Chamber|AGMH}, {@optfeature Sidearm|AGMH}, {@optfeature Special|AGMH}",
             {
               "type": "table",
               "colLabels": [
                 "Rarity",
                 "Slots",
                 "Bonus",
-                "Features"
+                "Features",
+                "Ammo"
               ],
               "rows": [
                 [
                   "Common",
                   "1",
                   "-",
-                  "{@optfeature Ammo|AGMH}, {@optfeature Chamber|AGMH}, {@optfeature Sidearm|AGMH}, {@optfeature Special|AGMH}, {@optfeature Normal Ammo|AGMH}, {@optfeature Tranq Ammo|AGMH}"
+                  "--",
+                  "{@optfeature Normal Ammo (DR)|AGMH|Normal Ammo}, {@optfeature Tranq Ammo (DR)|AGMH|Tranq Ammo}"
                 ],
                 [
                   "Uncommon",
                   "2",
                   "+1",
-                  "{@optfeature Empowered|AGMH}, {@optfeature Blaze Ammo|AGMH}, {@optfeature Cryo Ammo|AGMH}, {@optfeature Storm Ammo|AGMH}, {@optfeature Slime Ammo|AGMH}"
+                  "{@optfeature Empowered|AGMH}",
+                  "{@optfeature Blaze Ammo|AGMH}, {@optfeature Cryo Ammo|AGMH}, {@optfeature Storm Ammo|AGMH}, {@optfeature Slime Ammo|AGMH}"
                 ],
                 [
                   "Rare",
                   "3",
                   "+2",
-                  "{@optfeature Empowered Boost|AGMH}, {@optfeature Dawnstar Ammo|AGMH}, {@optfeature Full-Bore Ammo|AGMH}, {@optfeature Marksman Ammo|AGMH}, {@optfeature Twilight Ammo|AGMH}"
+                  "{@optfeature Empowered Boost|AGMH}",
+                  "{@optfeature Dawnstar Ammo|AGMH}, {@optfeature Full-Bore Ammo|AGMH}, {@optfeature Marksman Ammo|AGMH}, {@optfeature Twilight Ammo|AGMH}"
                 ],
                 [
                   "Very Rare",
                   "4",
                   "+2",
-                  "{@optfeature Empowered Boost (Very Rare)|AGMH|Empowered Boost}"
+                  "{@optfeature Empowered Boost (Very Rare)|AGMH|Empowered Boost}, {@optfeature Modifications|AGMH}",
+                  "--"
                 ],
                 [
                   "Legendary",
                   "5",
                   "+3",
-                  "{@optfeature Extended Empowerment|AGMH}, {@optfeature Additional Modifications|AGMH}, {@optfeature Blaze Ammo (Legendary)|AGMH|Blaze Ammo}, {@optfeature Cryo Ammo (Legendary)|AGMH|Cryo Ammo}, {@optfeature Dawnstar Ammo (Legendary)|AGMH|Dawnstar Ammo}, {@optfeature Full-Bore Ammo (Legendary)|AGMH|Full-Bore Ammo}, {@optfeature Marksman Ammo (Legendary)|AGMH|Marksman Ammo}, {@optfeature Normal Ammo (Legendary)|AGMH|Normal Ammo}, {@optfeature Storm Ammo (Legendary)|AGMH|Storm Ammo}, {@optfeature Slime Ammo (Legendary)|AGMH|Slime Ammo}, {@optfeature Tranq Ammo (Legendary)|AGMH|Tranq Ammo}, {@optfeature Twlight Ammo|AGMH}"
+                  "{@optfeature Extended Empowerment|AGMH}, {@optfeature Additional Modifications|AGMH}",
+                  "--"
                 ]
               ]
             }
@@ -1349,45 +1389,51 @@
           "type": "inset",
           "name": "Heavy Bowgun",
           "entries": [
-            "{@optfeature Ammo|AGMH}, {@optfeature Loading|AGMH}",
+            "{@optfeature Ammo (HBG)|AGMH|Ammo}, {@optfeature Loading (HBG)|AGMH|Loading}",
             {
               "type": "table",
               "colLabels": [
                 "Rarity",
                 "Slots",
                 "Bonus",
-                "Features"
+                "Features",
+                "Ammo"
               ],
               "rows": [
                 [
                   "Common",
                   "1",
                   "-",
-                  "{@optfeature Ammo|AGMH}, {@optfeature Loading|AGMH}, {@optfeature Normal Ammo|AGMH}, {@optfeature Tranq Ammo|AGMH}"
+                  "--",
+                  "{@optfeature Normal Ammo (HBG)|AGMH|Normal Ammo}, {@optfeature Tranq Ammo (HBG)|AGMH|Tranq Ammo}"
                 ],
                 [
                   "Uncommon",
                   "2",
                   "-",
-                  "{@optfeature Cluster Ammo|AGMH}, {@optfeature Pierce lvl 1|AGMH}, {@optfeature Poison Ammo|AGMH}, {@optfeature Recover lvl 1|AGMH}, {@optfeature Spread Ammo|AGMH}"
+                  "--",
+                  "{@optfeature Cluster Ammo|AGMH}, {@optfeature Pierce lvl 1|AGMH}, {@optfeature Poison Ammo (HBG)|AGMH|Poison Ammo}, {@optfeature Recover lvl 1 (HBG)|AGMH|Recover lvl 1}, {@optfeature Spread Ammo (HBG)|AGMH|Spread Ammo}"
                 ],
                 [
                   "Rare",
                   "3",
                   "+1",
-                  "{@optfeature Capacity Increase|AGMH}, {@optfeature Paralysis Ammo|AGMH}, {@optfeature Pierce lvl 2|AGMH}, {@optfeature Slicing Ammo|AGMH}, {@optfeature Sticky Ammo|AGMH}, {@optfeature Wyvern Ammo|AGMH}"
+                  "{@optfeature Capacity Increase (HBG)|AGMH|Capacity Increase}",
+                  "{@optfeature Paralysis Ammo (HBG)|AGMH|Paralysis Ammo}, {@optfeature Pierce lvl 2|AGMH}, {@optfeature Slicing Ammo|AGMH}, {@optfeature Sticky Ammo (HBG)|AGMH|Sticky Ammo}, {@optfeature Wyvern Ammo|AGMH}"
                 ],
                 [
                   "Very Rare",
                   "4",
                   "+1",
-                  "{@optfeature Capacity Increase (Very Rare)|AGMH|Capacity Increase}, {@optfeature Pierce lvl 3|AGMH}, {@optfeature Recover lvl 2|AGMH}"
+                  "{@optfeature Capacity Increase (HBG, Very Rare)|AGMH|Capacity Increase}",
+                  "{@optfeature Pierce lvl 3|AGMH}, {@optfeature Recover lvl 2 (HBG)|AGMH|Recover lvl 2}"
                 ],
                 [
                   "Legendary",
                   "5",
                   "+2",
-                  "{@optfeature Capacity Increase (Legendary)|AGMH|Capacity Increase}, {@optfeature Cluster Ammo (Legendary)|AGMH|Cluster Ammo}, {@optfeature Normal Ammo (Legendary)|AGMH|Normal Ammo}, {@optfeature Paralysis Ammo (Legendary)|AGMH|Paralysis Ammo}, {@optfeature Pierce lvl 1 (Legendary)|AGMH|Pierce lvl 1}, {@optfeature Pierce lvl 2 (Legendary)|AGMH|Pierce lvl 2}, {@optfeature Pierce lvl 3 (Legendary)|AGMH|Pierce lvl 3}, {@optfeature Poison Ammo (Legendary)|AGMH|Poison Ammo}, {@optfeature Recover lvl 1 (Legendary)|AGMH|Recover lvl 1}, {@optfeature Recover lvl 2 (Legendary)|AGMH|Recover lvl 2}, {@optfeature Slicing Ammo (Legendary)|AGMH|Slicing Ammo}, {@optfeature Spread Ammo (Legendary)|AGMH|Spread Ammo}, {@optfeature Sticky Ammo (Legendary)|AGMH|Sticky Ammo}, {@optfeature Tranq Ammo (Legendary)|AGMH|Tranq Ammo}, {@optfeature Wyvern Ammo (Legendary)|AGMH|Wyvern Ammo}"
+                  "{@optfeature Capacity Increase (HBG, Legendary)|AGMH|Capacity Increase}",
+                  "--"
                 ]
               ]
             }
@@ -1417,45 +1463,51 @@
           "type": "inset",
           "name": "Light Bowgun",
           "entries": [
-            "{@optfeature Rapid Fire|AGMH}, {@optfeature Overheat|AGMH}, {@optfeature Ammo|AGMH}, {@optfeature Loading|AGMH}",
+            "{@optfeature Rapid Fire|AGMH}, {@optfeature Overheat|AGMH}, {@optfeature Ammo (LBG)|AGMH|Ammo}, {@optfeature Loading (LBG)|AGMH|Loading}",
             {
               "type": "table",
               "colLabels": [
                 "Rarity",
                 "Slots",
                 "Bonus",
-                "Features"
+                "Features",
+                "Ammo"
               ],
               "rows": [
                 [
                   "Common",
                   "1",
                   "-",
-                  "{@optfeature Rapid Fire|AGMH}, {@optfeature Overheat|AGMH}, {@optfeature Ammo|AGMH}, {@optfeature Loading|AGMH}, {@optfeature Normal Ammo|AGMH}, {@optfeature Tranq Ammo|AGMH}"
+                  "--",
+                  "{@optfeature Normal Ammo (LBG)|AGMH|Normal Ammo}, {@optfeature Tranq Ammo (LBG)|AGMH|Tranq Ammo}"
                 ],
                 [
                   "Uncommon",
                   "2",
                   "-",
-                  "{@optfeature Flaming Ammo|AGMH}, {@optfeature Pierce Ammo|AGMH}, {@optfeature Poison Ammo|AGMH}, {@optfeature Recover lvl 1|AGMH}, {@optfeature Spread Ammo|AGMH}, {@optfeature Thunder Ammo|AGMH}, {@optfeature Water Ammo|AGMH}"
+                  "--",
+                  "{@optfeature Flaming Ammo|AGMH}, {@optfeature Pierce Ammo|AGMH}, {@optfeature Poison Ammo (LBG)|AGMH|Poison Ammo}, {@optfeature Recover lvl 1 (LBG)|AGMH|Recover lvl 1}, {@optfeature Spread Ammo (LBG)|AGMH|Spread Ammo}, {@optfeature Thunder Ammo|AGMH}, {@optfeature Water Ammo|AGMH}"
                 ],
                 [
                   "Rare",
                   "3",
                   "+1",
-                  "{@optfeature Capacity Increase|AGMH}, {@optfeature Armor Ammo|AGMH}, {@optfeature Demon Ammo|AGMH}, {@optfeature Dragon Ammo|AGMH}, {@optfeature Paralysis Ammo|AGMH}, {@optfeature Sleep Ammo|AGMH}, {@optfeature Sticky Ammo|AGMH}"
+                  "{@optfeature Capacity Increase (LBG)|AGMH|Capacity Increase}",
+                  "{@optfeature Armor Ammo|AGMH}, {@optfeature Demon Ammo|AGMH}, {@optfeature Dragon Ammo|AGMH}, {@optfeature Paralysis Ammo (LBG)|AGMH|Paralysis Ammo}, {@optfeature Sleep Ammo|AGMH}, {@optfeature Sticky Ammo (LBG)|AGMH|Sticky Ammo}"
                 ],
                 [
                   "Very Rare",
                   "4",
                   "+2",
-                  "{@optfeature Capacity Increase (Very Rare)|AGMH|Capacity Increase}, {@optfeature Recover lvl 2|AGMH}"
+                  "{@optfeature Capacity Increase (LBG, Very Rare)|AGMH|Capacity Increase}",
+                  "{@optfeature Recover lvl 2 (LBG)|AGMH|Recover lvl 2}"
                 ],
                 [
                   "Legendary",
                   "5",
                   "+3",
-                  "{@optfeature Capacity Increase (Legendary)|AGMH|Capacity Increase}, {@optfeature Armor Ammo (Legendary)|AGMH|Armor Ammo}, {@optfeature Demon Ammo (Legendary)|AGMH|Demon Ammo}, {@optfeature Dragon Ammo (Legendary)|AGMH|Dragon Ammo}, {@optfeature Flaming Ammo (Legendary)|AGMH|Flaming Ammo}, {@optfeature Normal Ammo (Legendary)|AGMH|Normal Ammo}, {@optfeature Paralysis Ammo (Legendary)|AGMH|Paralysis Ammo}, {@optfeature Pierce Ammo (Legendary)|AGMH|Pierce Ammo}, {@optfeature Poison Ammo (Legendary)|AGMH|Poison Ammo}, {@optfeature Recover lvl 1 (Legendary)|AGMH|Recover lvl 1}, {@optfeature Recover lvl 2 (Legendary)|AGMH|Recover lvl 2}, {@optfeature Sleep Ammo (Legendary)|AGMH|Sleep Ammo}, {@optfeature Spread Ammo (Legendary)|AGMH|Spread Ammo}, {@optfeature Sticky Ammo (Legendary)|AGMH|Sticky Ammo}, {@optfeature Thunder Ammo (Legendary)|AGMH|Thunder Ammo}, {@optfeature Tranq Ammo (Legendary)|AGMH|Tranq Ammo}, {@optfeature Water Ammo (Legendary)|AGMH|Water Ammo}"
+                  "{@optfeature Capacity Increase (LBG, Legendary)|AGMH|Capacity Increase}",
+                  "--"
                 ]
               ]
             }
@@ -1665,7 +1717,7 @@
       ]
     },
     {
-      "name": "Switch Mode",
+      "name": "Switch Mode (CB)",
       "source": "AGMH",
       "featureType": [
         "HWF"
@@ -1989,7 +2041,7 @@
       ]
     },
     {
-      "name": "Guard",
+      "name": "Guard (GS)",
       "source": "AGMH",
       "featureType": [
         "HWF"
@@ -2313,7 +2365,7 @@
       ]
     },
     {
-      "name": "Charge",
+      "name": "Charge (H)",
       "source": "AGMH",
       "featureType": [
         "HWF"
@@ -2331,7 +2383,25 @@
       ]
     },
     {
-      "name": "Charge Upgrade",
+      "name": "Mighty Weapon Upgrade",
+      "source": "AGMH",
+      "featureType": [
+        "HWF"
+      ],
+      "prerequisite": [
+        {
+          "otherSummary": {
+            "entry": "Hammer (Rare)",
+            "entrySummary": "Hammer (R)"
+          }
+        }
+      ],
+      "entries": [
+        "You can use your Mighty Weapon one additional time between rests (2 total) and you regain all expended uses when you finish a short or long rest. Additionally, when you hit any creature with this weapon, you can choose to have it make the Strength saving throw or be stunned. A Huge or larger creature has advantage on the saving throw."
+      ]
+    },
+    {
+      "name": "Charge Upgrade (H)",
       "source": "AGMH",
       "featureType": [
         "HWF"
@@ -2367,7 +2437,7 @@
       ]
     },
     {
-      "name": "Charge Upgrade (Very Rare)",
+      "name": "Charge Upgrade (H, Very Rare)",
       "source": "AGMH",
       "featureType": [
         "HWF"
@@ -2385,7 +2455,7 @@
       ]
     },
     {
-      "name": "Mighty Weapon Upgrade",
+      "name": "Mighty Weapon Upgrade (Legendary)",
       "source": "AGMH",
       "featureType": [
         "HWF"
@@ -2403,7 +2473,7 @@
       ]
     },
     {
-      "name": "Charge Upgrade (Legendary)",
+      "name": "Charge Upgrade (H, Legendary)",
       "source": "AGMH",
       "featureType": [
         "HWF"
@@ -3047,7 +3117,7 @@
         }
       ],
       "entries": [
-        "Allies in your melody's radius have advantage against being stunned. Variant: Notes Not all notes are immediately available upon obtaining the various hunting horns. Instead notes can be obtained in the following ways: Sold by a Vendor. Obtained as treasure. Quest reward. Crafted by the character using weaver's tools. These Notes can come in the form of arcane runes, vibrating strings, or other objects. Once the character obtains a note, they can add/install it to their hunting horn during a long rest."
+        "Allies in your melody's radius have advantage against being stunned."
       ]
     },
     {
@@ -3375,6 +3445,42 @@
       ]
     },
     {
+      "name": "Charge (L)",
+      "source": "AGMH",
+      "featureType": [
+        "HWF"
+      ],
+      "prerequisite": [
+        {
+          "otherSummary": {
+            "entry": "Lance (Rare)",
+            "entrySummary": "Lance (R)"
+          }
+        }
+      ],
+      "entries": [
+        "If you move 20 feet in a straight line towards a creature without taking damage, your first attack against it with your lance deals an extra 1d4 piercing damage."
+      ]
+    },
+    {
+      "name": "Charge Upgrade (L)",
+      "source": "AGMH",
+      "featureType": [
+        "HWF"
+      ],
+      "prerequisite": [
+        {
+          "otherSummary": {
+            "entry": "Lance (Very Rare)",
+            "entrySummary": "Lance (V)"
+          }
+        }
+      ],
+      "entries": [
+        "Your charge now deals an extra 2d4 piercing damage."
+      ]
+    },
+    {
       "name": "Powerguard Upgrade",
       "source": "AGMH",
       "featureType": [
@@ -3408,6 +3514,24 @@
       ],
       "entries": [
         "As a reaction when a creature misses a melee attack against you, you may make an opportunity attack against it. You can use this property a number of times equal to your Constitution modifier, regaining all uses after completing a long rest."
+      ]
+    },
+    {
+      "name": "Charge Upgrade (L, Legendary)",
+      "source": "AGMH",
+      "featureType": [
+        "HWF"
+      ],
+      "prerequisite": [
+        {
+          "otherSummary": {
+            "entry": "Lance (Legendary)",
+            "entrySummary": "Lance (L)"
+          }
+        }
+      ],
+      "entries": [
+        "Your charge now deals an extra 3d4 piercing damage."
       ]
     },
     {
@@ -3498,6 +3622,24 @@
       ],
       "entries": [
         "When you hit with this weapon, you now gain 3 spirit and you can spend this spirit on all previous rarities spirit gauge options"
+      ]
+    },
+    {
+      "name": "Switch Mode (MS)",
+      "source": "AGMH",
+      "featureType": [
+        "HWF"
+      ],
+      "prerequisite": [
+        {
+          "otherSummary": {
+            "entry": "Magnet Spike",
+            "entrySummary": "Magnet Spike"
+          }
+        }
+      ],
+      "entries": [
+        "As a bonus action, can change the damage type of this weapon from bludgeoning to slashing or vice versa."
       ]
     },
     {
@@ -3825,6 +3967,24 @@
       ]
     },
     {
+      "name": "Switch Mode (SR)",
+      "source": "AGMH",
+      "featureType": [
+        "HWF"
+      ],
+      "prerequisite": [
+        {
+          "otherSummary": {
+            "entry": "Splint Rapier",
+            "entrySummary": "Splint Rapier"
+          }
+        }
+      ],
+      "entries": [
+        "As a bonus action, you can switch the weapon between its single mode or its splint mode."
+      ]
+    },
+    {
       "name": "Embolden",
       "source": "AGMH",
       "featureType": [
@@ -3893,7 +4053,61 @@
         }
       ],
       "entries": [
-        "When you switch into splint mode, choose one of the following stances that you take until the end of your next turn (unless otherwise specified):\n\nStymie Stance. When you hit a creature with this weapon, you increase the maximum duration of any condition effecting it by 6 seconds.\n\nSaboteur Stance. Before the start of your next turn, when a creature hit by this weapon must make a saving throw against a condition, roll a d4 and subtract the number from the saving throw.\n\nElemental Stance. Choose damage types between: cold, fire, lightning, poison. Your rapiers now deal that damage type instead of piercing for 1 minute, or until you switch stances."
+        "When you switch into splint mode, choose one of the following stances that you take until the end of your next turn (unless otherwise specified):"
+      ]
+    },
+    {
+      "name": "Stymie Stance",
+      "source": "AGMH",
+      "featureType": [
+        "HWF"
+      ],
+      "prerequisite": [
+        {
+          "otherSummary": {
+            "entry": "Splint Rapier (Uncommon)",
+            "entrySummary": "Splint Rapier (U)"
+          }
+        }
+      ],
+      "entries": [
+        "When you hit a creature with this weapon, you increase the maximum duration of any condition effecting it by 6 seconds."
+      ]
+    },
+    {
+      "name": "Saboteur Stance",
+      "source": "AGMH",
+      "featureType": [
+        "HWF"
+      ],
+      "prerequisite": [
+        {
+          "otherSummary": {
+            "entry": "Splint Rapier (Uncommon)",
+            "entrySummary": "Splint Rapier (U)"
+          }
+        }
+      ],
+      "entries": [
+        "Before the start of your next turn, when a creature hit by this weapon must make a saving throw against a condition, roll a d4 and subtract the number from the saving throw."
+      ]
+    },
+    {
+      "name": "Elemental Stance",
+      "source": "AGMH",
+      "featureType": [
+        "HWF"
+      ],
+      "prerequisite": [
+        {
+          "otherSummary": {
+            "entry": "Splint Rapier (Uncommon)",
+            "entrySummary": "Splint Rapier (U)"
+          }
+        }
+      ],
+      "entries": [
+        "Choose damage types between: cold, fire, lightning, poison. Your rapiers now deal that damage type instead of piercing for 1 minute, or until you switch stances."
       ]
     },
     {
@@ -4077,6 +4291,24 @@
       ]
     },
     {
+      "name": "Switch Mode (SA)",
+      "source": "AGMH",
+      "featureType": [
+        "HWF"
+      ],
+      "prerequisite": [
+        {
+          "otherSummary": {
+            "entry": "Switch Axe",
+            "entrySummary": "Switch Axe"
+          }
+        }
+      ],
+      "entries": [
+        "As a bonus action, you can switch the weapon between its axe or sword mode. Each mode has specific benefits only available in that form."
+      ]
+    },
+    {
       "name": "Sword Gauge",
       "source": "AGMH",
       "featureType": [
@@ -4181,7 +4413,25 @@
         }
       ],
       "entries": [
-        "The target must also succeed on a a Constitution saving throw against a DC of 8 + your proficiency bonus + your Strength modifier or become poisoned until the end of your next turn. Power Phial Upgrade You can expend an extra 3 charges when using a power phial to roll 1d4 and add it to your attack roll."
+        "The target must also succeed on a a Constitution saving throw against a DC of 8 + your proficiency bonus + your Strength modifier or become poisoned until the end of your next turn."
+      ]
+    },
+    {
+      "name": "Power Phial Upgrade",
+      "source": "AGMH",
+      "featureType": [
+        "HWF"
+      ],
+      "prerequisite": [
+        {
+          "otherSummary": {
+            "entry": "Switch Axe (Rare)",
+            "entrySummary": "Switch Axe (R)"
+          }
+        }
+      ],
+      "entries": [
+        "You can expend an extra 3 charges when using a power phial to roll 1d4 and add it to your attack roll."
       ]
     },
     {
@@ -4397,7 +4647,25 @@
         }
       ],
       "entries": [
-        "When you attack a hostile creature with this weapon, you gain 1 spirit (maximum of 5). You lose all spirit, if you don't attack a target by the end of your next turn. You can expend spirit on the following weapon properties:\n\nEarth Style. As a bonus action, you can expend 2 spirit to increase your tonfas weapon damage die to a d8 until the end of your next turn.\n\nPropel. As a bonus action, you can expend 1 spirit to launch yourself 10 feet into the air. Until the end of your next turn you gain a fly speed of 10 feet (hover). You can't fly any higher than 10 feet above the ground from this property."
+        "When you attack a hostile creature with this weapon, you gain 1 spirit (maximum of 5). You lose all spirit, if you don't attack a target by the end of your next turn. You can expend spirit on the following weapon properties:\n\nEarth Style. As a bonus action, you can expend 2 spirit to increase your tonfas weapon damage die to a d8 until the end of your next turn."
+      ]
+    },
+    {
+      "name": "Propel",
+      "source": "AGMH",
+      "featureType": [
+        "HWF"
+      ],
+      "prerequisite": [
+        {
+          "otherSummary": {
+            "entry": "Tonfas (Uncommon)",
+            "entrySummary": "Tonfas (U)"
+          }
+        }
+      ],
+      "entries": [
+        "As a bonus action, you can expend 1 spirit to launch yourself 10 feet into the air. Until the end of your next turn you gain a fly speed of 10 feet (hover). You can't fly any higher than 10 feet above the ground from this property."
       ]
     },
     {
@@ -4545,6 +4813,24 @@
       ]
     },
     {
+      "name": "Guard (T)",
+      "source": "AGMH",
+      "featureType": [
+        "HWF"
+      ],
+      "prerequisite": [
+        {
+          "otherSummary": {
+            "entry": "Tonfas (Very Rare)",
+            "entrySummary": "Tonfas (V)"
+          }
+        }
+      ],
+      "entries": [
+        "As a reaction can expend 3 spirit to add 3 AC against one melee attack that would hit it. To do so, you must see the attacker and be wielding both tonfas."
+      ]
+    },
+    {
       "name": "Dragon Spirit Upgrade (Legendary)",
       "source": "AGMH",
       "featureType": [
@@ -4599,7 +4885,7 @@
       ]
     },
     {
-      "name": "Guard (Legendary)",
+      "name": "Guard (T, Legendary)",
       "source": "AGMH",
       "featureType": [
         "HWF"
@@ -5319,6 +5605,24 @@
       ]
     },
     {
+      "name": "Power Shot",
+      "source": "AGMH",
+      "featureType": [
+        "HWF"
+      ],
+      "prerequisite": [
+        {
+          "otherSummary": {
+            "entry": "Bow (Legendary)",
+            "entrySummary": "Bow (L)"
+          }
+        }
+      ],
+      "entries": [
+        "When you hit a creature with this weapon, you can charge one arrow in your quiver until the end of your turn. When you hit a creature with this charged arrow, roll one additional weapon damage die."
+      ]
+    },
+    {
       "name": "Dragonpiercer Upgrade (Legendary)",
       "source": "AGMH",
       "featureType": [
@@ -5333,11 +5637,11 @@
         }
       ],
       "entries": [
-        "This action now deals 5d6 piercing damage. Characters are not supposed to have an infinite amount of coatings or ammunition available to them, they should be bought at a price that the GM sees fit. A flask of coating weighs the same as a flask of oil by default, and a holster of ammunition weighs the same as a bag of ball bearings. The GM should determine how much coating or ammunition of each type a character has. Generally speaking a character should not have more than a dozen flasks of a coating, or holsters of ammunition."
+        "This action now deals 5d6 piercing damage."
       ]
     },
     {
-      "name": "Ammo",
+      "name": "Ammo (DR)",
       "source": "AGMH",
       "featureType": [
         "HWF"
@@ -5409,7 +5713,7 @@
       ]
     },
     {
-      "name": "Normal Ammo",
+      "name": "Normal Ammo (DR)",
       "source": "AGMH",
       "featureType": [
         "HWF"
@@ -5427,7 +5731,7 @@
       ]
     },
     {
-      "name": "Tranq Ammo",
+      "name": "Tranq Ammo (DR)",
       "source": "AGMH",
       "featureType": [
         "HWF"
@@ -5459,7 +5763,7 @@
         }
       ],
       "entries": [
-        "When you reload your repeaters while you are within 10 feet of a hostile creature, your repeaters are empowered for 1 minute or until you reload again when their isn't a hostile creature in range. While empowered, you gain an extra +1 bonus on attacks and damage rolls when attacking a creature within your weapon's normal attack range. Additional Ammo Available."
+        "When you reload your repeaters while you are within 10 feet of a hostile creature, your repeaters are empowered for 1 minute or until you reload again when their isn't a hostile creature in range. While empowered, you gain an extra +1 bonus on attacks and damage rolls when attacking a creature within your weapon's normal attack range."
       ]
     },
     {
@@ -5549,7 +5853,7 @@
         }
       ],
       "entries": [
-        "Your blaze, cryo, normal, storm, and slime ammo gain the following effects when a creature is hit with the ammo from an empowered repeater\n\nBlaze Ammo. The terrain in a 5-foot space the target is in ignites (unless the target is in a non flammable liquid or in the air). The terrain continues to burn until a creature uses an action to put it out. A creature that ends its turn on the space takes 1d6 fire damage.\n\nCryo Ammo. The target must succeed on a Constitution saving throw again your ammo save DC or be afflicted with waterblight for 1 minute. A target can repeat the saving throw at the end of each of its turns, ending the effect on itself on a success. When a target afflicted by the blight succeeds on its saving throw or the effect ends for it, the target is immune to this additional ammo effect for 24 hours.\n\nNormal Ammo. This ammo deals an extra 3 piercing damage to the target.\n\nStorm Ammo. The target must succeed on a Constitution saving throw again your ammo save DC or be afflicted with thunderblight for 1 minute. A target can repeat the saving throw at the end of each of its turns, ending the effect on itself on a success. When a target afflicted by the blight succeeds on its saving throw or the effect ends for it, the target is immune to this additional ammo effect for 24 hours.\n\nSlime Ammo. The target's armor class is reduced by 1 until the end of your next turn. A target hit by more than one slime ammo doesn't reduce the armor class. Additional Ammo Available."
+        "Your blaze, cryo, normal, storm, and slime ammo gain the following effects when a creature is hit with the ammo from an empowered repeater\n\nBlaze Ammo. The terrain in a 5-foot space the target is in ignites (unless the target is in a non flammable liquid or in the air). The terrain continues to burn until a creature uses an action to put it out. A creature that ends its turn on the space takes 1d6 fire damage.\n\nCryo Ammo. The target must succeed on a Constitution saving throw again your ammo save DC or be afflicted with waterblight for 1 minute. A target can repeat the saving throw at the end of each of its turns, ending the effect on itself on a success. When a target afflicted by the blight succeeds on its saving throw or the effect ends for it, the target is immune to this additional ammo effect for 24 hours.\n\nNormal Ammo. This ammo deals an extra 3 piercing damage to the target.\n\nStorm Ammo. The target must succeed on a Constitution saving throw again your ammo save DC or be afflicted with thunderblight for 1 minute. A target can repeat the saving throw at the end of each of its turns, ending the effect on itself on a success. When a target afflicted by the blight succeeds on its saving throw or the effect ends for it, the target is immune to this additional ammo effect for 24 hours.\n\nSlime Ammo. The target's armor class is reduced by 1 until the end of your next turn. A target hit by more than one slime ammo doesn't reduce the armor class."
       ]
     },
     {
@@ -5639,7 +5943,25 @@
         }
       ],
       "entries": [
-        "Your dawnstar, full-bore, marksman, twilight ammo gain the following effects when they are fired from an empowered repeater:\n\nDawnstar Ammo. The target sheds bright light in a 5-foot radius and dim light for an additional 5-feet until the end of your next turn. Invisible creatures and objects are visible as long as they are in the bright light.\n\nFull-Bore Ammo. You are pushed 15 feet backwards when you make an attack with this ammo.\n\nMarksman Ammo. When you roll a 20 on your attack roll with this ammo, your triple the dice instead of doubling them.\n\nTwlight Ammo. The target must succeed on a Constitution saving throw again your ammo save DC or be blinded until the end of its next turn.\n\nModifications. You have learned the in's and out's of your firearms and learned how to modify them for the challenge ahead. As part of a short rest, you can change out the modification on your repeaters with another. Each repeater can have a modification, but it can't have the same modification as the other repeater. The following modifications are available on a very rare dual repeaters:\n\nDemolition Sights. This repeater deals double damage to objects and structures.\n\nScoped Sights. Your normal and maximum attack range increases by 30 feet.\n\nLightweight Frame. Your movement speed is increased by 15 feet when you have 3 or less ammo in the chamber.\n\nTactician's Magazine. When you reload this repeater when it has 0 ammo remaining, the first attack made with it is always empowered."
+        "Your dawnstar, full-bore, marksman, twilight ammo gain the following effects when they are fired from an empowered repeater:\n\nDawnstar Ammo. The target sheds bright light in a 5-foot radius and dim light for an additional 5-feet until the end of your next turn. Invisible creatures and objects are visible as long as they are in the bright light.\n\nFull-Bore Ammo. You are pushed 15 feet backwards when you make an attack with this ammo.\n\nMarksman Ammo. When you roll a 20 on your attack roll with this ammo, your triple the dice instead of doubling them.\n\nTwlight Ammo. The target must succeed on a Constitution saving throw again your ammo save DC or be blinded until the end of its next turn."
+      ]
+    },
+    {
+      "name": "Modifications",
+      "source": "AGMH",
+      "featureType": [
+        "HWF"
+      ],
+      "prerequisite": [
+        {
+          "otherSummary": {
+            "entry": "Dual Repeaters (Very Rare)",
+            "entrySummary": "Dual Repeaters (V)"
+          }
+        }
+      ],
+      "entries": [
+        "You have learned the in's and out's of your firearms and learned how to modify them for the challenge ahead. As part of a short rest, you can change out the modification on your repeaters with another. Each repeater can have a modification, but it can't have the same modification as the other repeater. The following modifications are available on a very rare dual repeaters:\n\nDemolition Sights. This repeater deals double damage to objects and structures.\n\nScoped Sights. Your normal and maximum attack range increases by 30 feet.\n\nLightweight Frame. Your movement speed is increased by 15 feet when you have 3 or less ammo in the chamber.\n\nTactician's Magazine. When you reload this repeater when it has 0 ammo remaining, the first attack made with it is always empowered."
       ]
     },
     {
@@ -5675,11 +5997,11 @@
         }
       ],
       "entries": [
-        "Your repeaters can be modified with these additional options:\n\nCapacitive Magazine. When you cast a spell or use a class feature roll a d20. On a 10 or higher, up to 4 pieces of the current ammo type magically appear in the repeater's chamber.\n\nLucky Magazine. This repeater's critical hit range is increased by 1 when you have 3 or less ammo remaining in the chamber.\n\nSuppressor. If you miss a target with an attack from this repeater while hiding, your position is not exposed and you remain hidden. Though the target may be aware of the danger and the rough direction it came from. Ammo Vendor An ammo vendor may be located in a general store, near a blacksmith, or perhaps they have their own shop. A store may have a large supply of ammunition, which will be up to your GM. Below you will find each type of ammo, the amount you can carry, how much they cost. Type Cost Capacity"
+        "Your repeaters can be modified with these additional options:\n\nCapacitive Magazine. When you cast a spell or use a class feature roll a d20. On a 10 or higher, up to 4 pieces of the current ammo type magically appear in the repeater's chamber.\n\nLucky Magazine. This repeater's critical hit range is increased by 1 when you have 3 or less ammo remaining in the chamber.\n\nSuppressor. If you miss a target with an attack from this repeater while hiding, your position is not exposed and you remain hidden. Though the target may be aware of the danger and the rough direction it came from."
       ]
     },
     {
-      "name": "Blaze Ammo (Legendary)",
+      "name": "Ammo (HBG)",
       "source": "AGMH",
       "featureType": [
         "HWF"
@@ -5687,179 +6009,17 @@
       "prerequisite": [
         {
           "otherSummary": {
-            "entry": "Dual Repeaters (Legendary)",
-            "entrySummary": "Dual Repeaters (L)"
+            "entry": "Heavy Bowgun",
+            "entrySummary": "Heavy Bowgun"
           }
         }
       ],
       "entries": [
-        "(12) 1 gp 48"
+        "Your ammo is stored in an ammo pouch that weighs 10 lbs. The pouch can hold a certain amount of each type of ammo as shown in the Vendor table below. All ammo deal normal weapon damage unless otherwise specified. Some of your ammo require your target to make a saving throw to resist the ammo’s effects. The saving throw DC is calculated as follows: Ammo save DC = 8 + your proficiency bonus + your Dexterity modifier"
       ]
     },
     {
-      "name": "Cryo Ammo (Legendary)",
-      "source": "AGMH",
-      "featureType": [
-        "HWF"
-      ],
-      "prerequisite": [
-        {
-          "otherSummary": {
-            "entry": "Dual Repeaters (Legendary)",
-            "entrySummary": "Dual Repeaters (L)"
-          }
-        }
-      ],
-      "entries": [
-        "(12) 2 gp 48"
-      ]
-    },
-    {
-      "name": "Dawnstar Ammo (Legendary)",
-      "source": "AGMH",
-      "featureType": [
-        "HWF"
-      ],
-      "prerequisite": [
-        {
-          "otherSummary": {
-            "entry": "Dual Repeaters (Legendary)",
-            "entrySummary": "Dual Repeaters (L)"
-          }
-        }
-      ],
-      "entries": [
-        "(1) 2 gp 18"
-      ]
-    },
-    {
-      "name": "Full-Bore Ammo (Legendary)",
-      "source": "AGMH",
-      "featureType": [
-        "HWF"
-      ],
-      "prerequisite": [
-        {
-          "otherSummary": {
-            "entry": "Dual Repeaters (Legendary)",
-            "entrySummary": "Dual Repeaters (L)"
-          }
-        }
-      ],
-      "entries": [
-        "(1) 1 gp 18"
-      ]
-    },
-    {
-      "name": "Marksman Ammo (Legendary)",
-      "source": "AGMH",
-      "featureType": [
-        "HWF"
-      ],
-      "prerequisite": [
-        {
-          "otherSummary": {
-            "entry": "Dual Repeaters (Legendary)",
-            "entrySummary": "Dual Repeaters (L)"
-          }
-        }
-      ],
-      "entries": [
-        "(1) 1 gp 12"
-      ]
-    },
-    {
-      "name": "Normal Ammo (Legendary)",
-      "source": "AGMH",
-      "featureType": [
-        "HWF"
-      ],
-      "prerequisite": [
-        {
-          "otherSummary": {
-            "entry": "Dual Repeaters (Legendary)",
-            "entrySummary": "Dual Repeaters (L)"
-          }
-        }
-      ],
-      "entries": [
-        "(18) 1 gp 78"
-      ]
-    },
-    {
-      "name": "Storm Ammo (Legendary)",
-      "source": "AGMH",
-      "featureType": [
-        "HWF"
-      ],
-      "prerequisite": [
-        {
-          "otherSummary": {
-            "entry": "Dual Repeaters (Legendary)",
-            "entrySummary": "Dual Repeaters (L)"
-          }
-        }
-      ],
-      "entries": [
-        "(12) 2 gp 48"
-      ]
-    },
-    {
-      "name": "Slime Ammo (Legendary)",
-      "source": "AGMH",
-      "featureType": [
-        "HWF"
-      ],
-      "prerequisite": [
-        {
-          "otherSummary": {
-            "entry": "Dual Repeaters (Legendary)",
-            "entrySummary": "Dual Repeaters (L)"
-          }
-        }
-      ],
-      "entries": [
-        "(12) 1 gp 48"
-      ]
-    },
-    {
-      "name": "Tranq Ammo (Legendary)",
-      "source": "AGMH",
-      "featureType": [
-        "HWF"
-      ],
-      "prerequisite": [
-        {
-          "otherSummary": {
-            "entry": "Dual Repeaters (Legendary)",
-            "entrySummary": "Dual Repeaters (L)"
-          }
-        }
-      ],
-      "entries": [
-        "(1) 50 gp 78"
-      ]
-    },
-    {
-      "name": "Twlight Ammo",
-      "source": "AGMH",
-      "featureType": [
-        "HWF"
-      ],
-      "prerequisite": [
-        {
-          "otherSummary": {
-            "entry": "Dual Repeaters (Legendary)",
-            "entrySummary": "Dual Repeaters (L)"
-          }
-        }
-      ],
-      "entries": [
-        "(1) 2 gp 18 Variant: Crafting Ammunition You can craft ammunition to produce for your repeaters. At the end of each long rest, you can create 6 rounds of ammunition. After each short rest, you can produce 3 rounds. It takes 2 rounds of ammunition when you craft a single round of ammunition that has a maximum capacity below 20."
-      ]
-    },
-    {
-      "name": "Loading",
+      "name": "Loading (HBG)",
       "source": "AGMH",
       "featureType": [
         "HWF"
@@ -5874,6 +6034,42 @@
       ],
       "entries": [
         "As a bonus action you switch the ammo your bowgun is using with another. This replaces the standard 5e loading property."
+      ]
+    },
+    {
+      "name": "Normal Ammo (HBG)",
+      "source": "AGMH",
+      "featureType": [
+        "HWF"
+      ],
+      "prerequisite": [
+        {
+          "otherSummary": {
+            "entry": "Heavy Bowgun (Common)",
+            "entrySummary": "Heavy Bowgun (C)"
+          }
+        }
+      ],
+      "entries": [
+        "Deals normal weapon damage."
+      ]
+    },
+    {
+      "name": "Tranq Ammo (HBG)",
+      "source": "AGMH",
+      "featureType": [
+        "HWF"
+      ],
+      "prerequisite": [
+        {
+          "otherSummary": {
+            "entry": "Heavy Bowgun (Common)",
+            "entrySummary": "Heavy Bowgun (C)"
+          }
+        }
+      ],
+      "entries": [
+        "Acts as a tranq bomb with the bowgun's range and weapon proficiency."
       ]
     },
     {
@@ -5913,7 +6109,7 @@
       ]
     },
     {
-      "name": "Poison Ammo",
+      "name": "Poison Ammo (HBG)",
       "source": "AGMH",
       "featureType": [
         "HWF"
@@ -5931,7 +6127,7 @@
       ]
     },
     {
-      "name": "Recover lvl 1",
+      "name": "Recover lvl 1 (HBG)",
       "source": "AGMH",
       "featureType": [
         "HWF"
@@ -5949,7 +6145,7 @@
       ]
     },
     {
-      "name": "Spread Ammo",
+      "name": "Spread Ammo (HBG)",
       "source": "AGMH",
       "featureType": [
         "HWF"
@@ -5967,7 +6163,7 @@
       ]
     },
     {
-      "name": "Capacity Increase",
+      "name": "Capacity Increase (HBG)",
       "source": "AGMH",
       "featureType": [
         "HWF"
@@ -5981,11 +6177,11 @@
         }
       ],
       "entries": [
-        "You double the base ammo capacity your ammo pouch can hold for all ammo. Additional Ammo Available."
+        "You double the base ammo capacity your ammo pouch can hold for all ammo."
       ]
     },
     {
-      "name": "Paralysis Ammo",
+      "name": "Paralysis Ammo (HBG)",
       "source": "AGMH",
       "featureType": [
         "HWF"
@@ -6039,7 +6235,7 @@
       ]
     },
     {
-      "name": "Sticky Ammo",
+      "name": "Sticky Ammo (HBG)",
       "source": "AGMH",
       "featureType": [
         "HWF"
@@ -6075,7 +6271,7 @@
       ]
     },
     {
-      "name": "Capacity Increase (Very Rare)",
+      "name": "Capacity Increase (HBG, Very Rare)",
       "source": "AGMH",
       "featureType": [
         "HWF"
@@ -6089,7 +6285,7 @@
         }
       ],
       "entries": [
-        "You triple the base ammo capacity your ammo pouch can hold for all ammo. Additional Ammo Available."
+        "You triple the base ammo capacity your ammo pouch can hold for all ammo."
       ]
     },
     {
@@ -6111,7 +6307,7 @@
       ]
     },
     {
-      "name": "Recover lvl 2",
+      "name": "Recover lvl 2 (HBG)",
       "source": "AGMH",
       "featureType": [
         "HWF"
@@ -6129,7 +6325,7 @@
       ]
     },
     {
-      "name": "Capacity Increase (Legendary)",
+      "name": "Capacity Increase (HBG, Legendary)",
       "source": "AGMH",
       "featureType": [
         "HWF"
@@ -6143,223 +6339,7 @@
         }
       ],
       "entries": [
-        "You quadruple the base ammo capacity your ammo pouch can hold for all ammo. Ammo Vendor An ammo vendor may be located in a general store, near a blacksmith, or perhaps they have their own shop. A store may have a large supply of ammunition, which will be up to your GM. Below you will find each type of ammo, the amount you can carry, how much they cost. Type Cost Base Capacity"
-      ]
-    },
-    {
-      "name": "Cluster Ammo (Legendary)",
-      "source": "AGMH",
-      "featureType": [
-        "HWF"
-      ],
-      "prerequisite": [
-        {
-          "otherSummary": {
-            "entry": "Heavy Bowgun (Legendary)",
-            "entrySummary": "Heavy Bowgun (L)"
-          }
-        }
-      ],
-      "entries": [
-        "(1) 5 gp 2"
-      ]
-    },
-    {
-      "name": "Paralysis Ammo (Legendary)",
-      "source": "AGMH",
-      "featureType": [
-        "HWF"
-      ],
-      "prerequisite": [
-        {
-          "otherSummary": {
-            "entry": "Heavy Bowgun (Legendary)",
-            "entrySummary": "Heavy Bowgun (L)"
-          }
-        }
-      ],
-      "entries": [
-        "(1) 4 gp 1"
-      ]
-    },
-    {
-      "name": "Pierce lvl 1 (Legendary)",
-      "source": "AGMH",
-      "featureType": [
-        "HWF"
-      ],
-      "prerequisite": [
-        {
-          "otherSummary": {
-            "entry": "Heavy Bowgun (Legendary)",
-            "entrySummary": "Heavy Bowgun (L)"
-          }
-        }
-      ],
-      "entries": [
-        "(10) 1 gp 10"
-      ]
-    },
-    {
-      "name": "Pierce lvl 2 (Legendary)",
-      "source": "AGMH",
-      "featureType": [
-        "HWF"
-      ],
-      "prerequisite": [
-        {
-          "otherSummary": {
-            "entry": "Heavy Bowgun (Legendary)",
-            "entrySummary": "Heavy Bowgun (L)"
-          }
-        }
-      ],
-      "entries": [
-        "(10) 2 gp 10"
-      ]
-    },
-    {
-      "name": "Pierce lvl 3 (Legendary)",
-      "source": "AGMH",
-      "featureType": [
-        "HWF"
-      ],
-      "prerequisite": [
-        {
-          "otherSummary": {
-            "entry": "Heavy Bowgun (Legendary)",
-            "entrySummary": "Heavy Bowgun (L)"
-          }
-        }
-      ],
-      "entries": [
-        "(10) 3 gp 10"
-      ]
-    },
-    {
-      "name": "Poison Ammo (Legendary)",
-      "source": "AGMH",
-      "featureType": [
-        "HWF"
-      ],
-      "prerequisite": [
-        {
-          "otherSummary": {
-            "entry": "Heavy Bowgun (Legendary)",
-            "entrySummary": "Heavy Bowgun (L)"
-          }
-        }
-      ],
-      "entries": [
-        "(1) 4 gp 3"
-      ]
-    },
-    {
-      "name": "Recover lvl 1 (Legendary)",
-      "source": "AGMH",
-      "featureType": [
-        "HWF"
-      ],
-      "prerequisite": [
-        {
-          "otherSummary": {
-            "entry": "Heavy Bowgun (Legendary)",
-            "entrySummary": "Heavy Bowgun (L)"
-          }
-        }
-      ],
-      "entries": [
-        "(1) 5 gp 1"
-      ]
-    },
-    {
-      "name": "Recover lvl 2 (Legendary)",
-      "source": "AGMH",
-      "featureType": [
-        "HWF"
-      ],
-      "prerequisite": [
-        {
-          "otherSummary": {
-            "entry": "Heavy Bowgun (Legendary)",
-            "entrySummary": "Heavy Bowgun (L)"
-          }
-        }
-      ],
-      "entries": [
-        "(1) 7 gp 1"
-      ]
-    },
-    {
-      "name": "Slicing Ammo (Legendary)",
-      "source": "AGMH",
-      "featureType": [
-        "HWF"
-      ],
-      "prerequisite": [
-        {
-          "otherSummary": {
-            "entry": "Heavy Bowgun (Legendary)",
-            "entrySummary": "Heavy Bowgun (L)"
-          }
-        }
-      ],
-      "entries": [
-        "(1) 5 gp 1"
-      ]
-    },
-    {
-      "name": "Spread Ammo (Legendary)",
-      "source": "AGMH",
-      "featureType": [
-        "HWF"
-      ],
-      "prerequisite": [
-        {
-          "otherSummary": {
-            "entry": "Heavy Bowgun (Legendary)",
-            "entrySummary": "Heavy Bowgun (L)"
-          }
-        }
-      ],
-      "entries": [
-        "(20) 3 gp 10"
-      ]
-    },
-    {
-      "name": "Sticky Ammo (Legendary)",
-      "source": "AGMH",
-      "featureType": [
-        "HWF"
-      ],
-      "prerequisite": [
-        {
-          "otherSummary": {
-            "entry": "Heavy Bowgun (Legendary)",
-            "entrySummary": "Heavy Bowgun (L)"
-          }
-        }
-      ],
-      "entries": [
-        "(1) 1 gp 2"
-      ]
-    },
-    {
-      "name": "Wyvern Ammo (Legendary)",
-      "source": "AGMH",
-      "featureType": [
-        "HWF"
-      ],
-      "prerequisite": [
-        {
-          "otherSummary": {
-            "entry": "Heavy Bowgun (Legendary)",
-            "entrySummary": "Heavy Bowgun (L)"
-          }
-        }
-      ],
-      "entries": [
-        "(1) 10 gp 1 *Up to the GM on how much you can hold Variant: Crafting Ammunition You can craft ammunition to produce for your Bowgun. At the end of each long rest, you can create 20 rounds of ammunition. After each short rest, you can produce 5 rounds. It takes 3 rounds of ammunition when you craft any single round of ammunition that has a maximum capacity below 20."
+        "You quadruple the base ammo capacity your ammo pouch can hold for all ammo."
       ]
     },
     {
@@ -6399,6 +6379,78 @@
       ]
     },
     {
+      "name": "Ammo (LBG)",
+      "source": "AGMH",
+      "featureType": [
+        "HWF"
+      ],
+      "prerequisite": [
+        {
+          "otherSummary": {
+            "entry": "Light Bowgun",
+            "entrySummary": "Light Bowgun"
+          }
+        }
+      ],
+      "entries": [
+        "Your ammo is stored in an ammo pouch that weighs 10 lbs. The pouch can hold a certain amount of each type of ammo as shown in the Vendor table below. All ammo deal normal weapon damage unless otherwise specified. Some of your ammo require your target to make a saving throw to resist the ammo’s effects. The saving throw DC is calculated as follows: Ammo save DC = 8 + your proficiency bonus + your Dexterity modifier"
+      ]
+    },
+    {
+      "name": "Loading (LBG)",
+      "source": "AGMH",
+      "featureType": [
+        "HWF"
+      ],
+      "prerequisite": [
+        {
+          "otherSummary": {
+            "entry": "Light Bowgun",
+            "entrySummary": "Light Bowgun"
+          }
+        }
+      ],
+      "entries": [
+        "As a bonus action you switch the ammo your bowgun is using with another. This replaces the standard 5e loading property."
+      ]
+    },
+    {
+      "name": "Normal Ammo (LBG)",
+      "source": "AGMH",
+      "featureType": [
+        "HWF"
+      ],
+      "prerequisite": [
+        {
+          "otherSummary": {
+            "entry": "Light Bowgun (Common)",
+            "entrySummary": "Light Bowgun (C)"
+          }
+        }
+      ],
+      "entries": [
+        "Deals normal weapon damage."
+      ]
+    },
+    {
+      "name": "Tranq Ammo (LBG)",
+      "source": "AGMH",
+      "featureType": [
+        "HWF"
+      ],
+      "prerequisite": [
+        {
+          "otherSummary": {
+            "entry": "Light Bowgun (Common)",
+            "entrySummary": "Light Bowgun (C)"
+          }
+        }
+      ],
+      "entries": [
+        "Acts as a tranq bomb with the bowgun's range and weapon proficiency."
+      ]
+    },
+    {
       "name": "Flaming Ammo",
       "source": "AGMH",
       "featureType": [
@@ -6435,6 +6487,60 @@
       ]
     },
     {
+      "name": "Poison Ammo (LBG)",
+      "source": "AGMH",
+      "featureType": [
+        "HWF"
+      ],
+      "prerequisite": [
+        {
+          "otherSummary": {
+            "entry": "Light Bowgun (Uncommon)",
+            "entrySummary": "Light Bowgun (U)"
+          }
+        }
+      ],
+      "entries": [
+        "A creature hit by this ammo must succeed a Constitution saving throw or be poisoned for 1 minute. A poisoned target can repeat the saving throw at the end of each of its turns, ending the effect on itself on a success."
+      ]
+    },
+    {
+      "name": "Recover lvl 1 (LBG)",
+      "source": "AGMH",
+      "featureType": [
+        "HWF"
+      ],
+      "prerequisite": [
+        {
+          "otherSummary": {
+            "entry": "Light Bowgun (Uncommon)",
+            "entrySummary": "Light Bowgun (U)"
+          }
+        }
+      ],
+      "entries": [
+        "Instead of taking damage, a creature hit by this ammo regains 1d4 hit points."
+      ]
+    },
+    {
+      "name": "Spread Ammo (LBG)",
+      "source": "AGMH",
+      "featureType": [
+        "HWF"
+      ],
+      "prerequisite": [
+        {
+          "otherSummary": {
+            "entry": "Light Bowgun (Uncommon)",
+            "entrySummary": "Light Bowgun (U)"
+          }
+        }
+      ],
+      "entries": [
+        "When you hit a creature with this ammo and it is within half your normal bowgun range, the damage dealt to the target is split evenly between it and each creature adjacent to it."
+      ]
+    },
+    {
       "name": "Thunder Ammo",
       "source": "AGMH",
       "featureType": [
@@ -6468,6 +6574,24 @@
       ],
       "entries": [
         "Your attacks deal acid damage."
+      ]
+    },
+    {
+      "name": "Capacity Increase (LBG)",
+      "source": "AGMH",
+      "featureType": [
+        "HWF"
+      ],
+      "prerequisite": [
+        {
+          "otherSummary": {
+            "entry": "Light Bowgun (Rare)",
+            "entrySummary": "Light Bowgun (R)"
+          }
+        }
+      ],
+      "entries": [
+        "You double the base ammo capacity your ammo pouch can hold for all ammo."
       ]
     },
     {
@@ -6525,6 +6649,24 @@
       ]
     },
     {
+      "name": "Paralysis Ammo (LBG)",
+      "source": "AGMH",
+      "featureType": [
+        "HWF"
+      ],
+      "prerequisite": [
+        {
+          "otherSummary": {
+            "entry": "Light Bowgun (Rare)",
+            "entrySummary": "Light Bowgun (R)"
+          }
+        }
+      ],
+      "entries": [
+        "A creature hit by this ammo must succeed a Constitution saving throw or be incapacitated and have its movement speed reduced to 0 until the end of your next turn. If the creature fails the save by 5 or more, it is paralyzed instead until the end of your next turn."
+      ]
+    },
+    {
       "name": "Sleep Ammo",
       "source": "AGMH",
       "featureType": [
@@ -6543,7 +6685,7 @@
       ]
     },
     {
-      "name": "Armor Ammo (Legendary)",
+      "name": "Sticky Ammo (LBG)",
       "source": "AGMH",
       "featureType": [
         "HWF"
@@ -6551,17 +6693,17 @@
       "prerequisite": [
         {
           "otherSummary": {
-            "entry": "Light Bowgun (Legendary)",
-            "entrySummary": "Light Bowgun (L)"
+            "entry": "Light Bowgun (Rare)",
+            "entrySummary": "Light Bowgun (R)"
           }
         }
       ],
       "entries": [
-        "(1) 8 gp 1"
+        "A creature hit by this ammo must succeed a Strength saving throw or be restrained for 1 minute, the creature can use their action to attempt to break free (Escape DC equal to your Ammo save DC)."
       ]
     },
     {
-      "name": "Demon Ammo (Legendary)",
+      "name": "Capacity Increase (LBG, Very Rare)",
       "source": "AGMH",
       "featureType": [
         "HWF"
@@ -6569,17 +6711,17 @@
       "prerequisite": [
         {
           "otherSummary": {
-            "entry": "Light Bowgun (Legendary)",
-            "entrySummary": "Light Bowgun (L)"
+            "entry": "Light Bowgun (Very Rare)",
+            "entrySummary": "Light Bowgun (V)"
           }
         }
       ],
       "entries": [
-        "(1) 8 gp 1"
+        "You triple the base ammo capacity your ammo pouch can hold for all ammo."
       ]
     },
     {
-      "name": "Dragon Ammo (Legendary)",
+      "name": "Recover lvl 2 (LBG)",
       "source": "AGMH",
       "featureType": [
         "HWF"
@@ -6587,17 +6729,17 @@
       "prerequisite": [
         {
           "otherSummary": {
-            "entry": "Light Bowgun (Legendary)",
-            "entrySummary": "Light Bowgun (L)"
+            "entry": "Light Bowgun (Very Rare)",
+            "entrySummary": "Light Bowgun (V)"
           }
         }
       ],
       "entries": [
-        "(10) 3 gp 10"
+        "Instead of taking damage, a creature hit by this ammo regains 1d6 hit points."
       ]
     },
     {
-      "name": "Flaming Ammo (Legendary)",
+      "name": "Capacity Increase (LBG, Legendary)",
       "source": "AGMH",
       "featureType": [
         "HWF"
@@ -6611,79 +6753,7 @@
         }
       ],
       "entries": [
-        "(10) 3 gp 10"
-      ]
-    },
-    {
-      "name": "Pierce Ammo (Legendary)",
-      "source": "AGMH",
-      "featureType": [
-        "HWF"
-      ],
-      "prerequisite": [
-        {
-          "otherSummary": {
-            "entry": "Light Bowgun (Legendary)",
-            "entrySummary": "Light Bowgun (L)"
-          }
-        }
-      ],
-      "entries": [
-        "(10) 2 gp 10"
-      ]
-    },
-    {
-      "name": "Sleep Ammo (Legendary)",
-      "source": "AGMH",
-      "featureType": [
-        "HWF"
-      ],
-      "prerequisite": [
-        {
-          "otherSummary": {
-            "entry": "Light Bowgun (Legendary)",
-            "entrySummary": "Light Bowgun (L)"
-          }
-        }
-      ],
-      "entries": [
-        "(1) 5 gp 1"
-      ]
-    },
-    {
-      "name": "Thunder Ammo (Legendary)",
-      "source": "AGMH",
-      "featureType": [
-        "HWF"
-      ],
-      "prerequisite": [
-        {
-          "otherSummary": {
-            "entry": "Light Bowgun (Legendary)",
-            "entrySummary": "Light Bowgun (L)"
-          }
-        }
-      ],
-      "entries": [
-        "(10) 3 gp 10"
-      ]
-    },
-    {
-      "name": "Water Ammo (Legendary)",
-      "source": "AGMH",
-      "featureType": [
-        "HWF"
-      ],
-      "prerequisite": [
-        {
-          "otherSummary": {
-            "entry": "Light Bowgun (Legendary)",
-            "entrySummary": "Light Bowgun (L)"
-          }
-        }
-      ],
-      "entries": [
-        "(10) 3 gp 10 *Up to the GM on how much you can hold Variant: Crafting Ammunition You can craft ammunition to produce for your Bowgun. At the end of each long rest, you can create 20 rounds of ammunition. After each short rest, you can produce 5 rounds. It takes 3 rounds of ammunition when you craft a single round of ammunition that has a maximum capacity below 20."
+        "You quadruple the base ammo capacity your ammo pouch can hold for all ammo."
       ]
     }
   ],
@@ -9805,31 +9875,701 @@
       "source": "AGMH",
       "page": 73,
       "entries": [
-        "Downtime activity entry extracted from the GTMH Patreon/GMBinder source."
+        "Sometimes it is easier to hunt alone. This activity gives a character the chance to obtain some extra materials from creatures. The table below shows the maximum CR a character can hunt depending on their level and difficulty they choose. Once they choose their difficulty, they can then pick the creature they are hunting.",
+        {
+          "type": "table",
+          "colLabels": [
+            "Character Level",
+            "Medium Encounter",
+            "Hard Encounter",
+            "Deadly Encounter"
+          ],
+          "rows": [
+            [
+              "1",
+              "CR 0",
+              "CR 1/4",
+              "CR 1/4"
+            ],
+            [
+              "2",
+              "CR 1/8",
+              "CR 1/2",
+              "CR 1"
+            ],
+            [
+              "3",
+              "CR 1/2",
+              "CR 1",
+              "CR 2"
+            ],
+            [
+              "4",
+              "CR 1",
+              "CR 2",
+              "CR 2"
+            ],
+            [
+              "5",
+              "CR 2",
+              "CR 3",
+              "CR 4"
+            ],
+            [
+              "6",
+              "CR 2",
+              "CR 3",
+              "CR 4"
+            ],
+            [
+              "7",
+              "CR 3",
+              "CR 4",
+              "CR 4"
+            ],
+            [
+              "8",
+              "CR 3",
+              "CR 4",
+              "CR 5"
+            ],
+            [
+              "9",
+              "CR 3",
+              "CR 4",
+              "CR 5"
+            ],
+            [
+              "10",
+              "CR 4",
+              "CR 5",
+              "CR 6"
+            ],
+            [
+              "11",
+              "CR 4",
+              "CR 6",
+              "CR 7"
+            ],
+            [
+              "12",
+              "CR 5",
+              "CR 7",
+              "CR 8"
+            ],
+            [
+              "13",
+              "CR 5",
+              "CR 7",
+              "CR 8"
+            ],
+            [
+              "14",
+              "CR 6",
+              "CR 7",
+              "CR 8"
+            ],
+            [
+              "15",
+              "CR 6",
+              "CR 8",
+              "CR 9"
+            ],
+            [
+              "16",
+              "CR 7",
+              "CR 8",
+              "CR 10"
+            ],
+            [
+              "17",
+              "CR 8",
+              "CR 9",
+              "CR 11"
+            ],
+            [
+              "18",
+              "CR 8",
+              "CR 10",
+              "CR 11"
+            ],
+            [
+              "19",
+              "CR 8",
+              "CR 11",
+              "CR 12"
+            ],
+            [
+              "20",
+              "CR 9",
+              "CR 12",
+              "CR 13"
+            ]
+          ]
+        },
+        {
+          "type": "entries",
+          "name": "Resources",
+          "entries": [
+            "This activity requires one workweek of effort plus 100 gp to pay for research and supplies to hunt a medium. A character can hunt a hard encounter for 150 gp to cover expenses, or 200 gp for a deadly encounter."
+          ]
+        },
+        {
+          "type": "entries",
+          "name": "Resolution",
+          "entries": [
+            "The character must make a series of checks, with the DC for all the checks determined by the difficulty of the encounter. The chosen DC for medium is equal to the creature’s carve DC. A hard encounter is the creature’s carve DC +3 and deadly is the creature’s carve DC +6. Successful completion of the hunt yields a number of materials, as shown on the Loot Value table.",
+            "To attempt a Hunt, the character makes three checks: Wisdom ({@skill Perception}), Intelligence ({@skill Investigation}), and the player's choice of Wisdom ({@skill Survival}), Dexterity ({@skill Stealth}), or Strength ({@skill Athletics}).",
+            "If none of the checks are successful, the character is severely injured and hospitalized. The injured character must spend one week in the hospital for every 50g of the initial cost of the hunt.",
+            "If only one check is successful, the hunt fails but the character escapes.",
+            "If two checks are successful, the hunt is a partial success, netting the character one material from the creature. Roll on the loot table to determine which.",
+            "If all three checks are successful, the character earns three materials from the creature. Roll on the loot table for each material to determine which materials are obtained."
+          ]
+        }
       ]
     },
     {
       "name": "Downtime Activity: Trenya",
       "source": "AGMH",
-      "page": 73,
+      "page": 74,
       "entries": [
-        "Downtime activity entry extracted from the GTMH Patreon/GMBinder source."
+        "Trenya travels to various regions in his boat. A character can travel with Trenya on adventures. Trenya can help gather items for hunters, some of which can only be obtained through him. Trenya is a great way to gather materials for upgrading weapons and armor.",
+        {
+          "type": "entries",
+          "name": "Resources",
+          "entries": [
+            "This activity requires one workweek of effort and the character chooses the location for the adventure. The character has a choice between these locations: snowy mountains, jungle, desert, or swamp. Once the location is set, the character pays Trenya 200gp, 500gp, or 1500gp."
+          ]
+        },
+        {
+          "type": "entries",
+          "name": "Resolution",
+          "entries": [
+            "Depending on the location and how much the character spent they will need to make a number of checks; a Strength ({@skill Athletics}) check, a Dexterity ({@skill Stealth}) check, an Intelligence ({@skill Investigation}) check, a Wisdom ({@skill Perception}) check, and a Charisma ({@skill Intimidation}, {@skill Persuasion}, or {@skill Deception}) check. The character can only use each skill once and once they fail a check the adventure is over and they return home.",
+            "If only one check is successful, the character rolls on the general section of the table.",
+            "If two checks are successful, the character rolls on the first and second level of the table.",
+            "If three checks are successful, the character rolls on the first, second, and third level of the table.",
+            "If four checks are successful, the character rolls on the fourth and below levels of the table. If there is no fourth level or higher, the character may roll once again on a previous level.",
+            "If all five checks are successful, the character rolls on each level of the table. If there is no fifth level, the character may roll once again on a previous level.",
+            "{@i Some of the items listed on Trenya loot tables do not yet have a purpose. Either the creature's loot table has not been created as of yet, their purpose has not yet been determined, or they are junk that only has a gold value.}"
+          ]
+        },
+        {
+          "type": "entries",
+          "name": "200 GP Adventures (DC 12)",
+          "entries": [
+            {
+              "type": "table",
+              "colLabels": [
+                "Level",
+                "D%",
+                "Snowy Mountains"
+              ],
+              "rows": [
+                [
+                  "1. General",
+                  "d6",
+                  "Empty Phial, Snow Herb, Honey, Net, Paintball, Raw Meat"
+                ],
+                [
+                  "2. Mineral",
+                  "d4",
+                  "Earth Crystal, Machalite Ore, Ice Crystal, Armor Sphere"
+                ],
+                [
+                  "3. Insect",
+                  "d2",
+                  "Flashbug, Spiderweb"
+                ],
+                [
+                  "4. Monster",
+                  "d4",
+                  "Brute Bone, Bullfango Pelt, Screamer Sac, Sm Monster Bone"
+                ]
+              ]
+            },
+            {
+              "type": "table",
+              "colLabels": [
+                "Level",
+                "D%",
+                "Jungle"
+              ],
+              "rows": [
+                [
+                  "1. General",
+                  "d8",
+                  "Dung, Honey, Huskberry, Sm Bone Husk, Monster Fluid, Nitroshroom, Blue Mushroom, Horn"
+                ],
+                [
+                  "2. Mineral",
+                  "d2",
+                  "Armor Sphere, Earth Crystal"
+                ],
+                [
+                  "3. Monster",
+                  "d4",
+                  "Conga Pelt, Flame Sac, Velociprey Hide, Velociprey Fang"
+                ]
+              ]
+            },
+            {
+              "type": "table",
+              "colLabels": [
+                "Level",
+                "D%",
+                "Desert"
+              ],
+              "rows": [
+                [
+                  "1. General",
+                  "d6",
+                  "Insect Husk, Acid (vial), Fishing Lure (Tuna), Dung, Fire Herb, Meat (Poisoned)"
+                ],
+                [
+                  "2. Mineral",
+                  "d4",
+                  "Armor Sphere, Earth Crystal, Ice Crystal, Hard Armor Sphere"
+                ],
+                [
+                  "3. Fish",
+                  "d4",
+                  "Sushifish, Burst Arrowana, Pin Tuna, Small Goldenfish"
+                ],
+                [
+                  "4. Insect",
+                  "d2",
+                  "Flashbug, Snakebee Larva"
+                ],
+                [
+                  "5. Monster",
+                  "d4",
+                  "Genprey Fang, Piscine Fang, Giggi Stinger, Sm. Hermitaur Shell"
+                ]
+              ]
+            },
+            {
+              "type": "table",
+              "colLabels": [
+                "Level",
+                "D%",
+                "Swamp"
+              ],
+              "rows": [
+                [
+                  "1. General",
+                  "d4",
+                  "Glass Bottle, Large Barrel, Raw Meat, Potion of healing"
+                ],
+                [
+                  "2. Insect",
+                  "d6",
+                  "Carpenterbug, Bitterbug, Cricket, Worm, Honey, Spiderweb"
+                ],
+                [
+                  "3. Monster",
+                  "d8",
+                  "Jumbo Bone, Conga Pelt, Hydro Hide, Ioprey Scale, Blind knife, Mosswine Hide, Kelbi Horn, Velocidrome Head"
+                ]
+              ]
+            }
+          ]
+        },
+        {
+          "type": "entries",
+          "name": "500 GP Adventures (DC 17)",
+          "entries": [
+            {
+              "type": "table",
+              "colLabels": [
+                "Level",
+                "D%",
+                "Snowy Mountains"
+              ],
+              "rows": [
+                [
+                  "1. General",
+                  "d2",
+                  "Flute, Net"
+                ],
+                [
+                  "2. Fish",
+                  "—",
+                  "Small Goldenfish"
+                ],
+                [
+                  "3. Insects",
+                  "d2",
+                  "Thunderbug, Godbug"
+                ],
+                [
+                  "4. Monster",
+                  "d6",
+                  "Arzuros Pelt, Electro Sac, Gammoth Pelt, Med Monster Bone, Pale Extract, Monster Fluid"
+                ],
+                [
+                  "5. Unique",
+                  "—",
+                  "Bag of Holding (DMG p.153)"
+                ]
+              ]
+            },
+            {
+              "type": "table",
+              "colLabels": [
+                "Level",
+                "D%",
+                "Jungle"
+              ],
+              "rows": [
+                [
+                  "1. General",
+                  "d4",
+                  "Huskberry x20, Raw Meat x10, Black Pearl (250g), Potion of Greater Healing"
+                ],
+                [
+                  "2. Mineral",
+                  "d2",
+                  "Hard Armor Sphere, Dragonite Ore"
+                ],
+                [
+                  "3. Monster",
+                  "d6",
+                  "Hornetaur Wing, R.Inferno Sac, Kelbi Horn, Anjanath Pelt, Screamer Sac x4, Ceanataur Shell"
+                ],
+                [
+                  "4. Unique",
+                  "—",
+                  "Quaals's Feather Token (Roll to determine which feather, DMG p.197)"
+                ]
+              ]
+            },
+            {
+              "type": "table",
+              "colLabels": [
+                "Level",
+                "D%",
+                "Desert"
+              ],
+              "rows": [
+                [
+                  "1. General",
+                  "d4",
+                  "Large Barrel x5, Parashroom x5, Hot Pepper, Dust of Life x2"
+                ],
+                [
+                  "2. Mineral",
+                  "d2",
+                  "Hard Armor Sphere, Dragonite Ore"
+                ],
+                [
+                  "3. Monster",
+                  "d6",
+                  "Cephalos Scale, Lg Monster Bone, Med Monster Bone, Paralysis Sac, Coral Cephalos Scale, Hermitaur Claw"
+                ],
+                [
+                  "4. Unique",
+                  "—",
+                  "Chime of Opening (DMG p.158)"
+                ]
+              ]
+            },
+            {
+              "type": "table",
+              "colLabels": [
+                "Level",
+                "D%",
+                "Swamp"
+              ],
+              "rows": [
+                [
+                  "1. General",
+                  "d6",
+                  "Bedroll, Antiseptic Stone, 10 Torches, Antidote, Blue Mushroom x5, Dragon Seed x10"
+                ],
+                [
+                  "2. Mineral",
+                  "d4",
+                  "Machalite Ore, Heavy Armor Sphere, Lightcrystal, Dragonite Ore"
+                ],
+                [
+                  "3. Monster",
+                  "d6",
+                  "Hornetaur Wing, Pukei-Pukei Scale, Med Monster Bone, Vibrant Pelt, N.Sleep Sac, V.Tobi-Kadachi Thickfur"
+                ],
+                [
+                  "4. Unique",
+                  "—",
+                  "Mystery key (XGtE p.138)"
+                ]
+              ]
+            }
+          ]
+        },
+        {
+          "type": "entries",
+          "name": "1500 GP Adventures (DC 22)",
+          "entries": [
+            {
+              "type": "table",
+              "colLabels": [
+                "Level",
+                "D%",
+                "Snowy Mountains"
+              ],
+              "rows": [
+                [
+                  "1. Mineral",
+                  "d4",
+                  "Lifecrystals, Hard Armor Sphere, Heavy Armor Sphere, Royal Armor Sphere"
+                ],
+                [
+                  "3. Insects",
+                  "d4",
+                  "Flashbug, Godbug, Thunderbug, Emperor Locust"
+                ],
+                [
+                  "4. Monster",
+                  "d8",
+                  "Banbaro Cortex, Zinogre Carapace, Frost Sac, Pale Extract, Blangonga Pelt, Daora Carapace, Elder Dragon Bone, Ukanlos Tail"
+                ],
+                [
+                  "5. Unique",
+                  "—",
+                  "Elemental Gem (Emerald) (DMG p.167)"
+                ]
+              ]
+            },
+            {
+              "type": "table",
+              "colLabels": [
+                "Level",
+                "D%",
+                "Jungle"
+              ],
+              "rows": [
+                [
+                  "1. General",
+                  "d6",
+                  "Tropical Berry x3, Lg Barrel-bomb, Flash Bomb x2, Potion of Greater Healing, Antidote Horn, Dragon Toadstool"
+                ],
+                [
+                  "2. Mineral",
+                  "d4",
+                  "Dragonite Ore, Carbalite Ore, Heavy Armor Sphere, Royal Armor Sphere"
+                ],
+                [
+                  "3. Insect",
+                  "d2",
+                  "Godbug x5, Large Toxic Kumori"
+                ],
+                [
+                  "4. Monster",
+                  "d8",
+                  "Black Pearl, Silverwind Blackfur, Garuga Shard, Leshen Resin, Inferno Sac, Tsukami Hide, Kirin Tail, Elder Dragon Bone"
+                ],
+                [
+                  "5. Unique",
+                  "—",
+                  "1 bean from the Bag of Beans (DMG p.152)"
+                ]
+              ]
+            },
+            {
+              "type": "table",
+              "colLabels": [
+                "Level",
+                "D%",
+                "Desert"
+              ],
+              "rows": [
+                [
+                  "1. Mineral",
+                  "d4",
+                  "Light Crystal, Lifecrystals, Heavy Armor Sphere, Royal Armor Sphere"
+                ],
+                [
+                  "2. Insect",
+                  "d4",
+                  "Bitterbug x10, Flashbug x4, Godbug x5, Emperor Locust"
+                ],
+                [
+                  "3. Monster",
+                  "d6",
+                  "Lunastra Scale, Monoblos Carapace, Diablos Tailcase, Valstrax Cortex, Royal Pyroxene, Queen Substance"
+                ],
+                [
+                  "4. Unique",
+                  "—",
+                  "Nolzur's Marvelous Pigments (DMG p.183)"
+                ]
+              ]
+            },
+            {
+              "type": "table",
+              "colLabels": [
+                "Level",
+                "D%",
+                "Swamp"
+              ],
+              "rows": [
+                [
+                  "1. General",
+                  "d2",
+                  "Lg Barrel-bomb, Dragon Toadstool"
+                ],
+                [
+                  "2. Mineral",
+                  "d6",
+                  "Dragonite Ore, Life Crystals, Carbalite Ore, Heavy Armor Sphere, Life Crystals, Royal Armor Sphere"
+                ],
+                [
+                  "3. Insect",
+                  "d2",
+                  "Godbug x5, Bitterbug x10"
+                ],
+                [
+                  "4. Monster",
+                  "d8",
+                  "Ceanataur Shell, Acidic Glavenus Shard, Rathalos Scale, Chameleos Webbing, Rathalos Carapace, Gogmazios Offenders, Honed Acidcryst, Brach Carapace"
+                ]
+              ]
+            }
+          ]
+        }
       ]
     },
     {
       "name": "Downtime Activity: Sell Materials",
       "source": "AGMH",
-      "page": 73,
+      "page": 75,
       "entries": [
-        "Downtime activity entry extracted from the GTMH Patreon/GMBinder source."
+        "Selling materials can be a difficult task at times. Demand is not always there and even if you have a legitimate buyer for one you may still not get the price you are expecting.",
+        {
+          "type": "entries",
+          "name": "Resources",
+          "entries": [
+            "A character can find a buyer for a specific material by spending one day and 25gp, which is used to spread word of the desired sale. A character can pick up to 20 materials at a time to sell."
+          ]
+        },
+        {
+          "type": "entries",
+          "name": "Resolution",
+          "entries": [
+            "A character who wants to sell materials must make a Charisma ({@skill Persuasion}) check to determine what kind of offer comes in. The character can always opt not to sell, instead forfeiting the workweek of effort and trying again later. Use the Material Base Price and Material Item Offer tables below to determine the sale price.",
+            {
+              "type": "table",
+              "caption": "Material Base Price",
+              "colLabels": [
+                "Creatures CR",
+                "Base Price"
+              ],
+              "rows": [
+                [
+                  "0-3",
+                  "25 gp"
+                ],
+                [
+                  "4-8",
+                  "100 gp"
+                ],
+                [
+                  "9-13",
+                  "500 gp"
+                ],
+                [
+                  "14-19",
+                  "2,000 gp"
+                ],
+                [
+                  "20+",
+                  "4,000 gp"
+                ]
+              ],
+              "footnotes": [
+                "{@i *All materials are the same price from a creature based on its CR level.}"
+              ]
+            },
+            {
+              "type": "table",
+              "caption": "Material Item Offer",
+              "colLabels": [
+                "Check Total",
+                "Offer"
+              ],
+              "rows": [
+                [
+                  "1-10",
+                  "50% of base price"
+                ],
+                [
+                  "11-20",
+                  "100% of base price"
+                ],
+                [
+                  "21+",
+                  "150% of base price"
+                ]
+              ]
+            }
+          ]
+        }
       ]
     },
     {
       "name": "Downtime Activity: Palico Farm",
       "source": "AGMH",
-      "page": 73,
+      "page": 76,
       "entries": [
-        "Downtime activity entry extracted from the GTMH Patreon/GMBinder source."
+        "A character who has the time, the money, and the needed tools can use downtime collecting resources at the palico farm.",
+        {
+          "type": "entries",
+          "name": "Resources",
+          "entries": [
+            "This activity requires access to a farm run by felyne and melynx (typically found in any village or town), one workweek of effort plus a cost of 25 gp for access to the farm and tools required for the work."
+          ]
+        },
+        {
+          "type": "entries",
+          "name": "Resolution",
+          "entries": [
+            "Choose a location stat block appropriate for your level or lower, and the area you are in. The character then chooses three resources to collect between: fish, insects, mushroom, or plants. The character can pick the same resource multiple times, but they cannot pick a resource that is not on the location stat block they chose. The character then makes three skill checks, one for each resource they chose. The DC is equal to the resource DC in the location stat block.",
+            "The type of check they make depends on the resource they are attempting to obtain. For fish, they make a Strength ({@skill Athletics}) or Dexterity ({@skill Sleight of Hand}) check. For insects, they make a Dexterity ({@skill Sleight of Hand}) or Wisdom ({@skill Nature}) check. For mushrooms, they make a Wisdom ({@skill Nature}) or Wisdom ({@skill Survival}) check. For plants, they make a Wisdom ({@skill Nature}) or Wisdom ({@skill Survival}) check.",
+            "For each successful check, the character rolls on the location stat blocks resource table, gaining the resource listed."
+          ]
+        },
+        {
+          "type": "entries",
+          "name": "Complications",
+          "entries": [
+            "Complications while farming usually relate to the maintenance of the tools to gather the resources. Whenever a character starts a workweek on the palico farm, there is a 10 percent chance of one of the tools being unavailable due to maintenance. Roll on the complication table to determine why certain resources can't be collected this workweek.",
+            {
+              "type": "table",
+              "colLabels": [
+                "d4",
+                "Complication"
+              ],
+              "rows": [
+                [
+                  "1",
+                  "The Fishing Pole is broken, a new one won't arrive for a workweek. The character can't collect fish."
+                ],
+                [
+                  "2",
+                  "The bug net is filled with more holes than actual netting. The character can't collect insects."
+                ],
+                [
+                  "3",
+                  "The fields were just seeded, there are currently no plants to collect."
+                ],
+                [
+                  "4",
+                  "A mosswine got into the mushroom cave and ate every last mushroom. The character can't collect mushrooms to do this."
+                ]
+              ]
+            }
+          ]
+        }
       ]
     }
   ],

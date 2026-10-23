@@ -7,7 +7,7 @@ generatedBy: scripts/gtmh/format-raw-slices.py
 # Appendix A — Location Stat Blocks
 
 > Formatted staging slice of Amellwind's Guide to Monster Hunting (Patreon/GMBinder).
-> Canonical raw dump remains `public/data/gtmh-patreon/gtmh-patreon.md` for build scripts.
+> This slice is the source of truth for GTMH build scripts (edit here, not the raw dump).
 
 There are many different environments and locations that these creatures dwell in. In the location stat blocks below you will find out information about each location.
 

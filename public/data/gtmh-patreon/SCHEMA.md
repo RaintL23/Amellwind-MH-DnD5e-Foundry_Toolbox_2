@@ -5,7 +5,7 @@ The runtime overlay is a 5etools-shaped object keyed like the GTMH feed:
 ```json
 {
   "source": "GTMH-Patreon",
-  "generatedFrom": "public/data/gtmh-patreon/gtmh-patreon.md",
+  "generatedFrom": "public/data/gtmh-patreon/gtmh-patreon-*.md",
   "policy": "local-wins-by-name",
   "item": [],
   "optionalfeature": [],
@@ -37,6 +37,7 @@ The runtime overlay is a 5etools-shaped object keyed like the GTMH feed:
   - `src/features/amellwind/factions/data/factions.generated.json`
   - `src/features/amellwind/lore/data/lore.generated.json`
   - `src/features/amellwind/siege-weapons/data/dragonship.generated.json`
-- `item` (HW weapons) and `optionalfeature` are parsed from Appendix B in `public/data/gtmh-patreon/gtmh-patreon.md`.
-- `bookData` carries the Patreon Material Effects lists (Chapter 4 loot-table material list) for `/material-effects`.
+- `item` (HW weapons) and `optionalfeature` are parsed from `public/data/gtmh-patreon/gtmh-patreon-appendixB.md` (cost/weight from the pricing table in `gtmh-patreon-chapter3.md`).
+- `bookData` carries the Patreon Material Effects lists (loot-table material list in `gtmh-patreon-chapter4.md`) for `/material-effects`.
+- All inputs are the formatted slices (`gtmh-patreon-*.md` + `chapters/`); the legacy `gtmh-patreon.md` dump is not read.
 - Other keys are wired for local-wins merge and can be incrementally expanded.

@@ -7,7 +7,7 @@ generatedBy: scripts/gtmh/format-raw-slices.py
 # Welcome / Front Matter
 
 > Formatted staging slice of Amellwind's Guide to Monster Hunting (Patreon/GMBinder).
-> Canonical raw dump remains `public/data/gtmh-patreon/gtmh-patreon.md` for build scripts.
+> This slice is the source of truth for GTMH build scripts (edit here, not the raw dump).
 
 ## Welcome to Monster Hunter
 

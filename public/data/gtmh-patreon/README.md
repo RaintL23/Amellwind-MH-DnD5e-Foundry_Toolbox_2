@@ -5,7 +5,7 @@ Source document:
 
 This folder mirrors the MHMM Patreon pipeline:
 
-- Human-readable **formatted slices** (`gtmh-patreon-*.md`) for agent/parser work
+- **Formatted slices** (`gtmh-patreon-*.md`) — the **source of truth** every build script reads; edit them when the guide changes
 - Curated entity extracts in `chapters/`
 - Machine overlay in `supplement.json`
 - Merge policy: local-wins by normalized name, GitHub fills uncovered names
@@ -15,7 +15,8 @@ This folder mirrors the MHMM Patreon pipeline:
 ```bash
 pnpm build:gtmh-supplement
 pnpm build:gtmh-data
-# re-split + format staging slices from the raw dump:
+# legacy one-shot split of the raw dump; refuses to overwrite existing
+# slices (they may hold newer edits) unless --force is passed:
 python scripts/gtmh/format-raw-slices.py
 ```
 
@@ -25,7 +26,7 @@ python scripts/gtmh/format-raw-slices.py
 
 | File | Role |
 | --- | --- |
-| `gtmh-patreon.md` | Canonical raw dump (build scripts still read this) |
+| `gtmh-patreon.md` | Legacy raw dump (original split input; not read by build scripts) |
 | `gtmh-patreon-intro.md` | Front matter + TOC (formatted) |
 | `gtmh-patreon-chapter{1-5}.md` | Chapters 1–5 (formatted headings/tables) |
 | `gtmh-patreon-appendix{A,B,C}.md` | Appendices A–C (formatted) |

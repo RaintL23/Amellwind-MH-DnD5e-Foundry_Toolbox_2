@@ -7,7 +7,7 @@ generatedBy: scripts/gtmh/format-raw-slices.py
 # Appendix C — Old World Bestiary
 
 > Formatted staging slice of Amellwind's Guide to Monster Hunting (Patreon/GMBinder).
-> Canonical raw dump remains `public/data/gtmh-patreon/gtmh-patreon.md` for build scripts.
+> This slice is the source of truth for GTMH build scripts (edit here, not the raw dump).
 
 This appendix provides stat blocks for various creature and npcs from the Monster Hunter Universe that are not found in the Monster Hunter Monster Manual or from Appendix B of the Monster Manual. For guidance on how to use a creature's stat block, see the introduction of the Monster Manual.
 
