@@ -49,6 +49,7 @@ export const BIOME_ICONS: Record<string, string> = {
   "The Dunes": "🏜️",
   Jungle: "🌴",
   Ocean: "🌊",
+  "Rotten Vale": "🦴",
   "Snowy Mountains": "🏔️",
   "Verdant Hills": "🌿",
   Volcano: "🌋",

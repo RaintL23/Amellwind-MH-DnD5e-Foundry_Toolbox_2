@@ -676,7 +676,234 @@ export const ENVIRONMENTS: Environment[] = [
   },
 
   // ─────────────────────────────────────────────
-  // 5. SNOWY MOUNTAINS
+  // 5. ROTTEN VALE
+  // ─────────────────────────────────────────────
+  {
+    name: "Rotten Vale",
+    biome: "Necrotic Marshland",
+    navigationDC: 15,
+    encounterDC: 17,
+    investigationDC: 14,
+    commonWeather: "Effluvium (replaces weather)",
+    specialRules: [
+      {
+        name: "Aggressive",
+        description:
+          "All creatures in the rotten vale are aggressive, even if they normally aren't due to the effects of effluvium in the area.",
+      },
+      {
+        name: "Boneyard",
+        description:
+          "The rotten vale is a massive area covered in the rotting bones of elder dragons and other monsters that have come there to die, causing an abundant number of bonepiles in the area. When the spotter succeeds on an investigation check to locate resources in an area, the 1st resource is always a bonepile.",
+      },
+      {
+        name: "Effluvium (Replaces Weather)",
+        description:
+          "Effluvium is a deadly gas that cause dead tissue to rot rapidly, eats away at living tissue, and makes creatures more aggressive than normal. In each area the group enters there is 1d4 effluvium clouds spread randomly throughout the area. The clouds are fairly obvious in standard conditions, but at night or in areas that might have low visibility it may be difficult to locate (DC 14 Perception). See the Effluvium rule below to see what happens when a creature enters the effluvium.",
+      },
+      {
+        name: "Rotting Caverns",
+        description:
+          "The floors in the vale are rotting flesh and are covered in a thin layer of rancid slime. The walls are rotting flesh covered in mold and maggots. If a creature is climbing a wall and takes damage, it must succeed on a DC 12 Strength or Dexterity saving throw (creature's choice). On a failed save, the creature loses its grip and falls into a pool of rancid slime, potentially taking damage from the fall. There is a 25 percent chance that the fallen creature swallows a mouthful of slime and must succeed on a DC 13 Constitution saving throw or be poisoned until it finishes a short or long rest. The DC increases to +1 at 5th level, +2 at 11th level and +3 at 17th level.",
+      },
+      {
+        name: "Biome Details",
+        description:
+          "The necrotic marshland, also known as a decomposition biome that would be characterized by:",
+        items: [
+          "{@b Effluvium Gas:} Toxic gases permeating the air, causing decay and affecting living organisms.",
+          "{@b Bone Structures:} Large bony structures scattered throughout the landscape, remnants of fallen creatures.",
+          "{@b Scavengers and Carrion Feeders:} Creatures adapted to feed on decaying matter.",
+          "{@b Acidic Pools:} Pools of corrosive liquid that dissolve organic material.",
+          "{@b Darkness and Decay:} A gloomy atmosphere with little sunlight due to the thick canopy of dead trees and vegetation.",
+          "{@b Undead-Like Creatures:} Monsters that thrive in this environment, perhaps with adaptations to resist the toxic effects.",
+        ],
+      },
+      {
+        name: "Effluvium",
+        description:
+          "A cloud of effluvium typically fills a cube anywhere from at least 5 feet and up to 300 feet. You might determine the size based on how well the scout rolled on its perception or perhaps on how well you rolled on the Finding Signs Table. When a creature that isn't a Construct or Undead enters the cloud for the first time on a turn, or starts its turn there, it must make a DC 14 Constitution saving throw against disease. On a failed save, the creature takes 3 ({@damage 1d6}) necrotic damage plus {@damage 1d6} extra necrotic damage for each location stat block level range beyond the first, and its hit point maximum is reduced by an amount equal to the necrotic damage taken, and it is infected with effluvium. An infected creature can't regain hit points except by magical means, and must make a Constitution saving throw every 24 hours, or each time it enters a cloud of effluvium for the first time on a turn, or starts its turn there. On a failed save, the creature progresses to the next stage of infection (starting at 0), with the effects of that stage, and the DC of each Constitution saving throw shown in the table below. A creature suffers the effect of its current stage of infection as well as all lower stages.",
+        table: {
+          headers: ["Stage", "DC*", "Effect"],
+          rows: [
+            [
+              "1",
+              "10",
+              "The creature has disadvantage on Intelligence and Wisdom checks and its speed is reduced by 10 feet.",
+            ],
+            [
+              "2",
+              "12",
+              "The creature must eat twice as much food each day, and gains one level of exhaustion if it does not eat enough food. This level of exhaustion can be suppressed for 12 hours by a greater restoration spell, and can only be removed by eating enough food the following day, or a heal spell.",
+            ],
+            [
+              "3",
+              "14",
+              "The creature's passive Perception is reduced by 4, it is blind beyond 40 feet, has disadvantage on Dexterity checks that involve its hands, and it can't perform somatic components.",
+            ],
+            [
+              "4",
+              "16",
+              "The creature gains one level of exhaustion that can't be removed until it is cured, and at the start of each of its turns, it must succeed on a DC 16 Constitution saving throw or spend its action retching, vomiting, and coughing.",
+            ],
+          ],
+          footnote:
+            "*DC increases by 2 for each location stat block level range beyond the first.",
+        },
+        notes: [
+          "If any effect that cures disease is used on the creature, it must make a DC 18 Constitution saving throw. On a successful save, the creature is cured. On a failed save, the creature's stage of infection is reduced by 1. If an infected creature is reduced to 0 hit points, it does not die or fall unconscious, it instead becomes hostile to all other creatures, regains all of its hit points, and the effects of its infection are suppressed. This effect ends when the creature is cured.",
+          "A 20-foot-cube section of a cloud of effluvium is dispersed for 2d4 rounds if it is exposed to an effect that deals fire damage, returning on initiative count 10 (losing initiative ties). If exposed to an effect that cures disease, a section of a cloud is dispersed for 24 hours, or permanently if there are no other clouds of effluvium within 20 feet of the section.",
+        ],
+      },
+    ],
+    levelTiers: [
+      {
+        levelRange: "1-4",
+        commonSmallMonsters: "Boaboa, Gajalaka, Girros, Grimalkyne, Hornetaur, Mosswine, Vespoid, Wingdrake",
+        commonLargeMonsters: "Great Girros, Odogaron, Seltas, Young Odogaron",
+        resources: {
+          columns: [
+            { category: "Bonepiles", dc: 10 },
+            { category: "Fish", dc: 14 },
+            { category: "Insects", dc: 12 },
+            { category: "Minerals", dc: 13 },
+            { category: "Mushrooms", dc: 10 },
+            { category: "Plants", dc: 12 },
+          ],
+          rows: [
+            { roll: "1", items: ["Bone x2", "Whetfish", "Insect Husk", "Stone", "Nitroshroom", "Herb"] },
+            { roll: "2", items: ["Lg Bone Husk x2", "Sushifish", "Spiderweb", "Stone", "Blue Mushroom", "Bomberry"] },
+            { roll: "3", items: ["Sm Bone Husk x2", "Whetfish", "Carpenterbug", "Armor Sphere", "Toadstool", "Ivy"] },
+            { roll: "4", items: ["Bird Wyvern Bone x2", "Sushifish", "Honey", "Earth Crystal", "Toadstool", "Dragon Seed"] },
+            { roll: "5", items: ["Sm Bone Husk x2", "Pin Tuna", "Spiderweb", "Armor Sphere", "Toadstool", "Needleberry"] },
+            { roll: "6", items: ["Jumbo Bone x2", "Small Goldenfish", "Bitterbug", "Earth Crystal", "Parashroom", "Nullberry"] },
+          ],
+        },
+        encounters: [
+          { roll: "1", description: "1d10 + 5 Aptonoth" },
+          { roll: "2", description: "1 Gastodon" },
+          { roll: "3", description: "2d8 + 1 Girros pups" },
+          { roll: "4", description: "A hidden chamber filled with ancient carvings and skeletal remains, hinting at a forgotten history buried beneath the surface." },
+          { roll: "5", description: "1 Qurio swarm" },
+          { roll: "6", description: "A makeshift campsite adorned with crude totems and symbols, evidence of recent habitation by unknown denizens." },
+          { roll: "7", description: "2d4 Remobra" },
+          { roll: "8", description: "1d4 Girros" },
+          { roll: "9", description: "1 Great Girros" },
+          { roll: "10", description: "1 Odogaron" },
+        ],
+      },
+      {
+        levelRange: "5-10",
+        commonSmallMonsters: "Boaboa, Gajalaka, Girros, Grimalkyne, Hornetaur, Mosswine, Vespoid, Wingdrake",
+        commonLargeMonsters: "Great Girros, Odogaron, Seltas, Young Odogaron",
+        resources: {
+          columns: [
+            { category: "Bonepiles", dc: 12 },
+            { category: "Fish", dc: 16 },
+            { category: "Insects", dc: 14 },
+            { category: "Minerals", dc: 15 },
+            { category: "Mushrooms", dc: 12 },
+            { category: "Plants", dc: 14 },
+          ],
+          rows: [
+            { roll: "1", items: ["Lg Bone Husk x2", "Sushifish", "Honey", "Earth Crystal", "Toadstool", "Dragon Seed"] },
+            { roll: "2", items: ["Sm Bone Husk x2", "Sushifish", "Bitterbug", "Armor Sphere", "Toadstool", "Felvine"] },
+            { roll: "3", items: ["Monsterbone+ x2", "Pin Tuna", "Spiderweb", "Machalite Ore", "Toadstool", "Sap Plant"] },
+            { roll: "4", items: ["Brute Bone x2", "Popfish", "Flashbug", "Hard Armor Sphere", "Parashroom", "Scatternut"] },
+            { roll: "5", items: ["Monsterbone+ x2", "Wanchovy", "Godbug", "Machalite Ore", "Blue Mushroom", "Ivy"] },
+            { roll: "6", items: ["Lg Monster Bone x2", "Wanchovy", "Godbug", "Hard Armor Sphere", "Parashroom", "Herb x2"] },
+          ],
+        },
+        encounters: [
+          { roll: "1", description: "1 Girros or 1 Qurio swarm" },
+          { roll: "2", description: "1d8 + 1 Girros" },
+          { roll: "3", description: "The remnants of a previous expedition, their equipment and supplies scattered amidst the bones of fallen adventurers." },
+          { roll: "4", description: "1 Viper Tobi-Kadachi" },
+          { roll: "5", description: "1d3 Seltas" },
+          { roll: "6", description: "A dense fog, thick as soup, obscuring vision beyond a few feet and dampening all sound." },
+          { roll: "7", description: "1 Great Girros" },
+          { roll: "8", description: "2d6 + 10 Shamos pups with 1 herder (druid) attempting to usher them out of the vale." },
+          { roll: "9", description: "1d3 Volvidons" },
+          { roll: "10", description: "1 Pumpkin Uragaan" },
+        ],
+      },
+      {
+        levelRange: "11-16",
+        commonSmallMonsters: "Boaboa, Gajalaka, Girros, Grimalkyne, Hornetaur, Mosswine, Vespoid, Wingdrake",
+        commonLargeMonsters:
+          "Banbaro, Bazelgeuse, Chameleos, Deviljho, Gigginox, Great Girros, Odogaron, Seltas, Tigrex, Young Odogaron",
+        resources: {
+          columns: [
+            { category: "Bonepiles", dc: 15 },
+            { category: "Fish", dc: 19 },
+            { category: "Insects", dc: 17 },
+            { category: "Minerals", dc: 18 },
+            { category: "Mushrooms", dc: 15 },
+            { category: "Plants", dc: 17 },
+          ],
+          rows: [
+            { roll: "1", items: ["Sm Bone Husk x3", "Sushifish x4", "Spiderweb x3", "Lightcrystal", "Toadstool", "Ivy x2"] },
+            { roll: "2", items: ["Monster Toughbone x2", "Wanchovy", "Bitterbug x3", "Heavy Armor Sphere", "Blue Mushroom x2", "Dragon Seed x2"] },
+            { roll: "3", items: ["Monster Toughbone x2", "Small Goldenfish", "Emperor Locust", "Dragonite Ore", "Toadstool x2", "Adamant Seed"] },
+            { roll: "4", items: ["Lg Monster Bone x2", "Glutton Tuna", "Toxic Kumori", "Heavy Armor Sphere", "Parashroom x3", "Might Seed"] },
+            { roll: "5", items: ["Lg Monster Bone x2", "Speartuna", "Godbug x2", "Dragonite Ore", "Dragon Toadstool x2", "Gloamgrass Root x2"] },
+            { roll: "6", items: ["Elder Dragon Bone x2", "Ancient Fish", "Godbug x3", "Carbalite Ore", "Chaos Mushroom", "Dosbiscus"] },
+          ],
+        },
+        encounters: [
+          { roll: "1", description: "1d6 veterans with 1d6 Nerscylla" },
+          { roll: "2", description: "1d4 young Nargacuga" },
+          { roll: "3", description: "1d8 + 1 Young Odogaron" },
+          { roll: "4", description: "An unsettling tremor rumbles beneath the decaying earth, stirring up clouds of foul-smelling dust and unsettling the bones littering the ground." },
+          { roll: "5", description: "1 Gigginox" },
+          { roll: "6", description: "2d10 Troverian miners (commoners), coughing as they march towards a hold in the wall." },
+          { roll: "7", description: "1d3 Great Girros" },
+          { roll: "8", description: "1 Chameleos" },
+          { roll: "9", description: "2d4 undead Anjanath" },
+          { roll: "10", description: "1 Risen Chameleos" },
+        ],
+      },
+      {
+        levelRange: "17-20",
+        commonSmallMonsters: "Boaboa, Gajalaka, Girros, Grimalkyne, Hornetaur, Mosswine, Vespoid, Wingdrake",
+        commonLargeMonsters:
+          "Acidic Glavenus, Banbaro, Bazelgeuse, Chameleos, Deviljho, Gigginox, Great Girros, Odogaron, Savage Deviljho, Seltas, Tigrex, Vaal Hazak, Young Odogaron",
+        resources: {
+          columns: [
+            { category: "Bonepiles", dc: 18 },
+            { category: "Fish", dc: 22 },
+            { category: "Insects", dc: 20 },
+            { category: "Minerals", dc: 21 },
+            { category: "Mushrooms", dc: 19 },
+            { category: "Plants", dc: 20 },
+          ],
+          rows: [
+            { roll: "1", items: ["Lg Bone Husk x5", "Sushifish x5", "Toxic Kumori", "Royal Armor Sphere", "Toadstool x3", "Needleberry x4"] },
+            { roll: "2", items: ["Monster Toughbone x2", "Glutton Tuna", "Spiderweb x4", "Carbalite Ore", "Chaos Mushroom", "Nullberry x2"] },
+            { roll: "3", items: ["Lg Monster Bone x2", "Ancient Fish", "Honey x4", "Royal Armor Sphere", "Blue Mushroom x2", "Might Seed"] },
+            { roll: "4", items: ["Lg Monster Bone x2", "Speartuna", "Honey x5", "Carbalite Ore", "Dragon Toadstool", "Gloamgrass Root x2"] },
+            { roll: "5", items: ["Monster Toughbone x2", "Speartuna", "Large Toxic Kumori", "Royal Armor Sphere", "Parashroom x3", "Adamant Seed"] },
+            { roll: "6", items: ["Elder Dragon Bone x2", "Gastronome Tuna", "Large Toxic Kumori", "Carbalite Ore", "Dragon Toadstool", "Dosbiscus"] },
+          ],
+        },
+        encounters: [
+          { roll: "1", description: "1 Radobaan" },
+          { roll: "2", description: "2d6 Young Odogaron" },
+          { roll: "3", description: "A Rajang fighting a scarred Yian Garuga to the death." },
+          { roll: "4", description: "2 adolescent Rajang" },
+          { roll: "5", description: "An ancient, dormant elder dragon's skeletal remains (Dalamadur) unexpectedly animate" },
+          { roll: "6", description: "1 chaotic Gigginox" },
+          { roll: "7", description: "Mysterious, glowing crystals jut from the walls and floor of a cavern, pulsating with energy." },
+          { roll: "8", description: "1 Bazelgeuse" },
+          { roll: "9", description: "1 Vaal Hazak" },
+          { roll: "10", description: "1d2 Tigrex with 1d3 Radobaan" },
+        ],
+      },
+    ],
+  },
+
+  // ─────────────────────────────────────────────
+  // 6. SNOWY MOUNTAINS
   // ─────────────────────────────────────────────
   {
     name: "Snowy Mountains",
@@ -850,7 +1077,7 @@ export const ENVIRONMENTS: Environment[] = [
   },
 
   // ─────────────────────────────────────────────
-  // 6. VERDANT HILLS
+  // 7. VERDANT HILLS
   // ─────────────────────────────────────────────
   {
     name: "Verdant Hills",
@@ -1024,7 +1251,7 @@ export const ENVIRONMENTS: Environment[] = [
   },
 
   // ─────────────────────────────────────────────
-  // 7. VOLCANO
+  // 8. VOLCANO
   // ─────────────────────────────────────────────
   {
     name: "Volcano",
@@ -1187,7 +1414,7 @@ export const ENVIRONMENTS: Environment[] = [
   },
 
   // ─────────────────────────────────────────────
-  // 8. THE WETLANDS
+  // 9. THE WETLANDS
   // ─────────────────────────────────────────────
   {
     name: "The Wetlands",

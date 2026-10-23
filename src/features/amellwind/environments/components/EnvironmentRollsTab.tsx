@@ -339,9 +339,11 @@ export function EnvironmentRollsTab({
             <p className="text-xs text-foreground">
               Common Weather: {selectedEnvironment.commonWeather}
             </p>
-            <p className="text-xs text-foreground">
-              Total Resources: {selectedEnvironment.totalResources}
-            </p>
+            {selectedEnvironment.totalResources != null && (
+              <p className="text-xs text-foreground">
+                Total Resources: {selectedEnvironment.totalResources}
+              </p>
+            )}
           </div>
         </div>
       </div>

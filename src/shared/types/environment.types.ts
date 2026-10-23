@@ -28,9 +28,19 @@ export interface LevelTier {
   encounters: EncounterRow[];
 }
 
+export interface SpecialRuleTable {
+  headers: string[];
+  rows: string[][];
+  footnote?: string;
+}
+
 export interface SpecialRule {
   name: string;
   description: string;
+  items?: string[];
+  table?: SpecialRuleTable;
+  /** Paragraphs shown after the table. */
+  notes?: string[];
 }
 
 export interface WeatherRow {
@@ -44,7 +54,8 @@ export interface Environment {
   navigationDC: number;
   encounterDC: number;
   investigationDC: number;
-  totalResources: number;
+  /** Omitted for biomes published after the guide dropped Total Resources (Spotter role changes). */
+  totalResources?: number;
   commonWeather: string;
   specialRules: SpecialRule[];
   weatherTable?: WeatherRow[];
@@ -93,6 +104,12 @@ export const ENVIRONMENT_COLORS: Record<string, { accent: string; bg: string; bo
     bg: "from-red-950/60 to-red-900/40",
     border: "border-red-700/50",
     badge: "bg-red-900/50 text-red-300 border-red-700",
+  },
+  "Rotten Vale": {
+    accent: "text-fuchsia-400",
+    bg: "from-fuchsia-950/60 to-fuchsia-900/40",
+    border: "border-fuchsia-700/50",
+    badge: "bg-fuchsia-900/50 text-fuchsia-300 border-fuchsia-700",
   },
   "The Wetlands": {
     accent: "text-teal-400",

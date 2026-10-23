@@ -52,11 +52,13 @@ export function EnvironmentDetailContent({
             value={environment.investigationDC}
             icon={<Search className="h-3 w-3" />}
           />
-          <StatBadge
-            label="Total Resources"
-            value={environment.totalResources}
-            icon={<Package className="h-3 w-3" />}
-          />
+          {environment.totalResources != null && (
+            <StatBadge
+              label="Total Resources"
+              value={environment.totalResources}
+              icon={<Package className="h-3 w-3" />}
+            />
+          )}
         </div>
         <div className="flex items-center gap-1.5 text-xs text-muted-foreground">
           <Wind className="h-3 w-3" />
@@ -75,7 +77,10 @@ export function EnvironmentDetailContent({
             {environment.specialRules.map((rule) => (
               <div
                 key={rule.name}
-                className="rounded-md border border-border bg-card/50 p-3"
+                className={cn(
+                  "rounded-md border border-border bg-card/50 p-3",
+                  rule.table && "sm:col-span-2",
+                )}
               >
                 <p className="text-xs font-semibold text-foreground mb-1">
                   {rule.name}
@@ -83,6 +88,68 @@ export function EnvironmentDetailContent({
                 <p className="text-xs text-muted-foreground leading-relaxed">
                   <DndRichText text={rule.description} />
                 </p>
+                {rule.items && rule.items.length > 0 && (
+                  <ul className="mt-2 list-disc space-y-1 pl-4 text-xs text-muted-foreground leading-relaxed">
+                    {rule.items.map((item) => (
+                      <li key={item}>
+                        <DndRichText text={item} />
+                      </li>
+                    ))}
+                  </ul>
+                )}
+                {rule.table && (
+                  <div className="mt-3 overflow-x-auto rounded-lg border border-border">
+                    <table className="w-full text-xs">
+                      <thead>
+                        <tr className="bg-card/80">
+                          {rule.table.headers.map((header) => (
+                            <th
+                              key={header}
+                              className="px-3 py-1.5 text-left text-muted-foreground font-medium"
+                            >
+                              {header}
+                            </th>
+                          ))}
+                        </tr>
+                      </thead>
+                      <tbody>
+                        {rule.table.rows.map((row) => (
+                          <tr
+                            key={row[0]}
+                            className="border-t border-border/50"
+                          >
+                            {row.map((cell, i) => (
+                              <td
+                                key={i}
+                                className={cn(
+                                  "px-3 py-1.5 align-top",
+                                  i === row.length - 1
+                                    ? "text-foreground"
+                                    : "font-semibold text-muted-foreground whitespace-nowrap",
+                                )}
+                              >
+                                <DndRichText text={cell} />
+                              </td>
+                            ))}
+                          </tr>
+                        ))}
+                      </tbody>
+                    </table>
+                  </div>
+                )}
+                {rule.table?.footnote && (
+                  <p className="mt-1.5 text-[11px] italic text-muted-foreground">
+                    {rule.table.footnote}
+                  </p>
+                )}
+                {rule.notes?.map((note) => (
+                  <p
+                    key={note}
+                    className="mt-2 text-xs text-muted-foreground leading-relaxed"
+                  >
+                    <DndRichText text={note} />
+                  </p>
+                ))}
               </div>
             ))}
           </div>
