@@ -83,7 +83,9 @@ function HuntRuleBlockView({
     block.lists != null &&
     block.lists.length > 0 &&
     block.lists.every((list) => list.name != null);
-  const showRoleGrid = hasNamedLists && block.title === "Setting Roles";
+  const showRoleGrid =
+    hasNamedLists &&
+    (block.title === "Setting Roles" || block.title === "Roles for the Journey");
 
   const body = (
     <div className="space-y-3">
@@ -115,7 +117,12 @@ function HuntRuleBlockView({
 
       {block.children?.map((child) => (
         <div
-          key={child.title ?? child.text ?? child.lists?.[0]?.name}
+          key={
+            child.title ??
+            child.text ??
+            child.lists?.[0]?.name ??
+            child.table?.caption
+          }
           className="rounded-md border border-border/60 bg-muted/10"
         >
           {child.title ? (

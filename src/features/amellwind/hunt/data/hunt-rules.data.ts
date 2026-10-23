@@ -241,10 +241,11 @@ export const HUNT_RULE_SECTIONS: HuntRuleSection[] = [
     title: "Traveling",
     page: 83,
     intro:
-      "Standard 5e travel pace rules apply, plus variant rules for using hunt roles during overland travel.",
+      "In many Dungeons and Dragon campaigns your PCs are going to travel across the world. That is no different in a campaign that takes place in the Monster Hunter Universe. The rules below include the standard traveling pace rules from 5e Dungeons and Dragons as well as a new way for your PCs to travel across your world, using the same type of roles as when they go on a hunt (though with slightly different rules).",
     blocks: [
       {
         title: "Travel Pace",
+        text: "While traveling, a group of adventurers can move at a normal, fast, or slow pace, as shown on the Travel Pace table. The table states how far the party can move in a period of time and whether the pace has any effect. A fast pace makes characters less perceptive, while a slow pace makes it possible to sneak around and to search an area more carefully.",
         table: {
           caption: "Travel Pace Table",
           headers: [
@@ -275,11 +276,130 @@ export const HUNT_RULE_SECTIONS: HuntRuleSection[] = [
         children: [
           {
             title: "Forced March",
-            text: "The Travel Pace table assumes 8 hours of travel per day. For each additional hour beyond 8, each character must make a Constitution saving throw (DC 10 + 1 per hour past 8). On a failed save, a character suffers one level of exhaustion.",
+            text: "The Travel Pace table assumes that characters travel for 8 hours in day. They can push on beyond that limit, at the risk of exhaustion. For each additional hour of travel beyond 8 hours, the characters cover the distance shown in the Hour column for their pace, and each character must make a Constitution saving throw at the end of the hour. The DC is 10 + 1 for each hour past 8 hours. On a failed saving throw, a character suffers one level of exhaustion.",
           },
           {
-            title: "Short and Long Rests During Travel",
-            text: "During a week of travel, PCs can take two short rests. They can take a long rest at the end of each week and when they reach their destination. On average the group should encounter between 3-6 random encounters during a week of travel.",
+            title: "Mounts and Vehicles",
+            text: "For short spans of time (up to an hour), many animals move much faster than humanoids. A mounted character can ride at a gallop for about an hour, covering twice the usual distance for a fast pace. If fresh mounts are available every 8 to 10 miles, characters can cover larger distances at this pace, but this is very rare except in densely populated areas. Characters in wagons, carriages, or other land vehicles choose a pace as normal. Characters in a waterborne vessel are limited to the speed of the vessel, and they don't suffer penalties for a fast pace or gain benefits from a slow pace. Depending on the vessel and the size of the crew, ships might be able to travel for up to 24 hours per day. Certain special mounts, such as a pegasus or griffon, or special vehicles, such as a carpet of flying, allow you to travel more swiftly.",
+          },
+          {
+            title: "Difficult Terrain",
+            text: "The travel speeds given in the Travel Pace table assume relatively simple terrain: roads, open plains, or clear dungeon corridors. But adventurers often face dense forests, deep swamps, rubble-filled ruins, steep mountains, and ice-covered ground — all considered difficult terrain.",
+          },
+        ],
+      },
+      {
+        title: "Short and Long Rests During Travel",
+        text: "One of the biggest issue with traveling is that the party is able to get a long rest every single night, which makes it difficult for a DM to have to through 5-6 encounters in a single day vs 5-6 encounters over the course of the journey. To fix this problem, we are going to \"extend\" out the encounter day, into an encounter week. During this week, the PCs are able to take two short rests. They can take a long rest at the end of each week and when they reach their destination. With the additional rules below, the party has the chance of 14 random encounters during a week of travel. On average the group should encounter between 3-6 encounters (and not all of these have to be combat encounters), but should they feel unable to continue their travels without a long rest, they can remain at their last camp site for the remainder of the week and take a long rest.",
+      },
+      {
+        title: "Random Encounters",
+        text: "As they travel, the PCs may encounter random creatures, places of interest, merchants, etc. A random encounter can happen during a days travel, or at night while the group is resting at camp. This leaves the potential for 2 random encounters each day. To determine if a random encounter occurs, the DM will contest the trailblazer's and scout's checks with a random encounter check by rolling a d20 + modifiers based on the tables below. On a successful contest, roll a random encounter, or chose one you like.",
+        children: [
+          {
+            title: "Modifier Tables",
+            text: "The following tables are used to determine the bonus the DM adds to its contested roll against the trailblazer and scouts checks.",
+            children: [
+              {
+                table: {
+                  caption: "Environment",
+                  headers: ["Modifier Bonus", "Type of Environment"],
+                  rows: [
+                    ["+0", "An inn or home at a well-established settlement"],
+                    ["+1", "Peaceful countryside or safe roads"],
+                    ["+2", "Tamed wilderness, or the streets of an urban city"],
+                    ["+3", "Untamed wilderness of hazardous or unknown terrain"],
+                    ["+4", "Deadly wilderness or caves infested by dangerous monsters"],
+                    ["+5", "Alien planes of unspeakable horror"],
+                  ],
+                },
+              },
+              {
+                table: {
+                  caption: "Season",
+                  headers: ["Modifier Bonus", "Season"],
+                  rows: [
+                    ["+0", "Spring"],
+                    ["+0", "Summer"],
+                    ["+0", "Autumn"],
+                    ["+1", "Winter"],
+                  ],
+                },
+              },
+              {
+                table: {
+                  caption: "Travel Pace",
+                  headers: ["Modifier Bonus", "Pace"],
+                  rows: [
+                    ["-2", "Stealth"],
+                    ["+0", "Normal"],
+                    ["+3", "Fast"],
+                  ],
+                },
+              },
+              {
+                table: {
+                  caption: "Weather",
+                  headers: [
+                    "Modifier Bonus",
+                    "Weather",
+                    "Cold Climate",
+                    "Temperate Climate",
+                    "Desert",
+                  ],
+                  rows: [
+                    ["+0", "Normal", "Cold, calm", "Normal for season", "Calm"],
+                    ["+1", "Abnormal", "Heat wave or cold snap", "Heat wave or cold snap", "-"],
+                    ["+2", "Inclement", "Precipitation (snow)", "Precipitation (normal for season)", "Windy"],
+                    ["+3", "Storm", "Snowstorm", "Thunderstorm, snowstorm", "Duststorm"],
+                    ["+4", "Powerful storm", "Blizzard", "Windstorm, blizzard, hurricane, tornado", "Sandstorm"],
+                    ["+5", "Strange Phenomena", "-", "-", "-"],
+                  ],
+                },
+              },
+              {
+                table: {
+                  caption: "Time of Day When the Journey Starts",
+                  headers: ["Modifier Bonus", "Time of Day"],
+                  rows: [
+                    ["+0", "Morning"],
+                    ["+1", "Afternoon"],
+                    ["+2", "Evening"],
+                    ["+3", "Night"],
+                  ],
+                },
+              },
+            ],
+          },
+        ],
+      },
+      {
+        title: "Roles for the Journey",
+        text: "Traveling across the world uses the same roles as PCs choose from when going on a hunt, but with slightly different uses.",
+        lists: [
+          {
+            name: "Trailblazer",
+            items: [
+              "The trailblazer is the PC that decides the pace the group is going to travel at (slow, normal, fast). Once they decide the pace for the day, they make a Wisdom (Survival) check. This is then contested by the DM's random encounter check. If the DM succeeds, they roll on a random encounter table.",
+            ],
+          },
+          {
+            name: "Scout",
+            items: [
+              "The scouts role while traveling is not to forge ahead of the group, but instead they are tasked with finding a safe and secluded location to make camp at the end of the traveling day. When finding a camp, the scout will make a Wisdom (Perception) check and a Dexterity (Stealth) check. The DM can then contest the average of the two checks, the lowest check, or highest check (the choice you make should be the standard for the entire campaign). If the DM succeeds, they roll on a random encounter table.",
+            ],
+          },
+          {
+            name: "Spotter",
+            items: [
+              "The spotter is still the eyes and ears of the party during travel. Their passive Perception is used to determine if a random encounter is able to stealthily sneak up on the party or not. Additionally, once a week the spotter is able to roll on the mineral or bone resource table. Skill checks are not required to gather in this way. They may also gather from a lower level location stat block for the area. EX: A level 9 PC can choose to gather from the Level 1-5 location stat block or the 6-10 location stat block.",
+            ],
+          },
+          {
+            name: "Artisan",
+            items: [
+              "A meal cooked by the artisan during travel can last up to one week, but they are able to cook a new meal when camp is setup at the end of the traveling day. Additionally, each day the artisan can roll on an edible resource table (fish, insects, mushrooms, plants) appropriate for the location they are traveling through, to gather a resource. Skill checks are not required to gather in this way. They may also gather from a lower level location stat block for the area. EX: A level 9 PC can choose to gather from the Level 1-5 location stat block or the 6-10 location stat block.",
+            ],
           },
         ],
       },

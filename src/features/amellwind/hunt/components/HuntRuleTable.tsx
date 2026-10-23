@@ -29,8 +29,8 @@ export function HuntRuleTableView({ table }: HuntRuleTableProps) {
       <TableBody>
         {table.rows.map((row) => (
           <TableRow key={row.join("-")}>
-            {row.map((cell) => (
-              <TableCell key={cell} className="text-muted-foreground">
+            {row.map((cell, cellIndex) => (
+              <TableCell key={cellIndex} className="text-muted-foreground">
                 {cell}
               </TableCell>
             ))}

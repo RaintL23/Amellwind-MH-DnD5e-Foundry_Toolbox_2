@@ -22,6 +22,11 @@ export const HUNT_ENVIRONMENT_MAPPINGS: HuntEnvironmentMapping[] = [
     tags: ["coastal", "underwater"],
   },
   {
+    envName: "Rotten Vale",
+    // Girros / Great Girros only carry `underdark` in MHMM Appendix A.
+    tags: ["underdark", "swamp"],
+  },
+  {
     envName: "Snowy Mountains",
     tags: ["arctic", "mountain"],
   },

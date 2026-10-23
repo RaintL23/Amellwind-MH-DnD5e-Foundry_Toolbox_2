@@ -320,9 +320,11 @@ export function HuntSetupPanel({ hunt }: HuntSetupPanelProps) {
                   <Badge variant="outline" className="text-[10px] font-normal">
                     Investigation {hunt.selectedEnvironment.investigationDC}
                   </Badge>
-                  <Badge variant="outline" className="text-[10px] font-normal">
-                    Resources {hunt.selectedEnvironment.totalResources}
-                  </Badge>
+                  {hunt.selectedEnvironment.totalResources != null && (
+                    <Badge variant="outline" className="text-[10px] font-normal">
+                      Resources {hunt.selectedEnvironment.totalResources}
+                    </Badge>
+                  )}
                 </div>
               </div>
             ) : (
