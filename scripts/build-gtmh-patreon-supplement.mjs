@@ -23,8 +23,9 @@ import { STAGING_DIR } from "./gtmh/common.mjs";
 
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
 const ROOT = path.resolve(__dirname, "..");
-const SOURCE_DUMP = path
-  .relative(ROOT, path.join(ROOT, "public/data/gtmh-patreon/gtmh-patreon.md"))
+// Formatted chapter slices are the source of truth (not the old single dump).
+const SOURCE_SLICES = path
+  .relative(ROOT, path.join(STAGING_DIR, "gtmh-patreon-*.md"))
   .split(path.sep)
   .join("/");
 
@@ -57,7 +58,7 @@ function buildSupplement() {
 
   return {
     source: "GTMH-Patreon",
-    generatedFrom: SOURCE_DUMP,
+    generatedFrom: SOURCE_SLICES,
     policy: "local-wins-by-name",
     item: items,
     optionalfeature,

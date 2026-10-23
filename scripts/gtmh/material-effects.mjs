@@ -1,8 +1,17 @@
 /**
- * Parse Material Effects lists from the Patreon dump into a minimal bookData
- * tree that `mapMaterialEffectsFromBookData` understands.
+ * Parse Material Effects lists from the chapter 4 slice
+ * (`gtmh-patreon-chapter4.md`) into a minimal bookData tree that
+ * `mapMaterialEffectsFromBookData` understands.
  */
-import { readRawDumpSection } from "./common.mjs";
+import { flattenSliceMarkdown, readSlice, sliceSection } from "./common.mjs";
+
+const LOOT_LIST_TITLE = "Monster Hunter Monster Loot Table Material List";
+
+/** Structural `###` titles that must not swallow their intro paragraph. */
+const STRUCTURAL_TITLE_RX = new RegExp(
+  `^(?:${LOOT_LIST_TITLE}|(?:Weapon|Armor) Materials|Name Material Effect)$`,
+  "i",
+);
 
 const RARITIES = ["Common", "Uncommon", "Rare", "Very Rare", "Legendary"];
 
@@ -108,10 +117,10 @@ function extractSectionBody(source, title, nextTitles) {
 }
 
 export function buildMaterialEffectsBookData() {
-  const source = readRawDumpSection(
-    "Monster Hunter Monster Loot Table Material List",
-    "Chapter 5",
-  );
+  const flattened = flattenSliceMarkdown(readSlice("chapter4"), {
+    keepTitle: (title) => STRUCTURAL_TITLE_RX.test(title),
+  });
+  const source = sliceSection(flattened, LOOT_LIST_TITLE);
   if (!source) return {};
 
   const weaponEntries = [];

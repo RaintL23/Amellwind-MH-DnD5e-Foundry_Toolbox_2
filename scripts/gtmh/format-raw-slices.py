@@ -2,6 +2,10 @@
 """
 Split + format public/data/gtmh-patreon/gtmh-patreon.md into smaller markdown slices.
 
+LEGACY / one-shot: the formatted slices are now the source of truth for every
+GTMH build script and may contain edits newer than the raw dump. This script
+refuses to overwrite existing slices unless run with --force.
+
 Outputs (under public/data/gtmh-patreon/):
   gtmh-patreon-intro.md
   gtmh-patreon-chapter{1-5}.md
@@ -817,11 +821,24 @@ def front_matter(slice_key: str) -> str:
         f"---\n\n"
         f"# {TITLE_MAP[slice_key]}\n\n"
         f"> Formatted staging slice of Amellwind's Guide to Monster Hunting (Patreon/GMBinder).\n"
-        f"> Canonical raw dump remains `public/data/gtmh-patreon/gtmh-patreon.md` for build scripts.\n\n"
+        f"> This slice is the source of truth for GTMH build scripts (edit here, not the raw dump).\n\n"
     )
 
 
 def main() -> None:
+    existing = [
+        OUT_DIR / filename
+        for filename in FILE_MAP.values()
+        if (OUT_DIR / filename).exists()
+    ]
+    if existing and "--force" not in sys.argv[1:]:
+        names = ", ".join(p.name for p in existing)
+        sys.exit(
+            f"refusing to overwrite slices ({names}): they are the source of truth "
+            "and may hold edits newer than gtmh-patreon.md. Re-run with --force "
+            "only if you really want to regenerate them from the raw dump."
+        )
+
     raw = RAW.read_text(encoding="utf-8")
     lines = raw.splitlines()
     toc_by_slice = parse_toc_by_slice(lines)

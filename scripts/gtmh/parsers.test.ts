@@ -10,6 +10,57 @@ import { buildRaces } from "./races.mjs";
 import { buildMaterialEffectsBookData } from "./material-effects.mjs";
 import { mapMaterialEffectsFromBookData } from "../../src/features/amellwind/material-effects/mappers/material-effect.mapper.ts";
 import { mapWeapon } from "../../src/features/amellwind/weapons/mappers/weapon.mapper.ts";
+import { flattenSliceMarkdown, readMarkdownTable } from "./common.mjs";
+
+describe("gtmh slice reader", () => {
+  it("flattens ### entries to `Name. text` and keeps structural headings", () => {
+    const md = [
+      "## Heavy Bowgun",
+      "",
+      "### The Kinsect",
+      "",
+      "Intro rules.",
+      "",
+      "#### Nonmagical",
+      "",
+      "50 gp, 1d10 piercing",
+      "",
+      "### Normal Ammo",
+      "",
+      "Deals normal weapon damage.",
+      "",
+      "Pierce lvl 1. You gain a +1 bonus.",
+      "### Ammo Vendor",
+      "",
+      "| Type | Cost |",
+      "| --- | --- |",
+      "\\*Up to the GM",
+    ].join("\n");
+    const lines = flattenSliceMarkdown(md, {
+      keepTitle: (_t, { level, afterLevel4 }) => level === 3 && !afterLevel4,
+    })
+      .split("\n")
+      .filter(Boolean);
+    expect(lines).toEqual([
+      "Heavy Bowgun",
+      "The Kinsect",
+      "Intro rules.",
+      "Nonmagical",
+      "50 gp, 1d10 piercing",
+      "Normal Ammo. Deals normal weapon damage.",
+      "Pierce lvl 1. You gain a +1 bonus.",
+      "Ammo Vendor",
+      "| Type | Cost |",
+      "| --- | --- |",
+      "*Up to the GM",
+    ]);
+  });
+
+  it("reads markdown table rows by first header", () => {
+    const md = "| Weapon | Cost |\n| --- | ---: |\n| Bow | 24 gp |\n\nafter";
+    expect(readMarkdownTable(md, "Weapon")).toEqual([["Bow", "24 gp"]]);
+  });
+});
 
 describe("gtmh parsers", () => {
   it("extracts the 14 Patreon new feats", () => {
@@ -76,6 +127,36 @@ describe("gtmh parsers", () => {
     );
   });
 
+  it("keeps downtime activity sections and tables from the chapter 2 slice", () => {
+    const downtime = buildVariantRules().filter((r) =>
+      r.name.startsWith("Downtime Activity:"),
+    );
+    expect(JSON.stringify(downtime)).not.toContain("Downtime activity entry extracted");
+
+    const sectionNames = (name: string) =>
+      downtime
+        .find((r) => r.name === `Downtime Activity: ${name}`)
+        ?.entries.filter((e: { name?: string }) => typeof e === "object")
+        .map((e: { name?: string; type: string }) => e.name ?? e.type);
+    expect(sectionNames("Solo Hunt")).toEqual(["table", "Resources", "Resolution"]);
+    expect(sectionNames("Trenya")).toEqual([
+      "Resources",
+      "Resolution",
+      "200 GP Adventures (DC 12)",
+      "500 GP Adventures (DC 17)",
+      "1500 GP Adventures (DC 22)",
+    ]);
+    expect(sectionNames("Palico Farm")).toEqual(["Resources", "Resolution", "Complications"]);
+
+    const sell = downtime.find((r) => r.name === "Downtime Activity: Sell Materials");
+    const tables = sell?.entries[2].entries.filter((e: { type?: string }) => e.type === "table");
+    expect(tables.map((t: { caption?: string }) => t.caption)).toEqual([
+      "Material Base Price",
+      "Material Item Offer",
+    ]);
+    expect(tables[0].footnotes).toHaveLength(1);
+  });
+
   it("extracts Appendix B hunter weapons including Wire Knuckles", () => {
     const weapons = buildWeapons();
     expect(weapons.length).toBeGreaterThanOrEqual(22);
@@ -117,6 +198,60 @@ describe("gtmh parsers", () => {
     expect(features.some((f) => f.prerequisite?.[0]?.otherSummary?.entry?.includes("Wire Knuckles"))).toBe(
       true,
     );
+  });
+
+  it("keeps weapon optfeature names unique so shared labels do not overwrite each other", () => {
+    const features = buildOptionalFeatures();
+    const names = features.map((f) => f.name.toLowerCase());
+    expect(new Set(names).size).toBe(names.length);
+
+    const byName = new Map(features.map((f) => [f.name, f]));
+    const prereq = (name: string) =>
+      byName.get(name)?.prerequisite?.[0]?.otherSummary?.entry;
+    // Each bowgun / switch weapon keeps its own copy of the shared rule.
+    expect(prereq("Ammo (HBG)")).toBe("Heavy Bowgun");
+    expect(prereq("Ammo (LBG)")).toBe("Light Bowgun");
+    expect(prereq("Ammo (DR)")).toBe("Dual Repeaters");
+    expect(prereq("Switch Mode (SA)")).toBe("Switch Axe");
+    expect(prereq("Charge (L)")).toBe("Lance (Rare)");
+    expect(prereq("Capacity Increase (LBG, Very Rare)")).toBe("Light Bowgun (Very Rare)");
+    // Missing-period source lines are still features.
+    expect(prereq("Power Shot")).toBe("Bow (Legendary)");
+    expect(prereq("Power Phial Upgrade")).toBe("Switch Axe (Rare)");
+    // Sub-options with their own upgrade become chain roots (Tonfas Propel).
+    expect(prereq("Propel")).toBe("Tonfas (Uncommon)");
+  });
+
+  it("splits weapon rules from resource columns and keeps Base features off Common", () => {
+    const weapons = buildWeapons();
+    const hbg = mapWeapon(weapons.find((w) => w.name === "Heavy Bowgun"));
+    expect(hbg.baseFeatureNames).toEqual(["Ammo (HBG)", "Loading (HBG)"]);
+    expect(hbg.featureLabels?.["ammo (hbg)"]).toBe("Ammo");
+
+    const [common, , rare, , legendary] = hbg.rarityRows;
+    expect(common.columns.Features).toBeUndefined();
+    expect(common.columns.Ammo).toEqual(["Normal Ammo (HBG)", "Tranq Ammo (HBG)"]);
+    expect(rare.columns.Features).toEqual(["Capacity Increase (HBG)"]);
+    // Ammo Vendor table rows are not parsed as Legendary features.
+    expect(legendary.columns.Ammo).toBeUndefined();
+    expect(legendary.columns.Features).toEqual(["Capacity Increase (HBG, Legendary)"]);
+
+    const glaive = mapWeapon(weapons.find((w) => w.name === "Insect Glaive"));
+    expect(glaive.rarityRows[2].columns.Essences).toEqual(["Red", "White", "Orange", "Green"]);
+    expect(glaive.supplementaryNotes[0]).toMatch(/^The Kinsect\. The Kinsect returns/);
+
+    const horn = mapWeapon(weapons.find((w) => w.name === "Hunting Horn"));
+    expect(horn.rarityRows.map((r) => r.columns["Chord Length"])).toEqual([
+      "2",
+      "3",
+      "4",
+      "5",
+      undefined,
+    ]);
+
+    const longsword = weapons.find((w) => w.name === "Longsword");
+    const rows = longsword.entries[1].entries[0].rows;
+    expect(rows.map((r: string[]) => r[2])).toEqual(["-", "+1", "+2", "+2", "+3"]);
   });
 
   it("extracts material effects into bookData for the Amellwind list", () => {

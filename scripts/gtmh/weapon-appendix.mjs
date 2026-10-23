@@ -1,33 +1,17 @@
 /**
- * Parse Appendix B weapons from the GMBinder/Patreon dump into 5etools-shaped
- * HW items + optionalfeature rows (local-wins overlay).
+ * Parse Appendix B weapons from the formatted slice
+ * (`public/data/gtmh-patreon/gtmh-patreon-appendixB.md`, source of truth) into
+ * 5etools-shaped HW items + optionalfeature rows (local-wins overlay). Each
+ * `## Weapon` heading is one weapon; cost/weight come from the chapter 3
+ * "Armor & Weapon Pricing" table.
  */
-import { readRawDumpSection, toParagraphs } from "./common.mjs";
-
-export const APPENDIX_WEAPON_NAMES = [
-  "Accel Axe",
-  "Charge Blade",
-  "Dual Blades",
-  "Great Sword",
-  "Gunlance",
-  "Hammer",
-  "Hunting Horn",
-  "Insect Glaive",
-  "Lance",
-  "Longsword",
-  "Magnet Spike",
-  "Magus Staff",
-  "Splint Rapier",
-  "Switch Axe",
-  "Sword and Shield",
-  "Tonfas",
-  "Wire Knuckles",
-  "Wyvern Boomerang",
-  "Bow",
-  "Dual Repeaters",
-  "Heavy Bowgun",
-  "Light Bowgun",
-];
+import {
+  flattenSliceMarkdown,
+  headingBlocks,
+  readMarkdownTable,
+  readSlice,
+  toParagraphs,
+} from "./common.mjs";
 
 const RARITY_ORDER = ["Common", "Uncommon", "Rare", "Very Rare", "Legendary"];
 const RARITY_SLOTS = {
@@ -42,7 +26,7 @@ const RARITY_HEADER_RX =
   /^(Nonmagical|Common|Uncommon|Rare|Very Rare|Legendary|All Rarities|All Rarites)\s*$/i;
 
 const BONUS_RX =
-  /You gain a \+(\d+) bonus on attacks and damage rolls(?:;\s*and \+(\d+) AC(?: while[^.]*)?)?/i;
+  /(?:You gain a )?\+(\d+) bonus on attacks and damage rolls(?:;\s*and \+(\d+) AC(?: while[^.]*)?)?/i;
 
 const STAT_LINE_RX =
   /(?:(\d+)\s*gp,?\s*)?(\d+d\d+)\s+(slashing|piercing|bludgeoning)\b/i;
@@ -68,14 +52,99 @@ const PROPERTY_MAP = [
   [/\bversatile\b/i, "V"],
 ];
 
+/**
+ * Abbreviations used to disambiguate optfeature names shared by several
+ * weapons (e.g. "Ammo (HBG)" vs "Ammo (LBG)"). Matches the GitHub feed
+ * convention where it exists.
+ */
+const WEAPON_ABBREVIATIONS = {
+  "Accel Axe": "AA",
+  "Charge Blade": "CB",
+  "Dual Blades": "DB",
+  "Great Sword": "GS",
+  Gunlance: "GL",
+  Hammer: "H",
+  "Hunting Horn": "HH",
+  "Insect Glaive": "IG",
+  Lance: "L",
+  Longsword: "LS",
+  "Magnet Spike": "MS",
+  "Magus Staff": "MGS",
+  "Splint Rapier": "SR",
+  "Switch Axe": "SA",
+  "Sword and Shield": "SnS",
+  Tonfas: "T",
+  "Wire Knuckles": "WK",
+  "Wyvern Boomerang": "WB",
+  Bow: "B",
+  "Dual Repeaters": "DR",
+  "Heavy Bowgun": "HBG",
+  "Light Bowgun": "LBG",
+};
+
 const SKIP_FEATURE_PREFIXES = [
   /^this weapon retains/i,
   /^you gain a \+/i,
-  /^gm'?s? note/i,
-  /^coatings available\.?$/i,
-  /^available ammo\.?$/i,
-  /^additional coatings available\.?$/i,
+  /^\+\d+ bonus on attacks/i,
 ];
+
+/** Weapon resource columns (Forge-style): unlockable types, not rules. */
+const RESOURCE_MARKER_RX =
+  /^(?:(?:additional\s+)?(ammo|coatings|notes)\s+available|available\s+(ammo|coatings|notes))\s*[.:]?$/i;
+
+const RESOURCE_COLUMN_BY_MARKER = {
+  ammo: "Ammo",
+  coatings: "Coatings",
+  notes: "Notes",
+};
+
+/** Kinsect essences (Insect Glaive) are resources, not standalone features. */
+const KINSECT_ESSENCE_NAMES = new Set(["red", "white", "orange", "green"]);
+
+const PHIAL_RESOURCE_RX = /\bPhial \(Costs \d+\)$/i;
+
+/** Appendix trailers after the rarity list (vendor tables, GM notes, variants). */
+const WEAPON_TRAILER_RX = /^(?:ammo vendor|gm'?s? note|variant:)/i;
+
+const CHORD_LENGTH_RX = /chord length:\s*(\d+)/i;
+
+/** "Power Shot When you hit…" / "Power Phial Upgrade You can…" (missing period). */
+const UNPUNCTUATED_FEATURE_RX =
+  /^((?:[A-Z][\w'’+-]*\s){1,4}?)(When|Whenever|You|Your|As|If|This|On)\s(.+)$/s;
+
+const FEATURES_COLUMN = "Features";
+
+function lastWord(name) {
+  const words = name.trim().split(/\s+/);
+  return words[words.length - 1].toLowerCase();
+}
+
+/**
+ * Sub-option runs like Empowered Boost's "Blaze Ammo. … Cryo Ammo. …" share a
+ * trailing noun; a name that breaks the pattern ("Modifications") starts a new
+ * feature instead of being swallowed by the previous one.
+ */
+function breaksSuboptionRun(suboptionNames, name) {
+  if (suboptionNames.length < 3) return false;
+  const shared = lastWord(suboptionNames[0]);
+  if (!suboptionNames.every((n) => lastWord(n) === shared)) return false;
+  return lastWord(name) !== shared;
+}
+
+function matchFeatureLine(paragraph) {
+  const featureMatch = paragraph.match(/^([A-Z][\w'’/+() -]{0,80}?)\.\s+(.+)$/s);
+  if (featureMatch) {
+    return { name: featureMatch[1].trim(), text: featureMatch[2].trim() };
+  }
+  const loose = paragraph.match(UNPUNCTUATED_FEATURE_RX);
+  if (loose) {
+    return {
+      name: loose[1].trim(),
+      text: `${loose[2]} ${loose[3]}`.trim(),
+    };
+  }
+  return null;
+}
 
 function normalizeRarity(raw) {
   const key = String(raw ?? "").trim().toLowerCase();
@@ -88,23 +157,17 @@ function normalizeRarity(raw) {
   return null;
 }
 
-function splitWeaponBlocks(section) {
-  const nameSet = new Set(APPENDIX_WEAPON_NAMES.map((n) => n.toLowerCase()));
-  const lines = String(section ?? "").split("\n");
-  const blocks = [];
-  let current = null;
-
-  for (const line of lines) {
-    const trimmed = line.trim();
-    if (nameSet.has(trimmed.toLowerCase())) {
-      if (current) blocks.push(current);
-      current = { name: trimmed, body: [] };
-      continue;
-    }
-    if (current) current.body.push(line);
-  }
-  if (current) blocks.push(current);
-  return blocks;
+/**
+ * One block per `## Weapon` heading. `###` headings before the first
+ * `####` rarity (Insect Glaive "The Kinsect") stay as intro titles.
+ */
+function readWeaponBlocks() {
+  return headingBlocks(readSlice("appendixB"), 2).map((block) => ({
+    name: block.title,
+    body: flattenSliceMarkdown(block.body, {
+      keepTitle: (_title, { level, afterLevel4 }) => level === 3 && !afterLevel4,
+    }).split("\n"),
+  }));
 }
 
 function splitRaritySections(bodyLines) {
@@ -124,12 +187,73 @@ function splitRaritySections(bodyLines) {
   return sections;
 }
 
-function parseFeatureParagraphs(units) {
+/**
+ * Resource column for a feature name inside a rarity section, or Features.
+ * `markerColumn` is set after "Ammo Available." / "Coatings Available." / …
+ */
+function resolveFeatureColumn(weaponName, name, markerColumn) {
+  if (/\bUpgrade\b/i.test(name)) return FEATURES_COLUMN;
+  if (PHIAL_RESOURCE_RX.test(name)) return "Phials";
+  // Nonmagical tiers list starter ammo/coatings without an "Available" marker.
+  if (/.\sAmmo$/i.test(name)) return "Ammo";
+  if (/.\sCoating(?:\s\+\d+)?$/i.test(name)) return "Coatings";
+  if (
+    weaponName === "Insect Glaive" &&
+    KINSECT_ESSENCE_NAMES.has(name.toLowerCase())
+  ) {
+    return "Essences";
+  }
+  return markerColumn ?? FEATURES_COLUMN;
+}
+
+/** Continuation prose belongs to the last sub-option when one is open. */
+function appendFeatureText(feature, paragraph) {
+  const target = feature.suboptions.at(-1) ?? feature;
+  target.text = `${target.text} ${paragraph}`.trim();
+}
+
+function composeFeatureText(feature) {
+  return [
+    feature.text,
+    ...feature.suboptions.map((s) => `${s.name}. ${s.text}`),
+  ].join("\n\n");
+}
+
+/**
+ * Sub-options that later get their own "X Upgrade" (Tonfas Propel / Earth
+ * Style) are real features: split them out so the upgrade chain has a root.
+ */
+function promoteUpgradedSuboptions(features, upgradeBases, weaponName) {
+  return features.flatMap((feature) => {
+    const promoted = feature.suboptions.filter((s) =>
+      upgradeBases.has(s.name.toLowerCase()),
+    );
+    if (promoted.length === 0) return [feature];
+    return [
+      {
+        ...feature,
+        suboptions: feature.suboptions.filter((s) => !promoted.includes(s)),
+      },
+      ...promoted.map((s) => ({
+        name: s.name,
+        text: s.text,
+        rarityLabel: feature.rarityLabel,
+        column: resolveFeatureColumn(weaponName, s.name, null),
+        suboptions: [],
+      })),
+    ];
+  });
+}
+
+function parseFeatureParagraphs(units, weaponName) {
   const features = [];
   let bonus = null;
   let acBonus = null;
+  let chordLength = null;
   let current = null;
   let acceptingSuboptions = false;
+  let suboptionNames = [];
+  let markerColumn = null;
 
   for (const paragraph of units) {
     if (SKIP_FEATURE_PREFIXES.some((rx) => rx.test(paragraph))) {
@@ -141,12 +265,23 @@ function parseFeatureParagraphs(units) {
       continue;
     }
 
-    const featureMatch = paragraph.match(
-      /^([A-Z][\w'’/+() -]{0,80}?)\.\s+(.+)$/s,
-    );
+    const marker = paragraph.match(RESOURCE_MARKER_RX);
+    if (marker) {
+      markerColumn =
+        RESOURCE_COLUMN_BY_MARKER[(marker[1] ?? marker[2]).toLowerCase()];
+      acceptingSuboptions = false;
+      continue;
+    }
+
+    const chord = paragraph.match(CHORD_LENGTH_RX);
+    if (chord && /^Hunting Horn chord length/i.test(paragraph)) {
+      chordLength = chord[1];
+      continue;
+    }
+
+    const featureMatch = matchFeatureLine(paragraph);
     if (featureMatch) {
-      const name = featureMatch[1].trim();
-      const text = featureMatch[2].trim();
+      const { name, text } = featureMatch;
       // Skip prose that only looks like "Name. …" (ammo tables / sentences).
       if (
         /^(You|The|This|When|If|A|An|At|On|While|Once|Additionally)\b/i.test(
@@ -154,9 +289,7 @@ function parseFeatureParagraphs(units) {
         ) ||
         name.split(/\s+/).length > 6
       ) {
-        if (current) {
-          current.text = `${current.text} ${paragraph}`.trim();
-        }
+        if (current) appendFeatureText(current, paragraph);
         continue;
       }
       // Keep option bullets (Forced Movement / Directed Attack / …) inside the
@@ -165,22 +298,30 @@ function parseFeatureParagraphs(units) {
         current &&
         acceptingSuboptions &&
         !/\bUpgrade\b/i.test(name) &&
-        !/\bGauge\b/i.test(name)
+        !/\bGauge\b/i.test(name) &&
+        !breaksSuboptionRun(suboptionNames, name)
       ) {
-        current.text = `${current.text}\n\n${name}. ${text}`.trim();
+        current.suboptions.push({ name, text });
+        suboptionNames.push(name);
         continue;
       }
-      current = { name, text };
+      current = {
+        name,
+        text,
+        column: resolveFeatureColumn(weaponName, name, markerColumn),
+        suboptions: [],
+      };
       features.push(current);
+      suboptionNames = [];
       acceptingSuboptions =
-        /following (effects|options)|change as follows|choose one of the following/i.test(
+        /following (effects|options|modifications)|change as follows|choose one of the following|modifications are available/i.test(
           text,
         ) || /:\s*$/.test(text);
       continue;
     }
 
     if (current) {
-      current.text = `${current.text} ${paragraph}`.trim();
+      appendFeatureText(current, paragraph);
       if (
         /following (effects|options)|change as follows|choose one of the following/i.test(
           paragraph,
@@ -193,7 +334,7 @@ function parseFeatureParagraphs(units) {
     }
   }
 
-  return { features, bonus, acBonus };
+  return { features, bonus, acBonus, chordLength };
 }
 
 function sectionUnits(lines) {
@@ -273,47 +414,45 @@ function optfeatureTag(name, displayName = name) {
   return `{@optfeature ${safe}|AGMH|${safeDisplay}}`;
 }
 
-function buildWeaponRecord(block) {
-  const sections = splitRaritySections(block.body);
+/** Drops vendor tables / GM notes / variants that follow the Legendary tier. */
+function stripWeaponTrailers(bodyLines) {
+  const end = bodyLines.findIndex((line) => WEAPON_TRAILER_RX.test(line.trim()));
+  return end >= 0 ? bodyLines.slice(0, end) : bodyLines;
+}
+
+/**
+ * Intro prose after the first paragraph (e.g. Insect Glaive "The Kinsect"
+ * rules). A short title line becomes a bold lead-in.
+ */
+function introSupplementaryEntries(introLines) {
+  const blocks = String(introLines.join("\n"))
+    .replace(/\r\n/g, "\n")
+    .split(/\n{2,}/)
+    .map((b) => b.trim())
+    .filter(Boolean);
+  return blocks.slice(1).map((block) => {
+    const [first, ...rest] = block.split("\n");
+    const isTitle =
+      rest.length > 0 &&
+      !/[.:!?]$/.test(first.trim()) &&
+      first.trim().split(/\s+/).length <= 5;
+    const body = (isTitle ? rest : [first, ...rest])
+      .join(" ")
+      .replace(/\s+/g, " ")
+      .trim();
+    return isTitle ? `{@b ${first.trim()}.} ${body}` : body;
+  });
+}
+
+/** First pass: sections → stats, bonuses and labelled features per rarity. */
+function parseWeaponBlock(block) {
+  const sections = splitRaritySections(stripWeaponTrailers(block.body));
   const intro = sections.find((s) => s.rarity === "Intro");
   const introParagraphs = toParagraphs(intro?.lines.join("\n") ?? "");
-  const description = introParagraphs[0] ?? "";
 
   const baseStats = { value: 0, dmg1: "", dmgType: "", weight: 0, property: [] };
   const rarityBuckets = new Map();
   const allRarityFeatures = [];
-  const optionalFeatures = [];
-  const usedFeatureNames = new Map();
-
-  function registerFeature(displayName, rarityLabel, text) {
-    const base = String(displayName).trim();
-    const seen = usedFeatureNames.get(base.toLowerCase()) ?? 0;
-    usedFeatureNames.set(base.toLowerCase(), seen + 1);
-    const uniqueName = seen === 0 ? base : `${base} (${rarityLabel})`;
-
-    optionalFeatures.push({
-      name: uniqueName,
-      source: "AGMH",
-      featureType: ["HWF"],
-      prerequisite: [
-        {
-          otherSummary: {
-            entry:
-              rarityLabel === "All"
-                ? block.name
-                : `${block.name} (${rarityLabel})`,
-            entrySummary:
-              rarityLabel === "All"
-                ? block.name
-                : `${block.name} (${rarityLabel[0]})`,
-          },
-        },
-      ],
-      entries: [text],
-    });
-
-    return { uniqueName, displayName: base };
-  }
 
   for (const section of sections) {
     if (section.rarity === "Intro") continue;
@@ -322,13 +461,15 @@ function buildWeaponRecord(block) {
       Object.assign(baseStats, parseBaseStats(units));
     }
 
-    const { features, bonus, acBonus } = parseFeatureParagraphs(units);
+    const { features, bonus, acBonus, chordLength } = parseFeatureParagraphs(
+      units,
+      block.name,
+    );
 
     if (section.rarity === "All Rarities") {
-      for (const feature of features) {
-        const registered = registerFeature(feature.name, "All", feature.text);
-        allRarityFeatures.push(registered);
-      }
+      allRarityFeatures.push(
+        ...features.map((f) => ({ ...f, rarityLabel: "All" })),
+      );
       continue;
     }
 
@@ -339,56 +480,168 @@ function buildWeaponRecord(block) {
       rarity,
       bonus: "-",
       acBonus: null,
+      chordLength: null,
       features: [],
     };
     if (bonus) existing.bonus = bonus;
     if (acBonus) existing.acBonus = acBonus;
-
-    for (const feature of features) {
-      const registered = registerFeature(feature.name, rarity, feature.text);
-      existing.features.push(registered);
-    }
+    if (chordLength) existing.chordLength = chordLength;
+    existing.features.push(
+      ...features.map((f) => ({ ...f, rarityLabel: rarity })),
+    );
     rarityBuckets.set(rarity, existing);
   }
 
-  // Ensure Common exists even when dump only has Nonmagical stats.
-  if (!rarityBuckets.has("Common")) {
-    rarityBuckets.set("Common", {
-      rarity: "Common",
-      bonus: "-",
-      acBonus: null,
-      features: [],
-    });
+  const upgradeBases = new Set(
+    [...allRarityFeatures, ...[...rarityBuckets.values()].flatMap((b) => b.features)]
+      .filter((f) => /\bUpgrade\b/i.test(f.name))
+      .map((f) => f.name.replace(/\s+Upgrade\b.*/i, "").trim().toLowerCase()),
+  );
+  const finalize = (features) =>
+    promoteUpgradedSuboptions(features, upgradeBases, block.name).map((f) => ({
+      name: f.name,
+      column: f.column,
+      rarityLabel: f.rarityLabel,
+      text: composeFeatureText(f),
+    }));
+  for (const bucket of rarityBuckets.values()) {
+    bucket.features = finalize(bucket.features);
   }
 
-  const hasAcColumn = [...rarityBuckets.values()].some((row) => row.acBonus);
-  const colLabels = hasAcColumn
-    ? ["Rarity", "Slots", "Bonus", "AC Bonus", "Features"]
-    : ["Rarity", "Slots", "Bonus", "Features"];
+  return {
+    name: block.name,
+    description: introParagraphs[0] ?? "",
+    supplementary: introSupplementaryEntries(intro?.lines ?? []),
+    baseStats,
+    rarityBuckets,
+    allRarityFeatures: finalize(allRarityFeatures),
+  };
+}
 
-  const rows = RARITY_ORDER.map((rarity) => {
-    const bucket = rarityBuckets.get(rarity) ?? {
-      rarity,
-      bonus: "-",
-      acBonus: null,
-      features: [],
-    };
-    const featureRefs = [
-      ...(rarity === "Common" ? allRarityFeatures : []),
-      ...bucket.features,
-    ].map((f) => optfeatureTag(f.uniqueName, f.displayName));
-    const featuresCell = featureRefs.length > 0 ? featureRefs.join(", ") : "--";
-    const slots = String(RARITY_SLOTS[rarity] ?? 1);
-    if (hasAcColumn) {
-      return [
-        rarity,
-        slots,
-        bucket.bonus || "-",
-        bucket.acBonus || "-",
-        featuresCell,
-      ];
+function featureLabelsOf(parsed) {
+  return [
+    ...parsed.allRarityFeatures,
+    ...[...parsed.rarityBuckets.values()].flatMap((b) => b.features),
+  ].map((f) => f.name.trim().toLowerCase());
+}
+
+/**
+ * Optfeature names must be unique across the whole supplement (5etools keys
+ * them by name). Labels shared by several weapons get the weapon abbreviation;
+ * repeats inside one weapon get the rarity. The table tag keeps the plain label
+ * as display text, e.g. {@optfeature Ammo (HBG)|AGMH|Ammo}.
+ */
+function createFeatureNamer(sharedLabels) {
+  const usedNames = new Set();
+  return (weaponName, label, rarityLabel, seenInWeapon) => {
+    const qualifiers = [];
+    if (sharedLabels.has(label.toLowerCase())) {
+      qualifiers.push(WEAPON_ABBREVIATIONS[weaponName] ?? weaponName);
     }
-    return [rarity, slots, bucket.bonus || "-", featuresCell];
+    if (seenInWeapon > 0 && rarityLabel !== "All") qualifiers.push(rarityLabel);
+    let name =
+      qualifiers.length > 0 ? `${label} (${qualifiers.join(", ")})` : label;
+    for (let n = 2; usedNames.has(name.toLowerCase()); n++) {
+      name = `${label} (${[...qualifiers, n].join(", ")})`;
+    }
+    usedNames.add(name.toLowerCase());
+    return name;
+  };
+}
+
+function emptyRarityBucket(rarity) {
+  return { rarity, bonus: "-", acBonus: null, chordLength: null, features: [] };
+}
+
+/** Second pass: unique optfeature names + 5etools item with resource columns. */
+function buildWeaponRecord(parsed, nameFeature) {
+  const optionalFeatures = [];
+  const usedLabels = new Map();
+
+  function registerFeature(feature) {
+    const label = String(feature.name).trim();
+    const key = label.toLowerCase();
+    const seen = usedLabels.get(key) ?? 0;
+    usedLabels.set(key, seen + 1);
+    const uniqueName = nameFeature(parsed.name, label, feature.rarityLabel, seen);
+    const isAll = feature.rarityLabel === "All";
+
+    optionalFeatures.push({
+      name: uniqueName,
+      source: "AGMH",
+      featureType: ["HWF"],
+      prerequisite: [
+        {
+          otherSummary: {
+            entry: isAll
+              ? parsed.name
+              : `${parsed.name} (${feature.rarityLabel})`,
+            entrySummary: isAll
+              ? parsed.name
+              : `${parsed.name} (${feature.rarityLabel[0]})`,
+          },
+        },
+      ],
+      entries: [feature.text],
+    });
+
+    return { uniqueName, displayName: label, column: feature.column };
+  }
+
+  const allRarityFeatures = parsed.allRarityFeatures.map(registerFeature);
+  const rarityBuckets = new Map(
+    [...parsed.rarityBuckets.entries()].map(([rarity, bucket]) => [
+      rarity,
+      { ...bucket, features: bucket.features.map(registerFeature) },
+    ]),
+  );
+
+  // Ensure Common exists even when dump only has Nonmagical stats.
+  if (!rarityBuckets.has("Common")) {
+    rarityBuckets.set("Common", emptyRarityBucket("Common"));
+  }
+
+  const buckets = [...rarityBuckets.values()];
+  const hasAcColumn = buckets.some((row) => row.acBonus);
+  const hasChordColumn = buckets.some((row) => row.chordLength);
+  const resourceColumns = [
+    ...new Set(
+      buckets
+        .flatMap((row) => row.features.map((f) => f.column))
+        .filter((column) => column !== FEATURES_COLUMN),
+    ),
+  ];
+
+  const colLabels = [
+    "Rarity",
+    "Slots",
+    "Bonus",
+    ...(hasAcColumn ? ["AC Bonus"] : []),
+    ...(hasChordColumn ? ["Chord Length"] : []),
+    FEATURES_COLUMN,
+    ...resourceColumns,
+  ];
+
+  const featureCell = (features, column) => {
+    const refs = features
+      .filter((f) => f.column === column)
+      .map((f) => optfeatureTag(f.uniqueName, f.displayName));
+    return refs.length > 0 ? refs.join(", ") : "--";
+  };
+
+  // All-rarity features live only in the inset text (Base tier in the UI);
+  // repeating them on Common duplicated every Base feature.
+  const rows = RARITY_ORDER.map((rarity) => {
+    const bucket = rarityBuckets.get(rarity) ?? emptyRarityBucket(rarity);
+    return [
+      rarity,
+      String(RARITY_SLOTS[rarity] ?? 1),
+      bucket.bonus || "-",
+      ...(hasAcColumn ? [bucket.acBonus || "-"] : []),
+      ...(hasChordColumn ? [bucket.chordLength || "-"] : []),
+      featureCell(bucket.features, FEATURES_COLUMN),
+      ...resourceColumns.map((column) => featureCell(bucket.features, column)),
+    ];
   });
 
   const insetEntries = [];
@@ -405,8 +658,9 @@ function buildWeaponRecord(block) {
     rows,
   });
 
+  const { baseStats, description } = parsed;
   const item = {
-    name: block.name,
+    name: parsed.name,
     source: "AGMH",
     type: "HW",
     rarity: "none",
@@ -416,10 +670,11 @@ function buildWeaponRecord(block) {
     dmg1: baseStats.dmg1 || "",
     dmgType: baseStats.dmgType || "",
     entries: [
-      description ? `{@i ${description}}` : `{@i ${block.name}.}`,
+      description ? `{@i ${description}}` : `{@i ${parsed.name}.}`,
+      ...parsed.supplementary,
       {
         type: "inset",
-        name: block.name,
+        name: parsed.name,
         entries: insetEntries,
       },
     ],
@@ -440,19 +695,24 @@ const PRICING_NAME_ALIASES = {
   "sword & shield": "sword and shield",
 };
 
+function parseGp(value) {
+  const match = String(value).replace(/,/g, "").match(/(\d+(?:\.\d+)?)\s*gp/i);
+  return match ? Math.round(Number(match[1]) * 100) : undefined;
+}
+
 function parseWeaponPricingTable() {
-  const section = readRawDumpSection(
-    "Armor & Weapon Pricing",
-    "Armor Cost Armour Class (AC) Strength Stealth Weight",
-  );
   const byName = new Map();
-  for (const line of section.split("\n")) {
-    const row = line.trim().match(/^(.+?)\s+(\d+)\s*gp\s.*?(\d+(?:\.\d+)?)\s*lb\./i);
-    if (!row) continue;
-    const name = row[1].trim().toLowerCase();
+  for (const [weapon, cost, , , weight] of readMarkdownTable(
+    readSlice("chapter3"),
+    "Weapon",
+  )) {
+    const value = parseGp(cost);
+    const lb = String(weight ?? "").match(/(\d+(?:\.\d+)?)\s*lb/i);
+    if (value === undefined || !lb) continue;
+    const name = weapon.trim().toLowerCase();
     byName.set(PRICING_NAME_ALIASES[name] ?? name, {
-      value: Number(row[2]) * 100,
-      weight: Number(row[3]),
+      value,
+      weight: Number(lb[1]),
     });
   }
   return byName;
@@ -465,16 +725,22 @@ export function parseWeaponAppendix() {
 
   const pricing = parseWeaponPricingTable();
 
-  const section = readRawDumpSection(
-    "Appendix B: Monster Hunter Weapons",
-    "Appendix C: Old World Bestiary",
+  const parsedBlocks = readWeaponBlocks().map(parseWeaponBlock);
+  const weaponsByLabel = new Map();
+  for (const parsed of parsedBlocks) {
+    for (const label of new Set(featureLabelsOf(parsed))) {
+      weaponsByLabel.set(label, (weaponsByLabel.get(label) ?? 0) + 1);
+    }
+  }
+  const sharedLabels = new Set(
+    [...weaponsByLabel].filter(([, count]) => count > 1).map(([label]) => label),
   );
-  const blocks = splitWeaponBlocks(section);
+  const nameFeature = createFeatureNamer(sharedLabels);
   const items = [];
   const optionalFeatures = [];
 
-  for (const block of blocks) {
-    const parsed = buildWeaponRecord(block);
+  for (const block of parsedBlocks) {
+    const parsed = buildWeaponRecord(block, nameFeature);
     const price = pricing.get(block.name.toLowerCase());
     if (price) Object.assign(parsed.item, price);
     items.push(parsed.item);
