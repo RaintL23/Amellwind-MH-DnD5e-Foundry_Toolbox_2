@@ -117,6 +117,108 @@ export const STARTING_MATERIALS_CR_TABLE: GuideTable = {
   footnotes: ["If you roll a 0 on this CR range, treat it as if you rolled a 1."],
 };
 
+const RARITY_SLOTS_TABLE: GuideTable = {
+  colLabels: ["Rarity", "Slots"],
+  rows: [
+    ["Common", "1"],
+    ["Uncommon", "2"],
+    ["Rare", "3"],
+    ["Very Rare", "4"],
+    ["Legendary", "5"],
+  ],
+};
+
+const ARMOR_UPGRADE_TABLE: GuideTable = {
+  colLabels: ["Rarity", "Resource*", "Amount Needed", "Cost"],
+  rows: [
+    ["Uncommon", "Armor Sphere", "5", "500 gp"],
+    ["Rare", "Hard Armor Sphere", "10", "1,500 gp"],
+    ["Very Rare", "Heavy Armor Sphere", "15", "6,000 gp"],
+    ["Legendary", "Royal Armor Sphere", "20", "24,000 gp"],
+  ],
+  footnotes: [
+    '*Some creature materials will state that it is a "rarity" armor crafting material, these can be used in place of the resources listed in the table above.',
+  ],
+};
+
+const WEAPON_UPGRADE_TABLE: GuideTable = {
+  colLabels: ["Rarity", "Resource*", "Amount Needed", "Cost"],
+  rows: [
+    ["Uncommon", "Earth Crystal", "5", "500 gp"],
+    ["Rare", "Machalite Ore", "10", "1,000 gp"],
+    ["Very Rare", "Dragonite Ore", "15", "4,000 gp"],
+    ["Legendary", "Carbalite Ore", "20", "16,000 gp"],
+  ],
+  footnotes: [
+    '*Some creature materials will state that it is a "rarity" weapon crafting material, these can be used in place of the resources listed in the table above.',
+  ],
+};
+
+const WEAPON_PRICING_TABLE: GuideTable = {
+  colLabels: ["Weapon", "Cost", "Damage", "AC", "Weight", "Properties"],
+  rows: [
+    ["Accel Axe", "50 gp", "1d12 slashing", "—", "8 lb.", "heavy, two-handed"],
+    ["Charge Blade", "30 gp", "Varies, see Appendix B.", "Varies", "7 lb.", "heavy, two-handed, switch mode"],
+    ["Dual Blades", "30 gp", "1d6 slashing", "—", "4 lb.", "finesse, light, comes with a main & offhand weapon"],
+    ["Great Sword", "50 gp", "2d6 slashing", "—", "6 lb.", "heavy, two-handed"],
+    ["Gunlance", "50 gp", "1d8 piercing", "+2", "12 lb.", "reach, reload, comes with a shield"],
+    ["Hammer", "35 gp", "2d6 bludgeoning", "—", "10 lb.", "heavy, two-handed"],
+    ["Hunting Horn", "50 gp", "1d12 bludgeoning", "—", "8 lb.", "heavy, two-handed, chord length: 2"],
+    ["Insect Glaive", "35 gp", "1d10 slashing", "—", "5 lb.", "two-handed"],
+    ["Lance", "40 gp", "1d8 piercing", "+2", "12 lb.", "reach, versatile (1d10), comes with a shield"],
+    ["Longsword", "25 gp", "1d10 slashing", "—", "3 lb.", "two-handed"],
+    ["Magnet Spike", "35 gp", "Varies, see Appendix B.", "—", "7 lb.", "heavy, two-handed"],
+    ["Magus Staff", "20 gp", "1d6 bludgeoning", "—", "4 lb.", "versatile (1d8)"],
+    ["Splint Rapier", "30 gp", "Varies, see Appendix B.", "—", "4 lb.", "finesse, light"],
+    ["Switch Axe", "30 gp", "Varies, see Appendix B.", "—", "7 lb.", "heavy, two-handed"],
+    ["Sword & Shield", "20 gp", "1d6 slashing", "+2", "8 lb.", "finesse, light"],
+    ["Tonfas", "25 gp", "1d6 bludgeoning", "—", "6 lb.", "light, comes with a main & offhand weapon"],
+    ["Wired Knuckles", "30 gp", "1d4 bludgeoning", "—", "2 lb.", "light, comes with a main & offhand weapon"],
+    ["Wyvern Boomerang", "40 gp", "1d10 slashing", "—", "8 lb.", "two-handed, thrown (60/180)"],
+    ["Bow", "24 gp", "1d8 piercing", "—", "2 lb.", "ammunition (range 150/600), two-handed"],
+    ["Dual Repeaters", "25 gp", "2d4 piercing", "—", "5 lb.", "ammunition (range 30/120), finesse, loading (6), light, special"],
+    ["Heavy Bowgun", "50 gp", "1d10 piercing", "—", "18 lb.", "ammunition (range 100/400), heavy, two-handed"],
+    ["Light Bowgun", "24 gp", "1d4 piercing", "—", "5 lb.", "ammunition (range 80/320), two-handed, rapid fire"],
+  ],
+  footnotes: [
+    "*Weapons have additional magical properties depending on their rarity. You can find more information about each weapon in Appendix B.",
+    "**Shields are not sold separately by the smithy, they are part of specific weapon purchases.",
+  ],
+};
+
+const ARMOR_PRICING_TABLE: GuideTable = {
+  colLabels: ["Armor", "Cost", "Armor Class (AC)", "Strength", "Stealth", "Weight"],
+  rows: [
+    ["Padded (light)", "5 gp", "11 + Dex modifier", "—", "Disadvantage", "8 lb."],
+    ["Leather (light)", "10 gp", "11 + Dex modifier", "—", "—", "10 lb."],
+    ["Studded Leather (light)", "45 gp", "12 + Dex modifier", "—", "—", "13 lb."],
+    ["Hide (medium)", "10 gp", "12 + Dex modifier (max 2)", "—", "—", "12 lb."],
+    ["Chain Shirt (medium)", "50 gp", "13 + Dex modifier (max 2)", "—", "—", "20 lb."],
+    ["Scale Mail (medium)", "50 gp", "14 + Dex modifier (max 2)", "—", "Disadvantage", "45 lb."],
+    ["Breastplate (medium)", "400 gp", "14 + Dex modifier (max 2)", "—", "—", "20 lb."],
+    ["Half Plate (medium)", "700 gp", "15 + Dex modifier (max 2)", "—", "Disadvantage", "—"],
+    ["Ring Mail (heavy)", "30 gp", "14", "—", "Disadvantage", "40 lb."],
+    ["Chain Mail (heavy)", "75 gp", "16", "Str 13", "Disadvantage", "55 lb."],
+    ["Splint (heavy)", "200 gp", "17", "Str 15", "Disadvantage", "60 lb."],
+    ["Plate (heavy)", "1,500 gp", "18", "Str 15", "Disadvantage", "65 lb."],
+  ],
+  footnotes: [
+    "***No other armor exists in Monster Hunter. +1 armor or +3 armor is not something you will find at the smithy or on a hunt.",
+  ],
+};
+
+const GREAT_JAGRAS_LOOT_TABLE: GuideTable = {
+  colLabels: ["Carve Chance", "Capture Chance", "Material", "Slots"],
+  rows: [
+    ["1-6", "1-4", "Great Jagras Scale", "A"],
+    ["7-11", "5-10", "Great Jagras Hide", "A"],
+    ["12-15", "11-14", "Great Jagras Mane", "A"],
+    ["16-20", "15-16", "Great Jagras Claw", "W"],
+    ["—", "17-20", "Monster Bone+", "O"],
+  ],
+  footnotes: ["Great Jagras — Challenge Rating 4, Carves/Capture 2."],
+};
+
 export const CHARACTER_GUIDE_SECTIONS: GuideSection[] = [
   {
     id: "creating",
@@ -213,6 +315,204 @@ export const CHARACTER_GUIDE_SECTIONS: GuideSection[] = [
         paragraphs: [
           "Any and all other starting equipment you get from your class or background remains the same.",
         ],
+      },
+    ],
+  },
+  {
+    id: "equipment",
+    name: "Equipment",
+    paragraphs: [
+      "Equipment and Equipment Crafting are essentials of Monster Hunter. Players will seek out monster materials to use to improve their weapons, armor, and consumables. Below you will find the rules for weapons and armor, new items, and crafting.",
+    ],
+    subsections: [
+      {
+        name: "Starting Equipment",
+        paragraphs: [
+          "When you create your character, you receive equipment based on a combination of your class and background as per usual with a standard D&D game, except that you start with at least one of the new Monster Hunter Weapons found in appendix B and two trinkets. Alternatively, you can start with a number of gold pieces based on your class and spend them on items from the lists in this book or in the PHB. See the Starting Wealth by Class table (PHB p.143) to determine how much gold you have to spend.",
+          "You decide how your character came by this starting equipment. Typically you would have been equipped with a weapon, armor, and a backpack as part of graduating from the Wyvernian Academy, or from one of the other suggestions in the PHB.",
+          "Starting above 1st level? See the Higher Level tab for starting wealth, weapons, armor, and monster materials by level.",
+        ],
+      },
+      {
+        name: "Wealth",
+        paragraphs: [
+          "Wealth in the Monster Hunter universe is the same as in a standard D&D universe. Though it is a high magic setting, so a couple hundred gold is a pretty standard reward for a hunting party fresh out of the Wycademy. While high rank rewards can range in the tens if not hundreds of thousands.",
+        ],
+      },
+      {
+        name: "Selling Treasure",
+        paragraphs: [
+          "Opportunities are abound to find monster parts research items; rare ores, bugs, plants, etc; and old weapons and armor. Normally, you can sell your treasures and trinkets when you return to a town or other settlement, provided that the town, guild, research fleet, or wandering merchants are interested in your loot.",
+        ],
+      },
+      {
+        name: "Magical Items",
+        paragraphs: [
+          "Magical items do not exist in Monster Hunter the same way that they do in a normal D&D game. You cannot find or obtain a Flame Tongue Long sword, a Staff of Frost or any other magical armor, weapon, or wonderous items. Instead, when you kill or capture a creature, the party receives a number of materials that can be inserted into their weapons and armor to gain their magical effects. Think of it as a \"create your own magical items.\"",
+          "The number of materials you obtain from a creature is shown on the creatures loot table located in the Monster Hunter Monster Loot Table PDF.",
+        ],
+        subsections: [
+          {
+            name: "Limited Use Magical Items",
+            paragraphs: [
+              "Magical Items that have a limited number of uses, such as potions, food, spell scrolls, Bag of Beans (DMG 152), Dust of Disappearance (DMG 166), etc are all allowed and made available based on your GMs choosing.",
+            ],
+          },
+          {
+            name: "Attunement",
+            paragraphs: [
+              "When you finish a Short or Long rest you can attune to one weapon, one armor, and two trinkets. You cannot attune to multiple weapons or armor, and only one attuned trinket is active at a time, granting you the material effect placed inside of it. As an action, you can swap between which trinket is active.",
+              "An unattuned armor or weapon acts as a common version of the weapon no matter its rarity; preventing the use of the weapon properties it gained from the rarity increase. Additionally, any materials in these unattuned armor or weapons are disabled until attuned.",
+            ],
+          },
+        ],
+      },
+      {
+        name: "Armor",
+        paragraphs: [
+          "Armor in the Monster Hunter universe is comprised of all nonmagical armor in the Player's Handbook (p.145) and uses the standard rules for the armor. A PC at level 1 starts with the armor in their starting equipment of their class. This armor can be enhanced at the Smithy using materials you obtain while out on a hunt. They usually have the look and feel of the monsters utilized to enhance the armor.",
+        ],
+        subsections: [
+          {
+            name: "Rarity",
+            paragraphs: [
+              "There are 5 rarities of armor in Monster Hunter: common, uncommon, rare, very rare, and legendary. Each rarity has a number of slots the hunter can use to place monster materials in. These monster materials enchant their armor with magical effects.",
+              "When your armor's rarity increases to rare and above, choose one of the following properties it gains: +1 bonus to your AC, +1 to two skills of your choice, +1 to a chosen saving throw, or +1 to all saving throws you are not proficient with. You can pick the same bonus each time your armor's rarity increases or a different one if that is your preference.",
+            ],
+            table: RARITY_SLOTS_TABLE,
+          },
+          {
+            name: "Rules",
+            paragraphs: [
+              "Below you will find a set of rules that limit the materials that you can place in your armor, to provide a fair and balanced game:",
+            ],
+            orderedList: [
+              "Your armor can only have one damage reduction, resistance, or immunity to any one damage type.",
+              "Your armor can only have one advantage or immunity vs a condition such as poisoned, frightened, or prone.",
+              "Your armor can only have one material that grants a bonus to AC.",
+              "Your armor can only have one effect that uses runes.",
+              "A material can only be replaced with another material. Once replaced the previous material is destroyed.",
+              "Materials do not stack with improved versions of their effects, including unnamed materials (IE: detect does not stack with detect+).",
+            ],
+          },
+          {
+            name: "Clothing",
+            paragraphs: [
+              "A class that does not use armor such as a barbarian, monk, or some spellcasters can choose a piece of clothing as their armor. For example, this could be a robe, a tunic, or a loincloth. This armor provides no AC increase, but they can have their rarity upgrade the same way as a normal piece of armor can be to increase the material slots for magical effects.",
+            ],
+          },
+          {
+            name: "Upgrading your Armor",
+            paragraphs: [
+              "When you want to upgrade your armor consult the table below. Once you have the correct number of resources, a smithy will upgrade your armor for the cost listed. It takes one week to complete the process.",
+            ],
+            table: ARMOR_UPGRADE_TABLE,
+          },
+        ],
+      },
+      {
+        name: "Shields",
+        paragraphs: [
+          "Shields in the Monster Hunter universe can only be used with a weapon that already provides it. Any AC bonus it may provide is increased as the weapon's rarity changes, as shown in the weapons information in appendix B.",
+        ],
+      },
+      {
+        name: "Weapons",
+        paragraphs: [
+          "Your class grants proficiency in certain weapons, reflecting both the class's focus and the tools you are most likely to use. Whether you favor an insect glaive or a heavy bowgun, your weapon and your ability to wield it effectively can mean the difference between life and death while adventuring.",
+          "There are 21 types of weapons in the Monster Hunter universe: Accel Axe, Charge Blade, Dual Blades, Great Sword, Gunlance, Hammer, Hunting Horn, Insect Glaive, Lance, Longsword, Magnet Spike, Magus Staff, Splint Rapier, Switch Axe, Sword & Shield, Tonfas, Wyvern Boomerang Bow, Dual Repeaters, Light Bowgun, and Heavy Bowgun. These are the only weapons available to the players and other npcs. Standard D&D weapons do not exist in this world, but their proficiencies are still used to determine which type of weapon each class can use. Each weapon's compatible proficiencies are listed on the Weapons page.",
+          "All weapons stats & additional information can be found in Appendix B.",
+        ],
+        subsections: [
+          {
+            name: "Unarmed Strikes",
+            paragraphs: [
+              "A character can choose to attune to an \"unarmed item\" instead of a weapon, such as handwraps, gauntlets, or knuckles. This item is treated as a weapon for upgrading, attunement and material placement. This item has no special properties except that it offers 1 additional material slot per rarity level. E.g. an uncommon \"unarmed item\" would have 3 material slots rather than 2.",
+            ],
+          },
+          {
+            name: "Rarity",
+            paragraphs: [
+              "There are 5 rarities of weapons in Monster Hunter: common, uncommon, rare, very rare, and legendary. Each rarity has a number of slots the hunter can place materials into, enhancing their weapon with magical effects. Additionally, as the weapon's rarity increases their effects also improve.",
+            ],
+            table: RARITY_SLOTS_TABLE,
+          },
+          {
+            name: "Rules",
+            paragraphs: [
+              "Below you will find a set of rules that limit the materials that you can place in your weapon, to provide a fair and balanced game:",
+            ],
+            orderedList: [
+              "A weapon can have one material that causes an effect when you roll a 20, such as critical status effect on the Fancy Beak material. This material is exempt from rule 2.",
+              "A weapon can only have one extra damage, condition inflicting, or on-hit effect material. The extra damage material rule doesn't apply to materials that have a requirement to deal that extra damage, such as the partbreaker effect found on the Gravios Carapace material.",
+              "A weapon can only have one effect that uses runes.",
+              "A weapon can only have one bonus to spell DC and spell attack rolls.",
+              "A material can only be replaced with another material. Once replaced the previous material is destroyed.",
+              "Materials do not stack with improved versions of their effects, including unnamed materials (IE: critical eye+1 does not stack with critical eye+2).",
+            ],
+          },
+          {
+            name: "Upgrading your Weapon",
+            paragraphs: [
+              "When you want to upgrade your weapon consult the table below. Once you have the correct number of resources, a smithy will upgrade your weapon for the cost listed. It takes one week to complete the process.",
+            ],
+            table: WEAPON_UPGRADE_TABLE,
+          },
+        ],
+      },
+      {
+        name: "Trinkets",
+        paragraphs: [
+          "Trinkets in Monster Hunter are not just for show. They have 1 material slot that you can place a weapon or armor material into and still gain their benefit as if it was in a weapon or armor set. You can have up to two trinkets on you at a time, but you only gain the effect of one of the trinkets at a time. As an action, you can swap which trinket effect you are using.",
+          "Players can choose a trinket from the Player's Handbook (p.159) or perhaps a trophy from a creature they have hunted. If they do not find something they like on the list, the player can work with the GM to choose an appropriate trinket for their setting.",
+        ],
+        subsections: [
+          {
+            name: "Rules",
+            paragraphs: [
+              "If the material grants an effect such as extra damage on weapon attacks, or requires the armor to be worn, then it only works on armor or weapons you are attuned to.",
+            ],
+          },
+          {
+            name: "Cosmetic Material Slot",
+            paragraphs: [
+              "There are many materials you may find while hunting monsters. These cosmetic materials have no mechanical benefit, but change your characters appearance in some way. You have one cosmetic slot in either your armor or weapon (your choice) that you can place a cosmetic material into or replace when you find a different that suits your character a bit more.",
+            ],
+          },
+        ],
+      },
+      {
+        name: "Armor & Weapon Pricing",
+        subsections: [
+          { name: "Weapons", table: WEAPON_PRICING_TABLE },
+          { name: "Armor", table: ARMOR_PRICING_TABLE },
+        ],
+      },
+      {
+        name: "Let's Walk Through It All",
+        paragraphs: [
+          "With all the information you have read above, let's give an example of what you might see at the start of your game and how it all works.",
+          "Conrad is a level 2 fighter who has just killed his first great jagras (p.68 MHMM). He is currently wielding a common greatsword, wearing chainmail (that he got with his starting equipment), and has a tiny silver icon of a raven (his Trinket) attached to his belt.",
+          "Being excited over his first kill, Conrad attempts to carve the great jagras to obtain some materials he might be able to use. The GM then looks up the great jagras in the Monster Hunter Loot Table PDF to see how many carves Conrad will get to attempt on the creature. In this case we can see the great jagras's loot table below. Looking at the top of the table, Conrad gets two attempts at carving this creature (He would have also gotten two rolls on the capture table should he have captured it).",
+          "Next we need to determine the DC of the carve check. In this case the difficulty is a DC 12 (10 + 1/2 of the creatures CR rounded down). So Conrad makes his first Wisdom (Survival) check and rolls a 13! A success, and on a success we roll a d20. Conrad rolls a 14 which we compare to the carve chance section of the loot table. A 14 gets Conrad a Great Jagras Mane which is an armor material that makes it so you no longer need to eat or drink.",
+          "On Conrad's second carve attempt he rolls another Wisdom (Survival) check and rolls a 9. With the carve DC being 12 he fails the second carve attempt. Just because Conrad failed, doesn't mean he does not get anything, instead a failure results in you rolling a 1 on the creature's loot table. For his second item Conrad gets a great jagras scale which gives a +2 bonus to intimidation checks when placed into an armor slot. With the hunt complete, Conrad returns to the guild and reports his success.",
+          "At the guild he wants to make use of the materials he has just obtained, but he realizes there is one issue. Both materials he gathered are both armor materials and his common chainmail only has 1 slot. He has to choose which material to place into his armor. After some thought and deliberation, Conrad decides to place the great jagras mane into his armor, so that he no longer needs to eat or drink while he is attuned to this armor.",
+          "He then places the great jagras scale material into his trinket, because it can hold either 1 armor or weapon material in it. This way he can always have the great jagras scale effect when he needs to be a bit more intimidating. He can also then replace the great jagras scale with a stronger material once he finds one he prefers.",
+        ],
+        table: GREAT_JAGRAS_LOOT_TABLE,
+        bulletList: [
+          "{@b Great Jagras Scale (A).} You have a +2 bonus to Intimidation checks while you wear this armor.",
+          "{@b Great Jagras Hide (A) — Speed Eating.} While you are attuned to this armor, you can use any consumable, such as a potion or food, as a bonus action; so long as you are the one consuming it.",
+          "{@b Great Jagras Mane (A).} Free meal. While attuned to this armor, you no longer need to eat or drink.",
+          "{@b Great Jagras Claw (W) — Palico Rally.} NPC allies within 10 feet of you gain +1 AC and +1 to attack rolls while you are attuned to this weapon.",
+          "{@b Monster Bone+ (O).} Rare weapon crafting material.",
+        ],
+        inset: {
+          name: "Creator's Note",
+          paragraphs: [
+            "Hopefully this walkthrough of the process helps answer any questions you might have. The one thing I will note is that the great jagras is a lower CR creature and as such most of its materials have common magical effects, but as you start to kill stronger and more difficult creatures you will begin to see more powerful materials that you can socket into your armor, trinket, and weapons.",
+          ],
+        },
       },
     ],
   },

@@ -11,11 +11,17 @@ import {
 import { GuideTable } from "./GuideTable";
 import { DndRichText } from "@/shared/components/DndRichText";
 
-type TabId = "creating" | "higher-level" | "skills" | "hunt-roles";
+type TabId =
+  | "creating"
+  | "higher-level"
+  | "equipment"
+  | "skills"
+  | "hunt-roles";
 
 const TABS: Array<{ id: TabId; label: string }> = [
   { id: "creating", label: "Creating a Character" },
   { id: "higher-level", label: "Higher Level" },
+  { id: "equipment", label: "Equipment" },
   { id: "skills", label: "Skills" },
   { id: "hunt-roles", label: "Hunt Roles" },
 ];
@@ -95,6 +101,16 @@ function SubsectionBlock({
             </li>
           ))}
         </ol>
+      )}
+
+      {subsection.bulletList && (
+        <ul className="mt-3 list-disc space-y-2 pl-5 text-sm text-muted-foreground leading-relaxed">
+          {subsection.bulletList.map((item, i) => (
+            <li key={i}>
+              <DndRichText text={item} />
+            </li>
+          ))}
+        </ul>
       )}
 
       {subsection.inset && <GuideInset inset={subsection.inset} />}
@@ -191,7 +207,7 @@ export function CharacterGuidePage() {
           </h1>
         </div>
         <p className="text-sm text-muted-foreground max-w-3xl">
-          Chapter 2 recommendations from{" "}
+          Chapter 2 and 3 recommendations from{" "}
           <span className="text-foreground/80">
             Amellwind&apos;s Guide to Monster Hunting
           </span>
